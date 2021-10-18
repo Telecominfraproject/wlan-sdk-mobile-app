@@ -24,4 +24,10 @@ system works with 4 microservices working together to provide the functionality.
 - [Provisioning project](https://github.com/Telecominfraproject/wlan-cloud-owprov)
 - [Provisioning API](https://github.com/Telecominfraproject/wlan-cloud-owprov/blob/main/openapi/owprov.yaml)
 
+## How to use the API
+To see hos the API is used, take a look at the project, go into `test_scripts/curl` and this will show you how to login and perform some calls.
+
+## Authenticating
+To authenticate, you will need to send an oauth2 message to the security service, obtain a token, and use that token in all subsequent calls to the services. Once the session is over, just call logout.
+
 
