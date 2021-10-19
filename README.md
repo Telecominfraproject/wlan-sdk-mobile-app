@@ -34,4 +34,7 @@ To see hos the API is used, take a look at the project, go into `test_scripts/cu
 ## Authenticating
 To authenticate, you will need to send an oauth2 message to the security service, obtain a token, and use that token in all subsequent calls to the services. Once the session is over, just call logout.
 
+## eero Interface
+eero has a very nice interface. We should look at it and make sure we have similar experience and functionality. This [file](https://github.com/stephb9959/ow-self-care/main/eero-app.docx)
+
 
