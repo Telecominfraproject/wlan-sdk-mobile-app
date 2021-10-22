@@ -1,0 +1,9 @@
+# Prevent generator from creating these files:
+src/api/generated/*/git_push.sh
+
+# The following should only be needed for package creation
+src/api/generated/*/.npmignore
+
+# Already have .gitignore files
+src/api/generated/*/.gitignore
+src/api/generated/*/.openapi-generator-ignore
