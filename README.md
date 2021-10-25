@@ -40,8 +40,8 @@ eero has a very nice interface. We should look at it and make sure we have simil
 The current expectation is to be using 'yarn' as the package manager and to be using Prettier as source code formatter. 
 
 To run use the following
-    yarn react-native start
+- yarn react-native start
 
 To run either iOS or Android simulator builds:
-    yarn react-native ios-run
-    yarn react-native android-run
+- yarn react-native ios-run
+- yarn react-native android-run
