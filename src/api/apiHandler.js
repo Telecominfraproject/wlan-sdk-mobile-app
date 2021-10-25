@@ -22,14 +22,37 @@ axiosInstance.interceptors.request.use(
   },
 );
 
+// Setup the Security APIs
 const securityConfig = new SecurityConfiguration();
-const gatewayConfig = new GatewayConfiguration();
-
 const authenticationApi = new AuthenticationApiFactory(
   securityConfig,
   'https://14oranges.arilia.com:16001/api/v1',
   axiosInstance,
 );
-const devicesApi = new DevicesApiFactory(gatewayConfig, 'https://14oranges.arilia.com:16002/api/v1', axiosInstance);
+
+// Setup the Gateway APIs, if the URL is set
+const gatewayBaseUrl = getBaseUrlForApi('owgw');
+const gatewayConfig = new GatewayConfiguration();
+const devicesApi = gatewayBaseUrl ? new DevicesApiFactory(gatewayConfig, gatewayBaseUrl, axiosInstance) : null;
+
+// Get the base URL from the System Info. This is returned in a call to SystemInfo and it
+// is needed in order to provide the proper base URIs for the other API systems.
+function getBaseUrlForApi(type) {
+  const systemInfo = useStore.getState().systemInfo;
+  if (systemInfo && systemInfo.endpoints) {
+    const endpoints = systemInfo.endpoints;
+    const endpointsLength = endpoints.length;
+
+    for (let i = 0; i < endpointsLength; i++) {
+      let info = endpoints[i];
+
+      if (info.type === type) {
+        return info.uri + '/api/v1';
+      }
+    }
+  }
+
+  return null;
+}
 
 export {authenticationApi, devicesApi};

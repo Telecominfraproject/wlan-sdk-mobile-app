@@ -6,4 +6,9 @@ export const useStore = create(set => ({
     set({session: state});
   },
   clearSession: () => set({session: null}),
+  systemInfo: null,
+  setSystemInfo: state => {
+    set({systemInfo: state});
+  },
+  clearSystemInfo: () => set({systemInfo: null}),
 }));

@@ -48,6 +48,20 @@ export default class SignIn extends Component {
       });
       useStore.getState().setSession(response.data);
 
+      // Update the system endpoints and navigate to the main view.
+      this.getSystemEndpointsNavigateToMain();
+    } catch (error) {
+      Alert.alert(strings.formatString(strings.errors.signInError, error));
+    }
+  };
+
+  getSystemEndpointsNavigateToMain = async () => {
+    try {
+      // The system info is necessary before moving on to the next view as it'll provide
+      // the endpoints needed for communicating with the other systems
+      const response = await authenticationApi.getSystemInfo();
+      useStore.getState().setSystemInfo(response.data);
+
       // Replace to the main screen. Use replace to ensure no back button
       this.props.navigation.replace('Main');
     } catch (error) {
