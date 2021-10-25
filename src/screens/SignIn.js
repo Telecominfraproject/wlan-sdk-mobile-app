@@ -11,6 +11,11 @@ export default class SignIn extends Component {
     password: '',
   };
 
+  constructor(props) {
+    super(props);
+    this.passwordRef = React.createRef();
+  }
+
   render() {
     return (
       <View style={page.container}>
@@ -26,12 +31,23 @@ export default class SignIn extends Component {
           <TextInput
             placeholder={strings.placeholders.username}
             autoComplete="email"
+            autoCapitalize="none"
+            autoFocus={true}
+            keyboardType="email-address"
+            textContentType="username"
+            returnKeyType="next"
             onChangeText={text => this.setState({email: text})}
+            onSubmitEditing={() => this.passwordRef.current.focus()}
           />
           <TextInput
+            ref={this.passwordRef}
             placeholder={strings.placeholders.password}
             secureTextEntry={true}
+            autoCapitalize="none"
+            textContentType="password"
+            returnKeyType="go"
             onChangeText={text => this.setState({password: text})}
+            onSubmitEditing={() => this.onSignInPress()}
           />
           <Button title={strings.buttons.signIn} onPress={this.onSignInPress} />
           <Button title={strings.buttons.forgotPassword} onPress={this.onForgotPasswordPress} />
