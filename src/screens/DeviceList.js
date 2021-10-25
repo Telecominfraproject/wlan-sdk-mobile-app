@@ -38,5 +38,4 @@ export default class DeviceList extends Component {
       Alert.alert(strings.errors.errorTitle, strings.formatString(strings.errors.deviceListError, error));
     }
   };
-
 }

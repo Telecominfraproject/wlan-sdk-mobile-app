@@ -3,9 +3,13 @@ import LocalizedStrings from 'react-native-localization';
 export const strings = new LocalizedStrings({
   en: {
     errors: {
-      errorTitle: 'Error',
-      signInError: 'An error occurred while signing in: {0}',
-      deviceListError: 'An error occurred while retrieving devices: {0}',
+      signInTitle: 'Sign In Error',
+      systemSetupTitle: 'System Setup Error',
+      deviceListTitle: 'Devices Error',
+      credentials: 'Invalid credentials, check username and/or password.',
+      token: 'Credentials no longer valid, please sign-in again.',
+      internal: 'Internal error.',
+      unknown: 'Unknown error.',
     },
     placeholders: {
       username: 'Username',

@@ -1,16 +1,17 @@
 // Used the following for a basis for generating react-native from OpenAPI
 // https://majidlotfinia.medium.com/openapi-generator-for-react-native-by-swagger-58847cadd9e8
 import 'react-native-url-polyfill/auto';
-import {AuthenticationApiFactory, Configuration as SecurityConfiguration} from './generated/owSecurityApi';
-import {DevicesApiFactory, Configuration as GatewayConfiguration} from './generated/owGatewayApi';
-
+import {strings} from '../localization/LocalizationStrings';
 import axios from 'axios';
 import {useStore} from '../Store';
+import {showGeneralError} from '../Utils';
+import {AuthenticationApiFactory, Configuration as SecurityConfiguration} from './generated/owSecurityApi';
+import {DevicesApiFactory, Configuration as GatewayConfiguration} from './generated/owGatewayApi';
 
 const axiosInstance = axios.create({});
 axiosInstance.interceptors.request.use(
   config => {
-    let session = useStore.getState().session;
+    const session = useStore.getState().session;
     if (session) {
       config.headers.Authorization = 'Bearer ' + useStore.getState().session.access_token;
     }
@@ -55,4 +56,38 @@ function getBaseUrlForApi(type) {
   return null;
 }
 
-export {authenticationApi, devicesApi};
+function handleApiError(title, error) {
+  let message = strings.errors.unknown;
+
+  if (error.response) {
+    console.log(error.response);
+    switch (error.response.status) {
+      case 400:
+      case 404:
+        message = strings.errors.internal;
+        break;
+
+      case 403:
+        console.error(error);
+        if (useStore.getState().session === null) {
+          // If not currently signed in then return a credentials error
+          message = strings.errors.credentials;
+        } else {
+          // Otherwise indicate their token failed
+          message = strings.errors.token;
+        }
+        break;
+
+      default:
+        message = error;
+    }
+  } else if (error.request) {
+    message = error.request;
+  } else {
+    message = error;
+  }
+
+  showGeneralError(title, message);
+}
+
+export {authenticationApi, devicesApi, handleApiError};

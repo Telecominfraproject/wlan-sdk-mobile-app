@@ -3,7 +3,7 @@ import {strings} from '../localization/LocalizationStrings';
 import {useStore} from '../Store';
 import {page, pageItem} from '../AppStyle';
 import {View, Image, Button, TextInput, Alert} from 'react-native';
-import {authenticationApi} from '../api/apiHandler';
+import {handleApiError, authenticationApi} from '../api/apiHandler';
 
 export default class SignIn extends Component {
   state = {
@@ -58,6 +58,9 @@ export default class SignIn extends Component {
 
   onSignInPress = async () => {
     try {
+      // Make sure to clear any session information, this ensures error messaging is handled properly as well      
+      useStore.getState().clearSession();
+
       const response = await authenticationApi.getAccessToken({
         userId: this.state.email,
         password: this.state.password,
@@ -70,8 +73,7 @@ export default class SignIn extends Component {
       // Clear the current password
       this.passwordRef.current.clear();
 
-      // Show an alert
-      Alert.alert(strings.errors.errorTitle, strings.formatString(strings.errors.signInError, error));
+      handleApiError(strings.errors.signInTitle, error);
     }
   };
 
@@ -85,7 +87,7 @@ export default class SignIn extends Component {
       // Replace to the main screen. Use replace to ensure no back button
       this.props.navigation.replace('Main');
     } catch (error) {
-      Alert.alert(strings.errors.errorTitle, strings.formatString(strings.errors.signInError, error));
+      handleApiError(strings.errors.systemSetupTitle, error);
     }
   };
 
