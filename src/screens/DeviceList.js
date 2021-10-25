@@ -35,7 +35,7 @@ export default class DeviceList extends Component {
       this.setState({devices: response.data.devices});
     } catch (error) {
       console.warn(error);
-      Alert.alert(strings.formatString(strings.errors.deviceListError, error));
+      Alert.alert(strings.errors.errorTitle, strings.formatString(strings.errors.deviceListError, error));
     }
   };
 

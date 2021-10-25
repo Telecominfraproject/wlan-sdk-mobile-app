@@ -3,6 +3,7 @@ import LocalizedStrings from 'react-native-localization';
 export const strings = new LocalizedStrings({
   en: {
     errors: {
+      errorTitle: 'Error',
       signInError: 'An error occurred while signing in: {0}',
       deviceListError: 'An error occurred while retrieving devices: {0}',
     },

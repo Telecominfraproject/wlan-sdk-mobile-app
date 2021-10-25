@@ -67,7 +67,11 @@ export default class SignIn extends Component {
       // Update the system endpoints and navigate to the main view.
       this.getSystemEndpointsNavigateToMain();
     } catch (error) {
-      Alert.alert(strings.formatString(strings.errors.signInError, error));
+      // Clear the current password
+      this.passwordRef.current.clear();
+
+      // Show an alert
+      Alert.alert(strings.errors.errorTitle, strings.formatString(strings.errors.signInError, error));
     }
   };
 
@@ -81,7 +85,7 @@ export default class SignIn extends Component {
       // Replace to the main screen. Use replace to ensure no back button
       this.props.navigation.replace('Main');
     } catch (error) {
-      Alert.alert(strings.formatString(strings.errors.signInError, error));
+      Alert.alert(strings.errors.errorTitle, strings.formatString(strings.errors.signInError, error));
     }
   };
 
