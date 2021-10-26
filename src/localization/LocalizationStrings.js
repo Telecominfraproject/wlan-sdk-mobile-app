@@ -6,6 +6,8 @@ export const strings = new LocalizedStrings({
       signInTitle: 'Sign In Error',
       systemSetupTitle: 'System Setup Error',
       deviceListTitle: 'Devices Error',
+      forgotPasswordTitle: 'Forgot Password Error',
+      resetPasswordTitle: 'Reset Password Error',
       credentials: 'Invalid credentials, check username and/or password.',
       missingEndpoints: 'System is not set up correct - missing configuration information.',
       token: 'Credentials no longer valid, please sign-in again.',
@@ -15,11 +17,18 @@ export const strings = new LocalizedStrings({
     placeholders: {
       username: 'Username',
       password: 'Password',
+      newPassword: 'New Password',
+      email: 'Email',
     },
     buttons: {
       forgotPassword: 'Forgot Password',
       signIn: 'Sign In',
       signOut: 'Sign Out',
+      sendEmail: 'Send Email',
+      submit: 'Submit',
+    },
+    messages: {
+      resetEmail: 'You should soon receive an email containing the instructions to reset your password. Please make sure to check your spam if you can\'t find the email.',
     },
   },
 });
