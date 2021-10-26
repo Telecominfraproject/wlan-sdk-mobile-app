@@ -7,6 +7,7 @@ export const strings = new LocalizedStrings({
       systemSetupTitle: 'System Setup Error',
       deviceListTitle: 'Devices Error',
       credentials: 'Invalid credentials, check username and/or password.',
+      missingEndpoints: 'System is not set up correct - missing configuration information.',
       token: 'Credentials no longer valid, please sign-in again.',
       internal: 'Internal error.',
       unknown: 'Unknown error.',

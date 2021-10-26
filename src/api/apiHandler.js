@@ -40,6 +40,7 @@ const devicesApi = gatewayBaseUrl ? new DevicesApiFactory(gatewayConfig, gateway
 // is needed in order to provide the proper base URIs for the other API systems.
 function getBaseUrlForApi(type) {
   const systemInfo = useStore.getState().systemInfo;
+
   if (systemInfo && systemInfo.endpoints) {
     const endpoints = systemInfo.endpoints;
     const endpointsLength = endpoints.length;
@@ -56,11 +57,32 @@ function getBaseUrlForApi(type) {
   return null;
 }
 
+function setApiSystemInfo(systemInfo) {
+  // Set the state, then we can use the getBaseUrlForApi to verify it has the proper information
+  useStore.getState().setSystemInfo(systemInfo);
+
+  let valid = true;
+  const typesToValidate = ['owgw']; // Include all API types that might be used
+  const typesToValidateLength = typesToValidate.length;
+
+  for (let i = 0; i < typesToValidateLength; i++) {
+    let type = typesToValidate[i];
+
+    if (!getBaseUrlForApi(type)) {
+      valid = false;
+      break;
+    }
+  }
+
+  if (!valid) {
+    throw new Error(strings.error.missingEndpoints);
+  }
+}
+
 function handleApiError(title, error) {
   let message = strings.errors.unknown;
 
   if (error.response) {
-    console.log(error.response);
     switch (error.response.status) {
       case 400:
       case 404:
@@ -79,15 +101,15 @@ function handleApiError(title, error) {
         break;
 
       default:
-        message = error;
+        message = error.message;
     }
   } else if (error.request) {
     message = error.request;
   } else {
-    message = error;
+    message = error.message;
   }
 
   showGeneralError(title, message);
 }
 
-export {authenticationApi, devicesApi, handleApiError};
+export {authenticationApi, devicesApi, handleApiError, setApiSystemInfo};

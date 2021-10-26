@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import {strings} from '../localization/LocalizationStrings';
 import {useStore} from '../Store';
 import {page, pageItem} from '../AppStyle';
-import {View, Image, Button, TextInput, Alert} from 'react-native';
-import {handleApiError, authenticationApi} from '../api/apiHandler';
+import {View, Image, Button, TextInput} from 'react-native';
+import {handleApiError, authenticationApi, setApiSystemInfo} from '../api/apiHandler';
 
 export default class SignIn extends Component {
   state = {
@@ -82,7 +82,9 @@ export default class SignIn extends Component {
       // The system info is necessary before moving on to the next view as it'll provide
       // the endpoints needed for communicating with the other systems
       const response = await authenticationApi.getSystemInfo();
-      useStore.getState().setSystemInfo(response.data);
+
+      // Set the system info - this will validate as well, so an error might be thrown.
+      setApiSystemInfo(response.data);
 
       // Replace to the main screen. Use replace to ensure no back button
       this.props.navigation.replace('Main');

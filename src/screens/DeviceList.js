@@ -33,9 +33,9 @@ export default class DeviceList extends Component {
     try {
       const response = await devicesApi.getDeviceList();
       this.setState({devices: response.data.devices});
+      console.log(response.data);
     } catch (error) {
-      console.warn(error);
-      Alert.alert(strings.errors.errorTitle, strings.formatString(strings.errors.deviceListError, error));
+      handleApiError(strings.errors.deviceListTitle, error);
     }
   };
 }
