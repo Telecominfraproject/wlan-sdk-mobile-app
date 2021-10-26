@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
 import {strings} from '../localization/LocalizationStrings';
 import {useStore} from '../Store';
-import {page, pageItem} from '../AppStyle';
+import {pageStyle, pageItemStyle} from '../AppStyle';
 import {View, Button} from 'react-native';
 
 export default class Settings extends Component {
   render() {
     return (
-      <View style={page.container}>
-        <View style={pageItem.container}>
+      <View style={pageStyle.container}>
+        <View style={pageItemStyle.containerButton}>
           <Button title={strings.buttons.signOut} onPress={this.onSignOutPress} />
         </View>
       </View>
@@ -16,7 +16,7 @@ export default class Settings extends Component {
   }
 
   onSignOutPress = async () => {
-    // Clear the session information and go back to the sign in page
+    // Clear the session information and go back to the sign in pageStyle
     useStore.getState().clearSession();
     this.props.navigation.replace('SignIn');
   };

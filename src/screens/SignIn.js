@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {strings} from '../localization/LocalizationStrings';
 import {useStore} from '../Store';
-import {page, pageItem} from '../AppStyle';
-import {View, Image, Button, TextInput} from 'react-native';
+import {pageStyle, pageItemStyle} from '../AppStyle';
+import {StyleSheet, View, Image, Button, TextInput} from 'react-native';
 import {handleApiError, authenticationApi, setApiSystemInfo} from '../api/apiHandler';
 
 export default class SignIn extends Component {
@@ -18,17 +18,16 @@ export default class SignIn extends Component {
 
   render() {
     return (
-      <View style={page.container}>
-        <View style={pageItem.container}>
+      <View style={pageStyle.container}>
+        <View style={pageItemStyle.container}>
           <Image
-            style={{
-              height: 100,
-            }}
+            style={signInStyle.headerImage}
             source={require('../assets/OpenWiFi_LogoLockup_Black.png')}
           />
         </View>
-        <View style={pageItem.container}>
+        <View style={pageItemStyle.container}>
           <TextInput
+            style={pageItemStyle.inputText}
             placeholder={strings.placeholders.username}
             autoComplete="email"
             autoCapitalize="none"
@@ -39,7 +38,10 @@ export default class SignIn extends Component {
             onChangeText={text => this.setState({email: text})}
             onSubmitEditing={() => this.passwordRef.current.focus()}
           />
+        </View>
+        <View style={pageItemStyle.container}>
           <TextInput
+            style={pageItemStyle.inputText}
             ref={this.passwordRef}
             placeholder={strings.placeholders.password}
             secureTextEntry={true}
@@ -49,7 +51,11 @@ export default class SignIn extends Component {
             onChangeText={text => this.setState({password: text})}
             onSubmitEditing={() => this.onSignInPress()}
           />
+        </View>
+        <View style={pageItemStyle.containerButton}>
           <Button title={strings.buttons.signIn} onPress={this.onSignInPress} />
+        </View>
+        <View style={pageItemStyle.containerButton}>
           <Button title={strings.buttons.forgotPassword} onPress={this.onForgotPasswordPress} />
         </View>
       </View>
@@ -58,7 +64,7 @@ export default class SignIn extends Component {
 
   onSignInPress = async () => {
     try {
-      // Make sure to clear any session information, this ensures error messaging is handled properly as well      
+      // Make sure to clear any session information, this ensures error messaging is handled properly as well
       useStore.getState().clearSession();
 
       const response = await authenticationApi.getAccessToken({
@@ -97,3 +103,10 @@ export default class SignIn extends Component {
     this.props.navigation.navigate('ForgotPassword');
   };
 }
+
+const signInStyle = StyleSheet.create({
+  headerImage: {
+    height: 150,
+    marginBottom: 10,
+  },
+});

@@ -2,6 +2,7 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {Image} from 'react-native';
 
 import SignIn from './src/screens/SignIn';
 import ForgotPassword from './src/screens/ForgotPassword';
@@ -28,8 +29,31 @@ function App() {
 function TabScreens() {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Devices" component={DeviceStackScreens} options={{headerShown: false}} />
-      <Tab.Screen name="Settings" component={Settings} />
+      <Tab.Screen
+        name="Devices"
+        component={DeviceStackScreens}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({tintColor}) => (
+            <Image
+              source={require('./src/assets/server-solid.png')}
+              style={{width: 26, height: 26, tintColor: tintColor}}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={Settings}
+        options={{
+          tabBarIcon: ({tintColor}) => (
+            <Image
+              source={require('./src/assets/cog-solid.png')}
+              style={{width: 26, height: 26, tintColor: tintColor}}
+            />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 }

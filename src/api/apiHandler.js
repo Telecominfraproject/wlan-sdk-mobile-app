@@ -75,7 +75,7 @@ function setApiSystemInfo(systemInfo) {
   }
 
   if (!valid) {
-    throw new Error(strings.error.missingEndpoints);
+    throw new Error(strings.errors.missingEndpoints);
   }
 }
 
@@ -104,7 +104,7 @@ function handleApiError(title, error) {
         message = error.message;
     }
   } else if (error.request) {
-    message = error.request;
+    message = error.request.message;
   } else {
     message = error.message;
   }

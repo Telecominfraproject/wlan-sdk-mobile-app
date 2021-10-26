@@ -1,20 +1,23 @@
 import React, {Component} from 'react';
 import {strings} from '../localization/LocalizationStrings';
-import {page, pageItem} from '../AppStyle';
-import {View, Text, Alert, FlatList} from 'react-native';
-import {devicesApi} from '../api/apiHandler';
+import {pageStyle, pageItemStyle} from '../AppStyle';
+import {View, Text, FlatList} from 'react-native';
+import {devicesApi, handleApiError} from '../api/apiHandler';
+import {DeviceItem} from '../components/DeviceItem';
 
 export default class DeviceList extends Component {
   state = {devices: []};
 
   render() {
     return (
-      <View style={page.container}>
-        <View style={pageItem.container}>
-          <Text>Devices</Text>
+      <View style={pageStyle.container}>
+        <View style={pageItemStyle.container}>
+          <Text style={{fontSize: 24, fontWeight: 'bold'}}>Devices</Text>
+        </View>
+        <View style={pageItemStyle.container}>
           <FlatList
             data={this.state.devices}
-            renderItem={({item}) => <Text onPress={this.onDevicePress}>{item.compatible}</Text>}
+            renderItem={({item}) => <DeviceItem device={item} onPress={this.onDevicePress} />}
           />
         </View>
       </View>
