@@ -17,7 +17,7 @@ export default class ForgotPassword extends Component {
         <View style={pageItemStyle.container}>
           <Text>Forgot Password</Text>
         </View>
-        <View style={pageStyle.container}>
+        <View style={pageItemStyle.container}>
           <TextInput
             style={pageItemStyle.inputText}
             placeholder={strings.placeholders.email}
