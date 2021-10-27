@@ -9,6 +9,7 @@
     "test": "jest",
     "lint": "eslint .",
     "generate:security-apis": "npx openapi-generator-cli generate -i https://raw.githubusercontent.com/Telecominfraproject/wlan-cloud-ucentralsec/main/openpapi/ucentralsec/owsec.yaml -g typescript-axios -o ./src/api/generated/owSecurityApi --ignore-file-override=.openapi-generator-ignore",
+    "generate:userportal-apis": "npx openapi-generator-cli generate -i ./src/api/open-api/userportal.yaml -g typescript-axios -o ./src/api/generated/owUserPortalApi --ignore-file-override=.openapi-generator-ignore",
     "generate:gateway-apis": "npx openapi-generator-cli generate -i https://raw.githubusercontent.com/Telecominfraproject/wlan-cloud-ucentralgw/master/openapi/ucentral/owgw.yaml -g typescript-axios -o ./src/api/generated/owGatewayApi --ignore-file-override=.openapi-generator-ignore",
     "generate:provisioning-apis": "npx openapi-generator-cli generate -i https://raw.githubusercontent.com/Telecominfraproject/wlan-cloud-owprov/main/openapi/owprov.yaml -g typescript-axios -o ./src/api/generated/owProvisioningApi --ignore-file-override=.openapi-generator-ignore"
   },
