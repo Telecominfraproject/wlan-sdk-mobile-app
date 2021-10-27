@@ -9,6 +9,7 @@ export const strings = new LocalizedStrings({
       forgotPasswordTitle: 'Forgot Password Error',
       resetPasswordTitle: 'Reset Password Error',
       credentials: 'Invalid credentials, check username and/or password.',
+      failedToConnect: 'Failed to connect to server, check connections.',
       missingEndpoints: 'System is not set up correct - missing configuration information.',
       token: 'Credentials no longer valid, please sign-in again.',
       internal: 'Internal error.',
@@ -28,7 +29,8 @@ export const strings = new LocalizedStrings({
       submit: 'Submit',
     },
     messages: {
-      resetEmail: 'You should soon receive an email containing the instructions to reset your password. Please make sure to check your spam if you can\'t find the email.',
+      resetEmail:
+        "You should soon receive an email containing the instructions to reset your password. Please make sure to check your spam if you can't find the email.",
     },
   },
 });

@@ -104,7 +104,15 @@ function handleApiError(title, error) {
         message = error.message;
     }
   } else if (error.request) {
-    message = error.request.message;
+    console.log(error.request.responseText);
+    switch (error.request.status) {
+      case 0:
+        message = strings.errors.failedToConnect;
+        break;
+
+      default:
+        message = error.request.responseText;
+    }
   } else {
     message = error.message;
   }
