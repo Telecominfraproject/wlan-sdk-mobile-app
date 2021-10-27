@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {pageStyle, pageItemStyle} from '../AppStyle';
-import {View, Text, TextInput, Button} from 'react-native';
+import { View, Text, TextInput, Button, ActivityIndicator, Alert } from "react-native";
 import {strings} from '../localization/LocalizationStrings';
 import {authenticationApi, handleApiError} from '../api/apiHandler';
 import {useStore} from '../Store';
@@ -8,7 +8,7 @@ import {useStore} from '../Store';
 export default class ForgotPassword extends Component {
   state = {
     email: '',
-    sent: false,
+    loading: false,
   };
 
   render() {
@@ -28,13 +28,20 @@ export default class ForgotPassword extends Component {
             textContentType="emailAddress"
             returnKeyType="go"
             onChangeText={text => this.setState({email: text})}
-            onSubmitEditing={this.onSubmit}
+            onSubmitEditing={() => {this.state.email && this.onSubmit}}
           />
-          <Text>{this.state.sent && strings.messages.resetEmail}</Text>
         </View>
+        <View style={pageItemStyle.container}>
+          <ActivityIndicator size="large" animating={this.state.loading} />
+        </View>
+        {this.state.loading ||
         <View style={pageItemStyle.containerButton}>
-          <Button title={strings.buttons.sendEmail} onPress={this.onSubmit} />
+          <Button title={strings.buttons.sendEmail}
+                  onPress={this.onSubmit}
+                  disabled={!this.state.email}
+          />
         </View>
+        }
         <View style={pageItemStyle.containerButton}>
           <Button title={strings.buttons.signIn} onPress={this.backToSignin} />
         </View>
@@ -43,6 +50,7 @@ export default class ForgotPassword extends Component {
   }
 
   onSubmit = async () => {
+    this.setState({loading: true});
     try {
       useStore.getState().clearSession();
 
@@ -53,11 +61,12 @@ export default class ForgotPassword extends Component {
         undefined,
         true,
       );
-      console.log(JSON.stringify(response, null, '\t'));
-      this.setState({sent: true});
+      // console.log(JSON.stringify(response.data, null, '\t'));
+      Alert.alert(strings.messages.message, strings.messages.resetEmail);
     } catch (error) {
       handleApiError(strings.errors.forgotPasswordTitle, error);
     }
+    this.setState({loading: false});
   };
 
   backToSignin = () => {
