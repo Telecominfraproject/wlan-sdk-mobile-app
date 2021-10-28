@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { pageStyle, pageItemStyle } from '../AppStyle';
+import { pageStyle, pageItemStyle, primaryColor } from "../AppStyle";
 import { View, Text, TextInput, Button, Alert, ActivityIndicator } from 'react-native';
 import { strings } from '../localization/LocalizationStrings';
 import { authenticationApi, handleApiError } from '../api/apiHandler';
@@ -31,18 +31,22 @@ export default function ResetPassword(props) {
           newPassword,
         );
         console.log(JSON.stringify(response.data, null, '\t'));
+        setLoading(false);
         if (response.status === 200) {
           Alert.alert(strings.messages.message, strings.messages.requestSent);
+          props.navigation.replace('SignIn');
         }
       } catch (error) {
         handleApiError(strings.errors.titleResetPassword, error);
+        setLoading(false);
       }
-      setLoading(false);
     }
   };
 
   const checkPassword = () => {
-    if (newPassword === password) {
+    const valid = validatePassword(newPassword);
+
+    if(newPassword === password) {
       Alert.alert(strings.errors.titleResetPassword, strings.errors.samePassword);
       return false;
     }
@@ -50,7 +54,16 @@ export default function ResetPassword(props) {
       Alert.alert(strings.errors.titleResetPassword, strings.errors.mismatchPassword);
       return false;
     }
-    return newPassword !== password && newPassword === confirmPassword;
+    if(!valid) {
+      Alert.alert(strings.errors.titleResetPassword, strings.errors.badFormat);
+      return false;
+    }
+    return valid && newPassword !== password && newPassword === confirmPassword;
+  };
+
+  const validatePassword = (password) => {
+    const reg = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+    return reg.test(password);
   };
 
   return (
@@ -89,12 +102,26 @@ export default function ResetPassword(props) {
       <View style={pageItemStyle.containerButton}>
         <Button
           title={strings.buttons.submit}
+          color={primaryColor()}
           onPress={onSubmit}
           disabled={loading || !newPassword || !confirmPassword}
         />
       </View>
       <View style={pageItemStyle.containerButton}>
-        <Button title={strings.buttons.cancel} onPress={onCancel} disabled={loading} />
+        <Button
+          title={strings.buttons.cancel}
+          color={primaryColor()}
+          onPress={onCancel}
+          disabled={loading} />
+      </View>
+      <View style={pageItemStyle.container}>
+        <View>
+          <Text>{`\u2022 ${strings.passwordRequirements.req1}`}</Text>
+          <Text>{`\u2022 ${strings.passwordRequirements.req2}`}</Text>
+          <Text>{`\u2022 ${strings.passwordRequirements.req3}`}</Text>
+          <Text>{`\u2022 ${strings.passwordRequirements.req4}`}</Text>
+          <Text>{`\u2022 ${strings.passwordRequirements.req5}`}</Text>
+        </View>
       </View>
     </View>
   );

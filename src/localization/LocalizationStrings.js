@@ -3,6 +3,8 @@ import LocalizedStrings from 'react-native-localization';
 export const strings = new LocalizedStrings({
   en: {
     errors: {
+      badEmail: 'Please enter a valid email.',
+      badFormat: 'Please match the requested format.',
       credentials: 'Invalid credentials, check username and/or password.',
       emptyFields: 'Please fill in all fields',
       failedToConnect: 'Failed to connect to server, check connections.',
@@ -45,6 +47,13 @@ export const strings = new LocalizedStrings({
     },
     signIn: {
       description: 'Please sign in to your account.',
+    },
+    passwordRequirements: {
+      req1: 'Must be at least 8 characters long',
+      req2: 'Must contain 1 uppercase letter',
+      req3: 'Must contain 1 lowercase letter',
+      req4: 'Must contain 1 digit',
+      req5: 'Must contain 1 special character',
     },
   },
 });

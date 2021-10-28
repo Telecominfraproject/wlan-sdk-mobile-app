@@ -56,24 +56,35 @@ export default class ForgotPassword extends Component {
     );
   }
 
-  onSubmit = async () => {
-    this.setState({ loading: true });
-    try {
-      useStore.getState().clearSession();
-
-      const response = await authenticationApi.getAccessToken(
-        {
-          userId: this.state.email,
-        },
-        undefined,
-        true,
-      );
-      // console.log(JSON.stringify(response.data, null, '\t'));
-      Alert.alert(strings.messages.message, strings.messages.resetEmail);
-    } catch (error) {
-      handleApiError(strings.errors.titleForgotPassword, error);
+  validateEmail = () => {
+    const re = /\S+@\S+\.\S+/;
+    const valid = re.test(this.state.email);
+    if (!valid) {
+      Alert.alert(strings.errors.titleForgotPassword, strings.errors.badEmail);
     }
-    this.setState({ loading: false });
+    return valid;
+  }
+
+  onSubmit = async () => {
+    if (this.validateEmail()) {
+      this.setState({ loading: true });
+      try {
+        useStore.getState().clearSession();
+
+        const response = await authenticationApi.getAccessToken(
+          {
+            userId: this.state.email,
+          },
+          undefined,
+          true,
+        );
+        // console.log(JSON.stringify(response.data, null, '\t'));
+        Alert.alert(strings.messages.message, strings.messages.resetEmail);
+      } catch (error) {
+        handleApiError(strings.errors.titleForgotPassword, error);
+      }
+      this.setState({ loading: false });
+    }
   };
 
   backToSignin = () => {
