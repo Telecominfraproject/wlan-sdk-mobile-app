@@ -7,6 +7,7 @@ import {Image} from 'react-native';
 import BrandSelector from './src/screens/BrandSelector';
 import SignIn from './src/screens/SignIn';
 import ForgotPassword from './src/screens/ForgotPassword';
+import ResetPassword from './src/screens/ResetPassword';
 import DeviceList from './src/screens/DeviceList';
 import DeviceDetails from './src/screens/DeviceDetails';
 import Settings from './src/screens/Settings';
@@ -22,6 +23,7 @@ function App() {
         <Stack.Screen name="BrandSelector" component={BrandSelector} />
         <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+        <Stack.Screen name="ResetPassword" component={ResetPassword} />
         <Stack.Screen name="Main" component={TabScreens} />
       </Stack.Navigator>
     </NavigationContainer>

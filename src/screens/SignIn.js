@@ -68,6 +68,10 @@ export default class SignIn extends Component {
             <View style={pageItemStyle.containerButton}>
               <Button title={strings.buttons.signIn} color={primaryColor()} onPress={this.onSignInPress} />
             </View>
+            {/*<View style={pageItemStyle.containerButton}>
+              <Button title={"Reset"}
+                      onPress={() => this.props.navigation.navigate("ResetPassword", {userId: this.state.email, password: this.state.password})} />
+            </View>*/}
           </View>
         )}
       </View>
@@ -87,8 +91,17 @@ export default class SignIn extends Component {
       });
       useStore.getState().setSession(response.data);
 
-      // Update the system endpoints and navigate to the main view.
-      this.getSystemEndpointsNavigateToMain();
+      // must reset password
+      console.log(JSON.stringify(response.data, null, '\t'));
+      if (response.data.userMustChangePassword) {
+        this.props.navigation.navigate('ResetPassword', {
+          userId: this.state.email,
+          password: this.state.password,
+        });
+      } else {
+        // Update the system endpoints and navigate to the main view.
+        this.getSystemEndpointsNavigateToMain();
+      }
     } catch (error) {
       // Clear the loading state
       this.setState({loading: false});
