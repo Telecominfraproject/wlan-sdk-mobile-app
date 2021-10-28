@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {strings} from '../localization/LocalizationStrings';
 import {useStore} from '../Store';
-import {pageStyle, pageItemStyle} from '../AppStyle';
+import {pageStyle, pageItemStyle, primaryColor} from '../AppStyle';
 import {View, Button} from 'react-native';
 
 export default class Settings extends Component {
@@ -9,7 +9,7 @@ export default class Settings extends Component {
     return (
       <View style={pageStyle.container}>
         <View style={pageItemStyle.containerButton}>
-          <Button title={strings.buttons.signOut} onPress={this.onSignOutPress} />
+          <Button title={strings.buttons.signOut} color={primaryColor()} onPress={this.onSignOutPress} />
         </View>
       </View>
     );
@@ -18,6 +18,6 @@ export default class Settings extends Component {
   onSignOutPress = async () => {
     // Clear the session information and go back to the sign in pageStyle
     useStore.getState().clearSession();
-    this.props.navigation.replace('SignIn');
+    this.props.navigation.replace('BrandSelector');
   };
 }

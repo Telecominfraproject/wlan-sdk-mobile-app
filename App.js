@@ -4,6 +4,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Image} from 'react-native';
 
+import BrandSelector from './src/screens/BrandSelector';
 import SignIn from './src/screens/SignIn';
 import ForgotPassword from './src/screens/ForgotPassword';
 import DeviceList from './src/screens/DeviceList';
@@ -18,6 +19,7 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="BrandSelector" component={BrandSelector} />
         <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
         <Stack.Screen name="Main" component={TabScreens} />

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {pageStyle, pageItemStyle} from '../AppStyle';
+import {pageStyle, pageItemStyle, primaryColor} from '../AppStyle';
 import {View, Text, TextInput, Button} from 'react-native';
 import {strings} from '../localization/LocalizationStrings';
 import {authenticationApi, handleApiError} from '../api/apiHandler';
@@ -33,10 +33,10 @@ export default class ForgotPassword extends Component {
           <Text>{this.state.sent && strings.messages.resetEmail}</Text>
         </View>
         <View style={pageItemStyle.containerButton}>
-          <Button title={strings.buttons.sendEmail} onPress={this.onSubmit} />
+          <Button title={strings.buttons.sendEmail} color={primaryColor()} onPress={this.onSubmit} />
         </View>
         <View style={pageItemStyle.containerButton}>
-          <Button title={strings.buttons.signIn} onPress={this.backToSignin} />
+          <Button title={strings.buttons.signIn} color={primaryColor()} onPress={this.backToSignin} />
         </View>
       </View>
     );

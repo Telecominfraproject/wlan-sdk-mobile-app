@@ -15,6 +15,10 @@ export const strings = new LocalizedStrings({
       internal: 'Internal error.',
       unknown: 'Unknown error.',
     },
+    messages: {
+      resetEmail:
+        "You should soon receive an email containing the instructions to reset your password. Please make sure to check your spam if you can't find the email.",
+    },
     placeholders: {
       username: 'Username',
       password: 'Password',
@@ -28,9 +32,12 @@ export const strings = new LocalizedStrings({
       sendEmail: 'Send Email',
       submit: 'Submit',
     },
-    messages: {
-      resetEmail:
-        "You should soon receive an email containing the instructions to reset your password. Please make sure to check your spam if you can't find the email.",
+    brandSelector: {
+      title: 'Welcome',
+      description: 'Please select your provider to continue.',
+    },
+    signIn: {
+      description: 'Please sign in to your account.',
     },
   },
 });

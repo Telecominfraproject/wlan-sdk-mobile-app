@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {strings} from '../localization/LocalizationStrings';
 import {useStore} from '../Store';
-import {pageStyle, pageItemStyle} from '../AppStyle';
-import {StyleSheet, View, Image, Button, TextInput, ActivityIndicator} from 'react-native';
+import {pageStyle, pageItemStyle, primaryColor, primaryColorStyle} from '../AppStyle';
+import {StyleSheet, Text, View, Image, Button, TextInput, ActivityIndicator} from 'react-native';
 import {handleApiError, authenticationApi, setApiSystemInfo} from '../api/apiHandler';
 
 export default class SignIn extends Component {
@@ -21,13 +21,17 @@ export default class SignIn extends Component {
     return (
       <View style={pageStyle.container}>
         <View style={pageItemStyle.container}>
-          <Image style={signInStyle.headerImage} source={require('../assets/OpenWiFi_LogoLockup_Black.png')} />
+          <Image style={signInStyle.headerImage} source={{uri: useStore.getState().brandInfo.iconUri}} />
         </View>
-        <View style={pageItemStyle.container}>
-          <ActivityIndicator size="large" animating={this.state.loading} />
-        </View>
-        {!this.state.loading && (
+        {this.state.loading ? (
+          <View style={pageItemStyle.container}>
+            <ActivityIndicator size="large" color={primaryColor()} animating={this.state.loading} />
+          </View>
+        ) : (
           <View style={signInStyle.containerForm}>
+            <View style={pageItemStyle.container}>
+              <Text style={pageItemStyle.description}>{strings.signIn.description}</Text>
+            </View>
             <View style={pageItemStyle.container}>
               <TextInput
                 style={pageItemStyle.inputText}
@@ -57,10 +61,12 @@ export default class SignIn extends Component {
               />
             </View>
             <View style={pageItemStyle.containerButton}>
-              <Button title={strings.buttons.signIn} onPress={this.onSignInPress} />
+              <Text style={[pageItemStyle.buttonText, primaryColorStyle()]} onPress={this.onForgotPasswordPress}>
+                {strings.buttons.forgotPassword}
+              </Text>
             </View>
             <View style={pageItemStyle.containerButton}>
-              <Button title={strings.buttons.forgotPassword} onPress={this.onForgotPasswordPress} />
+              <Button title={strings.buttons.signIn} color={primaryColor()} onPress={this.onSignInPress} />
             </View>
           </View>
         )}
@@ -125,9 +131,12 @@ const signInStyle = StyleSheet.create({
     alignContent: 'flex-start',
     alignItems: 'center',
     flex: 0,
+    width: '100%',
   },
   headerImage: {
-    height: 150,
+    height: 75,
+    width: '100%',
+    resizeMode: 'contain',
     marginBottom: 10,
   },
 });
