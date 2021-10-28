@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { pageStyle, pageItemStyle, primaryColor } from "../AppStyle";
+import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { View, Text, TextInput, Button, Alert, ActivityIndicator } from 'react-native';
 import { strings } from '../localization/LocalizationStrings';
 import { authenticationApi, handleApiError } from '../api/apiHandler';
+import { logStringifyPretty, showGeneralMessage } from '../Utils';
 
 export default function ResetPassword(props) {
   const { userId, password } = props.route.params;
@@ -10,10 +11,6 @@ export default function ResetPassword(props) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const confirmRef = useRef();
-
-  useEffect(() => {
-    console.log(userId, password);
-  }, []);
 
   const onCancel = () => {
     props.navigation.replace('SignIn');
@@ -30,10 +27,10 @@ export default function ResetPassword(props) {
           },
           newPassword,
         );
-        console.log(JSON.stringify(response.data, null, '\t'));
+        logStringifyPretty(response.data);
         setLoading(false);
         if (response.status === 200) {
-          Alert.alert(strings.messages.message, strings.messages.requestSent);
+          showGeneralMessage(strings.messages.requestSent);
           props.navigation.replace('SignIn');
         }
       } catch (error) {
@@ -46,7 +43,7 @@ export default function ResetPassword(props) {
   const checkPassword = () => {
     const valid = validatePassword(newPassword);
 
-    if(newPassword === password) {
+    if (newPassword === password) {
       Alert.alert(strings.errors.titleResetPassword, strings.errors.samePassword);
       return false;
     }
@@ -54,23 +51,20 @@ export default function ResetPassword(props) {
       Alert.alert(strings.errors.titleResetPassword, strings.errors.mismatchPassword);
       return false;
     }
-    if(!valid) {
+    if (!valid) {
       Alert.alert(strings.errors.titleResetPassword, strings.errors.badFormat);
       return false;
     }
     return valid && newPassword !== password && newPassword === confirmPassword;
   };
 
-  const validatePassword = (password) => {
+  const validatePassword = password => {
     const reg = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
     return reg.test(password);
   };
 
   return (
     <View style={pageStyle.container}>
-      <View style={pageItemStyle.container}>
-        <Text>Reset Password</Text>
-      </View>
       <View style={pageItemStyle.container}>
         <ActivityIndicator size="large" animating={loading} />
       </View>
@@ -106,13 +100,6 @@ export default function ResetPassword(props) {
           onPress={onSubmit}
           disabled={loading || !newPassword || !confirmPassword}
         />
-      </View>
-      <View style={pageItemStyle.containerButton}>
-        <Button
-          title={strings.buttons.cancel}
-          color={primaryColor()}
-          onPress={onCancel}
-          disabled={loading} />
       </View>
       <View style={pageItemStyle.container}>
         <View>

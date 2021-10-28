@@ -4,6 +4,7 @@ import { useStore } from '../Store';
 import { pageStyle, pageItemStyle, primaryColor, primaryColorStyle } from '../AppStyle';
 import { StyleSheet, Text, View, Image, Button, TextInput, ActivityIndicator } from 'react-native';
 import { handleApiError, authenticationApi, setApiSystemInfo } from '../api/apiHandler';
+import { logStringifyPretty } from '../Utils';
 
 export default class SignIn extends Component {
   state = {
@@ -75,10 +76,6 @@ export default class SignIn extends Component {
             <View style={pageItemStyle.containerButton}>
               <Button title={strings.buttons.signIn} color={primaryColor()} onPress={this.onSignInPress} />
             </View>
-            {/*<View style={pageItemStyle.containerButton}>
-              <Button title={"Reset"}
-                      onPress={() => this.props.navigation.navigate("ResetPassword", {userId: this.state.email, password: this.state.password})} />
-            </View>*/}
           </View>
         )}
       </View>
@@ -99,7 +96,7 @@ export default class SignIn extends Component {
       useStore.getState().setSession(response.data);
 
       // must reset password
-      console.log(JSON.stringify(response.data, null, '\t'));
+      logStringifyPretty(response.data);
       if (response.data.userMustChangePassword) {
         this.props.navigation.navigate('ResetPassword', {
           userId: this.state.email,

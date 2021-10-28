@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
-import { View, Text, TextInput, Button, ActivityIndicator, Alert } from 'react-native';
+import { View, TextInput, Button, ActivityIndicator, Alert } from 'react-native';
 import { strings } from '../localization/LocalizationStrings';
 import { authenticationApi, handleApiError } from '../api/apiHandler';
 import { useStore } from '../Store';
+import { showGeneralMessage } from '../Utils';
 
 export default class ForgotPassword extends Component {
   state = {
@@ -14,9 +15,6 @@ export default class ForgotPassword extends Component {
   render() {
     return (
       <View style={pageStyle.container}>
-        <View style={pageItemStyle.container}>
-          <Text>Forgot Password</Text>
-        </View>
         <View style={pageItemStyle.container}>
           <ActivityIndicator size="large" animating={this.state.loading} />
         </View>
@@ -44,14 +42,6 @@ export default class ForgotPassword extends Component {
             disabled={this.state.loading || !this.state.email}
           />
         </View>
-        <View style={pageItemStyle.containerButton}>
-          <Button
-            title={strings.buttons.signIn}
-            color={primaryColor()}
-            onPress={this.backToSignin}
-            disabled={this.state.loading}
-          />
-        </View>
       </View>
     );
   }
@@ -63,7 +53,7 @@ export default class ForgotPassword extends Component {
       Alert.alert(strings.errors.titleForgotPassword, strings.errors.badEmail);
     }
     return valid;
-  }
+  };
 
   onSubmit = async () => {
     if (this.validateEmail()) {
@@ -78,16 +68,11 @@ export default class ForgotPassword extends Component {
           undefined,
           true,
         );
-        // console.log(JSON.stringify(response.data, null, '\t'));
-        Alert.alert(strings.messages.message, strings.messages.resetEmail);
+        showGeneralMessage(strings.messages.resetEmail);
       } catch (error) {
         handleApiError(strings.errors.titleForgotPassword, error);
       }
       this.setState({ loading: false });
     }
-  };
-
-  backToSignin = () => {
-    this.props.navigation.replace('SignIn');
   };
 }
