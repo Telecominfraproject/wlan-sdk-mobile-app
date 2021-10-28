@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
-import {strings} from '../localization/LocalizationStrings';
-import {useStore} from '../Store';
-import {pageStyle, pageItemStyle, primaryColor, primaryColorStyle} from '../AppStyle';
-import {StyleSheet, Text, View, Image, Button, TextInput, ActivityIndicator} from 'react-native';
-import {handleApiError, authenticationApi, setApiSystemInfo} from '../api/apiHandler';
+import React, { Component } from 'react';
+import { strings } from '../localization/LocalizationStrings';
+import { useStore } from '../Store';
+import { pageStyle, pageItemStyle, primaryColor, primaryColorStyle } from '../AppStyle';
+import { StyleSheet, Text, View, Image, Button, TextInput, ActivityIndicator } from 'react-native';
+import { handleApiError, authenticationApi, setApiSystemInfo } from '../api/apiHandler';
 
 export default class SignIn extends Component {
   state = {
@@ -17,11 +17,18 @@ export default class SignIn extends Component {
     this.passwordRef = React.createRef();
   }
 
+  componentDidMount() {
+    // If the brand is not selected, then resort back to the brand selector
+    if (useStore.getState().brandInfo === null) {
+      this.props.navigation.replace('BrandSelector');
+    }
+  }
+
   render() {
     return (
       <View style={pageStyle.container}>
         <View style={pageItemStyle.container}>
-          <Image style={signInStyle.headerImage} source={{uri: useStore.getState().brandInfo.iconUri}} />
+          <Image style={signInStyle.headerImage} source={{ uri: useStore.getState().brandInfo.iconUri }} />
         </View>
         {this.state.loading ? (
           <View style={pageItemStyle.container}>
@@ -43,7 +50,7 @@ export default class SignIn extends Component {
                 textContentType="username"
                 returnKeyType="next"
                 value={this.state.email}
-                onChangeText={text => this.setState({email: text})}
+                onChangeText={text => this.setState({ email: text })}
                 onSubmitEditing={() => this.passwordRef.current.focus()}
               />
             </View>
@@ -56,7 +63,7 @@ export default class SignIn extends Component {
                 autoCapitalize="none"
                 textContentType="password"
                 returnKeyType="go"
-                onChangeText={text => this.setState({password: text})}
+                onChangeText={text => this.setState({ password: text })}
                 onSubmitEditing={() => this.onSignInPress()}
               />
             </View>
@@ -80,7 +87,7 @@ export default class SignIn extends Component {
 
   onSignInPress = async () => {
     try {
-      this.setState({loading: true});
+      this.setState({ loading: true });
 
       // Make sure to clear any session information, this ensures error messaging is handled properly as well
       useStore.getState().clearSession();
@@ -104,7 +111,7 @@ export default class SignIn extends Component {
       }
     } catch (error) {
       // Clear the loading state
-      this.setState({loading: false});
+      this.setState({ loading: false });
 
       handleApiError(strings.errors.signInTitle, error);
     }
@@ -125,7 +132,7 @@ export default class SignIn extends Component {
       this.props.navigation.replace('Main');
     } catch (error) {
       // Make sure the loading state is done in all cases
-      this.setState({loading: false});
+      this.setState({ loading: false });
 
       handleApiError(strings.errors.systemSetupTitle, error);
     }
