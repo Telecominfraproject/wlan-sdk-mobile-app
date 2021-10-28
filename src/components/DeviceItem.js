@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {StyleSheet, TouchableOpacity, View, Text, Image} from 'react-native';
+import React, { Component } from 'react';
+import { StyleSheet, TouchableOpacity, View, Text, Image } from 'react-native';
 
 export class DeviceItem extends Component {
   render() {

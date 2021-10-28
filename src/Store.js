@@ -4,21 +4,21 @@ export const useStore = create(set => ({
   // Session information
   session: null,
   setSession: state => {
-    set({session: state});
+    set({ session: state });
   },
-  clearSession: () => set({session: null}),
+  clearSession: () => set({ session: null }),
 
   // Brand Info
   brandInfo: null,
   setBrandInfo: state => {
-    set({brandInfo: state});
+    set({ brandInfo: state });
   },
-  clearBrandInfo: () => set({brandInfo: null}),
+  clearBrandInfo: () => set({ brandInfo: null }),
 
   // System Info
   systemInfo: null,
   setSystemInfo: state => {
-    set({systemInfo: state});
+    set({ systemInfo: state });
   },
-  clearSystemInfo: () => set({systemInfo: null}),
+  clearSystemInfo: () => set({ systemInfo: null }),
 }));

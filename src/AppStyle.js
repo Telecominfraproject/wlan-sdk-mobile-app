@@ -1,5 +1,5 @@
-import {StyleSheet} from 'react-native';
-import {useStore} from './Store';
+import { StyleSheet } from 'react-native';
+import { useStore } from './Store';
 
 export function primaryColor() {
   let brandInfo = useStore.getState().brandInfo;
@@ -12,27 +12,27 @@ export function primaryColor() {
 }
 
 export function primaryColorStyle() {
-  return {
+  return StyleSheet.create({
     color: primaryColor(),
-  };
+  });
 }
 
 export const pageStyle = StyleSheet.create({
   container: {
+    // Layout
     flexDirection: 'column',
     flexWrap: 'nowrap',
+    flex: 1,
     justifyContent: 'flex-start',
     alignContent: 'flex-start',
     alignItems: 'center',
-    flex: 1,
+    // Content
     padding: 34,
-    color: '#101010',
-    fontWeight: 'bold',
     backgroundColor: '#eeeeee',
-  },
-  text: {
+    // Base Text
     fontSize: 14,
     fontWeight: 'bold',
+    color: '#101010',
   },
 });
 
@@ -53,19 +53,22 @@ export const pageItemStyle = StyleSheet.create({
   },
   containerButton: {
     height: 40,
-    marginBottom: 10,
     width: '100%',
+    marginBottom: 10,
   },
   inputText: {
+    // Layout
     height: 40,
-    marginBottom: 10,
     width: '100%',
-    borderColor: '#bbbbbb',
-    borderWidth: 1,
-    textAlign: 'left',
-    backgroundColor: '#ffffff',
+    marginBottom: 10,
     paddingLeft: 8,
     paddingRight: 8,
+    // Background and Border
+    backgroundColor: '#ffffff',
+    borderColor: '#bbbbbb',
+    borderWidth: 1,
+    // Text
+    textAlign: 'left',
   },
   buttonText: {
     textAlign: 'center',

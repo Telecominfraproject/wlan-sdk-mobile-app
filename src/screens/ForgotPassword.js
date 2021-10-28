@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
-import {pageStyle, pageItemStyle, primaryColor} from '../AppStyle';
-import {View, Text, TextInput, Button, ActivityIndicator, Alert} from 'react-native';
-import {strings} from '../localization/LocalizationStrings';
-import {authenticationApi, handleApiError} from '../api/apiHandler';
-import {useStore} from '../Store';
+import React, { Component } from 'react';
+import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
+import { View, Text, TextInput, Button, ActivityIndicator, Alert } from 'react-native';
+import { strings } from '../localization/LocalizationStrings';
+import { authenticationApi, handleApiError } from '../api/apiHandler';
+import { useStore } from '../Store';
 
 export default class ForgotPassword extends Component {
   state = {
@@ -30,7 +30,7 @@ export default class ForgotPassword extends Component {
             keyboardType="email-address"
             textContentType="emailAddress"
             returnKeyType="go"
-            onChangeText={text => this.setState({email: text})}
+            onChangeText={text => this.setState({ email: text })}
             onSubmitEditing={() => {
               this.state.email && this.onSubmit;
             }}
@@ -57,7 +57,7 @@ export default class ForgotPassword extends Component {
   }
 
   onSubmit = async () => {
-    this.setState({loading: true});
+    this.setState({ loading: true });
     try {
       useStore.getState().clearSession();
 
@@ -73,7 +73,7 @@ export default class ForgotPassword extends Component {
     } catch (error) {
       handleApiError(strings.errors.forgotPasswordTitle, error);
     }
-    this.setState({loading: false});
+    this.setState({ loading: false });
   };
 
   backToSignin = () => {

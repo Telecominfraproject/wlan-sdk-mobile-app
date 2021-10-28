@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
-import {strings} from '../localization/LocalizationStrings';
-import {useStore} from '../Store';
-import {pageStyle, pageItemStyle, primaryColor} from '../AppStyle';
-import {View, Button} from 'react-native';
+import React, { Component } from 'react';
+import { strings } from '../localization/LocalizationStrings';
+import { useStore } from '../Store';
+import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
+import { View, Button } from 'react-native';
 
 export default class Settings extends Component {
   render() {

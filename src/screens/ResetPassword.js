@@ -1,11 +1,11 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {pageStyle, pageItemStyle} from '../AppStyle';
-import {View, Text, TextInput, Button, Alert, ActivityIndicator} from 'react-native';
-import {strings} from '../localization/LocalizationStrings';
-import {authenticationApi, handleApiError} from '../api/apiHandler';
+import React, { useEffect, useRef, useState } from 'react';
+import { pageStyle, pageItemStyle } from '../AppStyle';
+import { View, Text, TextInput, Button, Alert, ActivityIndicator } from 'react-native';
+import { strings } from '../localization/LocalizationStrings';
+import { authenticationApi, handleApiError } from '../api/apiHandler';
 
 export default function ResetPassword(props) {
-  const {userId, password} = props.route.params;
+  const { userId, password } = props.route.params;
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);

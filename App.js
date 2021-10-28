@@ -1,8 +1,8 @@
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Image} from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Image } from 'react-native';
 
 import BrandSelector from './src/screens/BrandSelector';
 import SignIn from './src/screens/SignIn';
@@ -19,7 +19,7 @@ const DeviceStack = createNativeStackNavigator();
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="BrandSelector" component={BrandSelector} />
         <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
@@ -38,10 +38,10 @@ function TabScreens() {
         component={DeviceStackScreens}
         options={{
           headerShown: false,
-          tabBarIcon: ({tintColor}) => (
+          tabBarIcon: ({ tintColor }) => (
             <Image
               source={require('./src/assets/server-solid.png')}
-              style={{width: 26, height: 26, tintColor: tintColor}}
+              style={{ width: 26, height: 26, tintColor: tintColor }}
             />
           ),
         }}
@@ -50,10 +50,10 @@ function TabScreens() {
         name="Settings"
         component={Settings}
         options={{
-          tabBarIcon: ({tintColor}) => (
+          tabBarIcon: ({ tintColor }) => (
             <Image
               source={require('./src/assets/cog-solid.png')}
-              style={{width: 26, height: 26, tintColor: tintColor}}
+              style={{ width: 26, height: 26, tintColor: tintColor }}
             />
           ),
         }}

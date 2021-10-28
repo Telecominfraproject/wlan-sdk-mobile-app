@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
-import {strings} from '../localization/LocalizationStrings';
-import {useStore} from '../Store';
-import {pageStyle, pageItemStyle, primaryColor} from '../AppStyle';
-import {StyleSheet, View, Text, FlatList, TextInput, ActivityIndicator} from 'react-native';
-import {BrandItem} from '../components/BrandItem';
+import React, { Component } from 'react';
+import { strings } from '../localization/LocalizationStrings';
+import { useStore } from '../Store';
+import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
+import { StyleSheet, View, Text, FlatList, TextInput, ActivityIndicator } from 'react-native';
+import { BrandItem } from '../components/BrandItem';
 
 export default class BrandSelector extends Component {
   state = {
@@ -58,7 +58,7 @@ export default class BrandSelector extends Component {
               <FlatList
                 style={brandingSelectorStyle.containerList}
                 data={this.state.filtered ? this.state.filteredBrands : this.state.brands}
-                renderItem={({item}) => <BrandItem brand={item} onPress={this.onCompanySelect.bind(this, item)} />}
+                renderItem={({ item }) => <BrandItem brand={item} onPress={this.onCompanySelect.bind(this, item)} />}
               />
             </View>
           </View>
@@ -70,13 +70,13 @@ export default class BrandSelector extends Component {
   filterBrands = searchText => {
     if (searchText) {
       let searchTextLowerCase = searchText.toLowerCase();
-      this.setState({filtered: true});
+      this.setState({ filtered: true });
       this.setState({
         filteredBrands: this.state.brands.filter(b => b.name.toLowerCase().startsWith(searchTextLowerCase)),
       });
     } else {
-      this.setState({filtered: false});
-      this.setState({filteredBrands: []});
+      this.setState({ filtered: false });
+      this.setState({ filteredBrands: [] });
     }
   };
 
@@ -92,10 +92,10 @@ const brandingSelectorStyle = StyleSheet.create({
   containerBrands: {
     flexDirection: 'column',
     flexWrap: 'nowrap',
+    flex: 0,
     justifyContent: 'flex-start',
     alignContent: 'flex-start',
     alignItems: 'center',
-    flex: 0,
   },
   containerSearch: {
     marginBottom: 16,

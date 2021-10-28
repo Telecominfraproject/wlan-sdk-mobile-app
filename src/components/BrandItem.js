@@ -1,12 +1,12 @@
-import React, {Component} from 'react';
-import {StyleSheet, TouchableOpacity, View, Text, Image} from 'react-native';
+import React, { Component } from 'react';
+import { StyleSheet, TouchableOpacity, View, Text, Image } from 'react-native';
 
 export class BrandItem extends Component {
   render() {
     return (
       <TouchableOpacity onPress={this.props.onPress}>
         <View style={brandItemStyle.container}>
-          <Image style={brandItemStyle.icon} source={{uri: this.getCompanyIconUri()}} />
+          <Image style={brandItemStyle.icon} source={{ uri: this.getCompanyIconUri() }} />
           <Text style={brandItemStyle.text}>{this.getCompanyName()}</Text>
         </View>
       </TouchableOpacity>
