@@ -10,7 +10,7 @@ import ForgotPassword from './src/screens/ForgotPassword';
 import ResetPassword from './src/screens/ResetPassword';
 import DeviceList from './src/screens/DeviceList';
 import DeviceDetails from './src/screens/DeviceDetails';
-import Settings from './src/screens/Settings';
+import Profile from './src/screens/Profile';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -47,13 +47,13 @@ function TabScreens() {
         }}
       />
       <Tab.Screen
-        name="Settings"
-        component={Settings}
+        name="Profile"
+        component={Profile}
         options={{
-          title: 'Settings',
+          title: 'Profile',
           tabBarIcon: ({ tintColor }) => (
             <Image
-              source={require('./src/assets/cog-solid.png')}
+              source={require('./src/assets/user-solid.png')}
               style={{ width: 26, height: 26, tintColor: tintColor }}
             />
           ),

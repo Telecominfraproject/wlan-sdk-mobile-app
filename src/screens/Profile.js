@@ -4,7 +4,7 @@ import { useStore } from '../Store';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { View, Button } from 'react-native';
 
-export default class Settings extends Component {
+export default class Profile extends Component {
   render() {
     return (
       <View style={pageStyle.container}>
