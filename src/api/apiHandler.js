@@ -32,9 +32,17 @@ const authenticationApi = new AuthenticationApiFactory(
 );
 
 // Setup the Gateway APIs, if the URL is set
-const gatewayBaseUrl = getBaseUrlForApi('owgw');
 const gatewayConfig = new GatewayConfiguration();
-const devicesApi = gatewayBaseUrl ? new DevicesApiFactory(gatewayConfig, gatewayBaseUrl, axiosInstance) : null;
+var devicesApi = null;
+
+function getDevicesApi() {
+  if (devicesApi === null) {
+    let url = getBaseUrlForApi('owgw');
+    devicesApi = url ? new DevicesApiFactory(gatewayConfig, url, axiosInstance) : null;
+  }
+
+  return devicesApi;
+}
 
 // Get the base URL from the System Info. This is returned in a call to SystemInfo and it
 // is needed in order to provide the proper base URIs for the other API systems.
@@ -120,4 +128,4 @@ function handleApiError(title, error) {
   showGeneralError(title, message);
 }
 
-export {authenticationApi, devicesApi, handleApiError, setApiSystemInfo};
+export {authenticationApi, getDevicesApi, handleApiError, setApiSystemInfo};

@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {strings} from '../localization/LocalizationStrings';
 import {pageStyle, pageItemStyle} from '../AppStyle';
 import {View, Text, FlatList} from 'react-native';
-import {devicesApi, handleApiError} from '../api/apiHandler';
+import {getDevicesApi, handleApiError} from '../api/apiHandler';
 import {DeviceItem} from '../components/DeviceItem';
 
 export default class DeviceList extends Component {
@@ -34,7 +34,7 @@ export default class DeviceList extends Component {
 
   getDevices = async () => {
     try {
-      const response = await devicesApi.getDeviceList();
+      const response = await getDevicesApi().getDeviceList();
       this.setState({devices: response.data.devices});
       console.log(response.data);
     } catch (error) {
