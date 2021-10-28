@@ -38,7 +38,7 @@ export default class DeviceList extends Component {
       this.setState({ devices: response.data.devices });
       console.log(response.data);
     } catch (error) {
-      handleApiError(strings.errors.deviceListTitle, error);
+      handleApiError(strings.errors.titleDeviceList, error);
     }
   };
 }

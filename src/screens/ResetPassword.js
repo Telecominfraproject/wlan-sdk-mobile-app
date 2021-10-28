@@ -35,7 +35,7 @@ export default function ResetPassword(props) {
           Alert.alert(strings.messages.message, strings.messages.requestSent);
         }
       } catch (error) {
-        handleApiError(strings.errors.resetPasswordTitle, error);
+        handleApiError(strings.errors.titleResetPassword, error);
       }
       setLoading(false);
     }
@@ -43,11 +43,11 @@ export default function ResetPassword(props) {
 
   const checkPassword = () => {
     if (newPassword === password) {
-      Alert.alert(strings.errors.resetPasswordTitle, strings.errors.samePassword);
+      Alert.alert(strings.errors.titleResetPassword, strings.errors.samePassword);
       return false;
     }
     if (newPassword !== confirmPassword) {
-      Alert.alert(strings.errors.resetPasswordTitle, strings.errors.mismatchPassword);
+      Alert.alert(strings.errors.titleResetPassword, strings.errors.mismatchPassword);
       return false;
     }
     return newPassword !== password && newPassword === confirmPassword;

@@ -113,7 +113,7 @@ export default class SignIn extends Component {
       // Clear the loading state
       this.setState({ loading: false });
 
-      handleApiError(strings.errors.signInTitle, error);
+      handleApiError(strings.errors.titleSignIn, error);
     }
   };
 
@@ -134,7 +134,7 @@ export default class SignIn extends Component {
       // Make sure the loading state is done in all cases
       this.setState({ loading: false });
 
-      handleApiError(strings.errors.systemSetupTitle, error);
+      handleApiError(strings.errors.titleSystemSetup, error);
     }
   };
 

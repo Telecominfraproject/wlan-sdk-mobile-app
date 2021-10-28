@@ -71,7 +71,7 @@ export default class ForgotPassword extends Component {
       // console.log(JSON.stringify(response.data, null, '\t'));
       Alert.alert(strings.messages.message, strings.messages.resetEmail);
     } catch (error) {
-      handleApiError(strings.errors.forgotPasswordTitle, error);
+      handleApiError(strings.errors.titleForgotPassword, error);
     }
     this.setState({ loading: false });
   };
