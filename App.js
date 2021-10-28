@@ -19,12 +19,12 @@ const DeviceStack = createNativeStackNavigator();
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="BrandSelector" component={BrandSelector} />
-        <Stack.Screen name="SignIn" component={SignIn} />
-        <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-        <Stack.Screen name="ResetPassword" component={ResetPassword} />
-        <Stack.Screen name="Main" component={TabScreens} />
+      <Stack.Navigator>
+        <Stack.Screen name="BrandSelector" component={BrandSelector} options={{ title: 'Select Brand' }} />
+        <Stack.Screen name="SignIn" component={SignIn} options={{ title: 'Sign In' }} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ title: 'Forgot Password' }} />
+        <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ title: 'Password Reset' }} />
+        <Stack.Screen name="Main" component={TabScreens} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -50,6 +50,7 @@ function TabScreens() {
         name="Settings"
         component={Settings}
         options={{
+          title: 'Settings',
           tabBarIcon: ({ tintColor }) => (
             <Image
               source={require('./src/assets/cog-solid.png')}
@@ -65,8 +66,8 @@ function TabScreens() {
 function DeviceStackScreens() {
   return (
     <DeviceStack.Navigator>
-      <DeviceStack.Screen name="DeviceList" component={DeviceList} />
-      <DeviceStack.Screen name="DeviceDetails" component={DeviceDetails} />
+      <DeviceStack.Screen name="DeviceList" component={DeviceList} options={{ title: 'Devices' }} />
+      <DeviceStack.Screen name="DeviceDetails" component={DeviceDetails} options={{ title: 'Details' }} />
     </DeviceStack.Navigator>
   );
 }
