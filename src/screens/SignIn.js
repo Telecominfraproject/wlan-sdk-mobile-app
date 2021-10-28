@@ -38,6 +38,7 @@ export default class SignIn extends Component {
                 keyboardType="email-address"
                 textContentType="username"
                 returnKeyType="next"
+                value={this.state.email}
                 onChangeText={text => this.setState({email: text})}
                 onSubmitEditing={() => this.passwordRef.current.focus()}
               />
@@ -83,9 +84,6 @@ export default class SignIn extends Component {
       // Update the system endpoints and navigate to the main view.
       this.getSystemEndpointsNavigateToMain();
     } catch (error) {
-      // Clear the current password
-      this.passwordRef.current.clear();
-
       // Clear the loading state
       this.setState({loading: false});
 
