@@ -35,6 +35,7 @@ export const strings = new LocalizedStrings({
     },
     messages: {
       message: 'Message',
+      requestSent: 'Request successfully sent.',
       resetEmail:
         "You should soon receive an email containing the instructions to reset your password. Please make sure to check your spam if you can't find the email.",
     },

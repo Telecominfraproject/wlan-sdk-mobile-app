@@ -18,6 +18,9 @@ export default class ForgotPassword extends Component {
           <Text>Forgot Password</Text>
         </View>
         <View style={pageItemStyle.container}>
+          <ActivityIndicator size="large" animating={this.state.loading} />
+        </View>
+        <View style={pageItemStyle.container}>
           <TextInput
             style={pageItemStyle.inputText}
             placeholder={strings.placeholders.email}
@@ -31,19 +34,15 @@ export default class ForgotPassword extends Component {
             onSubmitEditing={() => {this.state.email && this.onSubmit}}
           />
         </View>
-        <View style={pageItemStyle.container}>
-          <ActivityIndicator size="large" animating={this.state.loading} />
-        </View>
-        {this.state.loading ||
         <View style={pageItemStyle.containerButton}>
           <Button title={strings.buttons.sendEmail}
                   onPress={this.onSubmit}
-                  disabled={!this.state.email}
-          />
+                  disabled={this.state.loading || !this.state.email} />
         </View>
-        }
         <View style={pageItemStyle.containerButton}>
-          <Button title={strings.buttons.signIn} onPress={this.backToSignin} />
+          <Button title={strings.buttons.signIn}
+                  onPress={this.backToSignin}
+                  disabled={this.state.loading} />
         </View>
       </View>
     );
