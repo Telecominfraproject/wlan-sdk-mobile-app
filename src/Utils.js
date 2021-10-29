@@ -21,5 +21,8 @@ export function signOut(navigation) {
   store.dispatch(clearSession());
   clearCredentials();
 
-  navigation.replace('BrandSelector');
+  navigation.reset({
+    index: 0,
+    routes: [{ name: 'BrandSelector' }],
+  });
 }
