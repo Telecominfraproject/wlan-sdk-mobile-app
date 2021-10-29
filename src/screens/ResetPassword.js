@@ -61,7 +61,7 @@ export default function ResetPassword(props) {
 
   return (
     <View style={pageStyle.container}>
-      <View style={pageItemStyle.container}>
+      <View style={pageItemStyle.loadingContainer}>
         <ActivityIndicator size="large" animating={loading} />
       </View>
       <View style={pageItemStyle.container}>

@@ -37,6 +37,18 @@ export const pageStyle = StyleSheet.create({
 });
 
 export const pageItemStyle = StyleSheet.create({
+  loadingContainer: {
+    ...StyleSheet.absoluteFill,
+    paddingVertical: '50%',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    zIndex: 50,
+  },
+  headerImage: {
+    height: 75,
+    width: '100%',
+    resizeMode: 'contain',
+    marginBottom: 10,
+  },
   title: {
     fontSize: 36,
     marginBottom: 14,

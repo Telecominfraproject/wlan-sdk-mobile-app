@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { clearSession } from '../store/SessionSlice';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
-import { View, TextInput, Button, ActivityIndicator, Alert } from 'react-native';
+import { View, TextInput, Button, ActivityIndicator, Alert, Image, Text } from 'react-native';
 import { strings } from '../localization/LocalizationStrings';
 import { authenticationApi, handleApiError } from '../api/apiHandler';
 import { showGeneralMessage } from '../Utils';
+import { selectBrandInfo } from '../store/BrandInfoSlice';
 
-const ForgotPassword = props => {
+const ForgotPassword = () => {
   const dispatch = useDispatch();
+  const brandInfo = useSelector(selectBrandInfo);
   const [email, setEmail] = useState();
   const [loading, setLoading] = useState(false);
 
@@ -47,8 +49,19 @@ const ForgotPassword = props => {
 
   return (
     <View style={pageStyle.container}>
+      {loading && (
+        <View style={pageItemStyle.loadingContainer}>
+          <ActivityIndicator size="large" color={primaryColor} animating={loading} />
+        </View>
+      )}
       <View style={pageItemStyle.container}>
-        <ActivityIndicator size="large" animating={loading} />
+        <Image style={pageItemStyle.headerImage} source={{ uri: brandInfo.iconUri }} />
+      </View>
+      <View style={pageItemStyle.container}>
+        <Text style={pageItemStyle.title}>{strings.forgotPassword.title}</Text>
+      </View>
+      <View style={pageItemStyle.container}>
+        <Text style={pageItemStyle.description}>{strings.forgotPassword.description}</Text>
       </View>
       <View style={pageItemStyle.container}>
         <TextInput
