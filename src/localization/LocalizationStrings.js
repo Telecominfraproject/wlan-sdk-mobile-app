@@ -21,10 +21,10 @@ export const strings = new LocalizedStrings({
       unknown: 'Unknown error.',
     },
     messages: {
-      message: 'Message',
       requestSent: 'Request successfully sent.',
       resetEmail:
         "You should soon receive an email containing the instructions to reset your password. Please make sure to check your spam if you can't find the email.",
+      titleMessage: 'Message',
     },
     placeholders: {
       confirmPassword: 'Confirm Password',

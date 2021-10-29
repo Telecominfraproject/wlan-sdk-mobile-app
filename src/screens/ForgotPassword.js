@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { clearSession } from '../store/SessionSlice';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
-import { View, Text, TextInput, Button, ActivityIndicator, Alert } from 'react-native';
+import { View, TextInput, Button, ActivityIndicator, Alert } from 'react-native';
 import { strings } from '../localization/LocalizationStrings';
 import { authenticationApi, handleApiError } from '../api/apiHandler';
+import { showGeneralMessage } from '../Utils';
 
 const ForgotPassword = props => {
   const dispatch = useDispatch();
@@ -35,8 +36,7 @@ const ForgotPassword = props => {
           undefined,
           true,
         );
-        // console.log(JSON.stringify(response.data, null, '\t'));
-        Alert.alert(strings.messages.message, strings.messages.resetEmail);
+        showGeneralMessage(strings.messages.resetEmail);
       } catch (error) {
         handleApiError(strings.errors.titleForgotPassword, error);
       } finally {
@@ -45,15 +45,8 @@ const ForgotPassword = props => {
     }
   };
 
-  const backToSignin = () => {
-    props.navigation.replace('SignIn');
-  };
-
   return (
     <View style={pageStyle.container}>
-      <View style={pageItemStyle.container}>
-        <Text>Forgot Password</Text>
-      </View>
       <View style={pageItemStyle.container}>
         <ActivityIndicator size="large" animating={loading} />
       </View>
@@ -80,9 +73,6 @@ const ForgotPassword = props => {
           onPress={onSubmit}
           disabled={loading || !email}
         />
-      </View>
-      <View style={pageItemStyle.containerButton}>
-        <Button title={strings.buttons.signIn} color={primaryColor} onPress={backToSignin} disabled={loading} />
       </View>
     </View>
   );

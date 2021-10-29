@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { View, Text, TextInput, Button, Alert, ActivityIndicator } from 'react-native';
 import { strings } from '../localization/LocalizationStrings';
 import { authenticationApi, handleApiError } from '../api/apiHandler';
+import { logStringifyPretty, showGeneralMessage } from '../Utils';
 
 export default function ResetPassword(props) {
   const { userId, password } = props.route.params;
@@ -10,14 +11,6 @@ export default function ResetPassword(props) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const confirmRef = useRef();
-
-  useEffect(() => {
-    console.log(userId, password);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const onCancel = () => {
-    props.navigation.replace('SignIn');
-  };
 
   const onSubmit = async () => {
     if (checkPassword()) {
@@ -30,10 +23,10 @@ export default function ResetPassword(props) {
           },
           newPassword,
         );
-        console.log(JSON.stringify(response.data, null, '\t'));
+        logStringifyPretty(response.data);
         setLoading(false);
         if (response.status === 200) {
-          Alert.alert(strings.messages.message, strings.messages.requestSent);
+          showGeneralMessage(strings.messages.requestSent);
           props.navigation.replace('SignIn');
         }
       } catch (error) {
@@ -69,9 +62,6 @@ export default function ResetPassword(props) {
   return (
     <View style={pageStyle.container}>
       <View style={pageItemStyle.container}>
-        <Text>Reset Password</Text>
-      </View>
-      <View style={pageItemStyle.container}>
         <ActivityIndicator size="large" animating={loading} />
       </View>
       <View style={pageItemStyle.container}>
@@ -106,9 +96,6 @@ export default function ResetPassword(props) {
           onPress={onSubmit}
           disabled={loading || !newPassword || !confirmPassword}
         />
-      </View>
-      <View style={pageItemStyle.containerButton}>
-        <Button title={strings.buttons.cancel} color={primaryColor} onPress={onCancel} disabled={loading} />
       </View>
       <View style={pageItemStyle.container}>
         <View>

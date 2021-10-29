@@ -6,6 +6,7 @@ import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor, primaryColorStyle } from '../AppStyle';
 import { StyleSheet, Text, View, Image, Button, TextInput, ActivityIndicator } from 'react-native';
 import { handleApiError, authenticationApi, setApiSystemInfo } from '../api/apiHandler';
+import { logStringifyPretty } from '../Utils';
 
 const SignIn = props => {
   const dispatch = useDispatch();
@@ -36,7 +37,7 @@ const SignIn = props => {
       dispatch(setSession(response.data));
 
       // must reset password
-      console.log(JSON.stringify(response.data, null, '\t'));
+      logStringifyPretty(response.data);
       if (response.data.userMustChangePassword) {
         props.navigation.navigate('ResetPassword', {
           userId: email,
