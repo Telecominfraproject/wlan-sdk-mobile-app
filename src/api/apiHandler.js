@@ -8,6 +8,12 @@ import { setSystemInfo } from '../store/SystemInfoSlice';
 import { showGeneralError } from '../Utils';
 import { AuthenticationApiFactory, Configuration as SecurityConfiguration } from './generated/owSecurityApi';
 import { DevicesApiFactory, Configuration as GatewayConfiguration } from './generated/owGatewayApi';
+import {
+  hasInternetCredentials,
+  setInternetCredentials,
+  getInternetCredentials,
+  resetInternetCredentials,
+} from 'react-native-keychain';
 
 const axiosInstance = axios.create({});
 axiosInstance.interceptors.request.use(
@@ -27,11 +33,8 @@ axiosInstance.interceptors.request.use(
 
 // Setup the Security APIs
 const securityConfig = new SecurityConfiguration();
-const authenticationApi = new AuthenticationApiFactory(
-  securityConfig,
-  'https://14oranges.arilia.com:16001/api/v1',
-  axiosInstance,
-);
+const baseAuthenticationApiUrl = 'https://14oranges.arilia.com:16001/api/v1';
+const authenticationApi = new AuthenticationApiFactory(securityConfig, baseAuthenticationApiUrl, axiosInstance);
 
 // Setup the Gateway APIs, if the URL is set
 const gatewayConfig = new GatewayConfiguration();
@@ -89,6 +92,22 @@ function setApiSystemInfo(systemInfo) {
   }
 }
 
+async function hasCredentials() {
+  return hasInternetCredentials(baseAuthenticationApiUrl);
+}
+
+async function setCredentials(email, password) {
+  return setInternetCredentials(baseAuthenticationApiUrl, email, password);
+}
+
+async function getCredentials() {
+  return getInternetCredentials(baseAuthenticationApiUrl);
+}
+
+async function clearCredentials() {
+  return resetInternetCredentials(baseAuthenticationApiUrl);
+}
+
 function handleApiError(title, error) {
   const state = store.getState();
   const session = state.session.value;
@@ -132,4 +151,13 @@ function handleApiError(title, error) {
   showGeneralError(title, message);
 }
 
-export { authenticationApi, devicesApi, handleApiError, setApiSystemInfo };
+export {
+  authenticationApi,
+  devicesApi,
+  handleApiError,
+  setApiSystemInfo,
+  hasCredentials,
+  setCredentials,
+  getCredentials,
+  clearCredentials,
+};

@@ -359,7 +359,11 @@ PODS:
     - React-perflogger (= 0.66.1)
   - ReactNativeLocalization (2.1.7):
     - React-Core
-  - RNScreens (3.8.0):
+  - RNFS (2.18.0):
+    - React
+  - RNKeychain (8.0.0):
+    - React-Core
+  - RNScreens (3.9.0):
     - React-Core
     - React-RCTImage
   - Yoga (1.14.0)
@@ -424,6 +428,8 @@ DEPENDENCIES:
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeLocalization (from `../node_modules/react-native-localization`)
+  - RNFS (from `../node_modules/react-native-fs`)
+  - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -510,6 +516,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   ReactNativeLocalization:
     :path: "../node_modules/react-native-localization"
+  RNFS:
+    :path: "../node_modules/react-native-fs"
+  RNKeychain:
+    :path: "../node_modules/react-native-keychain"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   Yoga:
@@ -562,10 +572,12 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: 33a949a51bec5f8a3c9e8d8092deb259600d761e
   ReactCommon: 620442811dc6f707b4bf5e3b27d4f19c12d5a821
   ReactNativeLocalization: 90a1181b7672309701dd7e5364fbf587319d41c6
-  RNScreens: 6e1ea5787989f92b0671049b808aef64fa1ef98c
+  RNFS: 3ab21fa6c56d65566d1fb26c2228e2b6132e5e32
+  RNKeychain: 4f63aada75ebafd26f4bc2c670199461eab85d94
+  RNScreens: 4d79118be80f79fa1f4aa131909a1d6e86280af3
   Yoga: 2b4a01651f42a32f82e6cef3830a3ba48088237f
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 26c2433f48c7ed7320ff21cfa38c81488f30cd7a
+PODFILE CHECKSUM: 04eaee5fd61079caa6b83f200156cc0dac8654cf
 
 COCOAPODS: 1.11.2

@@ -3,10 +3,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearSession, setSession } from '../store/SessionSlice';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { strings } from '../localization/LocalizationStrings';
+import * as Keychain from 'react-native-keychain';
 import { pageStyle, pageItemStyle, primaryColor, primaryColorStyle } from '../AppStyle';
 import { StyleSheet, Text, View, Image, Button, TextInput, ActivityIndicator } from 'react-native';
-import { handleApiError, authenticationApi, setApiSystemInfo } from '../api/apiHandler';
-import { logStringifyPretty } from '../Utils';
+import { logStringifyPretty, showGeneralError } from '../Utils';
+import {
+  handleApiError,
+  authenticationApi,
+  setApiSystemInfo,
+  hasCredentials,
+  setCredentials,
+  getCredentials,
+  clearCredentials,
+} from '../api/apiHandler';
 
 const SignIn = props => {
   const dispatch = useDispatch();
@@ -21,35 +30,57 @@ const SignIn = props => {
     if (brandInfo === null) {
       props.navigation.replace('BrandSelector');
     }
+
+    async function checkCredentials() {
+      let foundCredentials = await hasCredentials();
+      if (foundCredentials) {
+        signIn();
+      }
+    }
+    checkCredentials();
   });
 
   const onSignInPress = async () => {
+    await setCredentials(email, password);
+    signIn();
+  };
+
+  const signIn = async () => {
     try {
       setLoading(true);
 
       // Make sure to clear any session information, this ensures error messaging is handled properly as well
       dispatch(clearSession());
 
-      const response = await authenticationApi.getAccessToken({
-        userId: email,
-        password: password,
-      });
-      dispatch(setSession(response.data));
-
-      // must reset password
-      logStringifyPretty(response.data);
-      if (response.data.userMustChangePassword) {
-        props.navigation.navigate('ResetPassword', {
-          userId: email,
-          password: password,
-        });
+      const credentials = await getCredentials();
+      if (!credentials) {
+        clearCredentials();
+        showGeneralError(strings.errors.titleSignIn, 'No credentials');
       } else {
-        // Update the system endpoints and navigate to the main view.
-        getSystemEndpointsNavigateToMain();
+        const response = await authenticationApi.getAccessToken({
+          userId: credentials.username,
+          password: credentials.password,
+        });
+        dispatch(setSession(response.data));
+
+        logStringifyPretty(response.data);
+
+        // must reset password
+        if (response.data.userMustChangePassword) {
+          props.navigation.navigate('ResetPassword', {
+            userId: email,
+            password: password,
+          });
+        } else {
+          // Update the system endpoints and navigate to the main view.
+          getSystemEndpointsNavigateToMain();
+        }
       }
     } catch (error) {
       // Clear the loading state
       setLoading(false);
+
+      clearCredentials();
 
       handleApiError(strings.errors.titleSignIn, error);
     }

@@ -1,18 +1,12 @@
 import React from 'react';
 import { strings } from '../localization/LocalizationStrings';
-import { useDispatch } from 'react-redux';
-import { clearSession } from '../store/SessionSlice';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { View, Button } from 'react-native';
+import { signOut } from '../Utils';
 
 const Profile = props => {
-  const dispatch = useDispatch();
-
   const onSignOutPress = async () => {
-    // Clear the session information and go back to the start
-    dispatch(clearSession());
-
-    props.navigation.replace('BrandSelector');
+    signOut(props.navigation);
   };
 
   return (

@@ -12,13 +12,12 @@ const persistConfig = {
 };
 
 const persistedBrandInfoReducer = persistReducer(persistConfig, brandInfoReducer);
-const persistedSessionReducer = persistReducer(persistConfig, sessionReducer);
 const persistedSystemInfoReducer = persistReducer(persistConfig, systemInfoReducer);
 
 const store = configureStore({
   reducer: {
+    session: sessionReducer, // session is not persisted, new token is retrieved via credential storage if needed
     brandInfo: persistedBrandInfoReducer,
-    session: persistedSessionReducer,
     systemInfo: persistedSystemInfoReducer,
   },
   middleware: getDefaultMiddleware =>
