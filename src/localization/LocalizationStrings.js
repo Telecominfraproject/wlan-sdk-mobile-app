@@ -17,6 +17,7 @@ export const strings = new LocalizedStrings({
       titleDeviceList: 'Devices Error',
       titleForgotPassword: 'Forgot Password Error',
       titleResetPassword: 'Reset Password Error',
+      titleMFA: 'MFA Error',
       token: 'Credentials no longer valid, please sign-in again.',
       unknown: 'Unknown error.',
     },
@@ -27,6 +28,7 @@ export const strings = new LocalizedStrings({
       titleMessage: 'Message',
     },
     placeholders: {
+      code: 'Code',
       confirmPassword: 'Confirm Password',
       email: 'Email',
       newPassword: 'New Password',
@@ -36,6 +38,7 @@ export const strings = new LocalizedStrings({
     buttons: {
       cancel: 'Cancel',
       forgotPassword: 'Forgot Password',
+      resendCode: 'Resend Code',
       sendEmail: 'Send Email',
       signIn: 'Sign In',
       signOut: 'Sign Out',
@@ -47,6 +50,10 @@ export const strings = new LocalizedStrings({
     },
     signIn: {
       description: 'Please sign in to your account.',
+    },
+    forgotPassword: {
+      title: 'Reset Password',
+      description: 'Please enter your email to reset your password.',
     },
     passwordRequirements: {
       req1: 'Must be at least 8 characters long',
