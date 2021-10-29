@@ -3,7 +3,7 @@
 import 'react-native-url-polyfill/auto';
 import { strings } from '../localization/LocalizationStrings';
 import axios from 'axios';
-import store from '../store/Store';
+import { store } from '../store/Store';
 import { setSystemInfo } from '../store/SystemInfoSlice';
 import { showGeneralError } from '../Utils';
 import { AuthenticationApiFactory, Configuration as SecurityConfiguration } from './generated/owSecurityApi';

@@ -1,6 +1,7 @@
 import React from 'react';
-import store from './store/Store';
+import { store, persistor } from './store/Store';
 import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -21,15 +22,17 @@ const DeviceStack = createNativeStackNavigator();
 function App() {
   return (
     <Provider store={store}>
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="BrandSelector" component={BrandSelector} options={{ title: 'Select Brand' }} />
-          <Stack.Screen name="SignIn" component={SignIn} options={{ title: 'Sign In' }} />
-          <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ title: 'Forgot Password' }} />
-          <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ title: 'Password Reset' }} />
-          <Stack.Screen name="Main" component={TabScreens} options={{ headerShown: false }} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <PersistGate loading={null} persistor={persistor}>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen name="BrandSelector" component={BrandSelector} options={{ title: 'Select Brand' }} />
+            <Stack.Screen name="SignIn" component={SignIn} options={{ title: 'Sign In' }} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ title: 'Forgot Password' }} />
+            <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ title: 'Password Reset' }} />
+            <Stack.Screen name="Main" component={TabScreens} options={{ headerShown: false }} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PersistGate>
     </Provider>
   );
 }

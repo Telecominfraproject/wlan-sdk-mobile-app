@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import store from './store/Store';
+import { store } from './store/Store';
 
 export var primaryColor = '#2194f3';
 export var primaryColorStyle = StyleSheet.create({});

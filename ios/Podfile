@@ -12,6 +12,8 @@ target 'SelfCareApp' do
     :hermes_enabled => true
   )
 
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
+
   target 'SelfCareAppTests' do
     inherit! :complete
     # Pods for testing
