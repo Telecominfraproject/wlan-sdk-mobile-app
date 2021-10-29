@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { pageStyle, pageItemStyle, primaryColor } from "../AppStyle";
+import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { View, Text, TextInput, Button, Alert, ActivityIndicator } from 'react-native';
 import { strings } from '../localization/LocalizationStrings';
 import { authenticationApi, handleApiError } from '../api/apiHandler';
@@ -13,7 +13,7 @@ export default function ResetPassword(props) {
 
   useEffect(() => {
     console.log(userId, password);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onCancel = () => {
     props.navigation.replace('SignIn');
@@ -46,7 +46,7 @@ export default function ResetPassword(props) {
   const checkPassword = () => {
     const valid = validatePassword(newPassword);
 
-    if(newPassword === password) {
+    if (newPassword === password) {
       Alert.alert(strings.errors.titleResetPassword, strings.errors.samePassword);
       return false;
     }
@@ -54,14 +54,14 @@ export default function ResetPassword(props) {
       Alert.alert(strings.errors.titleResetPassword, strings.errors.mismatchPassword);
       return false;
     }
-    if(!valid) {
+    if (!valid) {
       Alert.alert(strings.errors.titleResetPassword, strings.errors.badFormat);
       return false;
     }
     return valid && newPassword !== password && newPassword === confirmPassword;
   };
 
-  const validatePassword = (password) => {
+  const validatePassword = password => {
     const reg = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
     return reg.test(password);
   };
@@ -102,17 +102,13 @@ export default function ResetPassword(props) {
       <View style={pageItemStyle.containerButton}>
         <Button
           title={strings.buttons.submit}
-          color={primaryColor()}
+          color={primaryColor}
           onPress={onSubmit}
           disabled={loading || !newPassword || !confirmPassword}
         />
       </View>
       <View style={pageItemStyle.containerButton}>
-        <Button
-          title={strings.buttons.cancel}
-          color={primaryColor()}
-          onPress={onCancel}
-          disabled={loading} />
+        <Button title={strings.buttons.cancel} color={primaryColor} onPress={onCancel} disabled={loading} />
       </View>
       <View style={pageItemStyle.container}>
         <View>

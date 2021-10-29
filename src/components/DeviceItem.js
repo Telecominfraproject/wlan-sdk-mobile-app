@@ -1,42 +1,40 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { StyleSheet, TouchableOpacity, View, Text, Image } from 'react-native';
 
-export class DeviceItem extends Component {
-  render() {
-    return (
-      <TouchableOpacity onPress={this.props.onPress}>
-        <View style={deviceItemStyle.container}>
-          <Image style={deviceItemStyle.icon} source={this.getDeviceIcon()} />
-
-          <View style={deviceItemStyle.textContainer}>
-            <Text>{this.getDeviceName()}</Text>
-            <Text>{this.getDeviceType()}</Text>
-          </View>
-
-          <Image style={deviceItemStyle.icon} source={this.getDeviceStatusIcon()} />
-
-          <Text>&gt;</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  }
-
-  getDeviceIcon() {
+const DeviceItem = props => {
+  const getDeviceIcon = () => {
     return require('../assets/server-solid.png');
-  }
+  };
 
-  getDeviceName() {
-    return this.props.device.compatible;
-  }
+  const getDeviceName = () => {
+    return props.device.compatible;
+  };
 
-  getDeviceType() {
-    return this.props.device.manufacturer;
-  }
+  const getDeviceType = () => {
+    return props.device.manufacturer;
+  };
 
-  getDeviceStatusIcon() {
+  const getDeviceStatusIcon = () => {
     return require('../assets/wifi-solid.png');
-  }
-}
+  };
+
+  return (
+    <TouchableOpacity onPress={props.onPress}>
+      <View style={deviceItemStyle.container}>
+        <Image style={deviceItemStyle.icon} source={getDeviceIcon()} />
+
+        <View style={deviceItemStyle.textContainer}>
+          <Text>{getDeviceName()}</Text>
+          <Text>{getDeviceType()}</Text>
+        </View>
+
+        <Image style={deviceItemStyle.icon} source={getDeviceStatusIcon()} />
+
+        <Text>&gt;</Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
 
 const deviceItemStyle = StyleSheet.create({
   container: {
@@ -63,3 +61,5 @@ const deviceItemStyle = StyleSheet.create({
     marginLeft: 10,
   },
 });
+
+export default DeviceItem;

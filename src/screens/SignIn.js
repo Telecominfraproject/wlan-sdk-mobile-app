@@ -1,123 +1,60 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect, createRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearSession, setSession } from '../store/SessionSlice';
+import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { strings } from '../localization/LocalizationStrings';
-import { useStore } from '../Store';
 import { pageStyle, pageItemStyle, primaryColor, primaryColorStyle } from '../AppStyle';
 import { StyleSheet, Text, View, Image, Button, TextInput, ActivityIndicator } from 'react-native';
 import { handleApiError, authenticationApi, setApiSystemInfo } from '../api/apiHandler';
 
-export default class SignIn extends Component {
-  state = {
-    email: '',
-    password: '',
-    loading: false,
-  };
+const SignIn = props => {
+  const dispatch = useDispatch();
+  const brandInfo = useSelector(selectBrandInfo);
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const [loading, setLoading] = useState(false);
+  const passwordRef = createRef();
 
-  constructor(props) {
-    super(props);
-    this.passwordRef = React.createRef();
-  }
-
-  componentDidMount() {
+  useEffect(() => {
     // If the brand is not selected, then resort back to the brand selector
-    if (useStore.getState().brandInfo === null) {
-      this.props.navigation.replace('BrandSelector');
+    if (brandInfo === null) {
+      props.navigation.replace('BrandSelector');
     }
-  }
+  });
 
-  render() {
-    return (
-      <View style={pageStyle.container}>
-        <View style={pageItemStyle.container}>
-          <Image style={signInStyle.headerImage} source={{ uri: useStore.getState().brandInfo.iconUri }} />
-        </View>
-        {this.state.loading ? (
-          <View style={pageItemStyle.container}>
-            <ActivityIndicator size="large" color={primaryColor()} animating={this.state.loading} />
-          </View>
-        ) : (
-          <View style={signInStyle.containerForm}>
-            <View style={pageItemStyle.container}>
-              <Text style={pageItemStyle.description}>{strings.signIn.description}</Text>
-            </View>
-            <View style={pageItemStyle.container}>
-              <TextInput
-                style={pageItemStyle.inputText}
-                placeholder={strings.placeholders.username}
-                autoComplete="email"
-                autoCapitalize="none"
-                autoFocus={true}
-                keyboardType="email-address"
-                textContentType="username"
-                returnKeyType="next"
-                value={this.state.email}
-                onChangeText={text => this.setState({ email: text })}
-                onSubmitEditing={() => this.passwordRef.current.focus()}
-              />
-            </View>
-            <View style={pageItemStyle.container}>
-              <TextInput
-                style={pageItemStyle.inputText}
-                ref={this.passwordRef}
-                placeholder={strings.placeholders.password}
-                secureTextEntry={true}
-                autoCapitalize="none"
-                textContentType="password"
-                returnKeyType="go"
-                onChangeText={text => this.setState({ password: text })}
-                onSubmitEditing={() => this.onSignInPress()}
-              />
-            </View>
-            <View style={pageItemStyle.containerButton}>
-              <Text style={[pageItemStyle.buttonText, primaryColorStyle()]} onPress={this.onForgotPasswordPress}>
-                {strings.buttons.forgotPassword}
-              </Text>
-            </View>
-            <View style={pageItemStyle.containerButton}>
-              <Button title={strings.buttons.signIn} color={primaryColor()} onPress={this.onSignInPress} />
-            </View>
-            {/*<View style={pageItemStyle.containerButton}>
-              <Button title={"Reset"}
-                      onPress={() => this.props.navigation.navigate("ResetPassword", {userId: this.state.email, password: this.state.password})} />
-            </View>*/}
-          </View>
-        )}
-      </View>
-    );
-  }
-
-  onSignInPress = async () => {
+  const onSignInPress = async () => {
     try {
-      this.setState({ loading: true });
+      setLoading(true);
 
       // Make sure to clear any session information, this ensures error messaging is handled properly as well
-      useStore.getState().clearSession();
+      dispatch(clearSession());
 
       const response = await authenticationApi.getAccessToken({
-        userId: this.state.email,
-        password: this.state.password,
+        userId: email,
+        password: password,
       });
-      useStore.getState().setSession(response.data);
+      dispatch(setSession(response.data));
 
       // must reset password
       console.log(JSON.stringify(response.data, null, '\t'));
       if (response.data.userMustChangePassword) {
-        this.props.navigation.navigate('ResetPassword', {
-          userId: this.state.email,
-          password: this.state.password,
+        props.navigation.navigate('ResetPassword', {
+          userId: email,
+          password: password,
         });
       } else {
         // Update the system endpoints and navigate to the main view.
-        this.getSystemEndpointsNavigateToMain();
+        getSystemEndpointsNavigateToMain();
       }
     } catch (error) {
       // Clear the loading state
-      this.setState({ loading: false });
+      setLoading(false);
 
       handleApiError(strings.errors.titleSignIn, error);
     }
   };
 
-  getSystemEndpointsNavigateToMain = async () => {
+  const getSystemEndpointsNavigateToMain = async () => {
     try {
       // The system info is necessary before moving on to the next view as it'll provide
       // the endpoints needed for communicating with the other systems
@@ -129,19 +66,74 @@ export default class SignIn extends Component {
       setApiSystemInfo(response.data);
 
       // Replace to the main screen. Use replace to ensure no back button
-      this.props.navigation.replace('Main');
+      props.navigation.replace('Main');
     } catch (error) {
       // Make sure the loading state is done in all cases
-      this.setState({ loading: false });
+      setLoading(false);
 
       handleApiError(strings.errors.titleSystemSetup, error);
     }
   };
 
-  onForgotPasswordPress = async () => {
-    this.props.navigation.navigate('ForgotPassword');
+  const onForgotPasswordPress = async () => {
+    props.navigation.navigate('ForgotPassword');
   };
-}
+
+  return (
+    <View style={pageStyle.container}>
+      <View style={pageItemStyle.container}>
+        <Image style={signInStyle.headerImage} source={{ uri: brandInfo.iconUri }} />
+      </View>
+      {loading ? (
+        <View style={pageItemStyle.container}>
+          <ActivityIndicator size="large" color={primaryColor} animating={loading} />
+        </View>
+      ) : (
+        <View style={signInStyle.containerForm}>
+          <View style={pageItemStyle.container}>
+            <Text style={pageItemStyle.description}>{strings.signIn.description}</Text>
+          </View>
+          <View style={pageItemStyle.container}>
+            <TextInput
+              style={pageItemStyle.inputText}
+              placeholder={strings.placeholders.username}
+              autoComplete="email"
+              autoCapitalize="none"
+              autoFocus={true}
+              keyboardType="email-address"
+              textContentType="username"
+              returnKeyType="next"
+              value={email}
+              onChangeText={text => setEmail(text)}
+              onSubmitEditing={() => passwordRef.current.focus()}
+            />
+          </View>
+          <View style={pageItemStyle.container}>
+            <TextInput
+              style={pageItemStyle.inputText}
+              ref={passwordRef}
+              placeholder={strings.placeholders.password}
+              secureTextEntry={true}
+              autoCapitalize="none"
+              textContentType="password"
+              returnKeyType="go"
+              onChangeText={text => setPassword(text)}
+              onSubmitEditing={() => onSignInPress()}
+            />
+          </View>
+          <View style={pageItemStyle.containerButton}>
+            <Text style={[pageItemStyle.buttonText, primaryColorStyle]} onPress={onForgotPasswordPress}>
+              {strings.buttons.forgotPassword}
+            </Text>
+          </View>
+          <View style={pageItemStyle.containerButton}>
+            <Button title={strings.buttons.signIn} color={primaryColor} onPress={onSignInPress} />
+          </View>
+        </View>
+      )}
+    </View>
+  );
+};
 
 const signInStyle = StyleSheet.create({
   containerForm: {
@@ -160,3 +152,5 @@ const signInStyle = StyleSheet.create({
     marginBottom: 10,
   },
 });
+
+export default SignIn;

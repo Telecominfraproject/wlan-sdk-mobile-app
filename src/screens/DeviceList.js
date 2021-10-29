@@ -1,44 +1,41 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle } from '../AppStyle';
 import { View, Text, FlatList } from 'react-native';
-import { getDevicesApi, handleApiError } from '../api/apiHandler';
-import { DeviceItem } from '../components/DeviceItem';
+import { devicesApi, handleApiError } from '../api/apiHandler';
+import DeviceItem from '../components/DeviceItem';
 
-export default class DeviceList extends Component {
-  state = { devices: [] };
+const DeviceList = props => {
+  const [devices, setDevices] = useState([]);
 
-  render() {
-    return (
-      <View style={pageStyle.container}>
-        <View style={pageItemStyle.container}>
-          <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Devices</Text>
-        </View>
-        <View style={pageItemStyle.container}>
-          <FlatList
-            data={this.state.devices}
-            renderItem={({ item }) => <DeviceItem device={item} onPress={this.onDevicePress} />}
-          />
-        </View>
-      </View>
-    );
-  }
+  useEffect(() => {
+    getDevices();
+  }, []);
 
-  onDevicePress = async () => {
-    this.props.navigation.navigate('DeviceDetails');
+  const onDevicePress = async () => {
+    props.navigation.navigate('DeviceDetails');
   };
 
-  componentDidMount = () => {
-    this.getDevices();
-  };
-
-  getDevices = async () => {
+  const getDevices = async () => {
     try {
-      const response = await getDevicesApi().getDeviceList();
-      this.setState({ devices: response.data.devices });
+      const response = await devicesApi.getDeviceList();
+      setDevices(response.data.devices);
       console.log(response.data);
     } catch (error) {
       handleApiError(strings.errors.titleDeviceList, error);
     }
   };
-}
+
+  return (
+    <View style={pageStyle.container}>
+      <View style={pageItemStyle.container}>
+        <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Devices</Text>
+      </View>
+      <View style={pageItemStyle.container}>
+        <FlatList data={devices} renderItem={({ item }) => <DeviceItem device={item} onPress={onDevicePress} />} />
+      </View>
+    </View>
+  );
+};
+
+export default DeviceList;

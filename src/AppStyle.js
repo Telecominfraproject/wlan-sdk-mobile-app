@@ -1,21 +1,21 @@
 import { StyleSheet } from 'react-native';
-import { useStore } from './Store';
+import store from './store/Store';
 
-export function primaryColor() {
-  let brandInfo = useStore.getState().brandInfo;
+export var primaryColor = '#2194f3';
+export var primaryColorStyle = StyleSheet.create({});
+
+function updatePrimaryColorInfo() {
+  const state = store.getState();
+  let brandInfo = state.brandInfo.value;
 
   if (brandInfo && brandInfo.primaryColor) {
-    return brandInfo.primaryColor;
+    primaryColor = brandInfo.primaryColor;
+    return StyleSheet.create({
+      color: brandInfo.primaryColor,
+    });
   }
-
-  return '#2194f3';
 }
-
-export function primaryColorStyle() {
-  return StyleSheet.create({
-    color: primaryColor(),
-  });
-}
+store.subscribe(updatePrimaryColorInfo);
 
 export const pageStyle = StyleSheet.create({
   container: {

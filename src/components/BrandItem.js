@@ -1,26 +1,24 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { StyleSheet, TouchableOpacity, View, Text, Image } from 'react-native';
 
-export class BrandItem extends Component {
-  render() {
-    return (
-      <TouchableOpacity onPress={this.props.onPress}>
-        <View style={brandItemStyle.container}>
-          <Image style={brandItemStyle.icon} source={{ uri: this.getCompanyIconUri() }} />
-          <Text style={brandItemStyle.text}>{this.getCompanyName()}</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  }
+const BrandItem = props => {
+  const getCompanyIconUri = () => {
+    return props.brand.iconUri;
+  };
 
-  getCompanyIconUri() {
-    return this.props.brand.iconUri;
-  }
+  const getCompanyName = () => {
+    return props.brand.name;
+  };
 
-  getCompanyName() {
-    return this.props.brand.name;
-  }
-}
+  return (
+    <TouchableOpacity onPress={props.onPress}>
+      <View style={brandItemStyle.container}>
+        <Image style={brandItemStyle.icon} source={{ uri: getCompanyIconUri() }} />
+        <Text style={brandItemStyle.text}>{getCompanyName()}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
 
 const brandItemStyle = StyleSheet.create({
   container: {
@@ -41,3 +39,5 @@ const brandItemStyle = StyleSheet.create({
     fontSize: 14,
   },
 });
+
+export default BrandItem;

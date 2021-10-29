@@ -1,16 +1,18 @@
 import React from 'react';
+import store from './store/Store';
+import { Provider } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Image } from 'react-native';
 
-import BrandSelector from './src/screens/BrandSelector';
-import SignIn from './src/screens/SignIn';
-import ForgotPassword from './src/screens/ForgotPassword';
-import ResetPassword from './src/screens/ResetPassword';
-import DeviceList from './src/screens/DeviceList';
-import DeviceDetails from './src/screens/DeviceDetails';
-import Profile from './src/screens/Profile';
+import BrandSelector from './screens/BrandSelector';
+import SignIn from './screens/SignIn';
+import ForgotPassword from './screens/ForgotPassword';
+import ResetPassword from './screens/ResetPassword';
+import DeviceList from './screens/DeviceList';
+import DeviceDetails from './screens/DeviceDetails';
+import Profile from './screens/Profile';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -18,15 +20,17 @@ const DeviceStack = createNativeStackNavigator();
 
 function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="BrandSelector" component={BrandSelector} options={{ title: 'Select Brand' }} />
-        <Stack.Screen name="SignIn" component={SignIn} options={{ title: 'Sign In' }} />
-        <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ title: 'Forgot Password' }} />
-        <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ title: 'Password Reset' }} />
-        <Stack.Screen name="Main" component={TabScreens} options={{ headerShown: false }} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="BrandSelector" component={BrandSelector} options={{ title: 'Select Brand' }} />
+          <Stack.Screen name="SignIn" component={SignIn} options={{ title: 'Sign In' }} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ title: 'Forgot Password' }} />
+          <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ title: 'Password Reset' }} />
+          <Stack.Screen name="Main" component={TabScreens} options={{ headerShown: false }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }
 
@@ -40,7 +44,7 @@ function TabScreens() {
           headerShown: false,
           tabBarIcon: ({ tintColor }) => (
             <Image
-              source={require('./src/assets/server-solid.png')}
+              source={require('./assets/server-solid.png')}
               style={{ width: 26, height: 26, tintColor: tintColor }}
             />
           ),
@@ -53,7 +57,7 @@ function TabScreens() {
           title: 'Profile',
           tabBarIcon: ({ tintColor }) => (
             <Image
-              source={require('./src/assets/user-solid.png')}
+              source={require('./assets/user-solid.png')}
               style={{ width: 26, height: 26, tintColor: tintColor }}
             />
           ),

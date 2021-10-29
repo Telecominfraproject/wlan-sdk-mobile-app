@@ -1,23 +1,27 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { strings } from '../localization/LocalizationStrings';
-import { useStore } from '../Store';
+import { useDispatch } from 'react-redux';
+import { clearSession } from '../store/SessionSlice';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { View, Button } from 'react-native';
 
-export default class Profile extends Component {
-  render() {
-    return (
-      <View style={pageStyle.container}>
-        <View style={pageItemStyle.containerButton}>
-          <Button title={strings.buttons.signOut} color={primaryColor()} onPress={this.onSignOutPress} />
-        </View>
-      </View>
-    );
-  }
+const Profile = props => {
+  const dispatch = useDispatch();
 
-  onSignOutPress = async () => {
-    // Clear the session information and go back to the sign in pageStyle
-    useStore.getState().clearSession();
-    this.props.navigation.replace('BrandSelector');
+  const onSignOutPress = async () => {
+    // Clear the session information and go back to the start
+    dispatch(clearSession());
+
+    props.navigation.replace('BrandSelector');
   };
-}
+
+  return (
+    <View style={pageStyle.container}>
+      <View style={pageItemStyle.containerButton}>
+        <Button title={strings.buttons.signOut} color={primaryColor} onPress={onSignOutPress} />
+      </View>
+    </View>
+  );
+};
+
+export default Profile;

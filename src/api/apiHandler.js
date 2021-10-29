@@ -1,19 +1,21 @@
 // Used the following for a basis for generating react-native from OpenAPI
 // https://majidlotfinia.medium.com/openapi-generator-for-react-native-by-swagger-58847cadd9e8
 import 'react-native-url-polyfill/auto';
-import {strings} from '../localization/LocalizationStrings';
+import { strings } from '../localization/LocalizationStrings';
 import axios from 'axios';
-import {useStore} from '../Store';
-import {showGeneralError} from '../Utils';
-import {AuthenticationApiFactory, Configuration as SecurityConfiguration} from './generated/owSecurityApi';
-import {DevicesApiFactory, Configuration as GatewayConfiguration} from './generated/owGatewayApi';
+import store from '../store/Store';
+import { setSystemInfo } from '../store/SystemInfoSlice';
+import { showGeneralError } from '../Utils';
+import { AuthenticationApiFactory, Configuration as SecurityConfiguration } from './generated/owSecurityApi';
+import { DevicesApiFactory, Configuration as GatewayConfiguration } from './generated/owGatewayApi';
 
 const axiosInstance = axios.create({});
 axiosInstance.interceptors.request.use(
   config => {
-    const session = useStore.getState().session;
+    const state = store.getState();
+    const session = state.session.value;
     if (session) {
-      config.headers.Authorization = 'Bearer ' + useStore.getState().session.access_token;
+      config.headers.Authorization = 'Bearer ' + session.access_token;
     }
 
     return config;
@@ -35,19 +37,19 @@ const authenticationApi = new AuthenticationApiFactory(
 const gatewayConfig = new GatewayConfiguration();
 var devicesApi = null;
 
-function getDevicesApi() {
-  if (devicesApi === null) {
-    let url = getBaseUrlForApi('owgw');
-    devicesApi = url ? new DevicesApiFactory(gatewayConfig, url, axiosInstance) : null;
-  }
+store.subscribe(generateDevicesApi);
+generateDevicesApi();
 
-  return devicesApi;
+function generateDevicesApi() {
+  let url = getBaseUrlForApi('owgw');
+  devicesApi = url ? new DevicesApiFactory(gatewayConfig, url, axiosInstance) : null;
 }
 
 // Get the base URL from the System Info. This is returned in a call to SystemInfo and it
 // is needed in order to provide the proper base URIs for the other API systems.
 function getBaseUrlForApi(type) {
-  const systemInfo = useStore.getState().systemInfo;
+  const state = store.getState();
+  const systemInfo = state.systemInfo.value;
 
   if (systemInfo && systemInfo.endpoints) {
     const endpoints = systemInfo.endpoints;
@@ -67,7 +69,7 @@ function getBaseUrlForApi(type) {
 
 function setApiSystemInfo(systemInfo) {
   // Set the state, then we can use the getBaseUrlForApi to verify it has the proper information
-  useStore.getState().setSystemInfo(systemInfo);
+  store.dispatch(setSystemInfo(systemInfo));
 
   let valid = true;
   const typesToValidate = ['owgw']; // Include all API types that might be used
@@ -88,6 +90,8 @@ function setApiSystemInfo(systemInfo) {
 }
 
 function handleApiError(title, error) {
+  const state = store.getState();
+  const session = state.session.value;
   let message = strings.errors.unknown;
 
   if (error.response) {
@@ -99,7 +103,7 @@ function handleApiError(title, error) {
 
       case 403:
         console.error(error);
-        if (useStore.getState().session === null) {
+        if (session === null) {
           // If not currently signed in then return a credentials error
           message = strings.errors.credentials;
         } else {
@@ -128,4 +132,4 @@ function handleApiError(title, error) {
   showGeneralError(title, message);
 }
 
-export {authenticationApi, getDevicesApi, handleApiError, setApiSystemInfo};
+export { authenticationApi, devicesApi, handleApiError, setApiSystemInfo };

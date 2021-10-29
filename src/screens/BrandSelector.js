@@ -1,92 +1,93 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectBrandInfo, setBrandInfo } from '../store/BrandInfoSlice';
 import { strings } from '../localization/LocalizationStrings';
-import { useStore } from '../Store';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { StyleSheet, View, Text, FlatList, TextInput, ActivityIndicator } from 'react-native';
-import { BrandItem } from '../components/BrandItem';
+import BrandItem from '../components/BrandItem';
 
-export default class BrandSelector extends Component {
-  state = {
-    loading: false,
-    brands: [
-      {
-        id: 'openwifi',
-        name: 'OpenWifi',
-        iconUri: 'https://14oranges-ui.arilia.com/assets/14Oranges_Logo.png',
-        primaryColor: '#19255f',
-      },
-      {
-        id: 'openwifigreen',
-        name: 'OpenWifi (Green)',
-        iconUri: 'https://14oranges-ui.arilia.com/assets/14Oranges_Logo.png',
-        primaryColor: '#1a3e1b',
-      },
-    ],
-    filtered: false,
-    filteredBrands: [],
-  };
+const BrandSelector = props => {
+  const dispatch = useDispatch();
+  const brandInfo = useSelector(selectBrandInfo);
+  // Currently this following state does not change, but the expectation is that this information
+  // will come from an API so it is being left as is for this development
+  const [loading, setLoading] = useState(false);
+  const [brands, setBrands] = useState([
+    {
+      id: 'openwifi',
+      name: 'OpenWifi',
+      iconUri: 'https://14oranges-ui.arilia.com/assets/14Oranges_Logo.png',
+      primaryColor: '#19255f',
+    },
+    {
+      id: 'openwifigreen',
+      name: 'OpenWifi (Green)',
+      iconUri: 'https://14oranges-ui.arilia.com/assets/14Oranges_Logo.png',
+      primaryColor: '#1a3e1b',
+    },
+  ]);
+  const [filtered, setFiltered] = useState(false);
+  const [filteredBrands, setFilteredBrands] = useState();
 
-  componentDidMount() {
-    if (useStore.getState().brandInfo !== null) {
-      this.props.navigation.navigate('SignIn');
+  useEffect(() => {
+    if (brandInfo !== null) {
+      props.navigation.navigate('SignIn');
     }
-  }
+    // No dependencies as this is only to run once on mount. There are plenty of
+    // hacks around this eslint warning, but disabling it makes the most sense.
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  render() {
-    return (
-      <View style={pageStyle.container}>
-        <View style={pageItemStyle.container}>
-          <Text style={pageItemStyle.title}>{strings.brandSelector.title}</Text>
-        </View>
-        <View style={pageItemStyle.container}>
-          <Text style={pageItemStyle.description}>{strings.brandSelector.description}</Text>
-        </View>
-        {this.state.loading ? (
-          <View style={pageItemStyle.container}>
-            <ActivityIndicator size="large" color={primaryColor()} animating={this.state.loading} />
-          </View>
-        ) : (
-          <View style={pageItemStyle.containerBrands}>
-            <View style={[pageItemStyle.container, brandingSelectorStyle.containerSearch]}>
-              <TextInput
-                style={pageItemStyle.inputText}
-                placeholder="Search"
-                onChangeText={search => this.filterBrands(search)}
-              />
-            </View>
-            <View style={pageItemStyle.container}>
-              <FlatList
-                style={brandingSelectorStyle.containerList}
-                data={this.state.filtered ? this.state.filteredBrands : this.state.brands}
-                renderItem={({ item }) => <BrandItem brand={item} onPress={this.onCompanySelect.bind(this, item)} />}
-              />
-            </View>
-          </View>
-        )}
-      </View>
-    );
-  }
-
-  filterBrands = searchText => {
+  const filterBrands = searchText => {
     if (searchText) {
       let searchTextLowerCase = searchText.toLowerCase();
-      this.setState({ filtered: true });
-      this.setState({
-        filteredBrands: this.state.brands.filter(b => b.name.toLowerCase().startsWith(searchTextLowerCase)),
-      });
+      setFiltered(true);
+      setFilteredBrands(brands.filter(b => b.name.toLowerCase().startsWith(searchTextLowerCase)));
     } else {
-      this.setState({ filtered: false });
-      this.setState({ filteredBrands: [] });
+      setFiltered(false);
+      setFilteredBrands([]);
     }
   };
 
-  onCompanySelect = async item => {
-    useStore.getState().setBrandInfo(item);
+  const onCompanySelect = async item => {
+    dispatch(setBrandInfo(item));
 
     // Replace to the main screen. Use replace to ensure no back button
-    this.props.navigation.navigate('SignIn');
+    props.navigation.navigate('SignIn');
   };
-}
+
+  return (
+    <View style={pageStyle.container}>
+      <View style={pageItemStyle.container}>
+        <Text style={pageItemStyle.title}>{strings.brandSelector.title}</Text>
+      </View>
+      <View style={pageItemStyle.container}>
+        <Text style={pageItemStyle.description}>{strings.brandSelector.description}</Text>
+      </View>
+      {loading ? (
+        <View style={pageItemStyle.container}>
+          <ActivityIndicator size="large" color={primaryColor} animating={loading} />
+        </View>
+      ) : (
+        <View style={pageItemStyle.containerBrands}>
+          <View style={[pageItemStyle.container, brandingSelectorStyle.containerSearch]}>
+            <TextInput
+              style={pageItemStyle.inputText}
+              placeholder="Search"
+              onChangeText={search => filterBrands(search)}
+            />
+          </View>
+          <View style={pageItemStyle.container}>
+            <FlatList
+              style={brandingSelectorStyle.containerList}
+              data={filtered ? filteredBrands : brands}
+              renderItem={({ item }) => <BrandItem brand={item} onPress={() => onCompanySelect(item)} />}
+            />
+          </View>
+        </View>
+      )}
+    </View>
+  );
+};
 
 const brandingSelectorStyle = StyleSheet.create({
   containerBrands: {
@@ -104,3 +105,5 @@ const brandingSelectorStyle = StyleSheet.create({
     width: '100%',
   },
 });
+
+export default BrandSelector;
