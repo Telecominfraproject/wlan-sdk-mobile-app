@@ -10,12 +10,13 @@ function updatePrimaryColorInfo() {
 
   if (brandInfo && brandInfo.primaryColor) {
     primaryColor = brandInfo.primaryColor;
-    return StyleSheet.create({
+    primaryColorStyle = StyleSheet.create({
       color: brandInfo.primaryColor,
     });
   }
 }
 store.subscribe(updatePrimaryColorInfo);
+updatePrimaryColorInfo();
 
 export const pageStyle = StyleSheet.create({
   container: {
