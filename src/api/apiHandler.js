@@ -121,7 +121,6 @@ function handleApiError(title, error) {
         break;
 
       case 403:
-        console.error(error);
         if (session === null) {
           // If not currently signed in then return a credentials error
           message = strings.errors.credentials;
@@ -135,7 +134,6 @@ function handleApiError(title, error) {
         message = error.message;
     }
   } else if (error.request) {
-    console.log(error.request.responseText);
     switch (error.request.status) {
       case 0:
         message = strings.errors.failedToConnect;
