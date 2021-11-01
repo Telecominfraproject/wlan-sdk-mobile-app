@@ -9,7 +9,7 @@ import { Image } from 'react-native';
 
 import BrandSelector from './screens/BrandSelector';
 import SignIn from './screens/SignIn';
-import MFACode from "./screens/MFACode";
+import MFACode from './screens/MFACode';
 import ForgotPassword from './screens/ForgotPassword';
 import ResetPassword from './screens/ResetPassword';
 import DeviceList from './screens/DeviceList';
@@ -30,7 +30,7 @@ function App() {
             <Stack.Screen name="SignIn" component={SignIn} options={{ title: 'Sign In' }} />
             <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ title: 'Forgot Password' }} />
             <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ title: 'Password Reset' }} />
-            <Stack.Screen name="MFACode" component={MFACode} options={{ title: 'MFA' }} />
+            <Stack.Screen name="MFACode" component={MFACode} options={{ title: 'Multi-factor Authentication' }} />
             <Stack.Screen name="Main" component={TabScreens} options={{ headerShown: false }} />
           </Stack.Navigator>
         </NavigationContainer>
