@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearSession, setSession } from '../store/SessionSlice';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { strings } from '../localization/LocalizationStrings';
-import * as Keychain from 'react-native-keychain';
 import { pageStyle, pageItemStyle, primaryColor, primaryColorStyle } from '../AppStyle';
 import { StyleSheet, Text, View, Image, Button, TextInput, ActivityIndicator } from 'react-native';
 import { logStringifyPretty, showGeneralError } from '../Utils';
@@ -102,7 +101,8 @@ const SignIn = props => {
       console.log(response.data);
 
       // Set the system info - this will validate as well, so an error might be thrown.
-      setApiSystemInfo(response.data);
+      // Need to wait for this to complete before navigating
+      await setApiSystemInfo(response.data);
 
       // Replace to the main screen. Use replace to ensure no back button
       props.navigation.replace('Main');

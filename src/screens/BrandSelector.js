@@ -49,9 +49,9 @@ const BrandSelector = props => {
   };
 
   const onCompanySelect = async item => {
-    dispatch(setBrandInfo(item));
+    // Save the brand information
+    await dispatch(setBrandInfo(item));
 
-    // Replace to the main screen. Use replace to ensure no back button
     props.navigation.navigate('SignIn');
   };
 
