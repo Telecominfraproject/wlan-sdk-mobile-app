@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * uCentral Security API
- * A process to manage security logins
+ * A process to manage security logins.
  *
  * The version of the OpenAPI document: 2.0.0
  * Contact: ucentralsupport@arilia.com
@@ -12,7 +12,5 @@
  * Do not edit the class manually.
  */
 
-
-export * from "./api";
-export * from "./configuration";
-
+export * from './api';
+export * from './configuration';
