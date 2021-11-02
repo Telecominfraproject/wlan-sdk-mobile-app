@@ -12,9 +12,12 @@ import SignIn from './screens/SignIn';
 import MFACode from './screens/MFACode';
 import ForgotPassword from './screens/ForgotPassword';
 import ResetPassword from './screens/ResetPassword';
+import Dashboard from './screens/Dashboard';
 import DeviceList from './screens/DeviceList';
 import DeviceDetails from './screens/DeviceDetails';
+import Network from './screens/Network';
 import Profile from './screens/Profile';
+import { primaryColor } from './AppStyle';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -41,7 +44,22 @@ function App() {
 
 function TabScreens() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={{
+        tabBarActiveTintColor: primaryColor,
+      }}>
+      <Tab.Screen
+        name="Dashboard"
+        component={Dashboard}
+        options={{
+          tabBarIcon: ({ tintColor }) => (
+            <Image
+              source={require('./assets/tachometer-alt-solid.png')}
+              style={{ width: 26, height: 26, tintColor: tintColor }}
+            />
+          ),
+        }}
+      />
       <Tab.Screen
         name="Devices"
         component={DeviceStackScreens}
@@ -49,7 +67,19 @@ function TabScreens() {
           headerShown: false,
           tabBarIcon: ({ tintColor }) => (
             <Image
-              source={require('./assets/server-solid.png')}
+              source={require('./assets/laptop-solid.png')}
+              style={{ width: 26, height: 26, tintColor: tintColor }}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Network"
+        component={Network}
+        options={{
+          tabBarIcon: ({ tintColor }) => (
+            <Image
+              source={require('./assets/wifi-solid.png')}
               style={{ width: 26, height: 26, tintColor: tintColor }}
             />
           ),

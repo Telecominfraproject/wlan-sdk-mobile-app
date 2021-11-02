@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, View, Text, Image } from 'react-native';
 
 const DeviceItem = props => {
   const getDeviceIcon = () => {
-    return require('../assets/server-solid.png');
+    return require('../assets/laptop-solid.png');
   };
 
   const getDeviceName = () => {
