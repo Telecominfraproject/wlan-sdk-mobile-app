@@ -60,6 +60,23 @@ const BrandSelector = props => {
     props.navigation.navigate('SignIn');
   };
 
+  const brandingSelectorStyle = StyleSheet.create({
+    containerBrands: {
+      flexDirection: 'column',
+      flexWrap: 'nowrap',
+      flex: 0,
+      justifyContent: 'flex-start',
+      alignContent: 'flex-start',
+      alignItems: 'center',
+    },
+    containerSearch: {
+      marginBottom: 16,
+    },
+    containerList: {
+      width: '100%',
+    },
+  });
+
   return (
     <View style={pageStyle.container}>
       <View style={pageItemStyle.container}>
@@ -93,22 +110,5 @@ const BrandSelector = props => {
     </View>
   );
 };
-
-const brandingSelectorStyle = StyleSheet.create({
-  containerBrands: {
-    flexDirection: 'column',
-    flexWrap: 'nowrap',
-    flex: 0,
-    justifyContent: 'flex-start',
-    alignContent: 'flex-start',
-    alignItems: 'center',
-  },
-  containerSearch: {
-    marginBottom: 16,
-  },
-  containerList: {
-    width: '100%',
-  },
-});
 
 export default BrandSelector;

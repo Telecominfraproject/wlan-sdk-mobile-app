@@ -118,6 +118,24 @@ const SignIn = props => {
     props.navigation.navigate('ForgotPassword');
   };
 
+  const signInStyle = StyleSheet.create({
+    containerForm: {
+      flexDirection: 'column',
+      flexWrap: 'nowrap',
+      justifyContent: 'flex-start',
+      alignContent: 'flex-start',
+      alignItems: 'center',
+      flex: 0,
+      width: '100%',
+    },
+    headerImage: {
+      height: 75,
+      width: '100%',
+      resizeMode: 'contain',
+      marginBottom: 10,
+    },
+  });
+
   return (
     <View style={pageStyle.container}>
       <View style={pageItemStyle.container}>
@@ -173,23 +191,5 @@ const SignIn = props => {
     </View>
   );
 };
-
-const signInStyle = StyleSheet.create({
-  containerForm: {
-    flexDirection: 'column',
-    flexWrap: 'nowrap',
-    justifyContent: 'flex-start',
-    alignContent: 'flex-start',
-    alignItems: 'center',
-    flex: 0,
-    width: '100%',
-  },
-  headerImage: {
-    height: 75,
-    width: '100%',
-    resizeMode: 'contain',
-    marginBottom: 10,
-  },
-});
 
 export default SignIn;

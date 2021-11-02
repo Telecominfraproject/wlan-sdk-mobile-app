@@ -10,6 +10,26 @@ const BrandItem = props => {
     return props.brand.name;
   };
 
+  const brandItemStyle = StyleSheet.create({
+    container: {
+      flexDirection: 'column',
+      flexWrap: 'nowrap',
+      flex: 0,
+      width: '100%',
+      alignItems: 'center',
+      marginBottom: 18,
+    },
+    icon: {
+      height: 75,
+      width: '100%',
+      resizeMode: 'contain',
+      marginBottom: 10,
+    },
+    text: {
+      fontSize: 14,
+    },
+  });
+
   return (
     <TouchableOpacity onPress={props.onPress}>
       <View style={brandItemStyle.container}>
@@ -19,25 +39,5 @@ const BrandItem = props => {
     </TouchableOpacity>
   );
 };
-
-const brandItemStyle = StyleSheet.create({
-  container: {
-    flexDirection: 'column',
-    flexWrap: 'nowrap',
-    flex: 0,
-    width: '100%',
-    alignItems: 'center',
-    marginBottom: 18,
-  },
-  icon: {
-    height: 75,
-    width: '100%',
-    resizeMode: 'contain',
-    marginBottom: 10,
-  },
-  text: {
-    fontSize: 14,
-  },
-});
 
 export default BrandItem;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { strings } from '../localization/LocalizationStrings';
-import { okColor } from '../AppStyle';
+import { okColor, primaryColor } from '../AppStyle';
 import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
 
 const Dashboard = props => {
@@ -19,6 +19,42 @@ const Dashboard = props => {
   const onGuestNetworkPress = async () => {
     props.navigation.navigate('Network');
   };
+
+  const dashboardStyle = StyleSheet.create({
+    container: {
+      flexDirection: 'column',
+      flexWrap: 'nowrap',
+      flex: 1,
+      width: '100%',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 20,
+      marginTop: 20,
+    },
+    touchableContainer: {
+      width: '100%',
+    },
+    itemContainer: {
+      flexDirection: 'column',
+      width: '100%',
+      alignItems: 'center',
+    },
+    networkNameLabel: {
+      fontSize: 48,
+      color: okColor,
+      textTransform: 'uppercase',
+    },
+    icon: {
+      height: 80,
+      width: '100%',
+      resizeMode: 'contain',
+      marginBottom: 10,
+      tintColor: primaryColor,
+    },
+    iconLabel: {
+      fontSize: 12,
+    },
+  });
 
   return (
     <View style={dashboardStyle.container}>
@@ -49,40 +85,5 @@ const Dashboard = props => {
     </View>
   );
 };
-
-const dashboardStyle = StyleSheet.create({
-  container: {
-    flexDirection: 'column',
-    flexWrap: 'nowrap',
-    flex: 1,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-    marginTop: 20,
-  },
-  touchableContainer: {
-    width: '100%',
-  },
-    itemContainer: {
-    flexDirection: 'column',
-    width: '100%',
-    alignItems: 'center',
-  },
-  networkNameLabel: {
-    fontSize: 48,
-    color: okColor,
-    textTransform: 'uppercase',
-  },
-  icon: {
-    height: 80,
-    width: '100%',
-    resizeMode: 'contain',
-    marginBottom: 10,
-  },
-  iconLabel: {
-    fontSize: 12,
-  },
-});
 
 export default Dashboard;
