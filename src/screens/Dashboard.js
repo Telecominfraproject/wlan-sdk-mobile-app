@@ -1,7 +1,7 @@
 import React from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { okColor } from '../AppStyle';
-import { StyleSheet, View, Text, Image, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
 
 const Dashboard = props => {
   const onNetworkPress = async () => {
@@ -22,30 +22,30 @@ const Dashboard = props => {
 
   return (
     <View style={dashboardStyle.container}>
-      <TouchableWithoutFeedback onPress={onNetworkPress}>
+      <TouchableOpacity style={dashboardStyle.touchableContainer} onPress={onNetworkPress}>
         <View style={dashboardStyle.itemContainer} onPress={onNetworkPress}>
           <Text style={dashboardStyle.networkNameLabel}>Name</Text>
           <Text style={dashboardStyle.iconLabel}>{strings.dashboard.network}</Text>
         </View>
-      </TouchableWithoutFeedback>
-      <TouchableWithoutFeedback onPress={onInternetPress}>
+      </TouchableOpacity>
+      <TouchableOpacity style={dashboardStyle.touchableContainer} onPress={onInternetPress}>
         <View style={dashboardStyle.itemContainer} onPress={onInternetPress}>
           <Image style={dashboardStyle.icon} source={require('../assets/globe-solid.png')} />
           <Text style={dashboardStyle.iconLabel}>{strings.dashboard.internet}</Text>
         </View>
-      </TouchableWithoutFeedback>
-      <TouchableWithoutFeedback onPress={onConnectedDevicePress}>
+      </TouchableOpacity>
+      <TouchableOpacity style={dashboardStyle.touchableContainer} onPress={onConnectedDevicePress}>
         <View style={dashboardStyle.itemContainer} onPress={onConnectedDevicePress}>
           <Image style={dashboardStyle.icon} source={require('../assets/laptop-solid.png')} />
           <Text style={dashboardStyle.iconLabel}>{strings.dashboard.connectedDevices}</Text>
         </View>
-      </TouchableWithoutFeedback>
-      <TouchableWithoutFeedback onPress={onGuestNetworkPress}>
+      </TouchableOpacity>
+      <TouchableOpacity style={dashboardStyle.touchableContainer} onPress={onGuestNetworkPress}>
         <View style={dashboardStyle.itemContainer} onPress={onGuestNetworkPress}>
           <Image style={dashboardStyle.icon} source={require('../assets/wifi-solid.png')} />
           <Text style={dashboardStyle.iconLabel}>{strings.dashboard.guestNetwork}</Text>
         </View>
-      </TouchableWithoutFeedback>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -61,7 +61,10 @@ const dashboardStyle = StyleSheet.create({
     marginBottom: 20,
     marginTop: 20,
   },
-  itemContainer: {
+  touchableContainer: {
+    width: '100%',
+  },
+    itemContainer: {
     flexDirection: 'column',
     width: '100%',
     alignItems: 'center',
