@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { store } from './store/Store';
 
+export var whiteColor = '#ffffff';
+
 export var primaryColor = '#2194f3';
 export var primaryColorStyle = StyleSheet.create({});
 
@@ -69,6 +71,8 @@ export const pageItemStyle = StyleSheet.create({
     flexWrap: 'nowrap',
     alignItems: 'center',
     justifyContent: 'flex-start',
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   containerButton: {
     height: 40,

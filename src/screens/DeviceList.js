@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle } from '../AppStyle';
-import { View, Text, FlatList } from 'react-native';
+import { View, ScrollView, SafeAreaView } from 'react-native';
 import { devicesApi, handleApiError } from '../api/apiHandler';
 import DeviceItem from '../components/DeviceItem';
+import AccordionSection from '../components/AccordionSection';
 
 const DeviceList = props => {
   const [devices, setDevices] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getDevices();
@@ -18,23 +20,31 @@ const DeviceList = props => {
 
   const getDevices = async () => {
     try {
+      setLoading(true);
       const response = await devicesApi.getDeviceList();
       setDevices(response.data.devices);
       console.log(response.data);
     } catch (error) {
       handleApiError(strings.errors.titleDeviceList, error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <View style={pageStyle.container}>
-      <View style={pageItemStyle.container}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Devices</Text>
-      </View>
-      <View style={pageItemStyle.container}>
-        <FlatList data={devices} renderItem={({ item }) => <DeviceItem device={item} onPress={onDevicePress} />} />
-      </View>
-    </View>
+    <SafeAreaView>
+      <ScrollView>
+        <View style={pageStyle.container}>
+          <View style={pageItemStyle.container}>
+            <AccordionSection title="Devices" isLoading={loading}>
+              {devices.map(item => {
+                return <DeviceItem device={item} onPress={onDevicePress} key={item.UUID} />;
+              })}
+            </AccordionSection>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
