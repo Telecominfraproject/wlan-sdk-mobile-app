@@ -62,5 +62,11 @@ export const strings = new LocalizedStrings({
       req4: 'Must contain 1 digit',
       req5: 'Must contain 1 special character',
     },
+    dashboard: {
+      network: 'Network',
+      internet: 'Internet',
+      connectedDevices: 'Connected Devices',
+      guestNetwork: 'Guest Network',
+    },
   },
 });

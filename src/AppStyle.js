@@ -4,6 +4,12 @@ import { store } from './store/Store';
 export var primaryColor = '#2194f3';
 export var primaryColorStyle = StyleSheet.create({});
 
+// Badges colours
+export var okColor = '#8BC34A';
+export var infoColor = '#2156e8';
+export var warnColor = '#fd9927';
+export var errorColor = '#e3202d';
+
 function updatePrimaryColorInfo() {
   const state = store.getState();
   let brandInfo = state.brandInfo.value;
