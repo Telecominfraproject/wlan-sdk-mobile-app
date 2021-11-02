@@ -7,6 +7,7 @@ import { store } from '../store/Store';
 import { setSystemInfo } from '../store/SystemInfoSlice';
 import { showGeneralError } from '../Utils';
 import { AuthenticationApiFactory, Configuration as SecurityConfiguration } from './generated/owSecurityApi';
+import { Configuration as UserPortalConfiguration } from './generated/owUserPortalApi';
 import { DevicesApiFactory, Configuration as GatewayConfiguration } from './generated/owGatewayApi';
 import {
   hasInternetCredentials,
@@ -33,36 +34,61 @@ axiosInstance.interceptors.request.use(
 
 // Setup the Security APIs
 const securityConfig = new SecurityConfiguration();
-const baseAuthenticationApiUrl = 'https://14oranges.arilia.com:16001/api/v1';
-const authenticationApi = new AuthenticationApiFactory(securityConfig, baseAuthenticationApiUrl, axiosInstance);
+var baseUrlSecurityApi = null;
+var authenticationApi = null;
 
-// Setup the Gateway APIs, if the URL is set
+// Setup the User Portal APIs
+const userPortalConfig = new UserPortalConfiguration();
+var baseUrlUserPortalApi = null;
+
+// Setup the Gateway APIs
 const gatewayConfig = new GatewayConfiguration();
+var baseUrlGatewayApi = null;
 var devicesApi = null;
 
-store.subscribe(generateDevicesApi);
-generateDevicesApi();
+store.subscribe(generateApis);
+generateApis();
 
-function generateDevicesApi() {
-  let url = getBaseUrlForApi('owgw');
-  devicesApi = url ? new DevicesApiFactory(gatewayConfig, url, axiosInstance) : null;
+function generateApis() {
+  // Setup the Security Portal
+  baseUrlSecurityApi = getBaseUrlForApi('owsec');
+  authenticationApi = baseUrlSecurityApi
+    ? new AuthenticationApiFactory(securityConfig, baseUrlSecurityApi, axiosInstance)
+    : null;
+
+  // Setup the User Portal (TODO - also add to the setApiSystemInfo)
+  baseUrlUserPortalApi = getBaseUrlForApi('owuserport');
+
+  // Setup the Gateway Portal
+  baseUrlGatewayApi = getBaseUrlForApi('owgw');
+  devicesApi = baseUrlGatewayApi ? new DevicesApiFactory(gatewayConfig, baseUrlGatewayApi, axiosInstance) : null;
 }
 
 // Get the base URL from the System Info. This is returned in a call to SystemInfo and it
 // is needed in order to provide the proper base URIs for the other API systems.
 function getBaseUrlForApi(type) {
   const state = store.getState();
-  const systemInfo = state.systemInfo.value;
 
-  if (systemInfo && systemInfo.endpoints) {
-    const endpoints = systemInfo.endpoints;
-    const endpointsLength = endpoints.length;
+  if (type === 'owsec') {
+    // The owsec currently comes from the branding information, while all
+    // other information is from the endpoints API
+    const brandInfo = state.brandInfo.value;
+    if (brandInfo && brandInfo.baseUrlSecurityApi) {
+      return brandInfo.baseUrlSecurityApi + '/api/v1';
+    }
+  } else {
+    const systemInfo = state.systemInfo.value;
 
-    for (let i = 0; i < endpointsLength; i++) {
-      let info = endpoints[i];
+    if (systemInfo && systemInfo.endpoints) {
+      const endpoints = systemInfo.endpoints;
+      const endpointsLength = endpoints.length;
 
-      if (info.type === type) {
-        return info.uri + '/api/v1';
+      for (let i = 0; i < endpointsLength; i++) {
+        let info = endpoints[i];
+
+        if (info.type === type) {
+          return info.uri + '/api/v1';
+        }
       }
     }
   }
@@ -93,19 +119,19 @@ function setApiSystemInfo(systemInfo) {
 }
 
 async function hasCredentials() {
-  return hasInternetCredentials(baseAuthenticationApiUrl);
+  return hasInternetCredentials(baseUrlSecurityApi);
 }
 
 async function setCredentials(email, password) {
-  return setInternetCredentials(baseAuthenticationApiUrl, email, password);
+  return setInternetCredentials(baseUrlSecurityApi, email, password);
 }
 
 async function getCredentials() {
-  return getInternetCredentials(baseAuthenticationApiUrl);
+  return getInternetCredentials(baseUrlSecurityApi);
 }
 
 async function clearCredentials() {
-  return resetInternetCredentials(baseAuthenticationApiUrl);
+  return resetInternetCredentials(baseUrlSecurityApi);
 }
 
 function handleApiError(title, error) {

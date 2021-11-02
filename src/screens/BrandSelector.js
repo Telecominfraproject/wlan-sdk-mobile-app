@@ -9,21 +9,23 @@ import BrandItem from '../components/BrandItem';
 const BrandSelector = props => {
   const dispatch = useDispatch();
   const brandInfo = useSelector(selectBrandInfo);
-  // Currently this following state does not change, but the expectation is that this information
+  // Currently the following state does not change, but the expectation is that this information
   // will come from an API so it is being left as is for this development
   const [loading, setLoading] = useState(false);
   const [brands, setBrands] = useState([
     {
-      id: 'openwifi',
-      name: 'OpenWifi',
-      iconUri: 'https://14oranges-ui.arilia.com/assets/14Oranges_Logo.png',
-      primaryColor: '#19255f',
+      id: 'lindsay',
+      name: 'Lindsay Broadband',
+      iconUri: 'https://lindsaybb.arilia.com/assets/LindsayBB_Logo.png',
+      primaryColor: '#f16b1f',
+      baseUrlSecurityApi: 'https://lindsay.arilia.com:16001',
     },
     {
-      id: 'openwifigreen',
-      name: 'OpenWifi (Green)',
+      id: '14oranges',
+      name: '14 Oranges',
       iconUri: 'https://14oranges-ui.arilia.com/assets/14Oranges_Logo.png',
-      primaryColor: '#1a3e1b',
+      primaryColor: '#0f5eaa',
+      baseUrlSecurityApi: 'https://14oranges.arilia.com:16001',
     },
   ]);
   const [filtered, setFiltered] = useState(false);
@@ -31,6 +33,9 @@ const BrandSelector = props => {
 
   useEffect(() => {
     if (brandInfo !== null) {
+      // If there is already brand information set, then move to the sign in page as nothing
+      // needs to be done. Since this only happens on mount, if the user presses 'back' from
+      // the "Sign In" page, it will not be run again allowing the user to choose in this scenario
       props.navigation.navigate('SignIn');
     }
     // No dependencies as this is only to run once on mount. There are plenty of
