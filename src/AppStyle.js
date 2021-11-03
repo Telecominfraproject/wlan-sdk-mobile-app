@@ -1,8 +1,12 @@
 import { StyleSheet } from 'react-native';
 import { store } from './store/Store';
 
+// Basic colours
+export var blackColor = '#101010';
 export var whiteColor = '#ffffff';
+export var grayColor = '#bbbbbb';
 
+// Primary color - branded
 export var primaryColor = '#2194f3';
 export var primaryColorStyle = StyleSheet.create({});
 
@@ -36,12 +40,11 @@ export const pageStyle = StyleSheet.create({
     alignContent: 'flex-start',
     alignItems: 'center',
     // Content
-    padding: 34,
+    padding: 35,
     backgroundColor: '#eeeeee',
     // Base Text
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#101010',
+    color: blackColor,
   },
 });
 
@@ -81,16 +84,18 @@ export const pageItemStyle = StyleSheet.create({
   },
   inputText: {
     // Layout
-    height: 40,
+    height: 44,
     width: '100%',
     marginBottom: 10,
-    paddingLeft: 8,
-    paddingRight: 8,
+    paddingLeft: 10,
+    paddingRight: 10,
     // Background and Border
-    backgroundColor: '#ffffff',
-    borderColor: '#bbbbbb',
+    backgroundColor: whiteColor,
+    borderColor: grayColor,
     borderWidth: 1,
+    borderRadius: 6,
     // Text
+    fontSize: 14,
     textAlign: 'left',
   },
   buttonText: {
