@@ -64,7 +64,7 @@ const SignIn = props => {
         });
         dispatch(setSession(response.data));
 
-        logStringifyPretty(response);
+        logStringifyPretty(response.data);
 
         if (response.data.method && response.data.created) {
           // MFA

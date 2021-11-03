@@ -10,7 +10,7 @@ import {
   AuthenticationApiFactory,
   Configuration as SecurityConfiguration,
   UserManagementApiFactory,
-} from "./generated/owSecurityApi";
+} from './generated/owSecurityApi';
 import { Configuration as UserPortalConfiguration } from './generated/owUserPortalApi';
 import { DevicesApiFactory, Configuration as GatewayConfiguration } from './generated/owGatewayApi';
 import {

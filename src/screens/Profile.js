@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
-import { pageStyle, pageItemStyle, primaryColor, primaryColorStyle } from '../AppStyle';
+import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import {
   StyleSheet,
   View,
@@ -9,12 +9,7 @@ import {
   ActivityIndicator,
   Linking,
   Alert,
-  SectionList,
-  Pressable,
-  TouchableHighlight,
   TouchableOpacity,
-  FlatList,
-  KeyboardAvoidingView,
   ScrollView,
 } from 'react-native';
 import { logStringifyPretty, signOut } from '../Utils';
@@ -24,7 +19,6 @@ import TextInputInPlaceEditing from '../components/TextInputInPlaceEditing';
 const Profile = props => {
   const [loading, setLoading] = useState(false);
   const [credentials, setCredentials] = useState();
-  const [info, setInfo] = useState([]);
   const [profile, setProfile] = useState({
     name: '',
     role: '',
@@ -66,7 +60,6 @@ const Profile = props => {
       const user = response.data.users.find(user => user.email === credentials.username);
       logStringifyPretty(user);
       setProfile(user);
-      getAccountInfo(user);
     } catch (error) {
       handleApiError('Profile Error', error);
     }
@@ -89,34 +82,10 @@ const Profile = props => {
       const response = await userManagementApi.updateUser(data.Id, undefined, userInfo);
       logStringifyPretty(response.data);
     } catch (error) {
-      handleApiError('updateProfile Error', error);
+      handleApiError('updateUser Error', error);
     } finally {
       setLoading(false);
     }
-  };
-
-  const getAccountInfo = user => {
-    const local = strings.profile;
-    const data = [
-      {
-        label: local.name,
-        value: user.name,
-      },
-      {
-        label: local.email,
-        value: user.email,
-      },
-      {
-        label: local.role,
-        value: user.userRole,
-      },
-      {
-        label: local.description,
-        value: user.description,
-        fullWidth: true,
-      },
-    ];
-    setInfo(data);
   };
 
   const getPolicies = async () => {
@@ -154,7 +123,6 @@ const Profile = props => {
   };
 
   const changePassword = () => {
-    logStringifyPretty(credentials);
     props.navigation.navigate('ResetPassword', {
       userId: credentials.username,
       password: credentials.password,
