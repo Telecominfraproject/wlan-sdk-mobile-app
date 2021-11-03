@@ -20,6 +20,7 @@ const BrandItem = props => {
       width: '100%',
       marginBottom: 18,
       padding: 10,
+      borderRadius: 10,
       backgroundColor: whiteColor,
     },
     icon: {
