@@ -1,7 +1,8 @@
 import React from 'react';
 import { strings } from '../localization/LocalizationStrings';
-import { okColor, primaryColor } from '../AppStyle';
+import { okColor, infoColor, errorColor, primaryColor, whiteColor } from '../AppStyle';
 import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
+import ImageWithBadge from '../components/ImageWithBadge';
 
 const Dashboard = props => {
   const onNetworkPress = async () => {
@@ -46,7 +47,7 @@ const Dashboard = props => {
     },
     icon: {
       height: 80,
-      width: '100%',
+      width: 80,
       resizeMode: 'contain',
       marginBottom: 10,
       tintColor: primaryColor,
@@ -66,19 +67,37 @@ const Dashboard = props => {
       </TouchableOpacity>
       <TouchableOpacity style={dashboardStyle.touchableContainer} onPress={onInternetPress}>
         <View style={dashboardStyle.itemContainer} onPress={onInternetPress}>
-          <Image style={dashboardStyle.icon} source={require('../assets/globe-solid.png')} />
+          <ImageWithBadge
+            style={dashboardStyle.icon}
+            source={require('../assets/globe-solid.png')}
+            badgeSource={require('../assets/wifi-solid.png')}
+            badgeTintColor={whiteColor}
+            badgeBackgroundColor={okColor}
+          />
           <Text style={dashboardStyle.iconLabel}>{strings.dashboard.internet}</Text>
         </View>
       </TouchableOpacity>
       <TouchableOpacity style={dashboardStyle.touchableContainer} onPress={onConnectedDevicePress}>
         <View style={dashboardStyle.itemContainer} onPress={onConnectedDevicePress}>
-          <Image style={dashboardStyle.icon} source={require('../assets/laptop-solid.png')} />
+          <ImageWithBadge
+            style={dashboardStyle.icon}
+            source={require('../assets/laptop-solid.png')}
+            badgeText="9"
+            badgeTintColor={whiteColor}
+            badgeBackgroundColor={infoColor}
+          />
           <Text style={dashboardStyle.iconLabel}>{strings.dashboard.connectedDevices}</Text>
         </View>
       </TouchableOpacity>
       <TouchableOpacity style={dashboardStyle.touchableContainer} onPress={onGuestNetworkPress}>
         <View style={dashboardStyle.itemContainer} onPress={onGuestNetworkPress}>
-          <Image style={dashboardStyle.icon} source={require('../assets/wifi-solid.png')} />
+          <ImageWithBadge
+            style={dashboardStyle.icon}
+            source={require('../assets/wifi-solid.png')}
+            badgeText="X"
+            badgeTintColor={whiteColor}
+            badgeBackgroundColor={errorColor}
+          />
           <Text style={dashboardStyle.iconLabel}>{strings.dashboard.guestNetwork}</Text>
         </View>
       </TouchableOpacity>
