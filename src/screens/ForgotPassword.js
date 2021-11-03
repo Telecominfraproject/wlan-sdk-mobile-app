@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearSession } from '../store/SessionSlice';
-import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
+import { pageStyle, pageItemStyle, primaryColor, primaryColorStyle } from "../AppStyle";
 import { View, TextInput, Button, ActivityIndicator, Alert, Image, Text } from 'react-native';
 import { strings } from '../localization/LocalizationStrings';
 import { authenticationApi, handleApiError } from '../api/apiHandler';
@@ -60,9 +60,9 @@ const ForgotPassword = () => {
       <View style={pageItemStyle.container}>
         <Text style={pageItemStyle.title}>{strings.forgotPassword.title}</Text>
       </View>
-      <View style={pageItemStyle.container}>
-        <Text style={pageItemStyle.description}>{strings.forgotPassword.description}</Text>
-      </View>
+      <Text style={[pageItemStyle.buttonText, primaryColorStyle]} onPress={() => {}}>
+        {strings.buttons.passwordPolicy}
+      </Text>
       <View style={pageItemStyle.container}>
         <TextInput
           style={pageItemStyle.inputText}

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { View, Text, TextInput, Button, Alert, ActivityIndicator } from 'react-native';
 import { strings } from '../localization/LocalizationStrings';
@@ -9,8 +9,31 @@ export default function ResetPassword(props) {
   const { userId, password } = props.route.params;
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [pattern, setPattern] = useState();
   const [loading, setLoading] = useState(false);
   const confirmRef = useRef();
+
+  useEffect(() => {
+    getPattern();
+  }, []);
+
+  const getPattern = async () => {
+    try {
+      const response = await authenticationApi.getAccessToken(
+        {
+          userId: userId,
+          password: password,
+        },
+        undefined,
+        undefined,
+        true,
+      );
+      logStringifyPretty(response.data);
+      setPattern(response.data.passwordPattern);
+    } catch (error) {
+      handleApiError('Profile Error', error);
+    }
+  };
 
   const onSubmit = async () => {
     if (checkPassword()) {
@@ -55,15 +78,18 @@ export default function ResetPassword(props) {
   };
 
   const validatePassword = password => {
-    const reg = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+    // const reg = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+    const reg = new RegExp(pattern, 'g');
     return reg.test(password);
   };
 
   return (
     <View style={pageStyle.container}>
-      <View style={pageItemStyle.loadingContainer}>
-        <ActivityIndicator size="large" animating={loading} />
-      </View>
+      {loading && (
+        <View style={pageItemStyle.loadingContainer}>
+          <ActivityIndicator size="large" animating={loading} />
+        </View>
+      )}
       <View style={pageItemStyle.container}>
         <TextInput
           style={pageItemStyle.inputText}

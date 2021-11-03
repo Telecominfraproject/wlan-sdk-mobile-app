@@ -12,6 +12,9 @@ const DeviceList = props => {
 
   useEffect(() => {
     getDevices();
+    return () => {
+      setDevices([]);
+    }
   }, []);
 
   const onDevicePress = async () => {

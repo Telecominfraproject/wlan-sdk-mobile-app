@@ -6,7 +6,11 @@ import axios from 'axios';
 import { store } from '../store/Store';
 import { setSystemInfo } from '../store/SystemInfoSlice';
 import { showGeneralError } from '../Utils';
-import { AuthenticationApiFactory, Configuration as SecurityConfiguration } from './generated/owSecurityApi';
+import {
+  AuthenticationApiFactory,
+  Configuration as SecurityConfiguration,
+  UserManagementApiFactory,
+} from "./generated/owSecurityApi";
 import { Configuration as UserPortalConfiguration } from './generated/owUserPortalApi';
 import { DevicesApiFactory, Configuration as GatewayConfiguration } from './generated/owGatewayApi';
 import {
@@ -36,6 +40,7 @@ axiosInstance.interceptors.request.use(
 const securityConfig = new SecurityConfiguration();
 var baseUrlSecurityApi = null;
 var authenticationApi = null;
+var userManagementApi = null;
 
 // Setup the User Portal APIs
 const userPortalConfig = new UserPortalConfiguration();
@@ -54,6 +59,9 @@ function generateApis() {
   baseUrlSecurityApi = getBaseUrlForApi('owsec');
   authenticationApi = baseUrlSecurityApi
     ? new AuthenticationApiFactory(securityConfig, baseUrlSecurityApi, axiosInstance)
+    : null;
+  userManagementApi = baseUrlSecurityApi
+    ? new UserManagementApiFactory(securityConfig, baseUrlSecurityApi, axiosInstance)
     : null;
 
   // Setup the User Portal (TODO - also add to the setApiSystemInfo)
@@ -177,6 +185,7 @@ function handleApiError(title, error) {
 
 export {
   authenticationApi,
+  userManagementApi,
   devicesApi,
   handleApiError,
   setApiSystemInfo,

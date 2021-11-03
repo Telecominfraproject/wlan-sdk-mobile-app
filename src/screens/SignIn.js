@@ -21,7 +21,6 @@ const SignIn = props => {
   const brandInfo = useSelector(selectBrandInfo);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const [uuid, setUuid] = useState();
   const [loading, setLoading] = useState(false);
   const passwordRef = createRef();
 
@@ -65,12 +64,11 @@ const SignIn = props => {
         });
         dispatch(setSession(response.data));
 
-        logStringifyPretty(response.data);
+        logStringifyPretty(response);
 
         if (response.data.method && response.data.created) {
           // MFA
-          setUuid(response.data.uuid);
-          props.navigation.navigate('MFACode', { uuid: uuid });
+          props.navigation.navigate('MFACode', { uuid: response.data.uuid });
         } else if (response.data.userMustChangePassword) {
           // Must reset password
           props.navigation.navigate('ResetPassword', {
