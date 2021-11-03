@@ -81,7 +81,12 @@ export default function MFACode(props) {
         </Text>
       </View>
       <View style={pageItemStyle.containerButton}>
-        <Button title={strings.buttons.submit} color={primaryColor} onPress={validateCode} disabled={loading || !code} />
+        <Button
+          title={strings.buttons.submit}
+          color={primaryColor}
+          onPress={validateCode}
+          disabled={loading || !code}
+        />
       </View>
     </View>
   );

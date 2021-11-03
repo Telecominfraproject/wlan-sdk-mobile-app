@@ -14,7 +14,7 @@ const DeviceList = props => {
     getDevices();
     return () => {
       setDevices([]);
-    }
+    };
   }, []);
 
   const onDevicePress = async () => {

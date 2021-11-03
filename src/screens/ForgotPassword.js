@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearSession } from '../store/SessionSlice';
-import { pageStyle, pageItemStyle, primaryColor, primaryColorStyle } from "../AppStyle";
+import { pageStyle, pageItemStyle, primaryColor, primaryColorStyle } from '../AppStyle';
 import { View, TextInput, Button, ActivityIndicator, Alert, Image, Text } from 'react-native';
 import { strings } from '../localization/LocalizationStrings';
 import { authenticationApi, handleApiError } from '../api/apiHandler';
