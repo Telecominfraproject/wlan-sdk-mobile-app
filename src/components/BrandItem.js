@@ -1,4 +1,5 @@
 import React from 'react';
+import { whiteColor } from '../AppStyle';
 import { StyleSheet, TouchableOpacity, View, Text, Image } from 'react-native';
 
 const BrandItem = props => {
@@ -15,9 +16,11 @@ const BrandItem = props => {
       flexDirection: 'column',
       flexWrap: 'nowrap',
       flex: 0,
-      width: '100%',
       alignItems: 'center',
+      width: '100%',
       marginBottom: 18,
+      padding: 10,
+      backgroundColor: whiteColor,
     },
     icon: {
       height: 75,

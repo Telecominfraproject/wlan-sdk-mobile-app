@@ -64,7 +64,7 @@ export const pageItemStyle = StyleSheet.create({
   },
   description: {
     fontSize: 14,
-    marginBottom: 40,
+    marginBottom: 10,
   },
   container: {
     flexDirection: 'row',

@@ -70,7 +70,7 @@ const BrandSelector = props => {
       alignItems: 'center',
     },
     containerSearch: {
-      marginBottom: 16,
+      marginBottom: 8,
     },
     containerList: {
       width: '100%',
