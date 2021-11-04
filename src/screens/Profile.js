@@ -3,6 +3,8 @@ import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import {
   StyleSheet,
+  SafeAreaView,
+  ScrollView,
   View,
   Button,
   Text,
@@ -10,7 +12,6 @@ import {
   Linking,
   Alert,
   TouchableOpacity,
-  ScrollView,
 } from 'react-native';
 import { logStringifyPretty, signOut } from '../Utils';
 import { authenticationApi, getCredentials, handleApiError, userManagementApi } from '../api/apiHandler';
@@ -133,79 +134,86 @@ const Profile = props => {
   const notificationHistory = () => {};
 
   return (
-    <ScrollView>
-      <View style={pageStyle.container}>
-        {loading && (
-          <View style={pageItemStyle.loadingContainer}>
-            <ActivityIndicator size="large" color={primaryColor} animating={loading} />
-          </View>
-        )}
-
-        <View style={pageItemStyle.container}>
-          <Text style={pageItemStyle.title}>{strings.profile.title}</Text>
-        </View>
-
-        {/*     Account Information      */}
-        <View style={pageItemStyle.container}>
-          <Text style={styles.header}>{strings.profile.accountInfo}</Text>
-        </View>
-
-        <View style={pageItemStyle.container}>
-          <Text style={styles.label}>{strings.profile.name}</Text>
-          <TextInputInPlaceEditing style={styles.input} label={'name'} value={profile.name} onSubmit={updateProfile} />
-        </View>
-        <View style={pageItemStyle.container}>
-          <Text style={styles.label}>{strings.profile.email}</Text>
-          <TextInputInPlaceEditing
-            style={styles.input}
-            label={'email'}
-            value={profile.email}
-            onSubmit={updateProfile}
-          />
-        </View>
-
-        <View style={pageItemStyle.containerButton}>
-          <Button title={strings.buttons.changePassword} color={primaryColor} onPress={changePassword} />
-        </View>
-        <View style={pageItemStyle.containerButton}>
-          <Button title={strings.buttons.signOut} color={primaryColor} onPress={onSignOutPress} />
-        </View>
-
-        {/*        Notifications         */}
-        <View style={pageItemStyle.container}>
-          <Text style={styles.header}>{strings.profile.notifications}</Text>
-        </View>
-        <View style={pageItemStyle.container}>
-          <TouchableOpacity onPress={notificationPref}>
-            <View style={styles.line}>
-              <Text>{strings.profile.notificationPref}</Text>
+    <SafeAreaView style={pageStyle.safeAreaView}>
+      <ScrollView contentContainerStyle={pageStyle.scrollView}>
+        <View style={pageStyle.container}>
+          {loading && (
+            <View style={pageItemStyle.loadingContainer}>
+              <ActivityIndicator size="large" color={primaryColor} animating={loading} />
             </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={notificationHistory}>
-            <View style={styles.line}>
-              <Text>{strings.profile.notificationHistory}</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+          )}
 
-        {/*         App            */}
-        <View style={pageItemStyle.container}>
-          <Text style={styles.header}>{strings.profile.app}</Text>
-        </View>
-        <View style={pageItemStyle.container}>
-          <View style={styles.line}>
-            <Text style={styles.label}>{strings.profile.version}</Text>
-            <Text style={styles.info}>{'123'}</Text>
+          <View style={pageItemStyle.container}>
+            <Text style={pageItemStyle.title}>{strings.profile.title}</Text>
           </View>
-        </View>
 
-        {/* <View style={pageItemStyle.containerButton}>
+          {/*     Account Information      */}
+          <View style={pageItemStyle.container}>
+            <Text style={styles.header}>{strings.profile.accountInfo}</Text>
+          </View>
+
+          <View style={pageItemStyle.container}>
+            <Text style={styles.label}>{strings.profile.name}</Text>
+            <TextInputInPlaceEditing
+              style={styles.input}
+              label={'name'}
+              value={profile ? profile.name : ''}
+              onSubmit={updateProfile}
+            />
+          </View>
+          <View style={pageItemStyle.container}>
+            <Text style={styles.label}>{strings.profile.email}</Text>
+            <TextInputInPlaceEditing
+              style={styles.input}
+              label={'email'}
+              value={profile ? profile.email : ''}
+              onSubmit={updateProfile}
+            />
+          </View>
+
+          <View style={pageItemStyle.containerButton}>
+            <Button title={strings.buttons.changePassword} color={primaryColor} onPress={changePassword} />
+          </View>
+          <View style={pageItemStyle.containerButton}>
+            <Button title={strings.buttons.signOut} color={primaryColor} onPress={onSignOutPress} />
+          </View>
+
+          {/*        Notifications         */}
+          <View style={pageItemStyle.container}>
+            <Text style={styles.header}>{strings.profile.notifications}</Text>
+          </View>
+          <View style={pageItemStyle.container}>
+            <TouchableOpacity onPress={notificationPref}>
+              <View style={styles.line}>
+                <Text>{strings.profile.notificationPref}</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={notificationHistory}>
+              <View style={styles.line}>
+                <Text>{strings.profile.notificationHistory}</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          {/*         App            */}
+          <View style={pageItemStyle.container}>
+            <Text style={styles.header}>{strings.profile.app}</Text>
+          </View>
+          <View style={pageItemStyle.container}>
+            <View style={styles.line}>
+              <Text style={styles.label}>{strings.profile.version}</Text>
+              <Text style={styles.info}>{'123'}</Text>
+            </View>
+          </View>
+
+          {/* <View style={pageItemStyle.containerButton}>
         <Text style={[pageItemStyle.buttonText, primaryColorStyle]} onPress={openPasswordPolicy}>
           {strings.buttons.passwordPolicy}
         </Text>
       </View>*/}
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

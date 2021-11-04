@@ -35,8 +35,8 @@ const DeviceList = props => {
   };
 
   return (
-    <SafeAreaView>
-      <ScrollView>
+    <SafeAreaView style={pageStyle.safeAreaView}>
+      <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.container}>
           <View style={pageItemStyle.container}>
             <AccordionSection title="Devices" isLoading={loading}>

@@ -31,16 +31,24 @@ store.subscribe(updatePrimaryColorInfo);
 updatePrimaryColorInfo();
 
 export const pageStyle = StyleSheet.create({
+  safeAreaView: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
   container: {
     // Layout
     flexDirection: 'column',
     flexWrap: 'nowrap',
     flex: 1,
     justifyContent: 'flex-start',
-    alignContent: 'flex-start',
     alignItems: 'center',
     // Content
-    padding: 35,
+    paddingTop: 15,
+    paddingBottom: 35,
+    paddingRight: 35,
+    paddingLeft: 35,
     backgroundColor: '#eeeeee',
     // Base Text
     fontSize: 14,
@@ -49,44 +57,52 @@ export const pageStyle = StyleSheet.create({
 });
 
 export const pageItemStyle = StyleSheet.create({
+  headerImage: {
+    marginTop: 20,
+    height: 75,
+    width: '100%',
+    resizeMode: 'contain',
+  },
+  title: {
+    marginTop: 20,
+    fontSize: 36,
+  },
+  description: {
+    marginTop: 20,
+    fontSize: 14,
+  },
   loadingContainer: {
     ...StyleSheet.absoluteFill,
     paddingVertical: '50%',
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
     zIndex: 50,
   },
-  headerImage: {
-    height: 75,
-    width: '100%',
-    resizeMode: 'contain',
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 36,
-    marginBottom: 14,
-  },
-  description: {
-    fontSize: 14,
-    marginBottom: 10,
-  },
   container: {
     flexDirection: 'row',
     flexWrap: 'nowrap',
-    alignItems: 'center',
     justifyContent: 'flex-start',
-    paddingTop: 10,
-    paddingBottom: 10,
+    alignItems: 'center',
   },
   containerButton: {
+    marginTop: 20,
     height: 40,
     width: '100%',
-    marginBottom: 10,
+  },
+  containerButtonText: {
+    marginTop: 20,
+    // Layout
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+
+    width: '100%',
   },
   inputText: {
+    marginTop: 10,
     // Layout
     height: 44,
     width: '100%',
-    marginBottom: 10,
     paddingLeft: 10,
     paddingRight: 10,
     // Background and Border

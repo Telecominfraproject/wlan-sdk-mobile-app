@@ -37,21 +37,25 @@ export const strings = new LocalizedStrings({
     },
     buttons: {
       cancel: 'Cancel',
+      changeBrand: 'Change Brand',
       changePassword: 'Change Password',
       forgotPassword: 'Forgot Password',
       passwordPolicy: 'Password Policy',
+      privacyPolicy: 'Privacy Policy',
       resendCode: 'Resend Code',
       sendEmail: 'Send Email',
       signIn: 'Sign In',
       signOut: 'Sign Out',
       submit: 'Submit',
+      termsConditions: 'Terms & Conditions',
     },
     brandSelector: {
       description: 'Please select your provider to continue.',
       title: 'Welcome',
     },
     signIn: {
-      description: 'Please sign in to your account.',
+      title: 'Sign In',
+      description: 'Please enter your email and password to sign in to your account.',
     },
     forgotPassword: {
       title: 'Reset Password',
@@ -63,6 +67,14 @@ export const strings = new LocalizedStrings({
       req3: 'Must contain 1 lowercase letter',
       req4: 'Must contain 1 digit',
       req5: 'Must contain 1 special character',
+    },
+    privacyPolicy: {
+      title: 'Privacy Policy',
+      content: 'This is the privacy policy.',
+    },
+    termsConditions: {
+      title: 'Terms & Conditions',
+      content: 'These are the terms and conditions.',
     },
     dashboard: {
       network: 'Network',

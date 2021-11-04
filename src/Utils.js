@@ -23,6 +23,6 @@ export function signOut(navigation) {
 
   navigation.reset({
     index: 0,
-    routes: [{ name: 'BrandSelector' }],
+    routes: [{ name: 'SignIn' }],
   });
 }

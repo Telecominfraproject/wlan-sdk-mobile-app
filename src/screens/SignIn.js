@@ -4,7 +4,17 @@ import { clearSession, setSession } from '../store/SessionSlice';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor, primaryColorStyle } from '../AppStyle';
-import { StyleSheet, Text, View, Image, Button, TextInput, ActivityIndicator } from 'react-native';
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Button,
+  TextInput,
+  ActivityIndicator,
+} from 'react-native';
 import { logStringifyPretty, showGeneralError } from '../Utils';
 import {
   handleApiError,
@@ -27,7 +37,10 @@ const SignIn = props => {
   useEffect(() => {
     // If the brand is not selected, then resort back to the brand selector
     if (brandInfo === null) {
-      props.navigation.replace('BrandSelector');
+      props.navigation.reset({
+        index: 0,
+        routes: [{ name: 'BrandSelector' }],
+      });
     }
 
     async function checkCredentials() {
@@ -116,77 +129,116 @@ const SignIn = props => {
     props.navigation.navigate('ForgotPassword');
   };
 
+  const onChangeBrandPress = async () => {
+    props.navigation.reset({
+      index: 0,
+      routes: [{ name: 'BrandSelector' }],
+    });
+  };
+
+  const onPrivacyPolicyPress = async () => {
+    props.navigation.navigate('PrivacyPolicy');
+  };
+
+  const onTermsConditionsPress = async () => {
+    props.navigation.navigate('TermsConditions');
+  };
+
   const signInStyle = StyleSheet.create({
     containerForm: {
       flexDirection: 'column',
       flexWrap: 'nowrap',
-      justifyContent: 'flex-start',
-      alignContent: 'flex-start',
-      alignItems: 'center',
       flex: 0,
       width: '100%',
+      justifyContent: 'flex-start',
+      alignItems: 'center',
     },
     headerImage: {
+      marginTop: 20,
+      // Layout
       height: 75,
       width: '100%',
       resizeMode: 'contain',
-      marginBottom: 10,
+    },
+    fillView: {
+      flex: 3,
     },
   });
 
   return (
-    <View style={pageStyle.container}>
-      <View style={pageItemStyle.container}>
-        <Image style={signInStyle.headerImage} source={{ uri: brandInfo.iconUri }} />
-      </View>
-      {loading ? (
-        <View style={pageItemStyle.container}>
-          <ActivityIndicator size="large" color={primaryColor} animating={loading} />
-        </View>
-      ) : (
-        <View style={signInStyle.containerForm}>
+    <SafeAreaView style={pageStyle.safeAreaView}>
+      <ScrollView contentContainerStyle={pageStyle.scrollView}>
+        <View style={pageStyle.container}>
           <View style={pageItemStyle.container}>
-            <Text style={pageItemStyle.description}>{strings.signIn.description}</Text>
+            <Image style={signInStyle.headerImage} source={{ uri: brandInfo.iconUri }} />
           </View>
           <View style={pageItemStyle.container}>
-            <TextInput
-              style={pageItemStyle.inputText}
-              placeholder={strings.placeholders.username}
-              autoComplete="email"
-              autoCapitalize="none"
-              autoFocus={true}
-              keyboardType="email-address"
-              textContentType="username"
-              returnKeyType="next"
-              value={email}
-              onChangeText={text => setEmail(text)}
-              onSubmitEditing={() => passwordRef.current.focus()}
-            />
+            <Text style={pageItemStyle.title}>{strings.signIn.title}</Text>
           </View>
-          <View style={pageItemStyle.container}>
-            <TextInput
-              style={pageItemStyle.inputText}
-              ref={passwordRef}
-              placeholder={strings.placeholders.password}
-              secureTextEntry={true}
-              autoCapitalize="none"
-              textContentType="password"
-              returnKeyType="go"
-              onChangeText={text => setPassword(text)}
-              onSubmitEditing={() => onSignInPress()}
-            />
-          </View>
-          <View style={pageItemStyle.containerButton}>
-            <Text style={[pageItemStyle.buttonText, primaryColorStyle]} onPress={onForgotPasswordPress}>
-              {strings.buttons.forgotPassword}
+          {loading ? (
+            <View style={pageItemStyle.container}>
+              <ActivityIndicator size="large" color={primaryColor} animating={loading} />
+            </View>
+          ) : (
+            <View style={signInStyle.containerForm}>
+              <View style={pageItemStyle.container}>
+                <Text style={pageItemStyle.description}>{strings.signIn.description}</Text>
+              </View>
+              <View style={pageItemStyle.container}>
+                <TextInput
+                  style={pageItemStyle.inputText}
+                  placeholder={strings.placeholders.username}
+                  autoComplete="email"
+                  autoCapitalize="none"
+                  autoFocus={true}
+                  keyboardType="email-address"
+                  textContentType="username"
+                  returnKeyType="next"
+                  value={email}
+                  onChangeText={text => setEmail(text)}
+                  onSubmitEditing={() => passwordRef.current.focus()}
+                />
+              </View>
+              <View style={pageItemStyle.container}>
+                <TextInput
+                  style={pageItemStyle.inputText}
+                  ref={passwordRef}
+                  placeholder={strings.placeholders.password}
+                  secureTextEntry={true}
+                  autoCapitalize="none"
+                  textContentType="password"
+                  returnKeyType="go"
+                  onChangeText={text => setPassword(text)}
+                  onSubmitEditing={() => onSignInPress()}
+                />
+              </View>
+              <View style={pageItemStyle.containerButtonText}>
+                <Text style={[pageItemStyle.buttonText, primaryColorStyle]} onPress={onForgotPasswordPress}>
+                  {strings.buttons.forgotPassword}
+                </Text>
+              </View>
+              <View style={pageItemStyle.containerButton}>
+                <Button title={strings.buttons.signIn} color={primaryColor} onPress={onSignInPress} />
+              </View>
+            </View>
+          )}
+          <View style={signInStyle.fillView} />
+          <View style={pageItemStyle.containerButtonText}>
+            <Text style={[pageItemStyle.buttonText, primaryColorStyle]} onPress={onChangeBrandPress}>
+              {strings.buttons.changeBrand}
             </Text>
           </View>
-          <View style={pageItemStyle.containerButton}>
-            <Button title={strings.buttons.signIn} color={primaryColor} onPress={onSignInPress} />
+          <View style={[pageItemStyle.containerButtonText]}>
+            <Text style={[pageItemStyle.buttonText, primaryColorStyle]} onPress={onPrivacyPolicyPress}>
+              {strings.buttons.privacyPolicy}
+            </Text>
+            <Text style={[pageItemStyle.buttonText, primaryColorStyle]} onPress={onTermsConditionsPress}>
+              {strings.buttons.termsConditions}
+            </Text>
           </View>
         </View>
-      )}
-    </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

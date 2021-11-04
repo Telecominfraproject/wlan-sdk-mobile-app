@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, Button, Text, TextInput, View } from 'react-native';
 import { pageItemStyle, pageStyle, primaryColor, primaryColorStyle } from '../AppStyle';
+import { SafeAreaView, ScrollView, ActivityIndicator, Button, Text, TextInput, View } from 'react-native';
 import { strings } from '../localization/LocalizationStrings';
 import { authenticationApi, handleApiError } from '../api/apiHandler';
 import { logStringifyPretty, showGeneralMessage } from '../Utils';
@@ -57,37 +57,41 @@ export default function MFACode(props) {
   };
 
   return (
-    <View style={pageStyle.container}>
-      {loading && (
-        <View style={pageItemStyle.loadingContainer}>
-          <ActivityIndicator size="large" color={primaryColor} animating={loading} />
+    <SafeAreaView style={pageStyle.safeAreaView}>
+      <ScrollView contentContainerStyle={pageStyle.scrollView}>
+        <View style={pageStyle.container}>
+          {loading && (
+            <View style={pageItemStyle.loadingContainer}>
+              <ActivityIndicator size="large" color={primaryColor} animating={loading} />
+            </View>
+          )}
+          <View style={pageItemStyle.container}>
+            <TextInput
+              style={pageItemStyle.inputText}
+              placeholder={strings.placeholders.code}
+              secureTextEntry={true}
+              onChangeText={text => setCode(text)}
+              autoCapitalize="none"
+              textContentType="oneTimeCode"
+              returnKeyType="send"
+              onSubmitEditing={validateCode}
+            />
+          </View>
+          <View style={pageItemStyle.containerButton}>
+            <Text style={[pageItemStyle.buttonText, primaryColorStyle]} onPress={resendValidationCode}>
+              {strings.buttons.resendCode}
+            </Text>
+          </View>
+          <View style={pageItemStyle.containerButton}>
+            <Button
+              title={strings.buttons.submit}
+              color={primaryColor}
+              onPress={validateCode}
+              disabled={loading || !code}
+            />
+          </View>
         </View>
-      )}
-      <View style={pageItemStyle.container}>
-        <TextInput
-          style={pageItemStyle.inputText}
-          placeholder={strings.placeholders.code}
-          secureTextEntry={true}
-          onChangeText={text => setCode(text)}
-          autoCapitalize="none"
-          textContentType="oneTimeCode"
-          returnKeyType="send"
-          onSubmitEditing={validateCode}
-        />
-      </View>
-      <View style={pageItemStyle.containerButton}>
-        <Text style={[pageItemStyle.buttonText, primaryColorStyle]} onPress={resendValidationCode}>
-          {strings.buttons.resendCode}
-        </Text>
-      </View>
-      <View style={pageItemStyle.containerButton}>
-        <Button
-          title={strings.buttons.submit}
-          color={primaryColor}
-          onPress={validateCode}
-          disabled={loading || !code}
-        />
-      </View>
-    </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }

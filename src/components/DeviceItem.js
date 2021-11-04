@@ -27,11 +27,13 @@ const DeviceItem = props => {
   };
 
   const getDeviceName = () => {
-    return props.device.compatible;
+    return 'sadjkahdjksah';
+    //return props.device.compatible | "asddasd";
   };
 
   const getDeviceType = () => {
-    return props.device.manufacturer;
+    return 'sadjkahdjksahasdasd';
+    //return props.device.manufacturer | "asdasddas";
   };
 
   const deviceItemStyle = StyleSheet.create({
@@ -39,20 +41,27 @@ const DeviceItem = props => {
       flexDirection: 'row',
       flexWrap: 'nowrap',
       flex: 1,
-      alignItems: 'center',
       justifyContent: 'space-between',
-      padding: 10,
-    },
-    textContainer: {
-      flexDirection: 'column',
-      alignItems: 'flex-start',
-      flexWrap: 'nowrap',
-      flex: 2,
-      marginLeft: 10,
+      alignItems: 'center',
+      paddingTop: 20,
+      paddingBottom: 20,
+      paddingRight: 10,
+      paddingLeft: 10,
     },
     icon: {
       width: 30,
       height: 30,
+    },
+    textContainer: {
+      flexDirection: 'column',
+      flexWrap: 'nowrap',
+      flex: 2,
+      justifyContent: 'flex-start',
+      alignItems: 'flex-start',
+      marginLeft: 10,
+    },
+    text: {
+      height: 18,
     },
   });
 
@@ -69,8 +78,8 @@ const DeviceItem = props => {
         />
 
         <View style={deviceItemStyle.textContainer}>
-          <Text>{getDeviceName()}</Text>
-          <Text>{getDeviceType()}</Text>
+          <Text style={deviceItemStyle.text}>{getDeviceName()}</Text>
+          <Text style={deviceItemStyle.text}>{getDeviceType()}</Text>
         </View>
 
         <Image style={deviceItemStyle.icon} source={require('../assets/angle-right-solid.png')} />

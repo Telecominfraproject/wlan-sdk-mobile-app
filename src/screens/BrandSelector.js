@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectBrandInfo, setBrandInfo } from '../store/BrandInfoSlice';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setBrandInfo } from '../store/BrandInfoSlice';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
-import { StyleSheet, View, Text, FlatList, TextInput, ActivityIndicator } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, View, Text, TextInput, ActivityIndicator } from 'react-native';
 import BrandItem from '../components/BrandItem';
 
 const BrandSelector = props => {
   const dispatch = useDispatch();
-  const brandInfo = useSelector(selectBrandInfo);
   // Currently the following state does not change, but the expectation is that this information
   // will come from an API so it is being left as is for this development
   const [loading, setLoading] = useState(false);
@@ -31,17 +30,6 @@ const BrandSelector = props => {
   const [filtered, setFiltered] = useState(false);
   const [filteredBrands, setFilteredBrands] = useState();
 
-  useEffect(() => {
-    if (brandInfo !== null) {
-      // If there is already brand information set, then move to the sign in page as nothing
-      // needs to be done. Since this only happens on mount, if the user presses 'back' from
-      // the "Sign In" page, it will not be run again allowing the user to choose in this scenario
-      props.navigation.navigate('SignIn');
-    }
-    // No dependencies as this is only to run once on mount. There are plenty of
-    // hacks around this eslint warning, but disabling it makes the most sense.
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
   const filterBrands = searchText => {
     if (searchText) {
       let searchTextLowerCase = searchText.toLowerCase();
@@ -54,10 +42,14 @@ const BrandSelector = props => {
   };
 
   const onCompanySelect = async item => {
-    // Save the brand information
-    await dispatch(setBrandInfo(item));
+    // Save the brand information on selection
+    dispatch(setBrandInfo(item));
 
-    props.navigation.navigate('SignIn');
+    // Start the navigation on signin
+    props.navigation.reset({
+      index: 0,
+      routes: [{ name: 'SignIn' }],
+    });
   };
 
   const brandingSelectorStyle = StyleSheet.create({
@@ -66,11 +58,8 @@ const BrandSelector = props => {
       flexWrap: 'nowrap',
       flex: 0,
       justifyContent: 'flex-start',
-      alignContent: 'flex-start',
       alignItems: 'center',
-    },
-    containerSearch: {
-      marginBottom: 8,
+      width: '100%',
     },
     containerList: {
       width: '100%',
@@ -78,36 +67,40 @@ const BrandSelector = props => {
   });
 
   return (
-    <View style={pageStyle.container}>
-      <View style={pageItemStyle.container}>
-        <Text style={pageItemStyle.title}>{strings.brandSelector.title}</Text>
-      </View>
-      <View style={pageItemStyle.container}>
-        <Text style={pageItemStyle.description}>{strings.brandSelector.description}</Text>
-      </View>
-      {loading ? (
-        <View style={pageItemStyle.container}>
-          <ActivityIndicator size="large" color={primaryColor} animating={loading} />
-        </View>
-      ) : (
-        <View style={pageItemStyle.containerBrands}>
-          <View style={[pageItemStyle.container, brandingSelectorStyle.containerSearch]}>
-            <TextInput
-              style={pageItemStyle.inputText}
-              placeholder="Search"
-              onChangeText={search => filterBrands(search)}
-            />
+    <SafeAreaView style={pageStyle.safeAreaView}>
+      <ScrollView contentContainerStyle={pageStyle.scrollView}>
+        <View style={pageStyle.container}>
+          <View style={pageItemStyle.container}>
+            <Text style={pageItemStyle.title}>{strings.brandSelector.title}</Text>
           </View>
           <View style={pageItemStyle.container}>
-            <FlatList
-              style={brandingSelectorStyle.containerList}
-              data={filtered ? filteredBrands : brands}
-              renderItem={({ item }) => <BrandItem brand={item} onPress={() => onCompanySelect(item)} />}
-            />
+            <Text style={pageItemStyle.description}>{strings.brandSelector.description}</Text>
           </View>
+          {loading ? (
+            <View style={pageItemStyle.container}>
+              <ActivityIndicator size="large" color={primaryColor} animating={loading} />
+            </View>
+          ) : (
+            <>
+              <View style={[pageItemStyle.container]}>
+                <TextInput
+                  style={pageItemStyle.inputText}
+                  placeholder="Search"
+                  onChangeText={search => filterBrands(search)}
+                />
+              </View>
+              <View style={[pageItemStyle.container]}>
+                <View style={brandingSelectorStyle.containerList}>
+                  {(filtered ? filteredBrands : brands).map(item => {
+                    return <BrandItem brand={item} key={item.id} onPress={() => onCompanySelect(item)} />;
+                  })}
+                </View>
+              </View>
+            </>
+          )}
         </View>
-      )}
-    </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

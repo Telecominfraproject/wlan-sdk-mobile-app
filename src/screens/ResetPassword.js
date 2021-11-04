@@ -79,10 +79,10 @@ export default function ResetPassword(props) {
     return valid && newPassword !== password && newPassword === confirmPassword;
   };
 
-  const validatePassword = password => {
+  const validatePassword = passwordToCheck => {
     // const reg = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
     const reg = new RegExp(pattern, 'g');
-    return reg.test(password);
+    return reg.test(passwordToCheck);
   };
 
   return (

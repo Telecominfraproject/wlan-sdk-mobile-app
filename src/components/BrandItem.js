@@ -13,23 +13,26 @@ const BrandItem = props => {
 
   const brandItemStyle = StyleSheet.create({
     container: {
+      marginTop: 10,
+      // Layout
       flexDirection: 'column',
       flexWrap: 'nowrap',
       flex: 0,
       alignItems: 'center',
       width: '100%',
-      marginBottom: 18,
+      // Visual
       padding: 10,
-      borderRadius: 10,
+      borderRadius: 6,
       backgroundColor: whiteColor,
     },
     icon: {
+      marginTop: 10,
       height: 75,
       width: '100%',
       resizeMode: 'contain',
-      marginBottom: 10,
     },
     text: {
+      marginTop: 10,
       fontSize: 14,
     },
   });
