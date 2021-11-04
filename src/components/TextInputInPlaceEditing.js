@@ -8,6 +8,8 @@ export default function TextInputInPlaceEditing(props) {
   const [edit, setEdit] = useState(false);
   const [value, setValue] = useState(props.value);
   const inputRef = useRef();
+  const style = props.style ?? {};
+  const objectKey = props.objectKey;
 
   useEffect(() => {
     if (edit) {
@@ -28,8 +30,8 @@ export default function TextInputInPlaceEditing(props) {
 
     try {
       setLoading(true);
-      if (props.label) {
-        props.onSubmit({ [props.label]: value });
+      if (objectKey) {
+        props.onSubmit({ [objectKey]: value });
       } else {
         props.onSubmit(value);
       }
@@ -41,12 +43,22 @@ export default function TextInputInPlaceEditing(props) {
     }
   };
 
-  const onBlur = () => {
-    onSubmit();
-  };
+  const styles = StyleSheet.create({
+    line: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    input: {},
+    loading: {
+      ...StyleSheet.absoluteFill,
+      alignItems: 'flex-end',
+      zIndex: 10,
+    },
+  });
 
   return (
-    <View style={props.style}>
+    <View style={style}>
       {loading && (
         <View style={styles.loading}>
           <ActivityIndicator color={primaryColor} animating={loading} />
@@ -57,8 +69,8 @@ export default function TextInputInPlaceEditing(props) {
           <TextInput
             ref={inputRef}
             style={[pageItemStyle.inputText, styles.input]}
-            onBlur={onBlur}
             value={value}
+            onBlur={onSubmit}
             onChangeText={text => setValue(text)}
             onSubmitEditing={onSubmit}
           />
@@ -69,19 +81,3 @@ export default function TextInputInPlaceEditing(props) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  line: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  input: {
-    textAlign: 'right',
-  },
-  loading: {
-    ...StyleSheet.absoluteFill,
-    alignItems: 'flex-end',
-    zIndex: 10,
-  },
-});
