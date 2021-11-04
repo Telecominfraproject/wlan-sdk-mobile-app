@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
-import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
+import { pageStyle, pageItemStyle, primaryColor, whiteColor, blackColor } from '../AppStyle';
 import {
   StyleSheet,
   SafeAreaView,
@@ -9,23 +9,17 @@ import {
   Button,
   Text,
   ActivityIndicator,
-  Linking,
-  Alert,
   TouchableOpacity,
 } from 'react-native';
 import { logStringifyPretty, signOut } from '../Utils';
 import { authenticationApi, getCredentials, handleApiError, userManagementApi } from '../api/apiHandler';
 import TextInputInPlaceEditing from '../components/TextInputInPlaceEditing';
+import AccordionSection from '../components/AccordionSection';
 
 const Profile = props => {
   const [loading, setLoading] = useState(false);
-  const [credentials, setCredentials] = useState();
-  const [profile, setProfile] = useState({
-    name: '',
-    role: '',
-    description: '',
-    phone: '',
-  });
+  const [credentials, setCredentials] = useState({});
+  const [profile, setProfile] = useState();
   const [policies, setPolicies] = useState({
     passwordPolicy: '',
     passwordPattern: '',
@@ -59,17 +53,21 @@ const Profile = props => {
     try {
       const response = await userManagementApi.getUsers();
       const user = response.data.users.find(user => user.email === credentials.username);
-      logStringifyPretty(user);
-      setProfile(user);
+      if (user) {
+        logStringifyPretty(user);
+        setProfile(user);
+      }
     } catch (error) {
-      handleApiError('Profile Error', error);
+      handleApiError('getProfile Error', error);
     }
   };
 
   const updateProfile = val => {
-    let obj = { ...profile, ...val };
-    updateUser(obj);
-    setProfile(obj);
+    if (profile) {
+      let obj = { ...profile, ...val };
+      updateUser(obj);
+      setProfile(obj);
+    }
   };
 
   const updateUser = async data => {
@@ -107,18 +105,6 @@ const Profile = props => {
     }
   };
 
-  const openPasswordPolicy = async () => {
-    const url = policies.passwordPolicy;
-    const supported = await Linking.canOpenURL(url);
-    if (supported) {
-      // Opening the link with some app, if the URL scheme is "http" the web link should be opened
-      // by some browser in the mobile
-      await Linking.openURL(url);
-    } else {
-      Alert.alert(`Don't know how to open this URL: ${url}`);
-    }
-  };
-
   const onSignOutPress = async () => {
     signOut(props.navigation);
   };
@@ -132,6 +118,42 @@ const Profile = props => {
 
   const notificationPref = () => {};
   const notificationHistory = () => {};
+
+  const styles = StyleSheet.create({
+    section: {
+      alignSelf: 'stretch',
+      marginVertical: 10,
+    },
+    item: {
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+    },
+    label: {
+      fontWeight: 'bold',
+    },
+    input: {
+      flex: 3,
+      textAlign: 'left',
+      fontSize: 16,
+    },
+    buttonContainer: {
+      marginVertical: 10,
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      alignSelf: 'stretch',
+    },
+    button: {
+      padding: 10,
+      width: '45%',
+      backgroundColor: whiteColor,
+      alignItems: 'center',
+      // border
+      borderWidth: 1,
+      borderRadius: 5,
+      borderColor: blackColor,
+    },
+  });
 
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
@@ -148,93 +170,77 @@ const Profile = props => {
           </View>
 
           {/*     Account Information      */}
-          <View style={pageItemStyle.container}>
-            <Text style={styles.header}>{strings.profile.accountInfo}</Text>
+          <View style={styles.section}>
+            <AccordionSection title={strings.profile.accountInfo} isLoading={loading} disableAccordion={true}>
+              {profile && (
+                <View style={styles.item}>
+                  <Text style={styles.label}>{strings.profile.name}</Text>
+                  <TextInputInPlaceEditing
+                    style={styles.input}
+                    objectKey={'name'}
+                    value={profile.name}
+                    onSubmit={updateProfile}
+                  />
+                </View>
+              )}
+
+              <View style={styles.item}>
+                <Text style={styles.label}>{strings.profile.email}</Text>
+                {profile ? (
+                  <TextInputInPlaceEditing
+                    style={styles.input}
+                    objectKey={'email'}
+                    value={profile.email}
+                    onSubmit={updateProfile}
+                  />
+                ) : (
+                  <Text style={styles.input}>{credentials && credentials.username}</Text>
+                )}
+              </View>
+            </AccordionSection>
           </View>
 
-          <View style={pageItemStyle.container}>
-            <Text style={styles.label}>{strings.profile.name}</Text>
-            <TextInputInPlaceEditing
-              style={styles.input}
-              label={'name'}
-              value={profile ? profile.name : ''}
-              onSubmit={updateProfile}
-            />
-          </View>
-          <View style={pageItemStyle.container}>
-            <Text style={styles.label}>{strings.profile.email}</Text>
-            <TextInputInPlaceEditing
-              style={styles.input}
-              label={'email'}
-              value={profile ? profile.email : ''}
-              onSubmit={updateProfile}
-            />
-          </View>
+          {/*             Buttons               */}
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.button} onPress={changePassword}>
+              <Text>{strings.buttons.changePassword}</Text>
+            </TouchableOpacity>
 
-          <View style={pageItemStyle.containerButton}>
-            <Button title={strings.buttons.changePassword} color={primaryColor} onPress={changePassword} />
-          </View>
-          <View style={pageItemStyle.containerButton}>
-            <Button title={strings.buttons.signOut} color={primaryColor} onPress={onSignOutPress} />
+            <TouchableOpacity style={styles.button} onPress={onSignOutPress}>
+              <Text>{strings.buttons.signOut}</Text>
+            </TouchableOpacity>
           </View>
 
           {/*        Notifications         */}
-          <View style={pageItemStyle.container}>
-            <Text style={styles.header}>{strings.profile.notifications}</Text>
-          </View>
-          <View style={pageItemStyle.container}>
-            <TouchableOpacity onPress={notificationPref}>
-              <View style={styles.line}>
-                <Text>{strings.profile.notificationPref}</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={notificationHistory}>
-              <View style={styles.line}>
-                <Text>{strings.profile.notificationHistory}</Text>
-              </View>
-            </TouchableOpacity>
+          <View style={styles.section}>
+            <AccordionSection title={strings.profile.notifications} isLoading={loading} disableAccordion={true}>
+              <TouchableOpacity onPress={notificationPref}>
+                <View style={styles.item}>
+                  <Text>{strings.profile.notificationPref}</Text>
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={notificationHistory}>
+                <View style={styles.item}>
+                  <Text>{strings.profile.notificationHistory}</Text>
+                </View>
+              </TouchableOpacity>
+            </AccordionSection>
           </View>
 
           {/*         App            */}
-          <View style={pageItemStyle.container}>
-            <Text style={styles.header}>{strings.profile.app}</Text>
+          <View style={styles.section}>
+            <AccordionSection title={strings.profile.app} isLoading={loading} disableAccordion={true}>
+              <View style={styles.item}>
+                <Text style={styles.label}>{strings.profile.version}</Text>
+                <Text style={styles.input}>{'123'}</Text>
+              </View>
+            </AccordionSection>
           </View>
-          <View style={pageItemStyle.container}>
-            <View style={styles.line}>
-              <Text style={styles.label}>{strings.profile.version}</Text>
-              <Text style={styles.info}>{'123'}</Text>
-            </View>
-          </View>
-
-          {/* <View style={pageItemStyle.containerButton}>
-        <Text style={[pageItemStyle.buttonText, primaryColorStyle]} onPress={openPasswordPolicy}>
-          {strings.buttons.passwordPolicy}
-        </Text>
-      </View>*/}
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  section: {},
-  header: {},
-  line: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-  },
-  input: {
-    flex: 3,
-  },
-  label: {
-    flex: 1,
-  },
-  info: {},
-});
 
 export default Profile;

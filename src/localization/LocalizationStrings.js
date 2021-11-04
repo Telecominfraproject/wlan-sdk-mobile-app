@@ -85,8 +85,10 @@ export const strings = new LocalizedStrings({
     profile: {
       accountInfo: 'ACCOUNT INFORMATION',
       app: 'APP',
+      configuration: 'CONFIGURATION',
       email: 'Email',
       description: 'Description',
+      manageDeviceGroups: 'Manage Device Groups',
       MFA: 'MFA',
       name: 'Name',
       notifications: 'NOTIFICATIONS',
@@ -94,7 +96,6 @@ export const strings = new LocalizedStrings({
       notificationPref: 'Notification Preference',
       phone: 'Phone Number',
       role: 'Role',
-      title: 'Profile',
       version: 'Version',
     },
   },
