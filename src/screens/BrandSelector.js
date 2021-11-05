@@ -5,6 +5,7 @@ import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, View, Text, TextInput, ActivityIndicator } from 'react-native';
 import BrandItem from '../components/BrandItem';
+import TextInputWithIcon from '../components/TextInputWithIcon';
 
 const BrandSelector = props => {
   const dispatch = useDispatch();
@@ -83,10 +84,11 @@ const BrandSelector = props => {
           ) : (
             <>
               <View style={[pageItemStyle.container]}>
-                <TextInput
+                <TextInputWithIcon
                   style={pageItemStyle.inputText}
                   placeholder="Search"
                   onChangeText={search => filterBrands(search)}
+                  source={require('../assets/search-solid.png')}
                 />
               </View>
               <View style={[pageItemStyle.container]}>
