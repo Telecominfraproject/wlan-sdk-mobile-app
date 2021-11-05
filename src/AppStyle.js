@@ -86,6 +86,7 @@ export const pageItemStyle = StyleSheet.create({
   containerButton: {
     marginTop: 20,
     height: 40,
+    borderRadius: 6,
     width: '100%',
   },
   containerButtonText: {

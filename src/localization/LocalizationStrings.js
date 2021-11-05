@@ -9,6 +9,7 @@ export const strings = new LocalizedStrings({
       emptyFields: 'Please fill in all fields',
       failedToConnect: 'Failed to connect to server, check connections.',
       internal: 'Internal error.',
+      invalidEmail: 'Invalid email provided.',
       mismatchPassword: 'Password mismatch.',
       missingEndpoints: 'System is not set up correct - missing configuration information.',
       samePassword: 'Password is the same as old password.',
@@ -23,7 +24,7 @@ export const strings = new LocalizedStrings({
     },
     messages: {
       requestSent: 'Request successfully sent.',
-      resetEmail:
+      resetEmailSent:
         "You should soon receive an email containing the instructions to reset your password. Please make sure to check your spam if you can't find the email.",
       titleMessage: 'Message',
     },
@@ -43,7 +44,7 @@ export const strings = new LocalizedStrings({
       passwordPolicy: 'Password Policy',
       privacyPolicy: 'Privacy Policy',
       resendCode: 'Resend Code',
-      sendEmail: 'Send Email',
+      resetPassword: 'Reset Password',
       signIn: 'Sign In',
       signOut: 'Sign Out',
       submit: 'Submit',

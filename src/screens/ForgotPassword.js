@@ -1,44 +1,37 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { clearSession } from '../store/SessionSlice';
-import { pageStyle, pageItemStyle, primaryColor, primaryColorStyle } from '../AppStyle';
-import { SafeAreaView, ScrollView, View, TextInput, Button, ActivityIndicator, Alert, Image, Text } from 'react-native';
+import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import { authenticationApi, handleApiError } from '../api/apiHandler';
-import { showGeneralMessage } from '../Utils';
+import { showGeneralMessage, showGeneralError } from '../Utils';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
+import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
+import { SafeAreaView, ScrollView, View, TextInput, Button, ActivityIndicator, Image, Text } from 'react-native';
 
 const ForgotPassword = () => {
-  const dispatch = useDispatch();
   const brandInfo = useSelector(selectBrandInfo);
   const [email, setEmail] = useState();
   const [loading, setLoading] = useState(false);
 
   const validateEmail = () => {
     const re = /\S+@\S+\.\S+/;
-    const valid = re.test(email);
-    if (!valid) {
-      Alert.alert(strings.errors.titleForgotPassword, strings.errors.badEmail);
-    }
-    return valid;
+    return re.test(email);
   };
 
   const onSubmit = async () => {
-    if (validateEmail()) {
-      setLoading(true);
-
+    if (!validateEmail()) {
+      showGeneralError(strings.forgotPassword.title, strings.errors.invalidEmail);
+    } else {
       try {
-        // Clear the session information
-        dispatch(clearSession());
+        setLoading(true);
 
-        const response = await authenticationApi.getAccessToken(
+        await authenticationApi.getAccessToken(
           {
             userId: email,
           },
           undefined,
           true,
         );
-        showGeneralMessage(strings.messages.resetEmail);
+        showGeneralMessage(strings.messages.resetEmailSent);
       } catch (error) {
         handleApiError(strings.errors.titleForgotPassword, error);
       } finally {
@@ -51,44 +44,40 @@ const ForgotPassword = () => {
     <SafeAreaView style={pageStyle.safeAreaView}>
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.container}>
-          {loading && (
-            <View style={pageItemStyle.loadingContainer}>
-              <ActivityIndicator size="large" color={primaryColor} animating={loading} />
-            </View>
-          )}
           <View style={pageItemStyle.container}>
             <Image style={pageItemStyle.headerImage} source={{ uri: brandInfo.iconUri }} />
           </View>
           <View style={pageItemStyle.container}>
             <Text style={pageItemStyle.title}>{strings.forgotPassword.title}</Text>
           </View>
-          <Text style={[pageItemStyle.buttonText, primaryColorStyle]} onPress={() => {}}>
-            {strings.buttons.passwordPolicy}
-          </Text>
-          <View style={pageItemStyle.container}>
-            <TextInput
-              style={pageItemStyle.inputText}
-              placeholder={strings.placeholders.email}
-              autoComplete="email"
-              autoCapitalize="none"
-              autoFocus={true}
-              keyboardType="email-address"
-              textContentType="emailAddress"
-              returnKeyType="go"
-              onChangeText={text => setEmail(text)}
-              onSubmitEditing={() => {
-                email && onSubmit;
-              }}
-            />
-          </View>
-          <View style={pageItemStyle.containerButton}>
-            <Button
-              title={strings.buttons.sendEmail}
-              color={primaryColor}
-              onPress={onSubmit}
-              disabled={loading || !email}
-            />
-          </View>
+          {loading ? (
+            <View style={pageItemStyle.loadingContainer}>
+              <ActivityIndicator size="large" color={primaryColor} animating={loading} />
+            </View>
+          ) : (
+            <>
+              <View style={pageItemStyle.container}>
+                <Text style={pageItemStyle.description}>{strings.forgotPassword.description}</Text>
+              </View>
+              <View style={pageItemStyle.container}>
+                <TextInput
+                  style={pageItemStyle.inputText}
+                  placeholder={strings.placeholders.email}
+                  autoComplete="email"
+                  autoCapitalize="none"
+                  autoFocus={true}
+                  keyboardType="email-address"
+                  textContentType="emailAddress"
+                  returnKeyType="go"
+                  onChangeText={text => setEmail(text)}
+                  onSubmitEditing={() => onSubmit()}
+                />
+              </View>
+              <View style={pageItemStyle.containerButton}>
+                <Button title={strings.buttons.resetPassword} color={primaryColor} onPress={onSubmit} />
+              </View>
+            </>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
