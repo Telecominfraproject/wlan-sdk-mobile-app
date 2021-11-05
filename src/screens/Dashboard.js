@@ -1,6 +1,6 @@
 import React from 'react';
 import { strings } from '../localization/LocalizationStrings';
-import { pageStyle, pageItemStyle, okColor, infoColor, errorColor, primaryColor, whiteColor } from '../AppStyle';
+import { pageStyle, okColor, infoColor, errorColor, primaryColor, whiteColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import ImageWithBadge from '../components/ImageWithBadge';
 
