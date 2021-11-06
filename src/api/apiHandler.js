@@ -9,6 +9,7 @@ import { showGeneralError } from '../Utils';
 import {
   AuthenticationApiFactory,
   Configuration as SecurityConfiguration,
+  EmailApiFactory,
   UserManagementApiFactory,
 } from './generated/owSecurityApi';
 import { Configuration as UserPortalConfiguration } from './generated/owUserPortalApi';
@@ -41,6 +42,7 @@ const securityConfig = new SecurityConfiguration();
 var baseUrlSecurityApi = null;
 var authenticationApi = null;
 var userManagementApi = null;
+var emailApi = null;
 
 // Setup the User Portal APIs
 const userPortalConfig = new UserPortalConfiguration();
@@ -63,6 +65,7 @@ function generateApis() {
   userManagementApi = baseUrlSecurityApi
     ? new UserManagementApiFactory(securityConfig, baseUrlSecurityApi, axiosInstance)
     : null;
+  emailApi = baseUrlSecurityApi ? new EmailApiFactory(securityConfig, baseUrlSecurityApi, axiosInstance) : null;
 
   // Setup the User Portal (TODO - also add to the setApiSystemInfo)
   baseUrlUserPortalApi = getBaseUrlForApi('owuserport');
@@ -186,6 +189,7 @@ function handleApiError(title, error) {
 export {
   authenticationApi,
   userManagementApi,
+  emailApi,
   devicesApi,
   handleApiError,
   setApiSystemInfo,

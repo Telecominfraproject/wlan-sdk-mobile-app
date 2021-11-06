@@ -4,17 +4,20 @@ import { pageStyle, pageItemStyle, primaryColor, whiteColor, blackColor } from '
 import {
   StyleSheet,
   SafeAreaView,
-  ScrollView,
   View,
-  Button,
   Text,
   ActivityIndicator,
   TouchableOpacity,
+  ScrollView,
+  Button,
+  TextInput,
 } from 'react-native';
 import { logStringifyPretty, signOut } from '../Utils';
-import { authenticationApi, getCredentials, handleApiError, userManagementApi } from '../api/apiHandler';
+import { authenticationApi, emailApi, getCredentials, handleApiError, userManagementApi } from '../api/apiHandler';
 import TextInputInPlaceEditing from '../components/TextInputInPlaceEditing';
 import AccordionSection from '../components/AccordionSection';
+import RadioCheckbox from '../components/RadioCheckbox';
+import { MfaAuthInfoMethodEnum } from '../api/generated/owSecurityApi';
 
 const Profile = props => {
   const [loading, setLoading] = useState(false);
@@ -25,6 +28,9 @@ const Profile = props => {
     passwordPattern: '',
     accessPolicy: '',
   });
+  const [mfaOptions, setMfaOptions] = useState({ off: true, sms: false, email: false, voice: false, method: '' });
+  const [mobiles, setMobiles] = useState([]);
+  const [phone, setPhone] = useState();
 
   useEffect(() => {
     getCred();
@@ -34,7 +40,7 @@ const Profile = props => {
     if (credentials) {
       getData();
     }
-  }, [credentials]);
+  }, [credentials]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const getCred = async () => {
     setLoading(true);
@@ -75,8 +81,8 @@ const Profile = props => {
       setLoading(true);
       const userInfo = {
         id: data.Id,
-        description: data.description,
         name: data.name,
+        userTypeProprietaryInfo: data.userTypeProprietaryInfo,
       };
       const response = await userManagementApi.updateUser(data.Id, undefined, userInfo);
       logStringifyPretty(response.data);
@@ -116,8 +122,59 @@ const Profile = props => {
     });
   };
 
+  // Notifications
   const notificationPref = () => {};
   const notificationHistory = () => {};
+
+  // MFA
+  const onChangeMFA = method => {
+    const { Sms, Email, Voice } = MfaAuthInfoMethodEnum;
+    let options = { off: true, sms: false, email: false, voice: false, method: method };
+    switch (method) {
+      case Sms:
+        options.off = false;
+        options.sms = true;
+        break;
+      case Email:
+        options.off = false;
+        options.email = true;
+        break;
+      case Voice:
+        options.off = false;
+        options.voice = true;
+        break;
+      default:
+        options.method = '';
+    }
+    updateMFA(options);
+    setMfaOptions(options);
+  };
+
+  const updateMFA = options => {
+    const propInfo = {
+      mfa: {
+        enabled: !options.off,
+        method: options.method,
+      },
+      mobiles: mobiles,
+    };
+    updateProfile({ userTypeProprietaryInfo: propInfo });
+  };
+
+  // Phone Numbers
+  const verifyPhone = async () => {
+    try {
+      const smsInfo = {
+        from: '+1 (819) 272-5460',
+        to: phone,
+        text: '',
+      };
+      const response = await emailApi.sendATestSMS(true, undefined, undefined, smsInfo);
+      logStringifyPretty(response.data);
+    } catch (err) {
+      handleApiError('verifyPhone', err);
+    }
+  };
 
   const styles = StyleSheet.create({
     section: {
@@ -132,7 +189,6 @@ const Profile = props => {
       fontWeight: 'bold',
     },
     input: {
-      flex: 3,
       textAlign: 'left',
       fontSize: 16,
     },
@@ -144,10 +200,10 @@ const Profile = props => {
       alignSelf: 'stretch',
     },
     button: {
-      padding: 10,
       width: '45%',
-      backgroundColor: whiteColor,
       alignItems: 'center',
+      backgroundColor: whiteColor,
+      padding: 10,
       // border
       borderWidth: 1,
       borderRadius: 5,
@@ -165,24 +221,20 @@ const Profile = props => {
             </View>
           )}
 
-          <View style={pageItemStyle.container}>
-            <Text style={pageItemStyle.title}>{strings.profile.title}</Text>
-          </View>
-
           {/*     Account Information      */}
           <View style={styles.section}>
             <AccordionSection title={strings.profile.accountInfo} isLoading={loading} disableAccordion={true}>
-              {profile && (
-                <View style={styles.item}>
-                  <Text style={styles.label}>{strings.profile.name}</Text>
+              <View style={styles.item}>
+                <Text style={styles.label}>{strings.profile.name}</Text>
+                {profile && (
                   <TextInputInPlaceEditing
                     style={styles.input}
                     objectKey={'name'}
                     value={profile.name}
                     onSubmit={updateProfile}
                   />
-                </View>
-              )}
+                )}
+              </View>
 
               <View style={styles.item}>
                 <Text style={styles.label}>{strings.profile.email}</Text>
@@ -197,6 +249,60 @@ const Profile = props => {
                   <Text style={styles.input}>{credentials && credentials.username}</Text>
                 )}
               </View>
+
+              {/*        Phone          */}
+              <View style={styles.item}>
+                <Text style={styles.label}>{strings.profile.phone}</Text>
+                {mobiles.length === 0 && (
+                  <View>
+                    <TextInput
+                      style={[pageItemStyle.inputText, styles.input]}
+                      autoCapitalize="none"
+                      keyboardType="phone-pad"
+                      textContentType="telephoneNumber"
+                      value={phone}
+                      onChangeText={text => setPhone(text)}
+                      onSubmitEditing={verifyPhone}
+                    />
+                    <Button
+                      title={strings.buttons.verify}
+                      color={primaryColor}
+                      disabled={!phone}
+                      onPress={verifyPhone}
+                    />
+                  </View>
+                )}
+              </View>
+
+              {/*     MFA       */}
+              {profile && (
+                <View style={styles.item}>
+                  <Text style={styles.label}>{strings.profile.MFA}</Text>
+                  <View>
+                    <RadioCheckbox
+                      label={strings.profile.off}
+                      checked={mfaOptions.off}
+                      onChange={() => onChangeMFA()}
+                    />
+                    <RadioCheckbox
+                      label={strings.profile.sms}
+                      checked={mfaOptions.sms}
+                      onChange={() => onChangeMFA(MfaAuthInfoMethodEnum.Sms)}
+                      disabled={mobiles.length === 0}
+                    />
+                    <RadioCheckbox
+                      label={strings.profile.email}
+                      checked={mfaOptions.email}
+                      onChange={() => onChangeMFA(MfaAuthInfoMethodEnum.Email)}
+                    />
+                    <RadioCheckbox
+                      label={strings.profile.voice}
+                      checked={mfaOptions.voice}
+                      onChange={() => onChangeMFA(MfaAuthInfoMethodEnum.Voice)}
+                    />
+                  </View>
+                </View>
+              )}
             </AccordionSection>
           </View>
 

@@ -49,6 +49,7 @@ export const strings = new LocalizedStrings({
       signOut: 'Sign Out',
       submit: 'Submit',
       termsConditions: 'Terms & Conditions',
+      verify: 'Verify',
     },
     brandSelector: {
       description: 'Please select your provider to continue.',
@@ -95,9 +96,12 @@ export const strings = new LocalizedStrings({
       notifications: 'NOTIFICATIONS',
       notificationHistory: 'Notification History',
       notificationPref: 'Notification Preference',
+      off: 'OFF',
       phone: 'Phone Number',
       role: 'Role',
+      sms: 'SMS',
       version: 'Version',
+      voice: 'Voice',
     },
   },
 });

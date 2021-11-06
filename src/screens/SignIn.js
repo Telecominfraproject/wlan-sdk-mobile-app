@@ -81,7 +81,7 @@ const SignIn = props => {
 
         if (response.data.method && response.data.created) {
           // MFA
-          props.navigation.navigate('MFACode', { uuid: response.data.uuid });
+          props.navigation.navigate('MFACode', { uuid: response.data.uuid, credentials });
         } else if (response.data.userMustChangePassword) {
           // Must reset password
           props.navigation.navigate('ResetPassword', {
