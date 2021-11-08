@@ -9,14 +9,14 @@ const ImageWithBadge = props => {
   const imageWithBadgeStyle = StyleSheet.create({
     container: {
       // Main container should be width/height passed in
-      width: props.style.width,
-      height: props.style.height,
+      width: props.style ? props.style.width : 'auto',
+      height: props.style ? props.style.height : 'auto',
       // Include all margins from the passed in style
-      margin: props.style.margin,
-      marginBottom: props.style.marginBottom,
-      marginTop: props.style.marginTop,
-      marginLeft: props.style.marginLeft,
-      marginRight: props.style.marginRight,
+      margin: props.style ? props.style.margin : 0,
+      marginBottom: props.style ? props.style.marginBottom : 0,
+      marginTop: props.style ? props.style.marginTop : 0,
+      marginLeft: props.style ? props.style.marginLeft : 0,
+      marginRight: props.style ? props.style.marginRight : 0,
     },
     badgeContainerLarge: {
       width: 30,
