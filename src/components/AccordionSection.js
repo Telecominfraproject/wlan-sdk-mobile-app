@@ -27,6 +27,13 @@ const AccordionSection = props => {
 
   const accordionSectionStyle = StyleSheet.create({
     container: {
+      // Include all margins from the passed in style, if it exists
+      margin: props.style ? props.style.margin : 0,
+      marginBottom: props.style ? props.style.marginBottom : 0,
+      marginTop: props.style ? props.style.marginTop : 0,
+      marginLeft: props.style ? props.style.marginLeft : 0,
+      marginRight: props.style ? props.style.marginRight : 0,
+
       width: '100%',
     },
     touchableContainer: {
@@ -67,6 +74,7 @@ const AccordionSection = props => {
       borderBottomRightRadius: 10,
       flexDirection: 'column',
       flexWrap: 'nowrap',
+      justifyContent: 'flex-start',
       width: '100%',
     },
   });
