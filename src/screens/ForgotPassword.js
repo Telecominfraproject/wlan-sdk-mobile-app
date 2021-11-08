@@ -5,7 +5,8 @@ import { authenticationApi, handleApiError } from '../api/apiHandler';
 import { showGeneralMessage, showGeneralError } from '../Utils';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
-import { SafeAreaView, ScrollView, View, TextInput, Button, ActivityIndicator, Image, Text } from 'react-native';
+import { SafeAreaView, ScrollView, View, TextInput, ActivityIndicator, Image, Text } from 'react-native';
+import ButtonStyled from '../components/ButtonStyled';
 
 const ForgotPassword = () => {
   const brandInfo = useSelector(selectBrandInfo);
@@ -74,7 +75,7 @@ const ForgotPassword = () => {
                 />
               </View>
               <View style={pageItemStyle.containerButton}>
-                <Button title={strings.buttons.resetPassword} color={primaryColor} onPress={onSubmit} />
+                <ButtonStyled title={strings.buttons.resetPassword} type="filled" onPress={onSubmit} />
               </View>
             </>
           )}

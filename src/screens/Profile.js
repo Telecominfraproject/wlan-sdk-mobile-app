@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
-import { pageStyle, pageItemStyle, primaryColor, whiteColor, blackColor } from '../AppStyle';
+import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import {
   StyleSheet,
   SafeAreaView,
@@ -9,11 +9,11 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   ScrollView,
-  Button,
   TextInput,
 } from 'react-native';
 import { logStringifyPretty, signOut } from '../Utils';
 import { authenticationApi, emailApi, getCredentials, handleApiError, userManagementApi } from '../api/apiHandler';
+import ButtonStyled from '../components/ButtonStyled';
 import TextInputInPlaceEditing from '../components/TextInputInPlaceEditing';
 import AccordionSection from '../components/AccordionSection';
 import RadioCheckbox from '../components/RadioCheckbox';
@@ -115,7 +115,7 @@ const Profile = props => {
     signOut(props.navigation);
   };
 
-  const changePassword = () => {
+  const onChangePassword = () => {
     props.navigation.navigate('ResetPassword', {
       userId: credentials.username,
       password: credentials.password,
@@ -178,12 +178,12 @@ const Profile = props => {
 
   const styles = StyleSheet.create({
     section: {
-      alignSelf: 'stretch',
-      marginVertical: 10,
+      marginTop: 10,
     },
     item: {
-      paddingHorizontal: 10,
       paddingVertical: 5,
+      paddingHorizontal: 10,
+      minHeight: 30,
     },
     label: {
       fontWeight: 'bold',
@@ -192,22 +192,13 @@ const Profile = props => {
       textAlign: 'left',
       fontSize: 16,
     },
-    buttonContainer: {
-      marginVertical: 10,
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'space-between',
-      alignSelf: 'stretch',
+    buttonLeft: {
+      marginRight: 5,
+      flex: 1,
     },
-    button: {
-      width: '45%',
-      alignItems: 'center',
-      backgroundColor: whiteColor,
-      padding: 10,
-      // border
-      borderWidth: 1,
-      borderRadius: 5,
-      borderColor: blackColor,
+    buttonRight: {
+      marginLeft: 5,
+      flex: 1,
     },
   });
 
@@ -222,127 +213,127 @@ const Profile = props => {
           )}
 
           {/*     Account Information      */}
-          <View style={styles.section}>
-            <AccordionSection title={strings.profile.accountInfo} isLoading={loading} disableAccordion={true}>
-              <View style={styles.item}>
-                <Text style={styles.label}>{strings.profile.name}</Text>
-                {profile && (
-                  <TextInputInPlaceEditing
-                    style={styles.input}
-                    objectKey={'name'}
-                    value={profile.name}
-                    onSubmit={updateProfile}
-                  />
-                )}
-              </View>
-
-              <View style={styles.item}>
-                <Text style={styles.label}>{strings.profile.email}</Text>
-                {profile ? (
-                  <TextInputInPlaceEditing
-                    style={styles.input}
-                    objectKey={'email'}
-                    value={profile.email}
-                    onSubmit={updateProfile}
-                  />
-                ) : (
-                  <Text style={styles.input}>{credentials && credentials.username}</Text>
-                )}
-              </View>
-
-              {/*        Phone          */}
-              <View style={styles.item}>
-                <Text style={styles.label}>{strings.profile.phone}</Text>
-                {mobiles.length === 0 && (
-                  <View>
-                    <TextInput
-                      style={[pageItemStyle.inputText, styles.input]}
-                      autoCapitalize="none"
-                      keyboardType="phone-pad"
-                      textContentType="telephoneNumber"
-                      value={phone}
-                      onChangeText={text => setPhone(text)}
-                      onSubmitEditing={verifyPhone}
-                    />
-                    <Button
-                      title={strings.buttons.verify}
-                      color={primaryColor}
-                      disabled={!phone}
-                      onPress={verifyPhone}
-                    />
-                  </View>
-                )}
-              </View>
-
-              {/*     MFA       */}
+          <AccordionSection
+            style={styles.section}
+            title={strings.profile.accountInfo}
+            isLoading={loading}
+            disableAccordion={true}>
+            <View style={styles.item}>
+              <Text style={styles.label}>{strings.profile.name}</Text>
               {profile && (
-                <View style={styles.item}>
-                  <Text style={styles.label}>{strings.profile.MFA}</Text>
-                  <View>
-                    <RadioCheckbox
-                      label={strings.profile.off}
-                      checked={mfaOptions.off}
-                      onChange={() => onChangeMFA()}
-                    />
-                    <RadioCheckbox
-                      label={strings.profile.sms}
-                      checked={mfaOptions.sms}
-                      onChange={() => onChangeMFA(MfaAuthInfoMethodEnum.Sms)}
-                      disabled={mobiles.length === 0}
-                    />
-                    <RadioCheckbox
-                      label={strings.profile.email}
-                      checked={mfaOptions.email}
-                      onChange={() => onChangeMFA(MfaAuthInfoMethodEnum.Email)}
-                    />
-                    <RadioCheckbox
-                      label={strings.profile.voice}
-                      checked={mfaOptions.voice}
-                      onChange={() => onChangeMFA(MfaAuthInfoMethodEnum.Voice)}
-                    />
-                  </View>
-                </View>
+                <TextInputInPlaceEditing
+                  style={styles.input}
+                  objectKey={'name'}
+                  value={profile.name}
+                  onSubmit={updateProfile}
+                />
               )}
-            </AccordionSection>
-          </View>
+            </View>
+
+            <View style={styles.item}>
+              <Text style={styles.label}>{strings.profile.email}</Text>
+              {profile ? (
+                <TextInputInPlaceEditing
+                  style={styles.input}
+                  objectKey={'email'}
+                  value={profile.email}
+                  onSubmit={updateProfile}
+                />
+              ) : (
+                <Text style={styles.input}>{credentials && credentials.username}</Text>
+              )}
+            </View>
+
+            {/*        Phone          */}
+            <View style={styles.item}>
+              <Text style={styles.label}>{strings.profile.phone}</Text>
+              <TextInput
+                style={[pageItemStyle.inputText, styles.input]}
+                autoCapitalize="none"
+                keyboardType="phone-pad"
+                textContentType="telephoneNumber"
+                value={phone}
+                onChangeText={text => setPhone(text)}
+                onSubmitEditing={verifyPhone}
+              />
+              <View style={pageItemStyle.containerButton}>
+                <ButtonStyled title={strings.buttons.verify} type="filled" onPress={verifyPhone} disabled={!phone} />
+              </View>
+            </View>
+
+            {/*     MFA       */}
+            {profile && (
+              <View style={styles.item}>
+                <Text style={styles.label}>{strings.profile.MFA}</Text>
+                <View>
+                  <RadioCheckbox label={strings.profile.off} checked={mfaOptions.off} onChange={() => onChangeMFA()} />
+                  <RadioCheckbox
+                    label={strings.profile.sms}
+                    checked={mfaOptions.sms}
+                    onChange={() => onChangeMFA(MfaAuthInfoMethodEnum.Sms)}
+                    disabled={mobiles.length === 0}
+                  />
+                  <RadioCheckbox
+                    label={strings.profile.email}
+                    checked={mfaOptions.email}
+                    onChange={() => onChangeMFA(MfaAuthInfoMethodEnum.Email)}
+                  />
+                  <RadioCheckbox
+                    label={strings.profile.voice}
+                    checked={mfaOptions.voice}
+                    onChange={() => onChangeMFA(MfaAuthInfoMethodEnum.Voice)}
+                  />
+                </View>
+              </View>
+            )}
+          </AccordionSection>
 
           {/*             Buttons               */}
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={changePassword}>
-              <Text>{strings.buttons.changePassword}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.button} onPress={onSignOutPress}>
-              <Text>{strings.buttons.signOut}</Text>
-            </TouchableOpacity>
+          <View style={pageItemStyle.containerButtons}>
+            <ButtonStyled
+              style={styles.buttonLeft}
+              title={strings.buttons.changePassword}
+              type="outline"
+              onPress={onChangePassword}
+            />
+            <ButtonStyled
+              style={styles.buttonRight}
+              title={strings.buttons.signOut}
+              type="outline"
+              onPress={onSignOutPress}
+            />
           </View>
 
           {/*        Notifications         */}
-          <View style={styles.section}>
-            <AccordionSection title={strings.profile.notifications} isLoading={loading} disableAccordion={true}>
-              <TouchableOpacity onPress={notificationPref}>
-                <View style={styles.item}>
-                  <Text>{strings.profile.notificationPref}</Text>
-                </View>
-              </TouchableOpacity>
+          <AccordionSection
+            style={styles.section}
+            title={strings.profile.notifications}
+            isLoading={loading}
+            disableAccordion={true}>
+            <TouchableOpacity onPress={notificationPref}>
+              <View style={styles.item}>
+                <Text>{strings.profile.notificationPref}</Text>
+              </View>
+            </TouchableOpacity>
 
-              <TouchableOpacity onPress={notificationHistory}>
-                <View style={styles.item}>
-                  <Text>{strings.profile.notificationHistory}</Text>
-                </View>
-              </TouchableOpacity>
-            </AccordionSection>
-          </View>
+            <TouchableOpacity onPress={notificationHistory}>
+              <View style={styles.item}>
+                <Text>{strings.profile.notificationHistory}</Text>
+              </View>
+            </TouchableOpacity>
+          </AccordionSection>
 
           {/*         App            */}
-          <View style={styles.section}>
-            <AccordionSection title={strings.profile.app} isLoading={loading} disableAccordion={true}>
-              <View style={styles.item}>
-                <Text style={styles.label}>{strings.profile.version}</Text>
-                <Text style={styles.input}>{'123'}</Text>
-              </View>
-            </AccordionSection>
-          </View>
+          <AccordionSection
+            style={styles.section}
+            title={strings.profile.app}
+            isLoading={loading}
+            disableAccordion={true}>
+            <View style={styles.item}>
+              <Text style={styles.label}>{strings.profile.version}</Text>
+              <Text style={styles.input}>{'123'}</Text>
+            </View>
+          </AccordionSection>
         </View>
       </ScrollView>
     </SafeAreaView>

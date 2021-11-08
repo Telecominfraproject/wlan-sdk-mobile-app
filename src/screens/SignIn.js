@@ -15,6 +15,7 @@ import {
   TextInput,
   ActivityIndicator,
 } from 'react-native';
+import ButtonStyled from '../components/ButtonStyled';
 import { logStringifyPretty, showGeneralError } from '../Utils';
 import {
   handleApiError,
@@ -212,29 +213,21 @@ const SignIn = props => {
                   onSubmitEditing={() => onSignInPress()}
                 />
               </View>
-              <View style={pageItemStyle.containerButtonText}>
-                <Text style={[pageItemStyle.buttonText, primaryColorStyle]} onPress={onForgotPasswordPress}>
-                  {strings.buttons.forgotPassword}
-                </Text>
+              <View style={pageItemStyle.containerButton}>
+                <ButtonStyled title={strings.buttons.forgotPassword} type="text" onPress={onForgotPasswordPress} />
               </View>
               <View style={pageItemStyle.containerButton}>
-                <Button title={strings.buttons.signIn} color={primaryColor} onPress={onSignInPress} />
+                <ButtonStyled title={strings.buttons.signIn} type="filled" onPress={onSignInPress} />
               </View>
             </View>
           )}
           <View style={signInStyle.fillView} />
-          <View style={pageItemStyle.containerButtonText}>
-            <Text style={[pageItemStyle.buttonText, primaryColorStyle]} onPress={onChangeBrandPress}>
-              {strings.buttons.changeBrand}
-            </Text>
+          <View style={pageItemStyle.containerButton}>
+            <ButtonStyled title={strings.buttons.changeBrand} type="text" onPress={onChangeBrandPress} />
           </View>
-          <View style={[pageItemStyle.containerButtonText]}>
-            <Text style={[pageItemStyle.buttonText, primaryColorStyle]} onPress={onPrivacyPolicyPress}>
-              {strings.buttons.privacyPolicy}
-            </Text>
-            <Text style={[pageItemStyle.buttonText, primaryColorStyle]} onPress={onTermsConditionsPress}>
-              {strings.buttons.termsConditions}
-            </Text>
+          <View style={pageItemStyle.containerButtons}>
+            <ButtonStyled title={strings.buttons.privacyPolicy} type="text" onPress={onPrivacyPolicyPress} />
+            <ButtonStyled title={strings.buttons.termsConditions} type="text" onPress={onTermsConditionsPress} />
           </View>
         </View>
       </ScrollView>

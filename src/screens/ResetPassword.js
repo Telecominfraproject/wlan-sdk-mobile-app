@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
-import { View, Text, TextInput, Button, Alert, ActivityIndicator } from 'react-native';
 import { strings } from '../localization/LocalizationStrings';
+import { pageStyle, pageItemStyle } from '../AppStyle';
+import { StyleSheet, View, Text, TextInput, Alert, ActivityIndicator } from 'react-native';
+import ButtonStyled from '../components/ButtonStyled';
 import { authenticationApi, handleApiError } from '../api/apiHandler';
 import { logStringifyPretty, showGeneralMessage } from '../Utils';
 
@@ -85,6 +86,12 @@ export default function ResetPassword(props) {
     return reg.test(passwordToCheck);
   };
 
+  const resetPasswordStyle = StyleSheet.create({
+    requirementsContainer: {
+      marginTop: 20,
+    },
+  });
+
   return (
     <View style={pageStyle.container}>
       {loading && (
@@ -118,15 +125,15 @@ export default function ResetPassword(props) {
         />
       </View>
       <View style={pageItemStyle.containerButton}>
-        <Button
+        <ButtonStyled
           title={strings.buttons.submit}
-          color={primaryColor}
+          type="filled"
           onPress={onSubmit}
           disabled={loading || !newPassword || !confirmPassword}
         />
       </View>
       <View style={pageItemStyle.container}>
-        <View>
+        <View style={resetPasswordStyle.requirementsContainer}>
           <Text>{`\u2022 ${strings.passwordRequirements.req1}`}</Text>
           <Text>{`\u2022 ${strings.passwordRequirements.req2}`}</Text>
           <Text>{`\u2022 ${strings.passwordRequirements.req3}`}</Text>

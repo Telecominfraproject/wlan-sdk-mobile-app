@@ -6,7 +6,9 @@ export var blackColor = '#101010';
 export var whiteColor = '#ffffff';
 
 export var grayBackgroundcolor = '#eeeeee';
+export var grayLightColor = '#dddddd';
 export var grayColor = '#bbbbbb';
+export var grayDarkColor = '#777777';
 
 // Primary color - branded
 export var primaryColor = '#2194f3';
@@ -85,18 +87,20 @@ export const pageItemStyle = StyleSheet.create({
   },
   containerButton: {
     marginTop: 20,
-    height: 40,
-    borderRadius: 6,
+    // Layout
+    flexDirection: 'column',
+    flexWrap: 'nowrap',
+    justifyContent: 'center',
+    alignItems: 'stretch',
     width: '100%',
   },
-  containerButtonText: {
+  containerButtons: {
     marginTop: 20,
     // Layout
     flexDirection: 'row',
     flexWrap: 'nowrap',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    justifyContent: 'space-around',
-
     width: '100%',
   },
   inputText: {
@@ -114,8 +118,5 @@ export const pageItemStyle = StyleSheet.create({
     // Text
     fontSize: 14,
     textAlign: 'left',
-  },
-  buttonText: {
-    textAlign: 'center',
   },
 });

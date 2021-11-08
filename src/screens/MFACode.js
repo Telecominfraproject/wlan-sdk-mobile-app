@@ -1,17 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { pageItemStyle, pageStyle, primaryColor, primaryColorStyle } from '../AppStyle';
-import { SafeAreaView, ScrollView, ActivityIndicator, Button, Text, TextInput, View } from 'react-native';
+import React, { useState } from 'react';
+import { pageItemStyle, pageStyle, primaryColor } from '../AppStyle';
+import { SafeAreaView, ScrollView, ActivityIndicator, TextInput, View } from 'react-native';
+import ButtonStyled from '../components/ButtonStyled';
 import { strings } from '../localization/LocalizationStrings';
-import {
-  authenticationApi,
-  clearCredentials,
-  handleApiError,
-  hasCredentials,
-  setApiSystemInfo,
-} from '../api/apiHandler';
-import { logStringifyPretty, showGeneralError, showGeneralMessage, signOut } from '../Utils';
-import { setSession } from '../store/SessionSlice';
-import { useDispatch } from 'react-redux';
+import { authenticationApi, handleApiError, setApiSystemInfo } from '../api/apiHandler';
+import { logStringifyPretty, showGeneralMessage, signOut } from '../Utils';
 
 export default function MFACode(props) {
   const { uuid, credentials } = props.route.params;
@@ -122,20 +115,18 @@ export default function MFACode(props) {
             />
           </View>
           <View style={pageItemStyle.containerButton}>
-            <Text style={[pageItemStyle.buttonText, primaryColorStyle]} onPress={resendValidationCode}>
-              {strings.buttons.resendCode}
-            </Text>
+            <ButtonStyled title={strings.buttons.resendCode} type="text" onPress={resendValidationCode} />
           </View>
           <View style={pageItemStyle.containerButton}>
-            <Button
+            <ButtonStyled
               title={strings.buttons.submit}
-              color={primaryColor}
+              type="filled"
               onPress={validateCode}
               disabled={loading || !code}
             />
           </View>
           <View style={pageItemStyle.containerButton}>
-            <Button title={strings.buttons.signOut} color={primaryColor} onPress={onSignOutPress} disabled={loading} />
+            <ButtonStyled title={strings.buttons.signOut} type="outline" onPress={onSignOutPress} disabled={loading} />
           </View>
         </View>
       </ScrollView>
