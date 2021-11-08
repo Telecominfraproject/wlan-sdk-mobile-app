@@ -4,6 +4,8 @@ import { store } from './store/Store';
 // Basic colours
 export var blackColor = '#101010';
 export var whiteColor = '#ffffff';
+
+export var grayBackgroundcolor = '#eeeeee';
 export var grayColor = '#bbbbbb';
 
 // Primary color - branded
@@ -34,9 +36,7 @@ export const pageStyle = StyleSheet.create({
   safeAreaView: {
     flex: 1,
   },
-  scrollView: {
-    flex: 1,
-  },
+  scrollView: {},
   container: {
     // Layout
     flexDirection: 'column',
@@ -49,7 +49,7 @@ export const pageStyle = StyleSheet.create({
     paddingBottom: 35,
     paddingRight: 35,
     paddingLeft: 35,
-    backgroundColor: '#eeeeee',
+    backgroundColor: grayBackgroundcolor,
     // Base Text
     fontSize: 14,
     color: blackColor,

@@ -43,10 +43,8 @@ const DeviceItem = props => {
       flex: 1,
       justifyContent: 'space-between',
       alignItems: 'center',
-      paddingTop: 20,
-      paddingBottom: 20,
-      paddingRight: 10,
-      paddingLeft: 10,
+      paddingVertical: 5,
+      paddingHorizontal: 10,
     },
     icon: {
       width: 30,

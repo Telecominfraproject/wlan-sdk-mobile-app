@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { strings } from '../localization/LocalizationStrings';
-import { pageStyle, pageItemStyle } from '../AppStyle';
+import { pageStyle } from '../AppStyle';
 import { View, ScrollView, SafeAreaView } from 'react-native';
 import { devicesApi, handleApiError } from '../api/apiHandler';
 import DeviceItem from '../components/DeviceItem';
@@ -38,13 +38,11 @@ const DeviceList = props => {
     <SafeAreaView style={pageStyle.safeAreaView}>
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.container}>
-          <View style={pageItemStyle.container}>
-            <AccordionSection title="Devices" isLoading={loading}>
-              {devices.map(item => {
-                return <DeviceItem device={item} onPress={onDevicePress} key={item.UUID} />;
-              })}
-            </AccordionSection>
-          </View>
+          <AccordionSection title="Devices" isLoading={loading}>
+            {devices.map(item => {
+              return <DeviceItem device={item} onPress={onDevicePress} key={item.UUID} />;
+            })}
+          </AccordionSection>
         </View>
       </ScrollView>
     </SafeAreaView>
