@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { setBrandInfo } from '../store/BrandInfoSlice';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
-import { SafeAreaView, ScrollView, StyleSheet, View, Text, TextInput, ActivityIndicator } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, View, Text, ActivityIndicator } from 'react-native';
 import BrandItem from '../components/BrandItem';
 import TextInputWithIcon from '../components/TextInputWithIcon';
 
