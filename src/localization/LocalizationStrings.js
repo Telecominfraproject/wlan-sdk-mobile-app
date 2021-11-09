@@ -9,6 +9,7 @@ export const strings = new LocalizedStrings({
       emptyFields: 'Please fill in all fields',
       failedToConnect: 'Failed to connect to server, check connections.',
       internal: 'Internal error.',
+      invalidCode: 'Invalid code.',
       invalidEmail: 'Invalid email provided.',
       mismatchPassword: 'Password mismatch.',
       missingEndpoints: 'System is not set up correct - missing configuration information.',
@@ -21,6 +22,7 @@ export const strings = new LocalizedStrings({
       titleMFA: 'MFA Error',
       token: 'Credentials no longer valid, please sign-in again.',
       unknown: 'Unknown error.',
+      validationError: 'Validation Error',
     },
     messages: {
       requestSent: 'Request successfully sent.',
@@ -29,6 +31,7 @@ export const strings = new LocalizedStrings({
       titleMessage: 'Message',
     },
     placeholders: {
+      addPhone: 'Add Phone',
       code: 'Code',
       confirmPassword: 'Confirm Password',
       email: 'Email',
@@ -45,10 +48,12 @@ export const strings = new LocalizedStrings({
       privacyPolicy: 'Privacy Policy',
       resendCode: 'Resend Code',
       resetPassword: 'Reset Password',
+      sendCode: 'Send Code',
       signIn: 'Sign In',
       signOut: 'Sign Out',
       submit: 'Submit',
       termsConditions: 'Terms & Conditions',
+      validate: 'Validate',
       verify: 'Verify',
     },
     brandSelector: {

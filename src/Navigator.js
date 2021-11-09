@@ -19,6 +19,7 @@ import DeviceDetails from './screens/DeviceDetails';
 import Network from './screens/Network';
 import Profile from './screens/Profile';
 import { primaryColor } from './AppStyle';
+import PhoneVerification from './screens/PhoneVerification';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -115,6 +116,11 @@ const Navigator = props => {
         <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} options={{ title: 'Privacy Policy' }} />
         <Stack.Screen name="TermsConditions" component={TermsConditions} options={{ title: 'Terms & Conditions' }} />
         <Stack.Screen name="MFACode" component={MFACode} options={{ title: 'Multi-factor Authentication' }} />
+        <Stack.Screen
+          name="PhoneVerification"
+          component={PhoneVerification}
+          options={{ title: 'Phone Verification' }}
+        />
         <Stack.Screen name="Main" component={TabScreens} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
