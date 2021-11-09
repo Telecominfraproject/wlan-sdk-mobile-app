@@ -64,6 +64,18 @@ components:
                 type: string
               Code:
                 type: integer
+    Error:
+      description: The requested operation was performed.
+      content:
+        application/json:
+          schema:
+            properties:
+              Operation:
+                type: string
+              Details:
+                type: string
+              Code:
+                type: integer
     BadRequest:
       description: The requested operation was performed.
       content:
@@ -78,13 +90,19 @@ components:
                 type: integer
 
   schemas:
-    HomeDeviceModeAutomatic:
+    HomeDeviceMode:
       type: object
       properties:
         type:
           type: string
           enum:
+            - bridge
+            - manual
             - automatic
+          default: automatic
+        enableLEDS:
+          type: boolean
+          default: true
         subnet:
           type: string
           format: ipv4
@@ -97,31 +115,12 @@ components:
         endIP:
           type: string
           format: ipv4
-
-    HomeDeviceModeManual:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-            - manual
-
-    HomeDeviceModeBridge:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-            - bridge
-
-    HomeDeviceMode:
-      type: object
-      properties:
-        type:
-          oneOf:
-            - $ref: '#/components/schemas/HomeDeviceModeAutomatic'
-            - $ref: '#/components/schemas/HomeDeviceModeManual'
-            - $ref: '#/components/schemas/HomeDeviceModeBridge'
+        created:
+          type: integer
+          format: int64
+        modified:
+          type: integer
+          format: int64
 
     IPReservation:
       type: object
@@ -135,6 +134,20 @@ components:
           type: string
           format: mac-address
 
+    IPReservationList:
+      type: object
+      properties:
+        created:
+          type: integer
+          format: int64
+        modified:
+          type: integer
+          format: int64
+        reservations:
+          type: array
+          items:
+            $ref: '#/components/schemas/IPReservation'
+
     DnsConfiguration:
       type: object
       properties:
@@ -142,43 +155,26 @@ components:
           type: boolean
         custom:
           type: boolean
-        customSettings:
-          type: object
-          properties:
-            primary:
-              type: string
-              format: ipv4
-            seconfary:
-              type: string
-              format: ipv4
+        primary:
+          type: string
+          format: ipv4
+        seconfary:
+          type: string
+          format: ipv4
 
-    InternetConnectionAutomatic:
+    InternetConnection:
       type: object
       properties:
-        connection:
+        type:
           type: string
           enum:
-            - automatic
-
-    InternetConnectionPPPoE:
-      type: object
-      properties:
-        connection:
-          type: string
-          enum:
+            - manual
             - pppoe
+            - automatic
         username:
           type: string
         password:
           type: string
-
-    InternetConnectionManual:
-      type: object
-      properties:
-        connection:
-          type: string
-          enum:
-            - manual
         ipAddress:
           type: string
           format: ipv4
@@ -194,15 +190,12 @@ components:
         secondaryDns:
           type: string
           format: ipv4
-
-    InternetConnection:
-      type: object
-      properties:
-        type:
-          oneOf:
-            - $ref: '#/components/schemas/InternetConnectionAutomatic'
-            - $ref: '#/components/schemas/InternetConnectionPPPoE'
-            - $ref: '#/components/schemas/InternetConnectionManual'
+        created:
+          type: integer
+          format: int64
+        modified:
+          type: integer
+          format: int64
 
     WifiNetwork:
       type: object
@@ -218,7 +211,7 @@ components:
           type: string
         encryption:
           type: string
-        band:
+        bands:
           type: array
           items:
             type: string
@@ -227,10 +220,27 @@ components:
               - 5G
               - 5GL
               - 5GU
+              - 6G
+
+    WifiNetworkList:
+      type: object
+      properties:
+        created:
+          type: integer
+          format: int64
+        modified:
+          type: integer
+          format: int64
+        networks:
+          type: array
+          items:
+            $ref: '#/components/schemas/WifiNetwork'
 
     AccessTime:
       type: object
       properties:
+        description:
+          type: string
         day:
           type: string
         rangeList:
@@ -241,6 +251,14 @@ components:
     AccessTimes:
       type: object
       properties:
+        description:
+          type: string
+        created:
+          type: integer
+          format: int64
+        modified:
+          type: integer
+          format: int64
         schedule:
           type: array
           items:
@@ -272,12 +290,24 @@ components:
           type: boolean
         ip:
           type: string
+        created:
+          type: integer
+          format: int64
+        modified:
+          type: integer
+          format: int64
         schedule:
           $ref: '#/components/schemas/AccessTimes'
 
     SubscriberDeviceList:
       type: object
       properties:
+        created:
+          type: integer
+          format: int64
+        modified:
+          type: integer
+          format: int64
         devices:
           type: array
           items:
@@ -306,6 +336,12 @@ components:
     AssociationList:
       type: object
       properties:
+        created:
+          type: integer
+          format: int64
+        modified:
+          type: integer
+          format: int64
         associations:
           type: array
           items:
@@ -332,13 +368,206 @@ components:
     ClientList:
       type: object
       properties:
+        created:
+          type: integer
+          format: int64
+          readOnly: true
+        modified:
+          type: integer
+          format: int64
+          readOnly: true
         clients:
           type: array
           items:
             $ref: '#/components/schemas/Client'
 
+    Location:
+      type: object
+      properties:
+        buildingName:
+          type: string
+        addressLines:
+          type: array
+          items:
+            type: string
+        city:
+          type: string
+        state:
+          type: string
+        postal:
+          type: string
+        country:
+          type: string
+        phones:
+          type: array
+          items:
+            type: string
+        mobiles:
+          type: array
+          items:
+            type: string
+
+    AccessPoint:
+      type: object
+      properties:
+        macAddress:
+          type: string
+        name:
+          type: string
+        id:
+          type: string
+          format: uuid
+        address:
+          $ref: '#/components/schemas/Location'
+
+    AccessPointList:
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccessPoint'
+
+    SubscriberInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        userId:
+          type: string
+          format: uuid
+          readOnly: true
+        firstName:
+          type: string
+        initials:
+          type: string
+        lastName:
+          type: string
+        phoneNumber:
+          type: string
+        secondaryEmail:
+          type: string
+          format: email
+        accessPoints:
+          readOnly: true
+          $ref: '#/components/schemas/AccessPointList'
+        serviceAddress:
+          $ref: '#/components/schemas/Location'
+        billingAddress:
+          $ref: '#/components/schemas/Location'
+        created:
+          type: integer
+          format: int64
+          readOnly: true
+        modified:
+          type: integer
+          format: int64
+          readOnly: true
+
+    PasswordChange:
+      type: object
+      properties:
+        oldPassword:
+          type: string
+          format: password
+        newPassword:
+          type: string
+          format: password
+
+    PasswordCreation:
+      type: object
+      properties:
+        newPassword:
+          type: string
+          format: password
 
 paths:
+  /accessPoints:
+    get:
+      tags:
+        - Access Points
+      summary: Retrieve information about user devices
+      operationId: getSubscriberAccessPointList
+      responses:
+        200:
+          $ref: '#/components/schemas/AccessPointList'
+    post:
+      tags:
+        - Access Points
+      summary: Add/register a new device for a subscriber
+      operationId: addSubscriberAccessPoint
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccessPoint'
+      responses:
+        200:
+          $ref: '#/components/schemas/AccessPointList'
+        400:
+          $ref: '#/components/responses/BadRequest'
+    put:
+      tags:
+        - Access Points
+      summary: Modify an existing device for a subscriber
+      operationId: modifySubscriberAccessPoint
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccessPoint'
+      responses:
+        200:
+          $ref: '#/components/schemas/AccessPointList'
+        400:
+          $ref: '#/components/responses/BadRequest'
+    delete:
+      tags:
+        - Access Points
+      summary: Delete an access point that is no longer in use.
+      operationId: deleteSubscriberAccessPoint
+      parameters:
+        - in: query
+          name: deviceId
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        200:
+          $ref: '#/components/responses/Success'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  /subscriber:
+    get:
+      tags:
+        - Subscriber Information
+      summary: Get the information about the subscriber
+      operationId: getSubscriberInfo
+      responses:
+        200:
+          $ref: '#/components/schemas/SubscriberInfo'
+    put:
+      tags:
+        - Subscriber Information
+      summary: Modify the information stored about the subscriber
+      operationId: modifySubscriberInfo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriberInfo'
+      responses:
+        200:
+          $ref: '#/components/schemas/SubscriberInfo'
+        400:
+          $ref: '#/components/responses/Error'
+
   /internetConnection:
     get:
       tags:
@@ -346,6 +575,12 @@ paths:
       summary: Read the current internet connection settings
       operationId: getInternetConnectionSettings
       parameters:
+        - in: query
+          name: deviceId
+          schema:
+            type: string
+            format: uuid
+          required: true
         - in: query
           name: default
           schema:
@@ -357,9 +592,17 @@ paths:
           $ref: '#/components/schemas/InternetConnection'
 
     put:
+      tags:
+        - Internet Connection
       summary: Modify the current internet connection settings
       operationId: modifyInternetConnectionSettings
       parameters:
+        - in: query
+          name: deviceId
+          schema:
+            type: string
+            format: uuid
+          required: true
         - in: query
           name: reset
           schema:
@@ -387,6 +630,12 @@ paths:
       operationId: getHomeDeviceMode
       parameters:
         - in: query
+          name: deviceId
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: query
           name: default
           schema:
             type: boolean
@@ -396,9 +645,17 @@ paths:
         200:
           $ref: '#/components/schemas/HomeDeviceMode'
     put:
+      tags:
+        - Device Mode
       summary: Modify the current device mode settings
       operationId: modifyHomeDeviceMode
       parameters:
+        - in: query
+          name: deviceId
+          schema:
+            type: string
+            format: uuid
+          required: true
         - in: query
           name: reset
           schema:
@@ -423,18 +680,20 @@ paths:
         - IP Reservations
       summary: Retreive the list of IP Reservations
       operationId: getIPReservationList
+      parameters:
+        - in: query
+          name: deviceId
+          schema:
+            type: string
+            format: uuid
+          required: true
       responses:
         200:
           description: Successfully retrieved list of IP Reservations
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  reservations:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/IPReservation'
+                $ref: '#/components/schemas/IPReservationList'
     put:
       tags:
         - IP Reservations
@@ -442,18 +701,30 @@ paths:
       operationId: addIPReservation
       parameters:
         - in: query
+          name: deviceId
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: query
           name: replace
           schema:
             type: boolean
             default: false
           required: false
+      requestBody:
+        description: List of IP reservations to maintain for this device.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IPReservationList'
       responses:
         200:
-          description: Reservation added
+          description: Reservations modified
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/IPReservation'
+                $ref: '#/components/schemas/IPReservationList'
         400:
           $ref: '#/components/responses/BadRequest'
 
@@ -463,6 +734,12 @@ paths:
       summary: Delete an IP Reservation
       operationId: deleteIPReservation
       parameters:
+        - in: query
+          name: deviceId
+          schema:
+            type: string
+            format: uuid
+          required: true
         - in: query
           name: macAddress
           schema:
@@ -483,10 +760,16 @@ paths:
   /wifiNetworks:
     get:
       tags:
-        - WiFi
+        - WiFi Networks
       summary: Get the list of defined WiFI networks
       operationId: getWifiNetworks
       parameters:
+        - in: query
+          name: deviceId
+          schema:
+            type: string
+            format: uuid
+          required: true
         - in: query
           name: default
           schema:
@@ -505,10 +788,16 @@ paths:
 
     put:
       tags:
-        - WiFi
+        - WiFi Networks
       summary: Update the list of WiFi networks
       operationId: modifyWiFiNetworks
       parameters:
+        - in: query
+          name: deviceId
+          schema:
+            type: string
+            format: uuid
+          required: true
         - in: query
           name: reset
           schema:
@@ -533,6 +822,13 @@ paths:
         - Clients
       summary: Get the list of wired clients
       operationId: getWiredClients
+      parameters:
+        - in: query
+          name: deviceId
+          schema:
+            type: string
+            format: uuid
+          required: true
       responses:
         200:
           description: Successfully retrieved client list
@@ -544,9 +840,16 @@ paths:
   /wifiClients:
     get:
       tags:
-        - Clients
+        - WiFi Clients
       summary: Get the list of wired clients
       operationId: getWifiClients
+      parameters:
+        - in: query
+          name: deviceId
+          schema:
+            type: string
+            format: uuid
+          required: true
       responses:
         200:
           description: Successfully retrieved client list
@@ -555,13 +858,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/AssociationList'
 
-
   /subscriberDevices:
     get:
       tags:
         - Subscriber Devices
       summary: Get the list of subscriber devices
       operationId: getSubscriberDevices
+      parameters:
+        - in: query
+          name: deviceId
+          schema:
+            type: string
+            format: uuid
+          required: true
       responses:
         200:
           description: Successfully retrieve subscriber devices
@@ -575,6 +884,12 @@ paths:
       summary: Update the list of subscriber devices
       operationId: modifySubscriberDevices
       parameters:
+        - in: query
+          name: deviceId
+          schema:
+            type: string
+            format: uuid
+          required: true
         - in: query
           name: reset
           schema:
@@ -594,5 +909,60 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SubscriberDeviceList'
+        400:
+          $ref: '#/components/responses/BadRequest'
+
+  /login:
+    post:
+      tags:
+        - Access Process
+      summary: User is requesting a signup for a new user ID
+      operationId: userSignUp
+      parameters:
+        - in: query
+          name: action
+          required: true
+          schema:
+            type: string
+            enum:
+              - signUp
+              - verifyEmail
+              - forgotPassword
+              - setpassword
+        - in: query
+          name: email
+          required: true
+          schema:
+            type: string
+            format: email
+        - in: query
+          name: id
+          required: false
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/PasswordChange'
+                - $ref: '#/components/schemas/PasswordCreation'
+      responses:
+        200:
+          description: signup in progress
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  error:
+                    type: string
+                  errorCode:
+                    type: integer
         400:
           $ref: '#/components/responses/BadRequest'
