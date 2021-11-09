@@ -1,23 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
-import {
-  StyleSheet,
-  SafeAreaView,
-  View,
-  Text,
-  ActivityIndicator,
-  TouchableOpacity,
-  ScrollView,
-  TextInput,
-} from 'react-native';
-import { logStringifyPretty, signOut } from '../Utils';
+import { StyleSheet, SafeAreaView, View, Text, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
+import { logStringifyPretty, showGeneralMessage, signOut } from '../Utils';
 import { authenticationApi, emailApi, getCredentials, handleApiError, userManagementApi } from '../api/apiHandler';
 import ButtonStyled from '../components/ButtonStyled';
 import TextInputInPlaceEditing from '../components/TextInputInPlaceEditing';
 import AccordionSection from '../components/AccordionSection';
 import RadioCheckbox from '../components/RadioCheckbox';
 import { MfaAuthInfoMethodEnum } from '../api/generated/owSecurityApi';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Profile = props => {
   const [loading, setLoading] = useState(false);
@@ -30,11 +22,14 @@ const Profile = props => {
   });
   const [mfaOptions, setMfaOptions] = useState({ off: true, sms: false, email: false, voice: false, method: '' });
   const [mobiles, setMobiles] = useState([]);
-  const [phone, setPhone] = useState();
 
-  useEffect(() => {
-    getCred();
-  }, []);
+  // on profile tab focus
+  useFocusEffect(
+    useCallback(() => {
+      getCred();
+      return () => {};
+    }, []),
+  );
 
   useEffect(() => {
     if (credentials) {
@@ -72,10 +67,10 @@ const Profile = props => {
     if (profile) {
       let obj = { ...profile, ...val };
       updateUser(obj);
-      setProfile(obj);
     }
   };
 
+  // call updateUser in api
   const updateUser = async data => {
     try {
       setLoading(true);
@@ -86,6 +81,7 @@ const Profile = props => {
       };
       const response = await userManagementApi.updateUser(data.Id, undefined, userInfo);
       logStringifyPretty(response.data);
+      setProfile(response.data);
     } catch (error) {
       handleApiError('updateUser Error', error);
     } finally {
@@ -146,15 +142,18 @@ const Profile = props => {
       default:
         options.method = '';
     }
-    updateMFA(options);
     setMfaOptions(options);
   };
 
-  const updateMFA = options => {
+  useEffect(() => {
+    updateMFA();
+  }, [mfaOptions]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const updateMFA = () => {
     const propInfo = {
       mfa: {
-        enabled: !options.off,
-        method: options.method,
+        enabled: !mfaOptions.off,
+        method: mfaOptions.method,
       },
       mobiles: mobiles,
     };
@@ -162,20 +161,55 @@ const Profile = props => {
   };
 
   // Phone Numbers
-  const verifyPhone = async () => {
-    try {
-      const smsInfo = {
-        from: '+1 (819) 272-5460',
-        to: phone,
-        text: '',
-      };
-      const response = await emailApi.sendATestSMS(true, undefined, undefined, smsInfo);
-      logStringifyPretty(response.data);
-    } catch (err) {
-      handleApiError('verifyPhone', err);
+  useEffect(() => {
+    if (profile) {
+      setMobiles(profile.userTypeProprietaryInfo.mobiles);
+    }
+  }, [profile]);
+
+  const getPhoneNumbers = () => {
+    if (!profile) {
+      return;
+    }
+    if (mobiles.length > 0) {
+      return mobiles.map((mobile, index) => (
+        <TextInputInPlaceEditing
+          key={index}
+          style={styles.input}
+          value={mobile.number}
+          onSubmit={phone => sendSmsCode(phone)}
+        />
+      ));
+    } else {
+      return (
+        <TextInputInPlaceEditing
+          style={styles.input}
+          placeholder={strings.placeholders.addPhone}
+          onSubmit={phone => sendSmsCode(phone)}
+        />
+      );
     }
   };
 
+  const sendSmsCode = async phone => {
+    let success = false;
+    try {
+      setLoading(true);
+      const response = await emailApi.sendATestSMS(true, undefined, undefined, { to: phone });
+      logStringifyPretty(response.data);
+      showGeneralMessage(response.data.Details);
+      success = true;
+    } catch (err) {
+      handleApiError('sendSmsCode', err);
+    } finally {
+      setLoading(false);
+      if (success) {
+        props.navigation.navigate('PhoneVerification', { phone, profile });
+      }
+    }
+  };
+
+  // Styles
   const styles = StyleSheet.create({
     section: {
       marginTop: 10,
@@ -247,18 +281,7 @@ const Profile = props => {
             {/*        Phone          */}
             <View style={styles.item}>
               <Text style={styles.label}>{strings.profile.phone}</Text>
-              <TextInput
-                style={[pageItemStyle.inputText, styles.input]}
-                autoCapitalize="none"
-                keyboardType="phone-pad"
-                textContentType="telephoneNumber"
-                value={phone}
-                onChangeText={text => setPhone(text)}
-                onSubmitEditing={verifyPhone}
-              />
-              <View style={pageItemStyle.containerButton}>
-                <ButtonStyled title={strings.buttons.verify} type="filled" onPress={verifyPhone} disabled={!phone} />
-              </View>
+              {getPhoneNumbers()}
             </View>
 
             {/*     MFA       */}
@@ -282,6 +305,7 @@ const Profile = props => {
                     label={strings.profile.voice}
                     checked={mfaOptions.voice}
                     onChange={() => onChangeMFA(MfaAuthInfoMethodEnum.Voice)}
+                    disabled={mobiles.length === 0}
                   />
                 </View>
               </View>

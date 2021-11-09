@@ -10,6 +10,7 @@ export default function TextInputInPlaceEditing(props) {
   const inputRef = useRef();
   const style = props.style ?? {};
   const objectKey = props.objectKey;
+  const placeholder = props.placeholder;
 
   useEffect(() => {
     if (edit) {
@@ -70,12 +71,13 @@ export default function TextInputInPlaceEditing(props) {
             ref={inputRef}
             style={[pageItemStyle.inputText, styles.input]}
             value={value}
+            placeholder={placeholder}
             onBlur={onSubmit}
             onChangeText={text => setValue(text)}
             onSubmitEditing={onSubmit}
           />
         ) : (
-          <Text style={styles.input}>{value}</Text>
+          <Text style={styles.input}>{value ?? placeholder}</Text>
         )}
       </Pressable>
     </View>
