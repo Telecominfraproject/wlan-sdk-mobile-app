@@ -18,7 +18,7 @@ import DeviceList from './screens/DeviceList';
 import DeviceDetails from './screens/DeviceDetails';
 import Network from './screens/Network';
 import Profile from './screens/Profile';
-import { primaryColor } from './AppStyle';
+import { primaryColor, blackColor } from './AppStyle';
 import PhoneVerification from './screens/PhoneVerification';
 
 const Stack = createNativeStackNavigator();
@@ -41,16 +41,17 @@ const Navigator = props => {
     return (
       <Tab.Navigator
         screenOptions={{
+          tabBarInactiveTintColor: blackColor,
           tabBarActiveTintColor: primaryColor,
         }}>
         <Tab.Screen
           name="Dashboard"
           component={Dashboard}
           options={{
-            tabBarIcon: ({ tintColor }) => (
+            tabBarIcon: ({ color }) => (
               <Image
                 source={require('./assets/tachometer-alt-solid.png')}
-                style={{ width: 26, height: 26, tintColor: tintColor }}
+                style={{ width: 26, height: 26, tintColor: color }}
               />
             ),
           }}
@@ -59,11 +60,8 @@ const Navigator = props => {
           name="Network"
           component={Network}
           options={{
-            tabBarIcon: ({ tintColor }) => (
-              <Image
-                source={require('./assets/wifi-solid.png')}
-                style={{ width: 26, height: 26, tintColor: tintColor }}
-              />
+            tabBarIcon: ({ color }) => (
+              <Image source={require('./assets/wifi-solid.png')} style={{ width: 26, height: 26, tintColor: color }} />
             ),
           }}
         />
@@ -72,10 +70,10 @@ const Navigator = props => {
           component={DeviceStackScreens}
           options={{
             headerShown: false,
-            tabBarIcon: ({ tintColor }) => (
+            tabBarIcon: ({ color }) => (
               <Image
                 source={require('./assets/laptop-solid.png')}
-                style={{ width: 26, height: 26, tintColor: tintColor }}
+                style={{ width: 26, height: 26, tintColor: color }}
               />
             ),
           }}
@@ -85,11 +83,8 @@ const Navigator = props => {
           component={Profile}
           options={{
             title: 'Profile',
-            tabBarIcon: ({ tintColor }) => (
-              <Image
-                source={require('./assets/user-solid.png')}
-                style={{ width: 26, height: 26, tintColor: tintColor }}
-              />
+            tabBarIcon: ({ color }) => (
+              <Image source={require('./assets/user-solid.png')} style={{ width: 26, height: 26, tintColor: color }} />
             ),
           }}
         />
