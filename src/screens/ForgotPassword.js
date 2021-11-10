@@ -5,10 +5,10 @@ import { authenticationApi, handleApiError } from '../api/apiHandler';
 import { showGeneralMessage, showGeneralError } from '../Utils';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
-import { SafeAreaView, ScrollView, View, TextInput, ActivityIndicator, Image, Text } from 'react-native';
+import { StyleSheet, SafeAreaView, ScrollView, View, TextInput, ActivityIndicator, Image, Text } from 'react-native';
 import ButtonStyled from '../components/ButtonStyled';
 
-const ForgotPassword = () => {
+const ForgotPassword = props => {
   const brandInfo = useSelector(selectBrandInfo);
   const [email, setEmail] = useState();
   const [loading, setLoading] = useState(false);
@@ -40,6 +40,20 @@ const ForgotPassword = () => {
       }
     }
   };
+
+  const onPrivacyPolicyPress = async () => {
+    props.navigation.navigate('PrivacyPolicy');
+  };
+
+  const onTermsConditionsPress = async () => {
+    props.navigation.navigate('TermsConditions');
+  };
+
+  const forgotPasswordStyle = StyleSheet.create({
+    fillView: {
+      flex: 3,
+    },
+  });
 
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
@@ -79,6 +93,11 @@ const ForgotPassword = () => {
               </View>
             </>
           )}
+          <View style={forgotPasswordStyle.fillView} />
+          <View style={pageItemStyle.containerButtons}>
+            <ButtonStyled title={strings.buttons.privacyPolicy} type="text" onPress={onPrivacyPolicyPress} />
+            <ButtonStyled title={strings.buttons.termsConditions} type="text" onPress={onTermsConditionsPress} />
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
