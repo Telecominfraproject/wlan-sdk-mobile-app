@@ -3,18 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearSession, setSession } from '../store/SessionSlice';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { strings } from '../localization/LocalizationStrings';
-import { pageStyle, pageItemStyle, primaryColor, primaryColorStyle } from '../AppStyle';
-import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  Button,
-  TextInput,
-  ActivityIndicator,
-} from 'react-native';
+import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
+import { SafeAreaView, ScrollView, StyleSheet, Text, View, Image, TextInput, ActivityIndicator } from 'react-native';
 import ButtonStyled from '../components/ButtonStyled';
 import { logStringifyPretty, showGeneralError } from '../Utils';
 import {
