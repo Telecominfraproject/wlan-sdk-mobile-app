@@ -3,6 +3,15 @@ import { primaryColor, whiteColor, grayColor, grayDarkColor, grayLightColor } fr
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 
 const ButtonStyled = props => {
+  // Supports the following props:
+  // title: <string> which is the button title
+  // onPress: <callback> for any onPress event
+  // style: <style> for the component, in general margins will handled
+  // color: <string> override color for the button, will use primaryColor as default
+  // type: one of ['filled', 'text', 'outline'] - default is 'filled'
+  // size: one of ['large', 'small'] - default is 'large'
+  // disabled: <boolean>
+
   const getTouchableStyle = () => {
     switch (props.type) {
       case 'text':
@@ -16,6 +25,8 @@ const ButtonStyled = props => {
   };
 
   const getContainerStyle = () => {
+    let containerSize = props.size === 'small' ? buttonStyledStyle.containerSmall : buttonStyledStyle.containerLarge;
+
     if (props.disabled) {
       switch (props.type) {
         case 'text':
@@ -24,7 +35,7 @@ const ButtonStyled = props => {
         case 'outline':
         case 'filled':
         default:
-          return [buttonStyledStyle.container, buttonStyledStyle.containerDisabled];
+          return [buttonStyledStyle.container, containerSize, buttonStyledStyle.containerDisabled];
       }
     } else {
       switch (props.type) {
@@ -32,11 +43,11 @@ const ButtonStyled = props => {
           return [buttonStyledStyle.containerTextOnly];
 
         case 'outline':
-          return [buttonStyledStyle.container, buttonStyledStyle.containerOutline];
+          return [buttonStyledStyle.container, containerSize, buttonStyledStyle.containerOutline];
 
         case 'filled':
         default:
-          return [buttonStyledStyle.container, buttonStyledStyle.containerFilled];
+          return [buttonStyledStyle.container, containerSize, buttonStyledStyle.containerFilled];
       }
     }
   };
@@ -82,7 +93,15 @@ const ButtonStyled = props => {
       flexWrap: 'nowrap',
       justifyContent: 'center',
       alignItems: 'center',
+    },
+    containerLarge: {
+      paddingHorizontal: 10,
       height: 44,
+      borderRadius: 6,
+    },
+    containerSmall: {
+      paddingHorizontal: 10,
+      height: 30,
       borderRadius: 6,
     },
     text: {
