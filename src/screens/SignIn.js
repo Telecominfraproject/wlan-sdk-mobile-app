@@ -46,8 +46,12 @@ const SignIn = props => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onSignInPress = async () => {
-    await setCredentials(email, password);
-    signIn();
+    if (!email || !password) {
+      showGeneralError(strings.errors.titleSignIn, strings.errors.emptyFields);
+    } else {
+      await setCredentials(email, password);
+      signIn();
+    }
   };
 
   const signIn = async () => {
@@ -178,7 +182,7 @@ const SignIn = props => {
               <View style={pageItemStyle.container}>
                 <TextInput
                   style={pageItemStyle.inputText}
-                  placeholder={strings.placeholders.username}
+                  placeholder={strings.placeholders.email}
                   autoComplete="email"
                   autoCapitalize="none"
                   autoFocus={true}

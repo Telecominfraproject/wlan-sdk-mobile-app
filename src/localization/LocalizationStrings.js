@@ -38,7 +38,6 @@ export const strings = new LocalizedStrings({
       email: 'Email',
       newPassword: 'New Password',
       password: 'Password',
-      username: 'Username',
     },
     buttons: {
       cancel: 'Cancel',
