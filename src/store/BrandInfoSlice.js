@@ -10,7 +10,7 @@ export const brandInfoSlice = createSlice({
       state.value = action.payload;
     },
     clearBrandInfo: state => {
-      state.value -= null;
+      state.value = null;
     },
   },
 });

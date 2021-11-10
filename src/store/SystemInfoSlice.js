@@ -10,7 +10,7 @@ export const systemInfoSlice = createSlice({
       state.value = action.payload;
     },
     clearSystemInfo: state => {
-      state.value -= null;
+      state.value = null;
     },
   },
 });

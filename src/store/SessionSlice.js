@@ -10,7 +10,7 @@ export const sessionSlice = createSlice({
       state.value = action.payload;
     },
     clearSession: state => {
-      state.value -= null;
+      state.value = null;
     },
   },
 });
