@@ -4,7 +4,6 @@ import { store } from './store/Store';
 // Basic colours
 export var blackColor = '#101010';
 export var whiteColor = '#ffffff';
-
 export var grayBackgroundcolor = '#eeeeee';
 export var grayLightColor = '#dddddd';
 export var grayColor = '#bbbbbb';
@@ -38,7 +37,11 @@ export const pageStyle = StyleSheet.create({
   safeAreaView: {
     flex: 1,
   },
-  scrollView: {},
+  scrollView: {
+    // The following needs to be flexGrow rather than flex in order to ensure
+    // scrolling will still happen on views that are larger than the screen height
+    flexGrow: 1,
+  },
   container: {
     // Layout
     flexDirection: 'column',
@@ -108,6 +111,8 @@ export const pageItemStyle = StyleSheet.create({
     // Layout
     height: 44,
     width: '100%',
+    paddingTop: 5,
+    paddingBottom: 5,
     paddingLeft: 10,
     paddingRight: 10,
     // Background and Border

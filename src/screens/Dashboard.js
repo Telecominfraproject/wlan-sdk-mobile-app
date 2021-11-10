@@ -22,9 +22,6 @@ const Dashboard = props => {
   };
 
   const dashboardStyle = StyleSheet.create({
-    scrollView: {
-      flex: 1,
-    },
     container: {
       flex: 1,
       justifyContent: 'space-between',
@@ -56,7 +53,7 @@ const Dashboard = props => {
 
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
-      <ScrollView contentContainerStyle={[pageStyle.scrollView, dashboardStyle.scrollView]}>
+      <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={[pageStyle.container, dashboardStyle.container]}>
           <TouchableOpacity style={dashboardStyle.touchableContainer} onPress={onNetworkPress}>
             <View style={dashboardStyle.itemContainer} onPress={onNetworkPress}>
