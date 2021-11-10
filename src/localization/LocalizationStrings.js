@@ -6,6 +6,7 @@ export const strings = new LocalizedStrings({
       badEmail: 'Please enter a valid email.',
       badFormat: 'Please match the requested format.',
       credentials: 'Invalid credentials, check username and/or password.',
+      emptyField: '{0} field must not be empty.',
       emptyFields: 'Please fill in all fields',
       failedToConnect: 'Failed to connect to server, check connections.',
       internal: 'Internal error.',

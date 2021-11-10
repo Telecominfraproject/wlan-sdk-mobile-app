@@ -13,14 +13,19 @@ const ForgotPassword = props => {
   const [email, setEmail] = useState();
   const [loading, setLoading] = useState(false);
 
-  const validateEmail = () => {
+  const validateEmail = emailToCheck => {
     const re = /\S+@\S+\.\S+/;
-    return re.test(email);
+    return re.test(emailToCheck);
   };
 
   const onSubmit = async () => {
-    if (!validateEmail()) {
-      showGeneralError(strings.forgotPassword.title, strings.errors.invalidEmail);
+    if (!email) {
+      showGeneralError(
+        strings.errors.titleForgotPassword,
+        strings.formatString(strings.errors.emptyField, strings.placeholders.email),
+      );
+    } else if (!validateEmail(email)) {
+      showGeneralError(strings.errors.titleForgotPassword, strings.errors.invalidEmail);
     } else {
       try {
         setLoading(true);
@@ -36,6 +41,7 @@ const ForgotPassword = props => {
       } catch (error) {
         handleApiError(strings.errors.titleForgotPassword, error);
       } finally {
+        // Make sure to always clear the loading flag
         setLoading(false);
       }
     }
