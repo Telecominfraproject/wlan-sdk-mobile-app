@@ -13,8 +13,12 @@ export function showGeneralMessage(message) {
   Alert.alert(strings.messages.titleMessage, message);
 }
 
-export function logStringifyPretty(obj) {
-  console.log(JSON.stringify(obj, null, '\t'));
+export function logStringifyPretty(obj, title) {
+  if (title) {
+    console.log(title, JSON.stringify(obj, null, '\t'));
+  } else {
+    console.log(JSON.stringify(obj, null, '\t'));
+  }
 }
 
 export function signOut(navigation) {

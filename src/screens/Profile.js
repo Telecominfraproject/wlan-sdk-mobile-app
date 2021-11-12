@@ -3,22 +3,21 @@ import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { StyleSheet, SafeAreaView, View, Text, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
 import { logStringifyPretty, showGeneralMessage, signOut } from '../Utils';
-import { authenticationApi, emailApi, getCredentials, handleApiError, userManagementApi } from '../api/apiHandler';
+import { emailApi, handleApiError, userManagementApi } from '../api/apiHandler';
 import ButtonStyled from '../components/ButtonStyled';
 import TextInputInPlaceEditing from '../components/TextInputInPlaceEditing';
 import AccordionSection from '../components/AccordionSection';
 import RadioCheckbox from '../components/RadioCheckbox';
 import { MfaAuthInfoMethodEnum } from '../api/generated/owSecurityApi';
 import { useFocusEffect } from '@react-navigation/native';
+import { store } from '../store/Store';
 
 const Profile = props => {
+  const state = store.getState();
+  const session = state.session.value;
   const [loading, setLoading] = useState(false);
-  const [credentials, setCredentials] = useState({});
-  const [profile, setProfile] = useState();
-  const [policies, setPolicies] = useState({
-    passwordPolicy: '',
-    passwordPattern: '',
-    accessPolicy: '',
+  const [profile, setProfile] = useState({
+    userTypeProprietaryInfo: { mfa: { enabled: false, method: '' }, mobiles: [] },
   });
   const [mfaOptions, setMfaOptions] = useState({ off: true, sms: false, email: false, voice: false, method: '' });
   const [mobiles, setMobiles] = useState([]);
@@ -26,45 +25,37 @@ const Profile = props => {
   // on profile tab focus
   useFocusEffect(
     useCallback(() => {
-      getCred();
+      // on focus
+      getProfile();
+
+      // on focus out
       return () => {};
-    }, []),
+    }, [getProfile]),
   );
 
+  // profile change updates the phone numbers
   useEffect(() => {
-    if (credentials) {
-      getData();
-    }
-  }, [credentials]); // eslint-disable-line react-hooks/exhaustive-deps
+    setMobiles(profile.userTypeProprietaryInfo.mobiles);
+  }, [profile.userTypeProprietaryInfo.mobiles]);
 
-  const getCred = async () => {
-    setLoading(true);
-    const cred = await getCredentials();
-    setCredentials(cred);
-    setLoading(false);
-  };
-
-  const getData = async () => {
-    setLoading(true);
-    await Promise.all([getProfile(), getPolicies()]);
-    setLoading(false);
-  };
-
-  const getProfile = async () => {
+  const getProfile = useCallback(async () => {
     try {
+      setLoading(true);
       const response = await userManagementApi.getUsers();
-      const user = response.data.users.find(user => user.email === credentials.username);
+      const user = response.data.users.find(user => user.email === session.username);
       if (user) {
-        logStringifyPretty(user);
+        logStringifyPretty(user, 'getProfile');
         setProfile(user);
       }
     } catch (error) {
-      handleApiError('getProfile Error', error);
+      handleApiError(strings.errors.titleProfile, error);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [session.username]);
 
   const updateProfile = val => {
-    if (profile) {
+    if (profile.Id) {
       let obj = { ...profile, ...val };
       updateUser(obj);
     }
@@ -83,27 +74,10 @@ const Profile = props => {
       logStringifyPretty(response.data);
       setProfile(response.data);
     } catch (error) {
-      handleApiError('updateUser Error', error);
+      handleApiError(strings.errors.titleUpdate, error);
+      getProfile();
     } finally {
       setLoading(false);
-    }
-  };
-
-  const getPolicies = async () => {
-    try {
-      const response = await authenticationApi.getAccessToken(
-        {
-          userId: credentials.username,
-          password: credentials.password,
-        },
-        undefined,
-        undefined,
-        true,
-      );
-      logStringifyPretty(response.data);
-      setPolicies(response.data);
-    } catch (error) {
-      handleApiError('Profile Error', error);
     }
   };
 
@@ -112,10 +86,7 @@ const Profile = props => {
   };
 
   const onChangePassword = () => {
-    props.navigation.navigate('ResetPassword', {
-      userId: credentials.username,
-      password: credentials.password,
-    });
+    props.navigation.navigate('ResetPassword');
   };
 
   // Notifications
@@ -140,35 +111,50 @@ const Profile = props => {
         options.voice = true;
         break;
       default:
-        options.method = '';
+        options.method = profile.userTypeProprietaryInfo.mfa.method;
     }
     setMfaOptions(options);
   };
 
+  const updateMFAOptions = useCallback(() => {
+    if (profile.Id) {
+      let mfa = profile.userTypeProprietaryInfo.mfa;
+      if (mfa.enabled) {
+        onChangeMFA(mfa.method);
+      } else {
+        onChangeMFA('off');
+      }
+    }
+  }, [profile.Id, profile.userTypeProprietaryInfo.mfa]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
-    updateMFA();
+    // update MFA on profile change
+    updateMFAOptions();
+  }, [updateMFAOptions]);
+
+  const updateProfileMFA = useCallback(() => {
+    if (profile.Id) {
+      const propInfo = {
+        mfa: {
+          enabled: !mfaOptions.off,
+          method: mfaOptions.method,
+        },
+        mobiles: mobiles,
+      };
+      if (JSON.stringify(profile.userTypeProprietaryInfo) !== JSON.stringify(propInfo)) {
+        updateProfile({ userTypeProprietaryInfo: propInfo });
+      }
+    }
   }, [mfaOptions]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const updateMFA = () => {
-    const propInfo = {
-      mfa: {
-        enabled: !mfaOptions.off,
-        method: mfaOptions.method,
-      },
-      mobiles: mobiles,
-    };
-    updateProfile({ userTypeProprietaryInfo: propInfo });
-  };
+  useEffect(() => {
+    // updates profile on MFA change
+    updateProfileMFA();
+  }, [updateProfileMFA]);
 
   // Phone Numbers
-  useEffect(() => {
-    if (profile) {
-      setMobiles(profile.userTypeProprietaryInfo.mobiles);
-    }
-  }, [profile]);
-
   const getPhoneNumbers = () => {
-    if (!profile) {
+    if (!profile.Id) {
       return;
     }
     if (mobiles.length > 0) {
@@ -178,6 +164,7 @@ const Profile = props => {
           style={styles.input}
           value={mobile.number}
           onSubmit={phone => sendSmsCode(phone)}
+          disabled={!mfaOptions.sms}
         />
       ));
     } else {
@@ -186,6 +173,7 @@ const Profile = props => {
           style={styles.input}
           placeholder={strings.placeholders.addPhone}
           onSubmit={phone => sendSmsCode(phone)}
+          disabled={!mfaOptions.sms}
         />
       );
     }
@@ -200,7 +188,7 @@ const Profile = props => {
       showGeneralMessage(response.data.Details);
       success = true;
     } catch (err) {
-      handleApiError('sendSmsCode', err);
+      handleApiError(strings.errors.titleSMS, err);
     } finally {
       setLoading(false);
       if (success) {
@@ -254,7 +242,7 @@ const Profile = props => {
             disableAccordion={true}>
             <View style={styles.item}>
               <Text style={styles.label}>{strings.profile.name}</Text>
-              {profile && (
+              {profile.name && (
                 <TextInputInPlaceEditing
                   style={styles.input}
                   objectKey={'name'}
@@ -266,16 +254,7 @@ const Profile = props => {
 
             <View style={styles.item}>
               <Text style={styles.label}>{strings.profile.email}</Text>
-              {profile ? (
-                <TextInputInPlaceEditing
-                  style={styles.input}
-                  objectKey={'email'}
-                  value={profile.email}
-                  onSubmit={updateProfile}
-                />
-              ) : (
-                <Text style={styles.input}>{credentials && credentials.username}</Text>
-              )}
+              <Text style={styles.input}>{session.username}</Text>
             </View>
 
             {/*        Phone          */}
@@ -285,7 +264,7 @@ const Profile = props => {
             </View>
 
             {/*     MFA       */}
-            {profile && (
+            {profile.Id && (
               <View style={styles.item}>
                 <Text style={styles.label}>{strings.profile.MFA}</Text>
                 <View>
@@ -294,18 +273,11 @@ const Profile = props => {
                     label={strings.profile.sms}
                     checked={mfaOptions.sms}
                     onChange={() => onChangeMFA(MfaAuthInfoMethodEnum.Sms)}
-                    disabled={mobiles.length === 0}
                   />
                   <RadioCheckbox
                     label={strings.profile.email}
                     checked={mfaOptions.email}
                     onChange={() => onChangeMFA(MfaAuthInfoMethodEnum.Email)}
-                  />
-                  <RadioCheckbox
-                    label={strings.profile.voice}
-                    checked={mfaOptions.voice}
-                    onChange={() => onChangeMFA(MfaAuthInfoMethodEnum.Voice)}
-                    disabled={mobiles.length === 0}
                   />
                 </View>
               </View>

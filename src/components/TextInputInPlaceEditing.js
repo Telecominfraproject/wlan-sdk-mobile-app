@@ -11,6 +11,7 @@ export default function TextInputInPlaceEditing(props) {
   const style = props.style ?? {};
   const objectKey = props.objectKey;
   const placeholder = props.placeholder;
+  const disabled = props.disabled ?? false;
 
   useEffect(() => {
     if (edit) {
@@ -65,8 +66,8 @@ export default function TextInputInPlaceEditing(props) {
           <ActivityIndicator color={primaryColor} animating={loading} />
         </View>
       )}
-      <Pressable onPress={() => setEdit(true)}>
-        {edit ? (
+      <Pressable onPress={() => setEdit(!disabled)}>
+        {edit && !disabled ? (
           <TextInput
             ref={inputRef}
             style={[pageItemStyle.inputText, styles.input]}
