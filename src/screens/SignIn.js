@@ -72,11 +72,11 @@ const SignIn = props => {
         });
         dispatch(setSession(response.data));
 
-        logStringifyPretty(response.data);
+        logStringifyPretty(response.data, response.request.responseURL);
 
         if (response.data.method && response.data.created) {
           // MFA
-          props.navigation.navigate('MFACode', { uuid: response.data.uuid, credentials });
+          props.navigation.navigate('MFACode', { credentials });
         } else if (response.data.userMustChangePassword) {
           // Must reset password
           props.navigation.navigate('ResetPassword', {

@@ -42,10 +42,10 @@ const Profile = props => {
     try {
       setLoading(true);
       const response = await userManagementApi.getUsers();
-      const user = response.data.users.find(user => user.email === session.username);
-      if (user) {
-        logStringifyPretty(user, 'getProfile');
-        setProfile(user);
+      const userProfile = response.data.users.find(user => user.email === session.username);
+      if (userProfile) {
+        logStringifyPretty(userProfile, 'getProfile');
+        setProfile(userProfile);
       }
     } catch (error) {
       handleApiError(strings.errors.titleProfile, error);

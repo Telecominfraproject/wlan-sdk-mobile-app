@@ -5,11 +5,18 @@ import ButtonStyled from '../components/ButtonStyled';
 import { strings } from '../localization/LocalizationStrings';
 import { authenticationApi, handleApiError, setApiSystemInfo } from '../api/apiHandler';
 import { logStringifyPretty, showGeneralMessage, signOut } from '../Utils';
+import { store } from '../store/Store';
+import { useDispatch } from 'react-redux';
+import { setSession } from '../store/SessionSlice';
 
 export default function MFACode(props) {
-  const { uuid, credentials } = props.route.params;
+  const state = store.getState();
+  const session = state.session.value;
+  const uuid = session.uuid;
+  const { credentials } = props.route.params;
   const [loading, setLoading] = useState(false);
   const [code, setCode] = useState('');
+  const dispatch = useDispatch();
 
   const validateCode = async () => {
     try {
@@ -25,17 +32,17 @@ export default function MFACode(props) {
         undefined,
         true,
       );
-      setLoading(false);
-      logStringifyPretty(response);
+      logStringifyPretty(response.data, response.request.responseURL);
+
+      dispatch(setSession(response.data));
 
       if (response.data.userMustChangePassword) {
         // Must reset password
         props.navigation.navigate('ResetPassword', {
-          userId: credentials.email,
+          userId: credentials.username,
           password: credentials.password,
         });
       } else if (response.status === 200) {
-        // showGeneralMessage(strings.messages.requestSent);
         getSystemEndpointsNavigateToMain();
       }
     } catch (error) {
@@ -50,18 +57,19 @@ export default function MFACode(props) {
       // the endpoints needed for communicating with the other systems
       const response = await authenticationApi.getSystemInfo();
 
-      console.log(response.data);
+      logStringifyPretty(response.data, response.request.responseURL);
 
       // Set the system info - this will validate as well, so an error might be thrown.
       // Need to wait for this to complete before navigating
       await setApiSystemInfo(response.data);
+
+      setLoading(false);
 
       // Replace to the main screen. Use replace to ensure no back button
       props.navigation.replace('Main');
     } catch (error) {
       // Make sure the loading state is done in all cases
       setLoading(false);
-
       handleApiError(strings.errors.titleSystemSetup, error);
     }
   };
@@ -78,7 +86,7 @@ export default function MFACode(props) {
         undefined,
         true,
       );
-      logStringifyPretty(response.data);
+      logStringifyPretty(response.data, response.request.responseURL);
       if (response.status === 200) {
         showGeneralMessage(strings.messages.requestSent);
       }
@@ -95,18 +103,17 @@ export default function MFACode(props) {
 
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
+      {loading && (
+        <View style={pageItemStyle.loadingContainer}>
+          <ActivityIndicator size="large" color={primaryColor} animating={loading} />
+        </View>
+      )}
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.container}>
-          {loading && (
-            <View style={pageItemStyle.loadingContainer}>
-              <ActivityIndicator size="large" color={primaryColor} animating={loading} />
-            </View>
-          )}
           <View style={pageItemStyle.container}>
             <TextInput
               style={pageItemStyle.inputText}
               placeholder={strings.placeholders.code}
-              secureTextEntry={true}
               onChangeText={text => setCode(text)}
               autoCapitalize="none"
               textContentType="oneTimeCode"
@@ -118,12 +125,7 @@ export default function MFACode(props) {
             <ButtonStyled title={strings.buttons.resendCode} type="text" onPress={resendValidationCode} />
           </View>
           <View style={pageItemStyle.containerButton}>
-            <ButtonStyled
-              title={strings.buttons.submit}
-              type="filled"
-              onPress={validateCode}
-              disabled={loading || !code}
-            />
+            <ButtonStyled title={strings.buttons.submit} type="filled" onPress={validateCode} disabled={loading} />
           </View>
           <View style={pageItemStyle.containerButton}>
             <ButtonStyled title={strings.buttons.signOut} type="outline" onPress={onSignOutPress} disabled={loading} />
