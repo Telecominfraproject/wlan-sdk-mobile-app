@@ -1,7 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
-import { StyleSheet, SafeAreaView, View, Text, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  StyleSheet,
+  SafeAreaView,
+  View,
+  Text,
+  ActivityIndicator,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+} from 'react-native';
 import { logStringifyPretty, showGeneralMessage, signOut } from '../Utils';
 import { emailApi, handleApiError, userManagementApi } from '../api/apiHandler';
 import ButtonStyled from '../components/ButtonStyled';
@@ -11,6 +20,7 @@ import RadioCheckbox from '../components/RadioCheckbox';
 import { MfaAuthInfoMethodEnum } from '../api/generated/owSecurityApi';
 import { useFocusEffect } from '@react-navigation/native';
 import { store } from '../store/Store';
+import Divider from "../components/Divider";
 
 const Profile = props => {
   const state = store.getState();
@@ -160,11 +170,10 @@ const Profile = props => {
     if (mobiles.length > 0) {
       return mobiles.map((mobile, index) => (
         <TextInputInPlaceEditing
-          key={index}
+          key={'phone' + index}
           style={styles.input}
           value={mobile.number}
           onSubmit={phone => sendSmsCode(phone)}
-          disabled={!mfaOptions.sms}
         />
       ));
     } else {
@@ -173,7 +182,6 @@ const Profile = props => {
           style={styles.input}
           placeholder={strings.placeholders.addPhone}
           onSubmit={phone => sendSmsCode(phone)}
-          disabled={!mfaOptions.sms}
         />
       );
     }
@@ -185,7 +193,7 @@ const Profile = props => {
       setLoading(true);
       const response = await emailApi.sendATestSMS(true, undefined, undefined, { to: phone });
       logStringifyPretty(response.data);
-      showGeneralMessage(response.data.Details);
+      showGeneralMessage(strings.messages.codeSent);
       success = true;
     } catch (err) {
       handleApiError(strings.errors.titleSMS, err);
@@ -222,6 +230,16 @@ const Profile = props => {
       marginLeft: 5,
       flex: 1,
     },
+    buttonLink: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    iconRight: {
+      width: 16,
+      height: 16,
+      resizeMode: 'contain',
+    },
   });
 
   return (
@@ -252,16 +270,22 @@ const Profile = props => {
               )}
             </View>
 
+            <Divider paddingHorizontal={10} />
+
             <View style={styles.item}>
               <Text style={styles.label}>{strings.profile.email}</Text>
               <Text style={styles.input}>{session.username}</Text>
             </View>
+
+            <Divider paddingHorizontal={10} />
 
             {/*        Phone          */}
             <View style={styles.item}>
               <Text style={styles.label}>{strings.profile.phone}</Text>
               {getPhoneNumbers()}
             </View>
+
+            <Divider paddingHorizontal={10} />
 
             {/*     MFA       */}
             {profile.Id && (
@@ -306,16 +330,14 @@ const Profile = props => {
             title={strings.profile.notifications}
             isLoading={loading}
             disableAccordion={true}>
-            <TouchableOpacity onPress={notificationPref}>
-              <View style={styles.item}>
-                <Text>{strings.profile.notificationPref}</Text>
-              </View>
+            <TouchableOpacity style={[styles.item, styles.buttonLink]} onPress={notificationPref}>
+              <Text>{strings.profile.notificationPref}</Text>
+              <Image style={styles.iconRight} source={require('../assets/angle-right-solid.png')} />
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={notificationHistory}>
-              <View style={styles.item}>
-                <Text>{strings.profile.notificationHistory}</Text>
-              </View>
+            <TouchableOpacity style={[styles.item, styles.buttonLink]} onPress={notificationHistory}>
+              <Text>{strings.profile.notificationHistory}</Text>
+              <Image style={styles.iconRight} source={require('../assets/angle-right-solid.png')} />
             </TouchableOpacity>
           </AccordionSection>
 

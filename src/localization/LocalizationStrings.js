@@ -29,6 +29,7 @@ export const strings = new LocalizedStrings({
       validationError: 'Validation Error',
     },
     messages: {
+      codeSent: 'Code has been sent.',
       requestSent: 'Request successfully sent.',
       resetEmailSent:
         "You should soon receive an email containing the instructions to reset your password. Please make sure to check your spam if you can't find the email.",

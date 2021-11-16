@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { ScrollView, View, SafeAreaView, TextInput, ActivityIndicator } from 'react-native';
 import { emailApi, handleApiError, userManagementApi } from '../api/apiHandler';
 import { logStringifyPretty, showGeneralError, showGeneralMessage } from '../Utils';
@@ -27,7 +27,7 @@ export default function PhoneVerification(props) {
 
   const updateUser = async () => {
     const mfa = profile.userTypeProprietaryInfo.mfa;
-    let mobiles = profile.userTypeProprietaryInfo.mobiles;
+    // let mobiles = profile.userTypeProprietaryInfo.mobiles;
     let mobile = {
       number: phone,
       verified: true,
@@ -35,7 +35,7 @@ export default function PhoneVerification(props) {
     };
     let userInfo = {
       id: profile.Id,
-      userTypeProprietaryInfo: { mfa, mobiles: [...mobiles, mobile] },
+      userTypeProprietaryInfo: { mfa, mobiles: [mobile] },
     };
     try {
       setLoading(true);

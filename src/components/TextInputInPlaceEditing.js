@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { pageItemStyle, primaryColor } from '../AppStyle';
 import { handleApiError } from '../api/apiHandler';
 
@@ -12,6 +12,7 @@ export default function TextInputInPlaceEditing(props) {
   const objectKey = props.objectKey;
   const placeholder = props.placeholder;
   const disabled = props.disabled ?? false;
+  const fontSize = props.fontSize ?? 16;
 
   useEffect(() => {
     if (edit) {
@@ -51,11 +52,24 @@ export default function TextInputInPlaceEditing(props) {
       justifyContent: 'space-between',
       alignItems: 'center',
     },
-    input: {},
     loading: {
       ...StyleSheet.absoluteFill,
       alignItems: 'flex-end',
       zIndex: 10,
+    },
+    pressable: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    input: {
+      fontSize: fontSize,
+      flexGrow: 1,
+    },
+    edit: {
+      width: fontSize,
+      height: fontSize,
+      resizeMode: 'contain',
     },
   });
 
@@ -66,7 +80,7 @@ export default function TextInputInPlaceEditing(props) {
           <ActivityIndicator color={primaryColor} animating={loading} />
         </View>
       )}
-      <Pressable onPress={() => setEdit(!disabled)}>
+      <Pressable style={styles.pressable} onPress={() => setEdit(!disabled)}>
         {edit && !disabled ? (
           <TextInput
             ref={inputRef}
@@ -80,6 +94,7 @@ export default function TextInputInPlaceEditing(props) {
         ) : (
           <Text style={styles.input}>{value ?? placeholder}</Text>
         )}
+        {!edit && !disabled && <Image style={styles.edit} source={require('../assets/edit_black.png')} />}
       </Pressable>
     </View>
   );
