@@ -148,6 +148,12 @@ export interface Association {
    * @type {string}
    * @memberof Association
    */
+  ssid?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Association
+   */
   macAddress?: string;
   /**
    *
