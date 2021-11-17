@@ -29,6 +29,7 @@ export const strings = new LocalizedStrings({
       validationError: 'Validation Error',
     },
     messages: {
+      empty: '-',
       codeSent: 'Code has been sent.',
       requestSent: 'Request successfully sent.',
       resetEmailSent:
@@ -59,6 +60,9 @@ export const strings = new LocalizedStrings({
       termsConditions: 'Terms & Conditions',
       validate: 'Validate',
       verify: 'Verify',
+    },
+    accordionSection: {
+      none: '- None -',
     },
     brandSelector: {
       description: 'Please select your provider to continue.',

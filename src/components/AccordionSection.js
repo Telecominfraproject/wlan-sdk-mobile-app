@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { primaryColor, whiteColor } from '../AppStyle';
+import { strings } from '../localization/LocalizationStrings';
+import { paddingHorizontalDefault, borderRadiusDefault, primaryColor, whiteColor, grayColor } from '../AppStyle';
 import { StyleSheet, TouchableOpacity, View, Text, Image, ActivityIndicator } from 'react-native';
 
 const AccordionSection = props => {
@@ -25,7 +26,17 @@ const AccordionSection = props => {
     showChildren ? setShowChildren(false) : setShowChildren(true);
   };
 
-  const accordionSectionStyle = StyleSheet.create({
+  const childrenWithSeparators = () => {
+    if (getChildrenCount() <= 1) {
+      return props.children;
+    }
+
+    return props.children.map((child, index) => {
+      return [child, index !== props.children.length - 1 && <View style={componentStyles.separator} />];
+    });
+  };
+
+  const componentStyles = StyleSheet.create({
     container: {
       // Include all margins from the passed in style, if it exists
       margin: props.style ? props.style.margin : 0,
@@ -46,10 +57,12 @@ const AccordionSection = props => {
       width: '100%',
       alignItems: 'center',
       justifyContent: 'space-between',
-      padding: 13,
+      paddingHorizontal: paddingHorizontalDefault,
+      height: 44,
+      // Visual
       backgroundColor: primaryColor,
-      borderTopLeftRadius: 10,
-      borderTopRightRadius: 10,
+      borderTopLeftRadius: borderRadiusDefault,
+      borderTopRightRadius: borderRadiusDefault,
     },
     headerEndContainer: {
       flexDirection: 'row',
@@ -69,28 +82,39 @@ const AccordionSection = props => {
       tintColor: whiteColor,
     },
     itemsContainer: {
-      backgroundColor: whiteColor,
-      borderBottomLeftRadius: 10,
-      borderBottomRightRadius: 10,
       flexDirection: 'column',
       flexWrap: 'nowrap',
       justifyContent: 'flex-start',
       width: '100%',
+      // Visual
+      backgroundColor: whiteColor,
+      borderBottomLeftRadius: borderRadiusDefault,
+      borderBottomRightRadius: borderRadiusDefault,
+    },
+    separator: {
+      backgroundColor: grayColor,
+      height: 1,
+      marginHorizontal: paddingHorizontalDefault,
+    },
+    noneContainer: {
+      flexDirection: 'row',
+      flexWrap: 'nowrap',
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%',
+      height: 30,
     },
   });
 
   return (
-    <View style={accordionSectionStyle.container}>
-      <TouchableOpacity
-        style={accordionSectionStyle.touchableContainer}
-        onPress={onHeaderPress}
-        disabled={!hasAccordion()}>
-        <View style={accordionSectionStyle.headerContainer}>
-          <Text style={accordionSectionStyle.headerText}>{getTitle()}</Text>
+    <View style={componentStyles.container}>
+      <TouchableOpacity style={componentStyles.touchableContainer} onPress={onHeaderPress} disabled={!hasAccordion()}>
+        <View style={componentStyles.headerContainer}>
+          <Text style={componentStyles.headerText}>{getTitle()}</Text>
           {hasAccordion() ? (
-            <View style={accordionSectionStyle.headerEndContainer}>
-              <Text style={accordionSectionStyle.headerText}>{getChildrenCount()}</Text>
-              <Image style={accordionSectionStyle.headerCaret} source={getCaretIcon()} />
+            <View style={componentStyles.headerEndContainer}>
+              <Text style={componentStyles.headerText}>{getChildrenCount()}</Text>
+              <Image style={componentStyles.headerCaret} source={getCaretIcon()} />
             </View>
           ) : (
             <View />
@@ -98,11 +122,19 @@ const AccordionSection = props => {
         </View>
       </TouchableOpacity>
       {props.isLoading ? (
-        <View style={accordionSectionStyle.itemsContainer}>
+        <View style={componentStyles.itemsContainer}>
           <ActivityIndicator size="large" color={primaryColor} animating={props.isLoading} />
         </View>
       ) : showChildren ? (
-        <View style={accordionSectionStyle.itemsContainer}>{props.children}</View>
+        <View style={componentStyles.itemsContainer}>
+          {getChildrenCount() > 0 ? (
+            childrenWithSeparators()
+          ) : (
+            <View style={componentStyles.noneContainer}>
+              <Text>{strings.accordionSection.none}</Text>
+            </View>
+          )}
+        </View>
       ) : (
         <View />
       )}
