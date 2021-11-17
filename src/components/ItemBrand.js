@@ -1,8 +1,8 @@
 import React from 'react';
-import { borderRadiusDefault, whiteColor } from '../AppStyle';
+import { marginTopDefault, paddingHorizontalDefault, borderRadiusDefault, whiteColor } from '../AppStyle';
 import { StyleSheet, TouchableOpacity, View, Text, Image } from 'react-native';
 
-const BrandItem = props => {
+const ItemBrand = props => {
   const getCompanyIconUri = () => {
     return props.brand.iconUri;
   };
@@ -11,9 +11,9 @@ const BrandItem = props => {
     return props.brand.name;
   };
 
-  const brandItemStyle = StyleSheet.create({
+  const componentStyles = StyleSheet.create({
     container: {
-      marginTop: 10,
+      marginTop: marginTopDefault,
       // Layout
       flexDirection: 'column',
       flexWrap: 'nowrap',
@@ -21,30 +21,30 @@ const BrandItem = props => {
       alignItems: 'center',
       width: '100%',
       // Visual
-      padding: 10,
+      padding: paddingHorizontalDefault,
       borderRadius: borderRadiusDefault,
       backgroundColor: whiteColor,
     },
     icon: {
-      marginTop: 10,
+      marginTop: marginTopDefault,
       height: 75,
       width: '100%',
       resizeMode: 'contain',
     },
     text: {
-      marginTop: 10,
+      marginTop: marginTopDefault,
       fontSize: 14,
     },
   });
 
   return (
     <TouchableOpacity onPress={props.onPress}>
-      <View style={brandItemStyle.container}>
-        <Image style={brandItemStyle.icon} source={{ uri: getCompanyIconUri() }} />
-        <Text style={brandItemStyle.text}>{getCompanyName()}</Text>
+      <View style={componentStyles.container}>
+        <Image style={componentStyles.icon} source={{ uri: getCompanyIconUri() }} />
+        <Text style={componentStyles.text}>{getCompanyName()}</Text>
       </View>
     </TouchableOpacity>
   );
 };
 
-export default BrandItem;
+export default ItemBrand;

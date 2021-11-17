@@ -34,7 +34,7 @@ const DeviceItem = props => {
     return props.device.manufacturer;
   };
 
-  const deviceItemStyle = StyleSheet.create({
+  const componentStyles = StyleSheet.create({
     container: {
       flexDirection: 'row',
       flexWrap: 'nowrap',
@@ -64,9 +64,9 @@ const DeviceItem = props => {
 
   return (
     <TouchableOpacity onPress={props.onPress}>
-      <View style={deviceItemStyle.container}>
+      <View style={componentStyles.container}>
         <ImageWithBadge
-          style={deviceItemStyle.icon}
+          style={componentStyles.icon}
           source={getDeviceIcon()}
           badgeSource={require('../assets/wifi-solid.png')}
           badgeTintColor={whiteColor}
@@ -74,12 +74,12 @@ const DeviceItem = props => {
           badgeSize="small"
         />
 
-        <View style={deviceItemStyle.textContainer}>
-          <Text style={deviceItemStyle.text}>{getDeviceName()}</Text>
-          <Text style={deviceItemStyle.text}>{getDeviceType()}</Text>
+        <View style={componentStyles.textContainer}>
+          <Text style={componentStyles.text}>{getDeviceName()}</Text>
+          <Text style={componentStyles.text}>{getDeviceType()}</Text>
         </View>
 
-        <Image style={deviceItemStyle.icon} source={require('../assets/angle-right-solid.png')} />
+        <Image style={componentStyles.icon} source={require('../assets/angle-right-solid.png')} />
       </View>
     </TouchableOpacity>
   );

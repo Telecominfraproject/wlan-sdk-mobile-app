@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, ImageBackground, Image, TextInput } from 'react-native';
+import { StyleSheet, View, Image, TextInput } from 'react-native';
 
 const TextInputWithIcon = props => {
   const [textShown, setTextShown] = useState(false);
 
-  const textInputWithIconStyle = StyleSheet.create({
+  const componentStyles = StyleSheet.create({
     container: {
       ...props.style,
     },
@@ -39,9 +39,9 @@ const TextInputWithIcon = props => {
   };
 
   return (
-    <View style={textInputWithIconStyle.container}>
-      {textShown ? <></> : <Image style={textInputWithIconStyle.icon} source={props.source} />}
-      <TextInput style={textInputWithIconStyle.text} placeholder="Search" onChangeText={onChangeTextInternal} />
+    <View style={componentStyles.container}>
+      {textShown ? <></> : <Image style={componentStyles.icon} source={props.source} />}
+      <TextInput style={componentStyles.text} placeholder="Search" onChangeText={onChangeTextInternal} />
     </View>
   );
 };

@@ -6,7 +6,7 @@ const ImageWithBadge = props => {
     return props.badgeSize === 'small';
   };
 
-  const imageWithBadgeStyle = StyleSheet.create({
+  const componentStyles = StyleSheet.create({
     container: {
       // Main container should be width/height passed in
       width: props.style ? props.style.width : 'auto',
@@ -73,17 +73,16 @@ const ImageWithBadge = props => {
   });
 
   return (
-    <View style={imageWithBadgeStyle.container}>
+    <View style={componentStyles.container}>
       <Image style={props.style} source={props.source} />
-      <View
-        style={isBadgeSizeSmall() ? imageWithBadgeStyle.badgeContainerSmall : imageWithBadgeStyle.badgeContainerLarge}>
+      <View style={isBadgeSizeSmall() ? componentStyles.badgeContainerSmall : componentStyles.badgeContainerLarge}>
         {props.badgeSource ? (
           <Image
-            style={isBadgeSizeSmall() ? imageWithBadgeStyle.badgeSmall : imageWithBadgeStyle.badgeLarge}
+            style={isBadgeSizeSmall() ? componentStyles.badgeSmall : componentStyles.badgeLarge}
             source={props.badgeSource}
           />
         ) : (
-          <Text style={isBadgeSizeSmall() ? imageWithBadgeStyle.badgeTextSmall : imageWithBadgeStyle.badgeTextLarge}>
+          <Text style={isBadgeSizeSmall() ? componentStyles.badgeTextSmall : componentStyles.badgeTextLarge}>
             {props.badgeText}
           </Text>
         )}

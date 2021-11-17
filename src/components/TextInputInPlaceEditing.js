@@ -46,7 +46,7 @@ export default function TextInputInPlaceEditing(props) {
     }
   };
 
-  const styles = StyleSheet.create({
+  const componentStyles = StyleSheet.create({
     line: {
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -76,15 +76,15 @@ export default function TextInputInPlaceEditing(props) {
   return (
     <View style={style}>
       {loading && (
-        <View style={styles.loading}>
+        <View style={componentStyles.loading}>
           <ActivityIndicator color={primaryColor} animating={loading} />
         </View>
       )}
-      <Pressable style={styles.pressable} onPress={() => setEdit(!disabled)}>
+      <Pressable style={componentStyles.pressable} onPress={() => setEdit(!disabled)}>
         {edit && !disabled ? (
           <TextInput
             ref={inputRef}
-            style={[pageItemStyle.inputText, styles.input]}
+            style={[pageItemStyle.inputText, componentStyles.input]}
             value={value}
             placeholder={placeholder}
             onBlur={onSubmit}
@@ -92,9 +92,9 @@ export default function TextInputInPlaceEditing(props) {
             onSubmitEditing={onSubmit}
           />
         ) : (
-          <Text style={styles.input}>{value ?? placeholder}</Text>
+          <Text style={componentStyles.input}>{value ?? placeholder}</Text>
         )}
-        {!edit && !disabled && <Image style={styles.edit} source={require('../assets/edit_black.png')} />}
+        {!edit && !disabled && <Image style={componentStyles.edit} source={require('../assets/edit_black.png')} />}
       </Pressable>
     </View>
   );

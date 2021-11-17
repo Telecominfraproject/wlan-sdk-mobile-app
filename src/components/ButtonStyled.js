@@ -1,5 +1,13 @@
 import React from 'react';
-import { borderRadiusDefault, primaryColor, whiteColor, grayColor, grayDarkColor, grayLightColor } from '../AppStyle';
+import {
+  paddingHorizontalDefault,
+  borderRadiusDefault,
+  primaryColor,
+  whiteColor,
+  grayColor,
+  grayDarkColor,
+  grayLightColor,
+} from '../AppStyle';
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 
 const ButtonStyled = props => {
@@ -15,39 +23,39 @@ const ButtonStyled = props => {
   const getTouchableStyle = () => {
     switch (props.type) {
       case 'text':
-        return [buttonStyledStyle.touchableStyle];
+        return [componentStyles.touchableStyle];
 
       case 'outline':
       case 'filled':
       default:
-        return [buttonStyledStyle.touchableStyle, buttonStyledStyle.touchableButtonTypeStyle];
+        return [componentStyles.touchableStyle, componentStyles.touchableButtonTypeStyle];
     }
   };
 
   const getContainerStyle = () => {
-    let containerSize = props.size === 'small' ? buttonStyledStyle.containerSmall : buttonStyledStyle.containerLarge;
+    let containerSize = props.size === 'small' ? componentStyles.containerSmall : componentStyles.containerLarge;
 
     if (props.disabled) {
       switch (props.type) {
         case 'text':
-          return [buttonStyledStyle.containerTextOnly];
+          return [componentStyles.containerTextOnly];
 
         case 'outline':
         case 'filled':
         default:
-          return [buttonStyledStyle.container, containerSize, buttonStyledStyle.containerDisabled];
+          return [componentStyles.container, containerSize, componentStyles.containerDisabled];
       }
     } else {
       switch (props.type) {
         case 'text':
-          return [buttonStyledStyle.containerTextOnly];
+          return [componentStyles.containerTextOnly];
 
         case 'outline':
-          return [buttonStyledStyle.container, containerSize, buttonStyledStyle.containerOutline];
+          return [componentStyles.container, containerSize, componentStyles.containerOutline];
 
         case 'filled':
         default:
-          return [buttonStyledStyle.container, containerSize, buttonStyledStyle.containerFilled];
+          return [componentStyles.container, containerSize, componentStyles.containerFilled];
       }
     }
   };
@@ -59,22 +67,22 @@ const ButtonStyled = props => {
         case 'outline':
         case 'filled':
         default:
-          return [buttonStyledStyle.text, buttonStyledStyle.textDisabled];
+          return [componentStyles.text, componentStyles.textDisabled];
       }
     } else {
       switch (props.type) {
         case 'text':
         case 'outline':
-          return [buttonStyledStyle.text, buttonStyledStyle.textOutline];
+          return [componentStyles.text, componentStyles.textOutline];
 
         default:
         case 'filled':
-          return [buttonStyledStyle.text, buttonStyledStyle.textFilled];
+          return [componentStyles.text, componentStyles.textFilled];
       }
     }
   };
 
-  const buttonStyledStyle = StyleSheet.create({
+  const componentStyles = StyleSheet.create({
     touchableStyle: {
       // Include all margins from the passed in style, if it exists
       margin: props.style ? props.style.margin : 0,
@@ -95,12 +103,12 @@ const ButtonStyled = props => {
       alignItems: 'center',
     },
     containerLarge: {
-      paddingHorizontal: 10,
+      paddingHorizontal: paddingHorizontalDefault,
       height: 44,
       borderRadius: borderRadiusDefault,
     },
     containerSmall: {
-      paddingHorizontal: 10,
+      paddingHorizontal: paddingHorizontalDefault,
       height: 30,
       borderRadius: borderRadiusDefault,
       minWidth: 77,

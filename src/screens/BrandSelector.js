@@ -4,7 +4,7 @@ import { setBrandInfo } from '../store/BrandInfoSlice';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, View, Text, ActivityIndicator } from 'react-native';
-import BrandItem from '../components/BrandItem';
+import ItemBrand from '../components/ItemBrand';
 import TextInputWithIcon from '../components/TextInputWithIcon';
 
 const BrandSelector = props => {
@@ -94,7 +94,7 @@ const BrandSelector = props => {
               <View style={[pageItemStyle.container]}>
                 <View style={brandingSelectorStyle.containerList}>
                   {(filtered ? filteredBrands : brands).map(item => {
-                    return <BrandItem brand={item} key={item.id} onPress={() => onCompanySelect(item)} />;
+                    return <ItemBrand brand={item} key={item.id} onPress={() => onCompanySelect(item)} />;
                   })}
                 </View>
               </View>

@@ -15,8 +15,8 @@ import { accessPointsApi, wifiNetworksApi, handleApiError } from '../api/apiHand
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
 import ImageWithBadge from '../components/ImageWithBadge';
-import ItemTextWithLabel from '../components/ItemTextWithLabel';
 import ItemTextWithIcon from '../components/ItemTextWithIcon';
+import ItemTextWithLabel from '../components/ItemTextWithLabel';
 
 const Network = props => {
   const [accessPoint, setAccessPoint] = useState();

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text } from 'react-native';
 import { blackColor, grayColor } from '../AppStyle';
 
 export default function RadioCheckbox(props) {
@@ -28,7 +28,7 @@ export default function RadioCheckbox(props) {
     }
   };
 
-  const styles = StyleSheet.create({
+  const componentStyles = StyleSheet.create({
     container: {
       flexDirection: 'row',
       justifyContent: 'flex-start',
@@ -48,9 +48,9 @@ export default function RadioCheckbox(props) {
   });
 
   return (
-    <Pressable style={styles.container} onPress={onPress} disabled={disabled}>
-      <Image style={styles.radio} source={getSource()} />
-      <Text style={styles.label}>{label}</Text>
+    <Pressable style={componentStyles.container} onPress={onPress} disabled={disabled}>
+      <Image style={componentStyles.radio} source={getSource()} />
+      <Text style={componentStyles.label}>{label}</Text>
     </Pressable>
   );
 }
