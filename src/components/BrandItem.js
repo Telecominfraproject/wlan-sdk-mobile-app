@@ -1,5 +1,5 @@
 import React from 'react';
-import { whiteColor } from '../AppStyle';
+import { borderRadiusDefault, whiteColor } from '../AppStyle';
 import { StyleSheet, TouchableOpacity, View, Text, Image } from 'react-native';
 
 const BrandItem = props => {
@@ -22,7 +22,7 @@ const BrandItem = props => {
       width: '100%',
       // Visual
       padding: 10,
-      borderRadius: 6,
+      borderRadius: borderRadiusDefault,
       backgroundColor: whiteColor,
     },
     icon: {

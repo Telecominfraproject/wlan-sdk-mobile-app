@@ -2,22 +2,29 @@ import { StyleSheet } from 'react-native';
 import { store } from './store/Store';
 
 // Basic colours
-export var blackColor = '#101010';
-export var whiteColor = '#ffffff';
-export var grayBackgroundcolor = '#eeeeee';
-export var grayLightColor = '#dddddd';
-export var grayColor = '#bbbbbb';
-export var grayDarkColor = '#777777';
+export const blackColor = '#101010';
+export const whiteColor = '#ffffff';
+export const grayBackgroundcolor = '#eeeeee';
+export const grayLightColor = '#dddddd';
+export const grayColor = '#bbbbbb';
+export const grayDarkColor = '#777777';
 
-// Primary color - branded
+// Primary color - branded, may change!
 export var primaryColor = '#2194f3';
 export var primaryColorStyle = StyleSheet.create({});
 
 // Badges colours
-export var okColor = '#8BC34A';
-export var infoColor = '#2156e8';
-export var warnColor = '#fd9927';
-export var errorColor = '#e3202d';
+export const okColor = '#8BC34A';
+export const infoColor = '#2156e8';
+export const warnColor = '#fd9927';
+export const errorColor = '#e3202d';
+
+// Padding and Margins
+export const marginTopDefault = 10;
+export const paddingHorizontalDefault = 10;
+export const paddingVerticalDefault = 5;
+export const heightCellDefault = 50;
+export const borderRadiusDefault = 6;
 
 function updatePrimaryColorInfo() {
   const state = store.getState();
@@ -119,7 +126,7 @@ export const pageItemStyle = StyleSheet.create({
     backgroundColor: whiteColor,
     borderColor: grayColor,
     borderWidth: 1,
-    borderRadius: 6,
+    borderRadius: borderRadiusDefault,
     // Text
     fontSize: 14,
     textAlign: 'left',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { primaryColor, whiteColor, grayColor, grayDarkColor, grayLightColor } from '../AppStyle';
+import { borderRadiusDefault, primaryColor, whiteColor, grayColor, grayDarkColor, grayLightColor } from '../AppStyle';
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 
 const ButtonStyled = props => {
@@ -97,12 +97,13 @@ const ButtonStyled = props => {
     containerLarge: {
       paddingHorizontal: 10,
       height: 44,
-      borderRadius: 6,
+      borderRadius: borderRadiusDefault,
     },
     containerSmall: {
       paddingHorizontal: 10,
       height: 30,
-      borderRadius: 6,
+      borderRadius: borderRadiusDefault,
+      minWidth: 77,
     },
     text: {
       fontSize: 14,
