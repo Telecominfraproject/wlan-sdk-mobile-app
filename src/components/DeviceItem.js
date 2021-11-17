@@ -27,13 +27,11 @@ const DeviceItem = props => {
   };
 
   const getDeviceName = () => {
-    return 'sadjkahdjksah';
-    //return props.device.compatible | "asddasd";
+    return props.device.compatible;
   };
 
   const getDeviceType = () => {
-    return 'sadjkahdjksahasdasd';
-    //return props.device.manufacturer | "asdasddas";
+    return props.device.manufacturer;
   };
 
   const deviceItemStyle = StyleSheet.create({
@@ -45,6 +43,7 @@ const DeviceItem = props => {
       alignItems: 'center',
       paddingVertical: 5,
       paddingHorizontal: 10,
+      height: 50,
     },
     icon: {
       width: 30,
