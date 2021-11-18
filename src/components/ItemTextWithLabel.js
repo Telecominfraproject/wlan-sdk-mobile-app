@@ -1,5 +1,5 @@
 import React from 'react';
-import { paddingHorizontalDefault, heightCellDefault } from '../AppStyle';
+import { paddingHorizontalDefault, heightCellDefault, primaryColor } from '../AppStyle';
 import { StyleSheet, View, Text } from 'react-native';
 import ButtonStyled from '../components/ButtonStyled';
 
@@ -7,13 +7,13 @@ const ItemTextWithLabel = props => {
   const componentStyles = StyleSheet.create({
     container: {
       height: heightCellDefault,
+      width: '100%',
       // Layout
       flexDirection: 'row',
       flexWrap: 'nowrap',
       flex: 0,
       alignItems: 'center',
       justifyContent: 'space-between',
-      width: '100%',
       // Visual
       paddingHorizontal: paddingHorizontalDefault,
     },
@@ -27,9 +27,12 @@ const ItemTextWithLabel = props => {
     },
     textLabel: {
       fontSize: 11,
+      color: primaryColor,
     },
     textValue: {
+      height: 28,
       fontSize: 14,
+      textAlignVertical: 'center',
     },
   });
 

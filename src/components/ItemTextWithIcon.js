@@ -23,15 +23,15 @@ const ItemTextWithIcon = props => {
       fontSize: 14,
     },
     icon: {
-      width: 30,
-      height: 30,
+      width: 20,
+      height: 20,
       marginRight: paddingHorizontalDefault,
       // Visual
       tintColor: props.iconTintColor ? props.iconTintColor : blackColor,
     },
     iconCaret: {
-      width: 30,
-      height: 30,
+      width: 22,
+      height: 22,
     },
   });
 
