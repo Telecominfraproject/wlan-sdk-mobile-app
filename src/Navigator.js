@@ -20,33 +20,60 @@ import Network from './screens/Network';
 import Profile from './screens/Profile';
 import { primaryColor, blackColor } from './AppStyle';
 import PhoneVerification from './screens/PhoneVerification';
+import NavigationHeader from './components/NavigationHeader';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+const DashboardStack = createNativeStackNavigator();
+const NetworkStack = createNativeStackNavigator();
 const DeviceStack = createNativeStackNavigator();
+const ProfileStack = createNativeStackNavigator();
 
-const Navigator = props => {
+const Navigator = () => {
   const brandInfo = useSelector(selectBrandInfo);
 
-  function DeviceStackScreens() {
+  function DashboardNavigator() {
     return (
-      <DeviceStack.Navigator>
+      <DashboardStack.Navigator
+        screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
+        <DeviceStack.Screen name="DashboardScreen" component={Dashboard} options={{ title: 'Dashboard' }} />
+      </DashboardStack.Navigator>
+    );
+  }
+  function NetworkNavigator() {
+    return (
+      <NetworkStack.Navigator screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
+        <DeviceStack.Screen name="NetworkScreen" component={Network} options={{ title: 'Network' }} />
+      </NetworkStack.Navigator>
+    );
+  }
+  function DeviceNavigator() {
+    return (
+      <DeviceStack.Navigator screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
         <DeviceStack.Screen name="DeviceList" component={DeviceList} options={{ title: 'Devices' }} />
         <DeviceStack.Screen name="DeviceDetails" component={DeviceDetails} options={{ title: 'Details' }} />
       </DeviceStack.Navigator>
     );
   }
+  function ProfileNavigator() {
+    return (
+      <ProfileStack.Navigator screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
+        <DeviceStack.Screen name="ProfileScreen" component={Profile} options={{ title: 'Profile' }} />
+      </ProfileStack.Navigator>
+    );
+  }
 
-  function TabScreens() {
+  function TabNavigator() {
     return (
       <Tab.Navigator
         screenOptions={{
           tabBarInactiveTintColor: blackColor,
           tabBarActiveTintColor: primaryColor,
+          headerShown: false,
         }}>
         <Tab.Screen
           name="Dashboard"
-          component={Dashboard}
+          component={DashboardNavigator}
           options={{
             tabBarIcon: ({ color }) => (
               <Image
@@ -58,7 +85,7 @@ const Navigator = props => {
         />
         <Tab.Screen
           name="Network"
-          component={Network}
+          component={NetworkNavigator}
           options={{
             tabBarIcon: ({ color }) => (
               <Image source={require('./assets/wifi-solid.png')} style={{ width: 26, height: 26, tintColor: color }} />
@@ -67,9 +94,8 @@ const Navigator = props => {
         />
         <Tab.Screen
           name="Devices"
-          component={DeviceStackScreens}
+          component={DeviceNavigator}
           options={{
-            headerShown: false,
             tabBarIcon: ({ color }) => (
               <Image
                 source={require('./assets/laptop-solid.png')}
@@ -80,9 +106,8 @@ const Navigator = props => {
         />
         <Tab.Screen
           name="Profile"
-          component={Profile}
+          component={ProfileNavigator}
           options={{
-            title: 'Profile',
             tabBarIcon: ({ color }) => (
               <Image source={require('./assets/user-solid.png')} style={{ width: 26, height: 26, tintColor: color }} />
             ),
@@ -94,16 +119,24 @@ const Navigator = props => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
         {brandInfo ? (
           <>
-            <Stack.Screen name="SignIn" component={SignIn} options={{ title: 'Sign In' }} />
-            <Stack.Screen name="BrandSelector" component={BrandSelector} options={{ title: 'Select Brand' }} />
+            <Stack.Screen name="SignIn" component={SignIn} options={{ title: 'Sign In', headerShown: false }} />
+            <Stack.Screen
+              name="BrandSelector"
+              component={BrandSelector}
+              options={{ title: 'Select Brand', headerShown: false }}
+            />
           </>
         ) : (
           <>
-            <Stack.Screen name="BrandSelector" component={BrandSelector} options={{ title: 'Select Brand' }} />
-            <Stack.Screen name="SignIn" component={SignIn} options={{ title: 'Sign In' }} />
+            <Stack.Screen
+              name="BrandSelector"
+              component={BrandSelector}
+              options={{ title: 'Select Brand', headerShown: false }}
+            />
+            <Stack.Screen name="SignIn" component={SignIn} options={{ title: 'Sign In', headerShown: false }} />
           </>
         )}
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ title: 'Forgot Password' }} />
@@ -116,7 +149,7 @@ const Navigator = props => {
           component={PhoneVerification}
           options={{ title: 'Phone Verification' }}
         />
-        <Stack.Screen name="Main" component={TabScreens} options={{ headerShown: false }} />
+        <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
