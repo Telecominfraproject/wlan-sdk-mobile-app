@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { placeholderColor } from '../AppStyle';
 import { StyleSheet, View, Image, TextInput } from 'react-native';
 
 const TextInputWithIcon = props => {
@@ -16,8 +17,7 @@ const TextInputWithIcon = props => {
       height: props.style.fontSize + 8,
       width: props.style.fontSize + 8,
       resizeMode: 'contain',
-      // This is the default placeholder text colour - if this needs to be changeable it can be updated
-      tintColor: '#c7c7cd',
+      tintColor: placeholderColor,
     },
     text: {
       height: '100%',

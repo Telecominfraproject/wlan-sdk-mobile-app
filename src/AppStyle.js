@@ -1,6 +1,10 @@
 import { StyleSheet } from 'react-native';
 import { store } from './store/Store';
 
+// Primary color - branded, may change!
+export var primaryColor = '#2194f3';
+export var primaryColorStyle = StyleSheet.create({});
+
 // Basic colours
 export const blackColor = '#101010';
 export const whiteColor = '#ffffff';
@@ -8,10 +12,7 @@ export const grayBackgroundcolor = '#eeeeee';
 export const grayLightColor = '#dddddd';
 export const grayColor = '#bbbbbb';
 export const grayDarkColor = '#777777';
-
-// Primary color - branded, may change!
-export var primaryColor = '#2194f3';
-export var primaryColorStyle = StyleSheet.create({});
+export const placeholderColor = '#c7c7cd';
 
 // Badges colours
 export const okColor = '#8BC34A';
