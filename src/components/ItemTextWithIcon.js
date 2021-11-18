@@ -38,7 +38,9 @@ const ItemTextWithIcon = props => {
   return (
     <TouchableOpacity onPress={props.onPress}>
       <View style={componentStyles.container}>
-        <Text style={componentStyles.textLabel} numberOfLines={1}>{props.label}</Text>
+        <Text style={componentStyles.textLabel} numberOfLines={1}>
+          {props.label}
+        </Text>
         <Image style={componentStyles.icon} source={props.icon} />
         <Image style={componentStyles.iconCaret} source={require('../assets/angle-right-solid.png')} />
       </View>
