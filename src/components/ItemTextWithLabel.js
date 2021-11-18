@@ -21,7 +21,7 @@ const ItemTextWithLabel = props => {
       // Layout
       flexDirection: 'column',
       flexWrap: 'nowrap',
-      flex: 0,
+      flex: 1,
       justifyContent: 'space-evenly',
       marginRight: paddingHorizontalDefault,
     },
@@ -39,8 +39,12 @@ const ItemTextWithLabel = props => {
   return (
     <View style={componentStyles.container}>
       <View style={componentStyles.containerText}>
-        <Text style={componentStyles.textLabel}>{props.label}</Text>
-        <Text style={componentStyles.textValue}>{props.value}</Text>
+        <Text style={componentStyles.textLabel} numberOfLines={1}>
+          {props.label}
+        </Text>
+        <Text style={componentStyles.textValue} numberOfLines={1}>
+          {props.value}
+        </Text>
       </View>
       {props.buttonTitle ? (
         <ButtonStyled title={props.buttonTitle} type={props.buttonType} onPress={props.onButtonPress} size="small" />
