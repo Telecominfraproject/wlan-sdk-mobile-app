@@ -27,12 +27,24 @@ const AccordionSection = props => {
   };
 
   const childrenWithSeparators = () => {
-    if (getChildrenCount() <= 1) {
+    if (!props.children) {
       return props.children;
     }
 
-    return props.children.map((child, index) => {
-      return [child, index !== props.children.length - 1 && <View style={componentStyles.separator} />];
+    let children = props.children;
+    if (!Array.isArray(children)) {
+      // If there is a single element, it won't be an array, so convert to simplify the handling
+      children = [children];
+    }
+
+    // The children can have arrays of arrays - flatten this to ensure there is a single list
+    let childrenFlattened = children.flat();
+    if (childrenFlattened.length <= 1) {
+      return childrenFlattened;
+    }
+
+    return childrenFlattened.map((child, index) => {
+      return [child, index !== childrenFlattened.length - 1 && <View style={componentStyles.separator} />];
     });
   };
 
