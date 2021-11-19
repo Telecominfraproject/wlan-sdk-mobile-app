@@ -146,13 +146,15 @@ const DeviceList = props => {
             isLoading={loadingWiredClients}>
             {wiredClients &&
               wiredClients.map(item => {
+                return (
                 <ItemTextWithIcon
                   label={getClientName(item)}
                   key={item.macAddress}
                   icon={getClientIcon(item)}
                   iconTintColor={getClientIconTint(item)}
                   onPress={() => onClientPress(item)}
-                />;
+                  />
+                );
               })}
           </AccordionSection>
 
@@ -162,13 +164,15 @@ const DeviceList = props => {
             isLoading={loadingWifiClients}>
             {wifiClients &&
               wifiClients.map(item => {
+                return (
                 <ItemTextWithIcon
                   label={getClientName(item)}
                   key={item.macAddress}
                   icon={getClientIcon(item)}
                   iconTintColor={getClientIconTint(item)}
                   onPress={() => onClientPress(item)}
-                />;
+                  />
+                );
               })}
           </AccordionSection>
         </View>
