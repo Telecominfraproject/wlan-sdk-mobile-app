@@ -28,17 +28,21 @@ const Profile = props => {
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState();
 
-  // On profile tab focus query the API for the latest profile
+  // Refresh the getProfile only anytime there is a navigation change and this has come into focus
+  // Need to becareful here as useFocusEffect is also called during re-render so it can result in
+  // infinite loops.
   useFocusEffect(
     useCallback(() => {
       getProfile();
 
       // Return function of what should be done on 'focus out'
       return () => {};
-    }, [getProfile]),
+      // Disable the eslint warning, as we want to change only on navigation changes
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.navigation]),
   );
 
-  const getProfile = useCallback(async () => {
+  const getProfile = async () => {
     try {
       setLoading(true);
 
@@ -55,7 +59,7 @@ const Profile = props => {
     } finally {
       setLoading(false);
     }
-  }, [session.username]);
+  };
 
   const updateProfile = val => {
     if (profile) {
