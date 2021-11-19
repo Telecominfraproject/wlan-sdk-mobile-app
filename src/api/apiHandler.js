@@ -14,7 +14,9 @@ import {
 } from './generated/owSecurityApi';
 import {
   AccessPointsApiFactory,
+  ClientsApiFactory,
   InternetConnectionApiFactory,
+  WiFiClientsApiFactory,
   WiFiNetworksApiFactory,
   Configuration as UserPortalConfiguration,
 } from './generated/owUserPortalApi';
@@ -54,7 +56,9 @@ const userPortalConfig = new UserPortalConfiguration();
 var baseUrlUserPortalApi = null;
 var accessPointsApi = null;
 var internetConnectionApi = null;
+var wifiClientsApi = null;
 var wifiNetworksApi = null;
+var wiredClientsApi = null;
 
 // Setup the Gateway APIs
 const gatewayConfig = new GatewayConfiguration();
@@ -83,8 +87,14 @@ function generateApis() {
   internetConnectionApi = baseUrlUserPortalApi
     ? new InternetConnectionApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
     : null;
+  wifiClientsApi = baseUrlUserPortalApi
+    ? new WiFiClientsApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
+    : null;
   wifiNetworksApi = baseUrlUserPortalApi
     ? new WiFiNetworksApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
+    : null;
+  wiredClientsApi = baseUrlUserPortalApi
+    ? new ClientsApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
     : null;
 
   // Setup the Gateway Portal
@@ -207,7 +217,9 @@ export {
   authenticationApi,
   accessPointsApi,
   internetConnectionApi,
+  wifiClientsApi,
   wifiNetworksApi,
+  wiredClientsApi,
   userManagementApi,
   emailApi,
   devicesApi,

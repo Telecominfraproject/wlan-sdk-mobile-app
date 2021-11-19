@@ -1,47 +1,170 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
-import { pageStyle } from '../AppStyle';
-import { View, ScrollView, SafeAreaView } from 'react-native';
-import { devicesApi, handleApiError } from '../api/apiHandler';
-import DeviceItem from '../components/DeviceItem';
+import { marginTopDefault, okColor, warnColor, errorColor, pageStyle } from '../AppStyle';
+import { StyleSheet, View, ScrollView, SafeAreaView } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { wifiClientsApi, wiredClientsApi, handleApiError } from '../api/apiHandler';
+import { showGeneralError } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
+import ItemTextWithIcon from '../components/ItemTextWithIcon';
 
 const DeviceList = props => {
-  const [devices, setDevices] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [wiredClients, setWiredClients] = useState();
+  const [loadingWiredClients, setLoadingWiredClients] = useState(false);
+  const [wifiClients, setWifiClients] = useState();
+  const [loadingWifiClients, setLoadingWifiClients] = useState(false);
 
-  useEffect(() => {
-    getDevices();
-    return () => {
-      setDevices([]);
-    };
-  }, []);
+  // Requeury the information anytime the view is refocused. Note in order for this
+  // to work everytime it is focused - do not use useCallback
+  useFocusEffect(() => {
+    // TODO: Get the current accessPoint Id from state
+    getWiredClients();
+    getWifiClients();
 
-  const onDevicePress = async () => {
-    props.navigation.navigate('DeviceDetails');
-  };
+    // Return function of what should be done on 'focus out'
+    return () => {};
+  });
 
-  const getDevices = async () => {
+  const getWiredClients = async accessPointToQuery => {
+    if (!wiredClientsApi) {
+      return;
+    }
+
     try {
-      setLoading(true);
-      const response = await devicesApi.getDeviceList();
-      setDevices(response.data.devices);
+      if (!accessPointToQuery) {
+        // If there is no access point to query, then clear the clients
+        setWiredClients(null);
+        return;
+      }
+
+      if (!wiredClients) {
+        // Only set the loading flag is there is currently no information. If there is already
+        // information consider this a refresh so no need to show the user.
+        setLoadingWiredClients(true);
+      }
+
+      const response = await wiredClientsApi.getWiredClients(accessPointToQuery.id);
       console.log(response.data);
+      if (response && response.data) {
+        setWiredClients(response.data);
+      } else {
+        console.error('Invalid response from getWiredClients');
+        showGeneralError(strings.errors.titleNetwork, strings.errors.invalidResponse);
+      }
     } catch (error) {
-      handleApiError(strings.errors.titleDeviceList, error);
+      handleApiError(strings.errors.titleNetwork, error);
     } finally {
-      setLoading(false);
+      setLoadingWiredClients(false);
     }
   };
+
+  const getWifiClients = async accessPointToQuery => {
+    if (!wifiClientsApi) {
+      return;
+    }
+
+    try {
+      if (!accessPointToQuery) {
+        // If there is no access point to query, then clear the clients
+        setWifiClients(null);
+        return;
+      }
+
+      if (!wifiClients) {
+        // Only set the loading flag is there is currently no information. If there is already
+        // information consider this a refresh so no need to show the user.
+        setLoadingWifiClients(true);
+      }
+
+      const response = await wifiClientsApi.getWifiClients(accessPointToQuery.id);
+      console.log(response.data);
+      if (response && response.data) {
+        setWifiClients(response.data);
+      } else {
+        console.error('Invalid response from getWifiClients');
+        showGeneralError(strings.errors.titleNetwork, strings.errors.invalidResponse);
+      }
+    } catch (error) {
+      handleApiError(strings.errors.titleNetwork, error);
+    } finally {
+      setLoadingWifiClients(false);
+    }
+  };
+
+  const getClientName = client => {
+    if (!client) {
+      return strings.messages.empty;
+    }
+
+    return client.name;
+  };
+
+  const getClientIcon = client => {
+    return require('../assets/laptop-solid.png');
+  };
+
+  const getClientIconTint = client => {
+    // Random choice for the moment, until the actual device parsing is implemented
+    let choice = Math.floor(Math.random() * 10) % 3;
+
+    switch (choice) {
+      case 2:
+        return errorColor;
+
+      case 1:
+        return warnColor;
+
+      default:
+      case 0:
+        return okColor;
+    }
+  };
+
+  const onClientPress = async client => {
+    props.navigation.navigate('DeviceDetails', { clientDetails: client });
+  };
+
+  // Styles
+  const componentStyles = StyleSheet.create({
+    sectionAccordion: {
+      marginTop: marginTopDefault,
+    },
+  });
 
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.container}>
-          <AccordionSection title="Devices" isLoading={loading}>
-            {devices.map(item => {
-              return <DeviceItem device={item} onPress={onDevicePress} key={item.UUID} />;
-            })}
+          <AccordionSection
+            style={componentStyles.sectionAccordion}
+            title="Wired Devices"
+            isLoading={loadingWiredClients}>
+            {wiredClients &&
+              wiredClients.map(item => {
+                <ItemTextWithIcon
+                  label={getClientName(item)}
+                  key={item.macAddress}
+                  icon={getClientIcon(item)}
+                  iconTintColor={getClientIconTint(item)}
+                  onPress={() => onClientPress(item)}
+                />;
+              })}
+          </AccordionSection>
+
+          <AccordionSection
+            style={componentStyles.sectionAccordion}
+            title="Wifi Devices"
+            isLoading={loadingWifiClients}>
+            {wifiClients &&
+              wifiClients.map(item => {
+                <ItemTextWithIcon
+                  label={getClientName(item)}
+                  key={item.macAddress}
+                  icon={getClientIcon(item)}
+                  iconTintColor={getClientIconTint(item)}
+                  onPress={() => onClientPress(item)}
+                />;
+              })}
           </AccordionSection>
         </View>
       </ScrollView>

@@ -13,12 +13,12 @@ import {
 import { StyleSheet, SafeAreaView, ScrollView, View, Text } from 'react-native';
 import { accessPointsApi, internetConnectionApi, wifiNetworksApi, handleApiError } from '../api/apiHandler';
 import { useFocusEffect } from '@react-navigation/native';
+import { showGeneralError } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
 import ImageWithBadge from '../components/ImageWithBadge';
 import ItemTextWithIcon from '../components/ItemTextWithIcon';
 import ItemTextWithLabel from '../components/ItemTextWithLabel';
-import { showGeneralError } from '../Utils';
 
 const Network = props => {
   const [accessPoint, setAccessPoint] = useState();
