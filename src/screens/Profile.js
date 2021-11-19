@@ -11,7 +11,7 @@ import {
 } from '../AppStyle';
 import { StyleSheet, SafeAreaView, View, Text, ScrollView } from 'react-native';
 import { logStringifyPretty, showGeneralMessage, signOut } from '../Utils';
-import { emailApi, handleApiError, userManagementApi } from '../api/apiHandler';
+import { emailApi, getCredentials, handleApiError, userManagementApi } from '../api/apiHandler';
 import { MfaAuthInfoMethodEnum } from '../api/generated/owSecurityApi';
 import { useFocusEffect } from '@react-navigation/native';
 import { store } from '../store/Store';
@@ -89,8 +89,13 @@ const Profile = props => {
     signOut(props.navigation);
   };
 
-  const onChangePasswordPress = () => {
-    props.navigation.navigate('ResetPassword');
+  const onChangePasswordPress = async () => {
+    const credentials = await getCredentials();
+    logStringifyPretty(credentials);
+    props.navigation.navigate('ResetPassword', {
+      userId: credentials.username,
+      password: credentials.password,
+    });
   };
 
   // Notifications

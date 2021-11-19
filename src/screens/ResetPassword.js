@@ -3,8 +3,10 @@ import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle } from '../AppStyle';
 import { StyleSheet, View, Text, TextInput, Alert, ActivityIndicator } from 'react-native';
 import ButtonStyled from '../components/ButtonStyled';
-import { authenticationApi, handleApiError } from '../api/apiHandler';
+import { authenticationApi, handleApiError, setCredentials } from '../api/apiHandler';
 import { logStringifyPretty, showGeneralMessage } from '../Utils';
+import { setSession } from '../store/SessionSlice';
+import { useDispatch } from 'react-redux';
 
 export default function ResetPassword(props) {
   const { userId, password } = props.route.params;
@@ -13,6 +15,7 @@ export default function ResetPassword(props) {
   const [pattern, setPattern] = useState();
   const [loading, setLoading] = useState(false);
   const confirmRef = useRef();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getPattern();
@@ -46,19 +49,33 @@ export default function ResetPassword(props) {
           {
             userId: userId,
             password: password,
+            newPassword: newPassword,
           },
           newPassword,
         );
-        logStringifyPretty(response.data);
+        logStringifyPretty(response.data, 'onSubmit');
+
+        // updates session and credentials
+        dispatch(setSession(response.data));
+        await updateCredentials();
+
+        showGeneralMessage(strings.messages.requestSent);
         setLoading(false);
-        if (response.status === 200) {
-          showGeneralMessage(strings.messages.requestSent);
-          props.navigation.replace('SignIn');
-        }
+
+        props.navigation.replace('SignIn');
       } catch (error) {
         handleApiError(strings.errors.titleResetPassword, error);
         setLoading(false);
       }
+    }
+  };
+
+  const updateCredentials = async () => {
+    try {
+      await setCredentials(userId, newPassword);
+    } catch (error) {
+      console.error('updateCredentials', error);
+      handleApiError(strings.errors.titleResetPassword, error);
     }
   };
 
@@ -125,12 +142,7 @@ export default function ResetPassword(props) {
         />
       </View>
       <View style={pageItemStyle.containerButton}>
-        <ButtonStyled
-          title={strings.buttons.submit}
-          type="filled"
-          onPress={onSubmit}
-          disabled={loading || !newPassword || !confirmPassword}
-        />
+        <ButtonStyled title={strings.buttons.submit} type="filled" onPress={onSubmit} disabled={loading} />
       </View>
       <View style={pageItemStyle.container}>
         <View style={resetPasswordStyle.requirementsContainer}>

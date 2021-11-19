@@ -4,7 +4,7 @@ import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { grayDarkColor, whiteColor } from '../AppStyle';
 
 export default function NavigationHeader(navigation, route, brandInfo) {
-  const styles = StyleSheet.create({
+  const componentStyles = StyleSheet.create({
     containerLeft: { flexDirection: 'row', alignItems: 'center' },
     button: { width: 30, height: 30, resizeMode: 'contain' },
     logo: { resizeMode: 'contain', width: 70, height: 50, marginHorizontal: 5 },
@@ -16,13 +16,13 @@ export default function NavigationHeader(navigation, route, brandInfo) {
     headerTitleAlign: 'center',
     headerTitleStyle: { color: whiteColor },
     headerLeft: ({ canGoBack }) => (
-      <View style={styles.containerLeft}>
+      <View style={componentStyles.containerLeft}>
         {canGoBack && (
           <Pressable onPress={() => navigation.goBack()}>
-            <Image style={styles.button} source={require('../assets/chevron_left_white.png')} />
+            <Image style={componentStyles.button} source={require('../assets/chevron_left_white.png')} />
           </Pressable>
         )}
-        {brandInfo && <Image style={styles.logo} source={{ uri: brandInfo.iconUri }} />}
+        {brandInfo && <Image style={componentStyles.logo} source={{ uri: brandInfo.iconUri }} />}
       </View>
     ),
   };
