@@ -137,7 +137,7 @@ const DeviceList = props => {
         <View style={pageStyle.container}>
           <AccordionSection
             style={componentStyles.sectionAccordion}
-            title="Wired Devices"
+            title={strings.deviceList.wiredClients}
             isLoading={loadingWiredClients}>
             {wiredClients &&
               wiredClients.map(item => {
@@ -153,7 +153,7 @@ const DeviceList = props => {
 
           <AccordionSection
             style={componentStyles.sectionAccordion}
-            title="Wifi Devices"
+            title={strings.deviceList.wifiClients}
             isLoading={loadingWifiClients}>
             {wifiClients &&
               wifiClients.map(item => {

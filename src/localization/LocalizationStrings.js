@@ -104,6 +104,10 @@ export const strings = new LocalizedStrings({
       connectedDevices: 'Connected Devices',
       guestNetwork: 'Guest Network',
     },
+    deviceList: {
+      wifiClients: 'Wifi Clients',
+      wiredClients: 'Wired Clients',
+    },
     network: {
       defaultGateway: 'Default Gateway',
       firmware: 'Firmware',
