@@ -48,7 +48,7 @@ const Profile = props => {
         logStringifyPretty(userProfile, 'getProfile');
         setProfile(userProfile);
       } else {
-        handleApiError(strings.errors.titleProfile, strings.error.userNotFound);
+        handleApiError(strings.errors.titleProfile, strings.errors.userNotFound);
       }
     } catch (error) {
       handleApiError(strings.errors.titleProfile, error);
@@ -310,7 +310,7 @@ const Profile = props => {
           <AccordionSection
             style={styles.section}
             title={strings.profile.app}
-            isLoading={loading}
+            isLoading={false}
             disableAccordion={true}>
             <ItemTextWithLabel key="version" label={strings.profile.version} value="V1.0.0" />
           </AccordionSection>
