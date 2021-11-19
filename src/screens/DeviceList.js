@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { marginTopDefault, okColor, warnColor, errorColor, pageStyle } from '../AppStyle';
 import { StyleSheet, View, ScrollView, SafeAreaView } from 'react-native';
@@ -14,16 +14,21 @@ const DeviceList = props => {
   const [wifiClients, setWifiClients] = useState();
   const [loadingWifiClients, setLoadingWifiClients] = useState(false);
 
-  // Requeury the information anytime the view is refocused. Note in order for this
-  // to work everytime it is focused - do not use useCallback
-  useFocusEffect(() => {
-    // TODO: Get the current accessPoint Id from state
-    getWiredClients();
-    getWifiClients();
+  // Refresh the information only anytime there is a navigation change and this has come into focus
+  // Need to becareful here as useFocusEffect is also called during re-render so it can result in
+  // infinite loops.
+  useFocusEffect(
+    useCallback(() => {
+      // TODO: Get the current accessPoint Id from state
+      getWiredClients();
+      getWifiClients();
 
-    // Return function of what should be done on 'focus out'
-    return () => {};
-  });
+      // Return function of what should be done on 'focus out'
+      return () => {};
+      // Disable the eslint warning, as we want to change only on navigation changes
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.navigation]),
+  );
 
   const getWiredClients = async accessPointToQuery => {
     if (!wiredClientsApi) {
