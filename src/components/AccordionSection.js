@@ -93,6 +93,13 @@ const AccordionSection = props => {
       resizeMode: 'contain',
       tintColor: whiteColor,
     },
+    activityIndicator: {
+      position: 'absolute',
+      opacity: 0.6,
+      backgroundColor: whiteColor,
+      width: '100%',
+      height: '100%',
+    },
     itemsContainer: {
       flexDirection: 'column',
       flexWrap: 'nowrap',
@@ -133,11 +140,7 @@ const AccordionSection = props => {
           )}
         </View>
       </TouchableOpacity>
-      {props.isLoading ? (
-        <View style={componentStyles.itemsContainer}>
-          <ActivityIndicator size="large" color={primaryColor} animating={props.isLoading} />
-        </View>
-      ) : showChildren ? (
+      {showChildren ? (
         <View style={componentStyles.itemsContainer}>
           {getChildrenCount() > 0 ? (
             childrenWithSeparators()
@@ -149,6 +152,14 @@ const AccordionSection = props => {
         </View>
       ) : (
         <View />
+      )}
+      {props.isLoading && (
+        <ActivityIndicator
+          style={componentStyles.activityIndicator}
+          size="large"
+          color={primaryColor}
+          animating={props.isLoading}
+        />
       )}
     </View>
   );
