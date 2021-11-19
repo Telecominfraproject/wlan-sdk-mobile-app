@@ -9,6 +9,7 @@ import AccordionSection from '../components/AccordionSection';
 import ItemTextWithIcon from '../components/ItemTextWithIcon';
 
 const DeviceList = props => {
+  const accessPoint = {};
   const [wiredClients, setWiredClients] = useState();
   const [loadingWiredClients, setLoadingWiredClients] = useState(false);
   const [wifiClients, setWifiClients] = useState();
@@ -20,14 +21,14 @@ const DeviceList = props => {
   useFocusEffect(
     useCallback(() => {
       // TODO: Get the current accessPoint Id from state
-      getWiredClients();
-      getWifiClients();
+      getWiredClients(accessPoint);
+      getWifiClients(accessPoint);
 
       // Return function of what should be done on 'focus out'
       return () => {};
       // Disable the eslint warning, as we want to change only on navigation changes
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.navigation]),
+    }, [props.navigation, accessPoint]),
   );
 
   const getWiredClients = async accessPointToQuery => {
@@ -126,7 +127,7 @@ const DeviceList = props => {
   };
 
   const onClientPress = async client => {
-    props.navigation.navigate('DeviceDetails', { clientDetails: client });
+    props.navigation.navigate('DeviceDetails', { accessPoint: accessPoint, client: client });
   };
 
   // Styles
@@ -147,12 +148,12 @@ const DeviceList = props => {
             {wiredClients &&
               wiredClients.map(item => {
                 return (
-                <ItemTextWithIcon
-                  label={getClientName(item)}
-                  key={item.macAddress}
-                  icon={getClientIcon(item)}
-                  iconTintColor={getClientIconTint(item)}
-                  onPress={() => onClientPress(item)}
+                  <ItemTextWithIcon
+                    label={getClientName(item)}
+                    key={item.macAddress}
+                    icon={getClientIcon(item)}
+                    iconTintColor={getClientIconTint(item)}
+                    onPress={() => onClientPress(item)}
                   />
                 );
               })}
@@ -165,12 +166,12 @@ const DeviceList = props => {
             {wifiClients &&
               wifiClients.map(item => {
                 return (
-                <ItemTextWithIcon
-                  label={getClientName(item)}
-                  key={item.macAddress}
-                  icon={getClientIcon(item)}
-                  iconTintColor={getClientIconTint(item)}
-                  onPress={() => onClientPress(item)}
+                  <ItemTextWithIcon
+                    label={getClientName(item)}
+                    key={item.macAddress}
+                    icon={getClientIcon(item)}
+                    iconTintColor={getClientIconTint(item)}
+                    onPress={() => onClientPress(item)}
                   />
                 );
               })}
