@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import {
   marginTopDefault,
@@ -11,23 +11,31 @@ import {
   okColor,
 } from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, Text } from 'react-native';
-import { accessPointsApi, wifiNetworksApi, handleApiError } from '../api/apiHandler';
+import { accessPointsApi, internetConnectionApi, wifiNetworksApi, handleApiError } from '../api/apiHandler';
+import { useFocusEffect } from '@react-navigation/native';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
 import ImageWithBadge from '../components/ImageWithBadge';
 import ItemTextWithIcon from '../components/ItemTextWithIcon';
 import ItemTextWithLabel from '../components/ItemTextWithLabel';
+import { showGeneralError } from '../Utils';
 
 const Network = props => {
   const [accessPoint, setAccessPoint] = useState();
   const [accessPointLoading, setAccessPointLoading] = useState(false);
-  const [wifiNetworks, setWifiNetworks] = useState([]);
+  const [wifiNetworks, setWifiNetworks] = useState();
   const [wifiNetworksLoading, setWifiNetworksLoading] = useState(false);
+  const [internetConnection, setInternetConnection] = useState();
+  const [internetConnectionLoading, setInternetConnectionLoading] = useState(false);
 
-  useEffect(() => {
+  // Requeury the information anytime the view is refocused. Note in order for this
+  // to work everytime it is focused - do not use useCallback
+  useFocusEffect(() => {
     getAccessPoint();
-    getWifiNetworks();
-  }, []);
+
+    // Return function of what should be done on 'focus out'
+    return () => {};
+  });
 
   const getAccessPoint = async () => {
     if (!accessPointsApi) {
@@ -35,10 +43,33 @@ const Network = props => {
     }
 
     try {
-      setAccessPointLoading(true);
+      if (!accessPoint) {
+        // Only set the loading flag is there is currently no information. If there is already
+        // information consider this a refresh so no need to show the user.
+        setAccessPointLoading(true);
+      }
+
       const response = await accessPointsApi.getSubscriberAccessPointList();
-      setAccessPoint(response.data.list);
       console.log(response.data);
+      if (response && response.data) {
+        const list = response.data.list;
+
+        if (list && Array.isArray(list) && list.length > 0) {
+          setAccessPoint(list[0]);
+        } else {
+          // List changed, so clear the current access point
+          setAccessPoint(null);
+          showGeneralError(strings.errors.titleNetwork, strings.errors.noAccessPoint);
+        }
+
+        // Update the networks based on the current accessPoint, if null
+        // then the functions will handle that appropriate as well
+        getWifiNetworks(accessPoint);
+        getInternetConnection(accessPoint);
+      } else {
+        console.error('Invalid response from getSubscriberAccessPointList');
+        showGeneralError(strings.errors.titleNetwork, strings.errors.invalidResponse);
+      }
     } catch (error) {
       handleApiError(strings.errors.titleNetwork, error);
     } finally {
@@ -46,20 +77,69 @@ const Network = props => {
     }
   };
 
-  const getWifiNetworks = async () => {
+  const getWifiNetworks = async accessPointToQuery => {
     if (!wifiNetworksApi) {
       return;
     }
 
     try {
-      setWifiNetworksLoading(true);
-      const response = await wifiNetworksApi.getWifiNetworks;
-      setWifiNetworks(response.data.list);
+      if (!accessPointToQuery) {
+        // If there is no access point to query, then clear the wifi networks as well
+        setWifiNetworks(null);
+        return;
+      }
+
+      if (!wifiNetworks) {
+        // Only set the loading flag is there is currently no information. If there is already
+        // information consider this a refresh so no need to show the user.
+        setWifiNetworksLoading(true);
+      }
+
+      const response = await wifiNetworksApi.getWifiNetworks(accessPointToQuery.id, false);
       console.log(response.data);
+      if (response && response.data) {
+        setWifiNetworks(response.data);
+      } else {
+        console.error('Invalid response from getWifiNetworks');
+        showGeneralError(strings.errors.titleNetwork, strings.errors.invalidResponse);
+      }
     } catch (error) {
       handleApiError(strings.errors.titleNetwork, error);
     } finally {
       setWifiNetworksLoading(false);
+    }
+  };
+
+  const getInternetConnection = async accessPointToQuery => {
+    if (!internetConnectionApi) {
+      return;
+    }
+
+    try {
+      if (!accessPointToQuery) {
+        // If there is no access point to query, then clear the wifi networks as well
+        setWifiNetworks(null);
+        return;
+      }
+
+      if (!internetConnection) {
+        // Only set the loading flag is there is currently no information. If there is already
+        // information consider this a refresh so no need to show the user.
+        setInternetConnectionLoading(true);
+      }
+
+      const response = await internetConnectionApi.getInternetConnectionSettings(accessPointToQuery.id, false);
+      console.log(response.data);
+      if (response && response.data) {
+        setInternetConnection(response.data);
+      } else {
+        console.error('Invalid response from getInternetConnectionSettings');
+        showGeneralError(strings.errors.titleNetwork, strings.errors.invalidResponse);
+      }
+    } catch (error) {
+      handleApiError(strings.errors.titleNetwork, error);
+    } finally {
+      setInternetConnectionLoading(false);
     }
   };
 
@@ -189,11 +269,18 @@ const Network = props => {
               badgeSize="small"
             />
             <Text style={componentStyles.sectionNetworkText}>{getAccessPointName()}</Text>
-            <ButtonStyled title={strings.buttons.reboot} type="outline" onPress={onRebootPress} size="small" />
+            <ButtonStyled
+              title={strings.buttons.reboot}
+              type="outline"
+              onPress={onRebootPress}
+              size="small"
+              disabled={!accessPoint}
+            />
           </View>
+
           <AccordionSection
             style={componentStyles.sectionAccordion}
-            title={strings.network.network}
+            title={strings.network.networks}
             disableAccordion={true}
             isLoading={wifiNetworksLoading}>
             {wifiNetworks &&
@@ -209,6 +296,7 @@ const Network = props => {
                 );
               })}
           </AccordionSection>
+
           <AccordionSection
             style={componentStyles.sectionAccordion}
             title={strings.network.routerSettings}
@@ -219,6 +307,7 @@ const Network = props => {
               value={accessPoint ? accessPoint.firmware : strings.messages.empty}
               buttonTitle={strings.buttons.update}
               onButtonPress={onUpdateFirmwarePress}
+              buttonDisabled={!accessPoint}
             />
             <ItemTextWithLabel
               label={strings.network.productModel}
@@ -231,6 +320,33 @@ const Network = props => {
             <ItemTextWithLabel
               label={strings.network.macAddress}
               value={accessPoint ? accessPoint.macAddress : strings.messages.empty}
+            />
+          </AccordionSection>
+
+          <AccordionSection
+            style={componentStyles.sectionAccordion}
+            title={strings.network.internetSettings}
+            disableAccordion={true}
+            isLoading={internetConnectionLoading}>
+            <ItemTextWithLabel
+              label={strings.network.ipAdddress}
+              value={internetConnection ? internetConnection.ipAddress : strings.messages.empty}
+            />
+            <ItemTextWithLabel
+              label={strings.network.subnetMask}
+              value={internetConnection ? internetConnection.subnetMask : strings.messages.empty}
+            />
+            <ItemTextWithLabel
+              label={strings.network.defaultGateway}
+              value={internetConnection ? internetConnection.defaultGateway : strings.messages.empty}
+            />
+            <ItemTextWithLabel
+              label={strings.network.primaryDns}
+              value={internetConnection ? internetConnection.primaryDns : strings.messages.empty}
+            />
+            <ItemTextWithLabel
+              label={strings.network.secondaryDns}
+              value={internetConnection ? internetConnection.secondaryDns : strings.messages.empty}
             />
           </AccordionSection>
         </View>

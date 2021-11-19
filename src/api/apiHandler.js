@@ -14,6 +14,7 @@ import {
 } from './generated/owSecurityApi';
 import {
   AccessPointsApiFactory,
+  InternetConnectionApiFactory,
   WiFiNetworksApiFactory,
   Configuration as UserPortalConfiguration,
 } from './generated/owUserPortalApi';
@@ -52,6 +53,7 @@ var emailApi = null;
 const userPortalConfig = new UserPortalConfiguration();
 var baseUrlUserPortalApi = null;
 var accessPointsApi = null;
+var internetConnectionApi = null;
 var wifiNetworksApi = null;
 
 // Setup the Gateway APIs
@@ -77,6 +79,9 @@ function generateApis() {
   baseUrlUserPortalApi = getBaseUrlForApi('owuserport');
   accessPointsApi = baseUrlUserPortalApi
     ? new AccessPointsApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
+    : null;
+  internetConnectionApi = baseUrlUserPortalApi
+    ? new InternetConnectionApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
     : null;
   wifiNetworksApi = baseUrlUserPortalApi
     ? new WiFiNetworksApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
@@ -201,6 +206,7 @@ function handleApiError(title, error) {
 export {
   authenticationApi,
   accessPointsApi,
+  internetConnectionApi,
   wifiNetworksApi,
   userManagementApi,
   emailApi,

@@ -47,7 +47,13 @@ const ItemTextWithLabel = props => {
         </Text>
       </View>
       {props.buttonTitle ? (
-        <ButtonStyled title={props.buttonTitle} type={props.buttonType} onPress={props.onButtonPress} size="small" />
+        <ButtonStyled
+          title={props.buttonTitle}
+          type={props.buttonType}
+          onPress={props.onButtonPress}
+          size="small"
+          disabled={props.buttonDisabled}
+        />
       ) : (
         <></>
       )}
