@@ -4,7 +4,7 @@ import { selectBrandInfo } from './store/BrandInfoSlice';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Image } from 'react-native';
+import { Image, Platform } from 'react-native';
 
 import BrandSelector from './screens/BrandSelector';
 import SignIn from './screens/SignIn';
@@ -18,7 +18,7 @@ import DeviceList from './screens/DeviceList';
 import DeviceDetails from './screens/DeviceDetails';
 import Network from './screens/Network';
 import Profile from './screens/Profile';
-import { primaryColor, blackColor } from './AppStyle';
+import { primaryColor, blackColor, grayBackgroundcolor } from './AppStyle';
 import PhoneVerification from './screens/PhoneVerification';
 import NavigationHeader from './components/NavigationHeader';
 
@@ -119,7 +119,13 @@ const Navigator = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
+      <Stack.Navigator
+        screenOptions={{
+          headerBackVisible: Platform.OS === 'ios',
+          headerStyle: { backgroundColor: grayBackgroundcolor },
+          headerShadowVisible: false,
+          headerTitleStyle: { fontSize: 16 },
+        }}>
         {brandInfo ? (
           <>
             <Stack.Screen name="SignIn" component={SignIn} options={{ title: 'Sign In', headerShown: false }} />

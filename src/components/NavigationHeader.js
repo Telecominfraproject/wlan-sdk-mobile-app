@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Pressable, StyleSheet, View } from 'react-native';
+import { Image, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { grayDarkColor, whiteColor } from '../AppStyle';
 
@@ -17,7 +17,7 @@ export default function NavigationHeader(navigation, route, brandInfo) {
     headerTitleStyle: { color: whiteColor },
     headerLeft: ({ canGoBack }) => (
       <View style={componentStyles.containerLeft}>
-        {canGoBack && (
+        {Platform.OS === 'ios' && canGoBack && (
           <Pressable onPress={() => navigation.goBack()}>
             <Image style={componentStyles.button} source={require('../assets/chevron_left_white.png')} />
           </Pressable>
