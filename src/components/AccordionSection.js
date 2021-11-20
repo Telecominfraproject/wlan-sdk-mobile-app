@@ -44,7 +44,10 @@ const AccordionSection = props => {
     }
 
     return childrenFlattened.map((child, index) => {
-      return [child, index !== childrenFlattened.length - 1 && <View style={componentStyles.separator} />];
+      return [
+        child,
+        index !== childrenFlattened.length - 1 && <View key={'seperator_' + index} style={componentStyles.separator} />,
+      ];
     });
   };
 
@@ -145,13 +148,13 @@ const AccordionSection = props => {
           {getChildrenCount() > 0 ? (
             childrenWithSeparators()
           ) : (
-            <View style={componentStyles.noneContainer}>
+            <View key="none" style={componentStyles.noneContainer}>
               <Text>{strings.accordionSection.none}</Text>
             </View>
           )}
         </View>
       ) : (
-        <View />
+        <View key="empty" />
       )}
       {props.isLoading && (
         <ActivityIndicator
