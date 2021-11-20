@@ -18,6 +18,7 @@ import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
 import ImageWithBadge from '../components/ImageWithBadge';
 import ItemTextWithLabel from '../components/ItemTextWithLabel';
+import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 
 const DeviceDetails = props => {
   const accessPoint = props.route.params.accessPoint;
@@ -30,7 +31,6 @@ const DeviceDetails = props => {
   // infinite loops.
   useFocusEffect(
     useCallback(() => {
-      console.log(props.route);
       if (accessPoint && client) {
         getSubsciberDevice(accessPoint, client);
       }
@@ -49,12 +49,17 @@ const DeviceDetails = props => {
 
     try {
       if (!accessPointToQuery || !clientToQuery) {
+        showGeneralError(strings.errors.titleNetwork, strings.errors.internal);
+        return;
+      }
+
+      if (!device) {
         // Only set the loading flag is there is currently no information. If there is already
         // information consider this a refresh so no need to show the user.
         setDeviceLoading(true);
       }
 
-      const response = await subscriberDevicesApi.get.getSubscriberDevices(accessPointToQuery.id);
+      const response = await subscriberDevicesApi.getSubscriberDevices(accessPointToQuery.id);
       console.log(response.data);
       if (response && response.data) {
         const searchResult = response.data.devices.find(
@@ -76,6 +81,57 @@ const DeviceDetails = props => {
       handleApiError(strings.errors.titleNetwork, error);
     } finally {
       setDeviceLoading(false);
+    }
+  };
+
+  const updateDeviceValue = jsonObject => {
+    if (jsonObject) {
+      // We are looping, but really only expect one
+      for (const [key, value] of Object.entries(jsonObject)) {
+        updateSubsciberDevice(accessPoint, client, key, value);
+      }
+    }
+  };
+
+  const updateSubsciberDevice = async (accessPointToUpdate, clientToUpdate, keyToUpdate, valueToUpdate) => {
+    if (!subscriberDevicesApi) {
+      return;
+    }
+
+    try {
+      if (!accessPointToUpdate || !clientToUpdate || !keyToUpdate || !valueToUpdate) {
+        showGeneralError(strings.errors.titleNetwork, strings.errors.internal);
+        return;
+      }
+
+      // Get the most current subscriber devices, we want to be as current as possible to ensure we have the latest
+      // values before updating the new information
+      const responseGet = await subscriberDevicesApi.getSubscriberDevices(accessPointToUpdate.id);
+      if (responseGet && responseGet.data) {
+        let subscriberDevices = responseGet.data.devices;
+        let deviceToUpdate = subscriberDevices.find(deviceTemp => deviceTemp.macAddress === clientToUpdate.macAddress);
+
+        // Update the value
+        deviceToUpdate[keyToUpdate] = valueToUpdate;
+
+        const responseModify = await subscriberDevicesApi.get.modifySubscriberDevices(
+          accessPointToUpdate.id,
+          false,
+          subscriberDevices,
+        );
+        console.log(responseModify.data);
+        if (responseModify && responseModify.data) {
+          // Updated - no need to do anyting
+        } else {
+          console.error('Invalid response from modifySubscriberDevices');
+          showGeneralError(strings.errors.titleNetwork, strings.errors.invalidResponse);
+        }
+      } else {
+        console.error('Invalid response from getSubscriberDevices');
+        showGeneralError(strings.errors.titleNetwork, strings.errors.invalidResponse);
+      }
+    } catch (error) {
+      handleApiError(strings.errors.titleNetwork, error);
     }
   };
 
@@ -172,8 +228,8 @@ const DeviceDetails = props => {
             title={strings.deviceDetails.connectionDetails}
             disableAccordion={true}
             isLoading={deviceLoading}>
-            <ItemTextWithLabel label={strings.deviceDetails.status} value="Connected" />
-            <ItemTextWithLabel label={strings.deviceDetails.connectionType} value={getConnectionType()} />
+            <ItemTextWithLabel key="status" label={strings.deviceDetails.status} value="Connected" />
+            <ItemTextWithLabel key="type" label={strings.deviceDetails.connectionType} value={getConnectionType()} />
           </AccordionSection>
 
           <AccordionSection
@@ -182,30 +238,41 @@ const DeviceDetails = props => {
             disableAccordion={true}
             isLoading={deviceLoading}>
             <ItemTextWithLabel
+              key="name"
               label={strings.deviceDetails.name}
               value={device ? device.name : strings.messages.empty}
             />
-            <ItemTextWithLabel
+            <ItemTextWithLabelEditable
+              key="group"
               label={strings.deviceDetails.group}
               value={device ? device.group : strings.messages.empty}
+              editKey="group"
+              onEdit={updateDeviceValue}
             />
-            <ItemTextWithLabel
+            <ItemTextWithLabelEditable
+              key="description"
               label={strings.deviceDetails.description}
               value={device ? device.description : strings.messages.empty}
+              editKey="description"
+              onEdit={updateDeviceValue}
             />
             <ItemTextWithLabel
+              key="type"
               label={strings.deviceDetails.type}
               value={device ? device.type : strings.messages.empty}
             />
             <ItemTextWithLabel
+              key="manufacturer"
               label={strings.deviceDetails.manufacturer}
               value={device ? device.manufacturer : strings.messages.empty}
             />
             <ItemTextWithLabel
+              key="ipAddress"
               label={strings.deviceDetails.ipAddress}
               value={device ? device.ip : strings.messages.empty}
             />
             <ItemTextWithLabel
+              key="macAddress"
               label={strings.deviceDetails.macAddress}
               value={device ? device.macAddress : strings.messages.empty}
             />
