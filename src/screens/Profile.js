@@ -96,7 +96,7 @@ const Profile = props => {
   const onChangePasswordPress = async () => {
     const credentials = await getCredentials();
     logStringifyPretty(credentials);
-    props.navigation.navigate('ResetPassword', {
+    props.navigation.navigate('ChangePassword', {
       userId: credentials.username,
       password: credentials.password,
     });

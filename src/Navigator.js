@@ -59,6 +59,7 @@ const Navigator = () => {
     return (
       <ProfileStack.Navigator screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
         <DeviceStack.Screen name="ProfileScreen" component={Profile} options={{ title: 'Profile' }} />
+        <DeviceStack.Screen name="ChangePassword" component={ResetPassword} options={{ title: 'Change Password' }} />
       </ProfileStack.Navigator>
     );
   }
