@@ -10,19 +10,22 @@ export default function Divider(props) {
   const height = props.height ?? 2;
   const paddingHorizontal = props.paddingHorizontal ?? 0;
   const paddingVertical = props.paddingVertical ?? 0;
-  const margin = props.margin ?? 5;
+  const marginHorizontal = props.marginHorizontal ?? 0;
+  const marginVertical = props.marginVertical ?? 5;
 
   const styles = StyleSheet.create({
     container: {
       paddingHorizontal,
       paddingVertical,
+      width: '100%',
+      marginHorizontal,
+      marginVertical,
     },
     default: {
-      flex: 1,
+      // flex: 1,
       backgroundColor: color,
       width,
       height,
-      margin,
     },
   });
 

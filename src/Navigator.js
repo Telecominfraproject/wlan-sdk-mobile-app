@@ -21,6 +21,7 @@ import Profile from './screens/Profile';
 import { primaryColor, blackColor, grayBackgroundcolor } from './AppStyle';
 import PhoneVerification from './screens/PhoneVerification';
 import NavigationHeader from './components/NavigationHeader';
+import SignUp from './screens/SignUp';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -148,6 +149,7 @@ const Navigator = () => {
         )}
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ title: 'Forgot Password' }} />
         <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ title: 'Password Reset' }} />
+        <Stack.Screen name="SignUp" component={SignUp} options={{ title: 'Sign Up' }} />
         <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} options={{ title: 'Privacy Policy' }} />
         <Stack.Screen name="TermsConditions" component={TermsConditions} options={{ title: 'Terms & Conditions' }} />
         <Stack.Screen name="MFACode" component={MFACode} options={{ title: 'Multi-factor Authentication' }} />
