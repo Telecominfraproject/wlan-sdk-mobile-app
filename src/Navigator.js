@@ -1,65 +1,88 @@
 import React from 'react';
+import { strings } from './localization/LocalizationStrings';
+import { primaryColor, blackColor, grayBackgroundcolor } from './AppStyle';
 import { useSelector } from 'react-redux';
 import { selectBrandInfo } from './store/BrandInfoSlice';
+import { StyleSheet, Image, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Image, Platform } from 'react-native';
 
 import BrandSelector from './screens/BrandSelector';
-import SignIn from './screens/SignIn';
-import MFACode from './screens/MFACode';
-import ForgotPassword from './screens/ForgotPassword';
-import ResetPassword from './screens/ResetPassword';
-import PrivacyPolicy from './screens/PrivacyPolicy';
-import TermsConditions from './screens/TermsConditions';
 import Dashboard from './screens/Dashboard';
-import DeviceList from './screens/DeviceList';
 import DeviceDetails from './screens/DeviceDetails';
-import Network from './screens/Network';
-import Profile from './screens/Profile';
-import { primaryColor, blackColor, grayBackgroundcolor } from './AppStyle';
-import PhoneVerification from './screens/PhoneVerification';
+import DeviceList from './screens/DeviceList';
+import ForgotPassword from './screens/ForgotPassword';
 import NavigationHeader from './components/NavigationHeader';
-
-const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
-const DashboardStack = createNativeStackNavigator();
-const NetworkStack = createNativeStackNavigator();
-const DeviceStack = createNativeStackNavigator();
-const ProfileStack = createNativeStackNavigator();
+import Network from './screens/Network';
+import MFACode from './screens/MFACode';
+import PhoneVerification from './screens/PhoneVerification';
+import PrivacyPolicy from './screens/PrivacyPolicy';
+import Profile from './screens/Profile';
+import ResetPassword from './screens/ResetPassword';
+import SignIn from './screens/SignIn';
+import TermsConditions from './screens/TermsConditions';
 
 const Navigator = () => {
   const brandInfo = useSelector(selectBrandInfo);
+  const Stack = createNativeStackNavigator();
+  const Tab = createBottomTabNavigator();
+  const DashboardStack = createNativeStackNavigator();
+  const NetworkStack = createNativeStackNavigator();
+  const DeviceStack = createNativeStackNavigator();
+  const ProfileStack = createNativeStackNavigator();
+
+  // Styles
+  const componentStyles = StyleSheet.create({
+    tabIcon: {
+      height: 26,
+      width: 26,
+    },
+  });
 
   function DashboardNavigator() {
     return (
       <DashboardStack.Navigator
         screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
-        <DeviceStack.Screen name="DashboardScreen" component={Dashboard} options={{ title: 'Dashboard' }} />
+        <DeviceStack.Screen
+          name="DashboardScreen"
+          component={Dashboard}
+          options={{ title: strings.navigator.dashboard }}
+        />
       </DashboardStack.Navigator>
     );
   }
+
   function NetworkNavigator() {
     return (
       <NetworkStack.Navigator screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
-        <DeviceStack.Screen name="NetworkScreen" component={Network} options={{ title: 'Network' }} />
+        <DeviceStack.Screen name="NetworkScreen" component={Network} options={{ title: strings.navigator.network }} />
       </NetworkStack.Navigator>
     );
   }
+
   function DeviceNavigator() {
     return (
       <DeviceStack.Navigator screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
-        <DeviceStack.Screen name="DeviceList" component={DeviceList} options={{ title: 'Devices' }} />
-        <DeviceStack.Screen name="DeviceDetails" component={DeviceDetails} options={{ title: 'Details' }} />
+        <DeviceStack.Screen name="DeviceList" component={DeviceList} options={{ title: strings.navigator.devices }} />
+        <DeviceStack.Screen
+          name="DeviceDetails"
+          component={DeviceDetails}
+          options={{ title: strings.navigator.details }}
+        />
       </DeviceStack.Navigator>
     );
   }
+
   function ProfileNavigator() {
     return (
       <ProfileStack.Navigator screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
-        <DeviceStack.Screen name="ProfileScreen" component={Profile} options={{ title: 'Profile' }} />
-        <DeviceStack.Screen name="ChangePassword" component={ResetPassword} options={{ title: 'Change Password' }} />
+        <DeviceStack.Screen name="ProfileScreen" component={Profile} options={{ title: strings.navigator.profile }} />
+        <DeviceStack.Screen
+          name="ChangePassword"
+          component={ResetPassword}
+          options={{ title: strings.navigator.changePassword }}
+        />
       </ProfileStack.Navigator>
     );
   }
@@ -79,7 +102,7 @@ const Navigator = () => {
             tabBarIcon: ({ color }) => (
               <Image
                 source={require('./assets/tachometer-alt-solid.png')}
-                style={{ width: 26, height: 26, tintColor: color }}
+                style={[componentStyles.tabIcon, { tintColor: color }]}
               />
             ),
           }}
@@ -89,7 +112,10 @@ const Navigator = () => {
           component={NetworkNavigator}
           options={{
             tabBarIcon: ({ color }) => (
-              <Image source={require('./assets/wifi-solid.png')} style={{ width: 26, height: 26, tintColor: color }} />
+              <Image
+                source={require('./assets/wifi-solid.png')}
+                style={[componentStyles.tabIcon, { tintColor: color }]}
+              />
             ),
           }}
         />
@@ -100,7 +126,7 @@ const Navigator = () => {
             tabBarIcon: ({ color }) => (
               <Image
                 source={require('./assets/laptop-solid.png')}
-                style={{ width: 26, height: 26, tintColor: color }}
+                style={[componentStyles.tabIcon, { tintColor: color }]}
               />
             ),
           }}
@@ -110,7 +136,10 @@ const Navigator = () => {
           component={ProfileNavigator}
           options={{
             tabBarIcon: ({ color }) => (
-              <Image source={require('./assets/user-solid.png')} style={{ width: 26, height: 26, tintColor: color }} />
+              <Image
+                source={require('./assets/user-solid.png')}
+                style={[componentStyles.tabIcon, { tintColor: color }]}
+              />
             ),
           }}
         />
@@ -146,15 +175,35 @@ const Navigator = () => {
             <Stack.Screen name="SignIn" component={SignIn} options={{ title: 'Sign In', headerShown: false }} />
           </>
         )}
-        <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ title: 'Forgot Password' }} />
-        <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ title: 'Password Reset' }} />
-        <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} options={{ title: 'Privacy Policy' }} />
-        <Stack.Screen name="TermsConditions" component={TermsConditions} options={{ title: 'Terms & Conditions' }} />
-        <Stack.Screen name="MFACode" component={MFACode} options={{ title: 'Multi-factor Authentication' }} />
+        <Stack.Screen
+          name="ForgotPassword"
+          component={ForgotPassword}
+          options={{ title: strings.navigator.forgotPassword }}
+        />
+        <Stack.Screen
+          name="ResetPassword"
+          component={ResetPassword}
+          options={{ title: strings.navigator.passwordReset }}
+        />
+        <Stack.Screen
+          name="PrivacyPolicy"
+          component={PrivacyPolicy}
+          options={{ title: strings.navigator.privacyPolicy }}
+        />
+        <Stack.Screen
+          name="TermsConditions"
+          component={TermsConditions}
+          options={{ title: strings.navigator.termsConditions }}
+        />
+        <Stack.Screen
+          name="MFACode"
+          component={MFACode}
+          options={{ title: strings.navigator.multiFactorAuthentication }}
+        />
         <Stack.Screen
           name="PhoneVerification"
           component={PhoneVerification}
-          options={{ title: 'Phone Verification' }}
+          options={{ title: strings.navigator.phoneVerification }}
         />
         <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
       </Stack.Navigator>
