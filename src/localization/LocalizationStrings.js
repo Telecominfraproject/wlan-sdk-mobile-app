@@ -53,6 +53,7 @@ export const strings = new LocalizedStrings({
       phoneVerification: 'Phone Verification',
       privacyPolicy: 'Privacy Policy',
       profile: 'Profile',
+      signUp: 'Sign Up',
       termsConditions: 'Terms & Conditions',
     },
     placeholders: {
@@ -78,6 +79,7 @@ export const strings = new LocalizedStrings({
       sendCode: 'Send Code',
       signIn: 'Sign In',
       signOut: 'Sign Out',
+      signUp: 'Sign Up',
       submit: 'Submit',
       termsConditions: 'Terms & Conditions',
       update: 'Update',
@@ -94,6 +96,11 @@ export const strings = new LocalizedStrings({
     signIn: {
       title: 'Sign In',
       description: 'Please enter your email and password to sign in to your account.',
+      noAccount: "Don't have an account?",
+    },
+    signUp: {
+      title: 'Sign Up',
+      description: 'Please enter a email and password to create an account.',
     },
     forgotPassword: {
       title: 'Reset Password',
@@ -159,7 +166,7 @@ export const strings = new LocalizedStrings({
       email: 'Email',
       description: 'Description',
       manageDeviceGroups: 'Manage Device Groups',
-      MFA: 'MFA',
+      mfa: 'MFA',
       name: 'Name',
       notifications: 'Notifications',
       notificationHistory: 'Notification History',

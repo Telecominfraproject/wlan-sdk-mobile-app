@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearSession, setSession } from '../store/SessionSlice';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { strings } from '../localization/LocalizationStrings';
-import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
+import { pageStyle, pageItemStyle, primaryColor, blackColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View, Image, TextInput, ActivityIndicator } from 'react-native';
 import ButtonStyled from '../components/ButtonStyled';
 import { logStringifyPretty, showGeneralError } from '../Utils';
@@ -16,6 +16,7 @@ import {
   getCredentials,
   clearCredentials,
 } from '../api/apiHandler';
+import Divider from '../components/Divider';
 
 const SignIn = props => {
   const dispatch = useDispatch();
@@ -124,6 +125,10 @@ const SignIn = props => {
     props.navigation.navigate('ForgotPassword');
   };
 
+  const onSignUp = () => {
+    props.navigation.navigate('SignUp');
+  };
+
   const onChangeBrandPress = async () => {
     props.navigation.reset({
       index: 0,
@@ -215,6 +220,16 @@ const SignIn = props => {
               </View>
             </View>
           )}
+
+          <Divider marginVertical={30} />
+
+          {/* Sign Up */}
+          <Text>{strings.signIn.noAccount}</Text>
+          <View style={pageItemStyle.containerButton}>
+            <ButtonStyled title={strings.buttons.signUp} type={'outline'} onPress={onSignUp} />
+          </View>
+
+          {/* Bottom Buttons */}
           <View style={signInStyle.fillView} />
           <View style={pageItemStyle.containerButton}>
             <ButtonStyled title={strings.buttons.changeBrand} type="text" onPress={onChangeBrandPress} />

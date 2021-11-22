@@ -21,6 +21,7 @@ import PrivacyPolicy from './screens/PrivacyPolicy';
 import Profile from './screens/Profile';
 import ResetPassword from './screens/ResetPassword';
 import SignIn from './screens/SignIn';
+import SignUp from './screens/SignUp';
 import TermsConditions from './screens/TermsConditions';
 
 const Navigator = () => {
@@ -185,6 +186,7 @@ const Navigator = () => {
           component={ResetPassword}
           options={{ title: strings.navigator.passwordReset }}
         />
+        <Stack.Screen name="SignUp" component={SignUp} options={{ title: strings.navigator.signUp }} />
         <Stack.Screen
           name="PrivacyPolicy"
           component={PrivacyPolicy}
