@@ -192,7 +192,7 @@ const Profile = props => {
       props.navigation.navigate('PhoneVerification', { phone, profile });
     } catch (err) {
       setLoading(false);
-      handleApiError(strings.errors.titleSMS, err);
+      handleApiError(strings.errors.titleSms, err);
     }
   };
 
@@ -250,7 +250,7 @@ const Profile = props => {
 
               {/* MFA */}
               <View key="mfa" style={styles.item}>
-                <Text style={styles.label}>{strings.profile.MFA}</Text>
+                <Text style={styles.label}>{strings.profile.mfa}</Text>
                 {profile.userTypeProprietaryInfo.mfa && (
                   <View>
                     <RadioCheckbox

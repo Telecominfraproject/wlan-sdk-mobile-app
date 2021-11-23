@@ -15,7 +15,7 @@ import DeviceList from './screens/DeviceList';
 import ForgotPassword from './screens/ForgotPassword';
 import NavigationHeader from './components/NavigationHeader';
 import Network from './screens/Network';
-import MFACode from './screens/MFACode';
+import MfaCode from './screens/MfaCode';
 import PhoneVerification from './screens/PhoneVerification';
 import PrivacyPolicy from './screens/PrivacyPolicy';
 import Profile from './screens/Profile';
@@ -198,8 +198,8 @@ const Navigator = () => {
           options={{ title: strings.navigator.termsConditions }}
         />
         <Stack.Screen
-          name="MFACode"
-          component={MFACode}
+          name="MfaCode"
+          component={MfaCode}
           options={{ title: strings.navigator.multiFactorAuthentication }}
         />
         <Stack.Screen

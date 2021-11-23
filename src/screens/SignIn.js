@@ -87,7 +87,7 @@ const SignIn = props => {
         showGeneralError(strings.errors.titleSignIn, strings.errors.invalidResponse);
       } else if (response.data.method && response.data.created) {
         // Handle Multi-Factor Authentication
-        props.navigation.navigate('MFACode', { credentials });
+        props.navigation.navigate('MfaCode', { credentials });
       } else if (response.data.userMustChangePassword) {
         // Handle Password Reset
         props.navigation.navigate('ResetPassword', {

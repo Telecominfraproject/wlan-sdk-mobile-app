@@ -9,7 +9,7 @@ import { store } from '../store/Store';
 import { useDispatch } from 'react-redux';
 import { setSession } from '../store/SessionSlice';
 
-export default function MFACode(props) {
+export default function MfaCode(props) {
   const state = store.getState();
   const session = state.session.value;
   const uuid = session.uuid;
@@ -47,7 +47,7 @@ export default function MFACode(props) {
       }
     } catch (error) {
       setLoading(false);
-      handleApiError(strings.errors.titleMFA, error);
+      handleApiError(strings.errors.titleMfa, error);
     }
   };
 
@@ -92,7 +92,7 @@ export default function MFACode(props) {
       }
       setLoading(false);
     } catch (error) {
-      handleApiError(strings.errors.titleMFA, error);
+      handleApiError(strings.errors.titleMfa, error);
       signOut(props.navigation);
     }
   };
