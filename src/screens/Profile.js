@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import {
   marginTopDefault,
@@ -9,7 +9,7 @@ import {
   pageItemStyle,
   paddingVerticalDefault,
 } from '../AppStyle';
-import { StyleSheet, SafeAreaView, View, Text, ScrollView } from 'react-native';
+import { StyleSheet, SafeAreaView, View, ScrollView } from 'react-native';
 import { logStringifyPretty, showGeneralMessage, signOut } from '../Utils';
 import { emailApi, getCredentials, handleApiError, userManagementApi } from '../api/apiHandler';
 import { MfaAuthInfoMethodEnum } from '../api/generated/owSecurityApi';
@@ -20,13 +20,14 @@ import ButtonStyled from '../components/ButtonStyled';
 import ItemTextWithIcon from '../components/ItemTextWithIcon';
 import ItemTextWithLabel from '../components/ItemTextWithLabel';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
-import RadioCheckbox from '../components/RadioCheckbox';
+import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
 
 const Profile = props => {
   const state = store.getState();
   const session = state.session.value;
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState();
+  const [mfaValue, setMfaValue] = useState('off');
 
   // Refresh the getProfile only anytime there is a navigation change and this has come into focus
   // Need to becareful here as useFocusEffect is also called during re-render so it can result in
@@ -132,6 +133,14 @@ const Profile = props => {
     updateProfile({ userTypeProprietaryInfo: proprietaryInfo });
   };
 
+  useEffect(() => {
+    if (profile) {
+      let mfa = profile.userTypeProprietaryInfo.mfa;
+      let val = mfa.enabled ? mfa.method : 'off';
+      setMfaValue(val);
+    }
+  }, [profile]);
+
   // Phone Numbers
   const renderPhoneNumberFields = () => {
     let views = [];
@@ -201,6 +210,10 @@ const Profile = props => {
     section: {
       marginTop: marginTopDefault,
     },
+    accountSection: {
+      marginTop: marginTopDefault,
+      zIndex: 1,
+    },
     item: {
       paddingVertical: paddingVerticalDefault,
       paddingHorizontal: paddingHorizontalDefault,
@@ -234,7 +247,7 @@ const Profile = props => {
             />
           ) : (
             <AccordionSection
-              style={styles.section}
+              style={styles.accountSection}
               title={strings.profile.accountInfo}
               isLoading={loading}
               disableAccordion={true}>
@@ -249,34 +262,20 @@ const Profile = props => {
               {renderPhoneNumberFields()}
 
               {/* MFA */}
-              <View key="mfa" style={styles.item}>
-                <Text style={styles.label}>{strings.profile.mfa}</Text>
-                {profile.userTypeProprietaryInfo.mfa && (
-                  <View>
-                    <RadioCheckbox
-                      label={strings.profile.off}
-                      checked={!profile.userTypeProprietaryInfo.mfa.enabled}
-                      onChange={() => onMfaChange()}
-                    />
-                    <RadioCheckbox
-                      label={strings.profile.sms}
-                      checked={
-                        profile.userTypeProprietaryInfo.mfa.enabled &&
-                        profile.userTypeProprietaryInfo.mfa.method === MfaAuthInfoMethodEnum.Sms
-                      }
-                      onChange={() => onMfaChange(MfaAuthInfoMethodEnum.Sms)}
-                    />
-                    <RadioCheckbox
-                      label={strings.profile.email}
-                      checked={
-                        profile.userTypeProprietaryInfo.mfa.enabled &&
-                        profile.userTypeProprietaryInfo.mfa.method === MfaAuthInfoMethodEnum.Email
-                      }
-                      onChange={() => onMfaChange(MfaAuthInfoMethodEnum.Email)}
-                    />
-                  </View>
-                )}
-              </View>
+              {profile.userTypeProprietaryInfo.mfa && (
+                <ItemPickerWithLabel
+                  label={strings.profile.mfa}
+                  loading={loading}
+                  value={mfaValue}
+                  setValue={setMfaValue}
+                  items={[
+                    { label: strings.profile.off, value: 'off' },
+                    { label: strings.profile.email, value: MfaAuthInfoMethodEnum.Email },
+                    { label: strings.profile.sms, value: MfaAuthInfoMethodEnum.Sms },
+                  ]}
+                  onChangeValue={onMfaChange}
+                />
+              )}
             </AccordionSection>
           )}
 
