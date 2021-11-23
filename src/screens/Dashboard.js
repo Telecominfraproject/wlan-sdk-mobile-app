@@ -6,7 +6,7 @@ import { SafeAreaView, ScrollView, StyleSheet, View, Text, TouchableOpacity } fr
 import { useFocusEffect } from '@react-navigation/native';
 import { selectCurrentAccessPoint } from '../store/SubscriberSlice';
 import { internetConnectionApi, wifiNetworksApi, subscriberDevicesApi, handleApiError } from '../api/apiHandler';
-import { showGeneralError } from '../Utils';
+import { showGeneralError, displayValue } from '../Utils';
 import ImageWithBadge from '../components/ImageWithBadge';
 
 const Dashboard = props => {
@@ -53,13 +53,16 @@ const Dashboard = props => {
       }
 
       const response = await internetConnectionApi.getInternetConnectionSettings(accessPointToQuery.id, false);
-      console.log(response.data);
-      if (response && response.data) {
-        setInternetConnection(response.data);
-      } else {
+
+      if (!response || !response.data) {
+        console.log(response);
         console.error('Invalid response from getInternetConnectionSettings');
         showGeneralError(strings.errors.titleDashboard, strings.errors.invalidResponse);
+        return;
       }
+
+      console.log(response.data);
+      setInternetConnection(response.data);
     } catch (error) {
       handleApiError(strings.errors.titleDashboard, error);
     } finally {
@@ -86,13 +89,16 @@ const Dashboard = props => {
       }
 
       const response = await wifiNetworksApi.getWifiNetworks(accessPointToQuery.id, false);
-      console.log(response.data);
-      if (response && response.data) {
-        setWifiNetworks(response.data);
-      } else {
+
+      if (!response || !response.data) {
+        console.log(response);
         console.error('Invalid response from getWifiNetworks');
         showGeneralError(strings.errors.titleDashboard, strings.errors.invalidResponse);
+        return;
       }
+
+      console.log(response.data);
+      setWifiNetworks(response.data);
     } catch (error) {
       handleApiError(strings.errors.titleDashboard, error);
     } finally {
@@ -118,13 +124,16 @@ const Dashboard = props => {
       }
 
       const response = await subscriberDevicesApi.getSubscriberDevices(accessPointToQuery.id);
-      console.log(response.data);
-      if (response && response.data) {
-        setSubscriberDevices(response.data);
-      } else {
-        console.error('Invalid response from getSubsciberDevices');
+
+      if (!response || !response.data) {
+        console.log(response);
+        console.error('Invalid response from getSubscriberDevices');
         showGeneralError(strings.errors.titleDashboard, strings.errors.invalidResponse);
+        return;
       }
+
+      console.log(response.data);
+      setSubscriberDevices(response.data);
     } catch (error) {
       handleApiError(strings.errors.titleDashboard, error);
     } finally {
@@ -255,7 +264,7 @@ const Dashboard = props => {
         <View style={[pageStyle.container, dashboardStyle.container]}>
           <TouchableOpacity style={dashboardStyle.touchableContainer} onPress={onNetworkPress}>
             <View style={dashboardStyle.itemContainer} onPress={onNetworkPress}>
-              <Text style={dashboardStyle.networkNameLabel}>{accessPoint ? accessPoint.name : '-'}</Text>
+              <Text style={dashboardStyle.networkNameLabel}>{displayValue(accessPoint, 'name')}</Text>
               <Text style={dashboardStyle.iconLabel}>{strings.dashboard.network}</Text>
             </View>
           </TouchableOpacity>
