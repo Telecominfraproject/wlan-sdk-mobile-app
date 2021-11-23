@@ -15,7 +15,7 @@ import { StyleSheet, SafeAreaView, ScrollView, View, Text } from 'react-native';
 import { internetConnectionApi, wifiNetworksApi, handleApiError } from '../api/apiHandler';
 import { selectCurrentAccessPoint } from '../store/SubscriberSlice';
 import { useFocusEffect } from '@react-navigation/native';
-import { showGeneralError } from '../Utils';
+import { showGeneralError, displayValue } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
 import ImageWithBadge from '../components/ImageWithBadge';
@@ -63,13 +63,16 @@ const Network = props => {
       }
 
       const response = await wifiNetworksApi.getWifiNetworks(accessPointToQuery.id, false);
-      console.log(response.data);
-      if (response && response.data) {
-        setWifiNetworks(response.data);
-      } else {
+
+      if (!response || !response.data) {
+        console.log(response);
         console.error('Invalid response from getWifiNetworks');
         showGeneralError(strings.errors.titleNetwork, strings.errors.invalidResponse);
+        return;
       }
+
+      console.log(response.data);
+      setWifiNetworks(response.data);
     } catch (error) {
       handleApiError(strings.errors.titleNetwork, error);
     } finally {
@@ -96,13 +99,16 @@ const Network = props => {
       }
 
       const response = await internetConnectionApi.getInternetConnectionSettings(accessPointToQuery.id, false);
-      console.log(response.data);
-      if (response && response.data) {
-        setInternetConnection(response.data);
-      } else {
+
+      if (!response || !response.data) {
+        console.log(response);
         console.error('Invalid response from getInternetConnectionSettings');
         showGeneralError(strings.errors.titleNetwork, strings.errors.invalidResponse);
+        return;
       }
+
+      console.log(response.data);
+      setInternetConnection(response.data);
     } catch (error) {
       handleApiError(strings.errors.titleNetwork, error);
     } finally {
@@ -111,10 +117,12 @@ const Network = props => {
   };
 
   const getAccessPointIcon = () => {
+    // TODO: Implement
     return require('../assets/wifi-solid.png');
   };
 
   const getAccessPointStatusColor = () => {
+    // TODO: Implement
     // Random choice for the moment, until the actual device parsing is implemented
     let choice = Math.floor(Math.random() * 10) % 3;
 
@@ -132,22 +140,16 @@ const Network = props => {
   };
 
   const getAccessPointBadgeIcon = () => {
+    // TODO: Implement
     return require('../assets/wifi-solid.png');
   };
 
-  const getAccessPointName = () => {
-    if (!accessPoint) {
-      return strings.messages.empty;
-    }
-
-    return accessPoint.name;
-  };
-
   const onRebootPress = async () => {
-    // Handle reboot
+    // TODO: Implement
   };
 
   const getWifiNetworkLabel = item => {
+    // TODO: Ensure this is correct
     if (!item) {
       return strings.messages.empty;
     }
@@ -165,10 +167,12 @@ const Network = props => {
   };
 
   const getWifiNetworkIcon = item => {
+    // TODO: Implement
     return require('../assets/wifi-solid.png');
   };
 
   const getWifiNetworkIconTint = item => {
+    // TODO: Implement
     // Random choice for the moment, until the actual device parsing is implemented
     let choice = Math.floor(Math.random() * 10) % 3;
 
@@ -186,11 +190,12 @@ const Network = props => {
   };
 
   const onWifiNetworkPress = async () => {
+    // TODO: Implement
     props.navigation.navigate('DeviceList');
   };
 
   const onUpdateFirmwarePress = async () => {
-    // Handle Update Firmware
+    // TODO: Implement
     console.log('Upgrade firmware');
   };
 
@@ -235,7 +240,7 @@ const Network = props => {
               badgeBackgroundColor={getAccessPointStatusColor()}
               badgeSize="small"
             />
-            <Text style={componentStyles.sectionNetworkText}>{getAccessPointName()}</Text>
+            <Text style={componentStyles.sectionNetworkText}>{displayValue(accessPoint, 'name')}</Text>
             <ButtonStyled
               title={strings.buttons.reboot}
               type="outline"
@@ -271,23 +276,17 @@ const Network = props => {
             isLoading={false}>
             <ItemTextWithLabel
               label={strings.network.firmware}
-              value={accessPoint ? accessPoint.firmware : strings.messages.empty}
+              value={displayValue(accessPoint, 'firmware')}
               buttonTitle={strings.buttons.update}
               onButtonPress={onUpdateFirmwarePress}
               buttonDisabled={!accessPoint}
             />
-            <ItemTextWithLabel
-              label={strings.network.productModel}
-              value={accessPoint ? accessPoint.model : strings.messages.empty}
-            />
+            <ItemTextWithLabel label={strings.network.productModel} value={displayValue(accessPoint, 'model')} />
             <ItemTextWithLabel
               label={strings.network.serialNumber}
-              value={accessPoint ? accessPoint.serial_number : strings.messages.empty}
+              value={displayValue(accessPoint, 'serial_number')}
             />
-            <ItemTextWithLabel
-              label={strings.network.macAddress}
-              value={accessPoint ? accessPoint.macAddress : strings.messages.empty}
-            />
+            <ItemTextWithLabel label={strings.network.macAddress} value={displayValue(accessPoint, 'macAddress')} />
           </AccordionSection>
 
           <AccordionSection
@@ -297,27 +296,24 @@ const Network = props => {
             isLoading={internetConnectionLoading}>
             <ItemTextWithLabel
               label={strings.network.ipAdddress}
-              value={internetConnection ? internetConnection.ipAddress : strings.messages.empty}
+              value={displayValue(internetConnection, 'ipAddress')}
             />
-            <ItemTextWithLabel
-              label={strings.network.type}
-              value={internetConnection ? internetConnection.type : strings.messages.empty}
-            />
+            <ItemTextWithLabel label={strings.network.type} value={displayValue(internetConnection, 'type')} />
             <ItemTextWithLabel
               label={strings.network.subnetMask}
-              value={internetConnection ? internetConnection.subnetMask : strings.messages.empty}
+              value={displayValue(internetConnection, 'subnetMask')}
             />
             <ItemTextWithLabel
               label={strings.network.defaultGateway}
-              value={internetConnection ? internetConnection.defaultGateway : strings.messages.empty}
+              value={displayValue(internetConnection, 'defaultGateway')}
             />
             <ItemTextWithLabel
               label={strings.network.primaryDns}
-              value={internetConnection ? internetConnection.primaryDns : strings.messages.empty}
+              value={displayValue(internetConnection, 'primaryDns')}
             />
             <ItemTextWithLabel
               label={strings.network.secondaryDns}
-              value={internetConnection ? internetConnection.secondaryDns : strings.messages.empty}
+              value={displayValue(internetConnection, 'secondaryDns')}
             />
           </AccordionSection>
         </View>
