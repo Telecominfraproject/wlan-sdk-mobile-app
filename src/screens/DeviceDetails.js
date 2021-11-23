@@ -13,7 +13,7 @@ import {
 import { StyleSheet, SafeAreaView, ScrollView, View, Text } from 'react-native';
 import { subscriberDevicesApi, handleApiError } from '../api/apiHandler';
 import { useFocusEffect } from '@react-navigation/native';
-import { showGeneralError } from '../Utils';
+import { showGeneralError, displayValue } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
 import ImageWithBadge from '../components/ImageWithBadge';
@@ -44,12 +44,13 @@ const DeviceDetails = props => {
 
   const getSubsciberDevice = async (accessPointToQuery, clientToQuery) => {
     if (!subscriberDevicesApi) {
+      // This is expected to be temporary
       return;
     }
 
     try {
       if (!accessPointToQuery || !clientToQuery) {
-        showGeneralError(strings.errors.titleNetwork, strings.errors.internal);
+        showGeneralError(strings.errors.titleDeviceDetails, strings.errors.internal);
         return;
       }
 
@@ -61,24 +62,22 @@ const DeviceDetails = props => {
 
       const response = await subscriberDevicesApi.getSubscriberDevices(accessPointToQuery.id);
       console.log(response.data);
-      if (response && response.data) {
-        const searchResult = response.data.devices.find(
-          deviceTemp => deviceTemp.macAddress === clientToQuery.macAddress,
-        );
 
-        if (searchResult) {
-          setDevice(searchResult);
-        } else {
-          // List changed, so clear the current access point
-          setDevice(null);
-          showGeneralError(strings.errors.titleNetwork, strings.errors.noSubscriberDevice);
-        }
-      } else {
+      if (!response || !response.data || !response.data.devices) {
         console.error('Invalid response from getSubsciberDevice');
-        showGeneralError(strings.errors.titleNetwork, strings.errors.invalidResponse);
+        showGeneralError(strings.errors.titleDeviceDetails, strings.errors.invalidResponse);
+        return;
+      }
+
+      const foundDevice = response.data.devices.find(deviceTemp => deviceTemp.macAddress === clientToQuery.macAddress);
+      if (foundDevice) {
+        setDevice(foundDevice);
+      } else {
+        setDevice(null);
+        showGeneralError(strings.errors.titleDeviceDetails, strings.errors.noSubscriberDevice);
       }
     } catch (error) {
-      handleApiError(strings.errors.titleNetwork, error);
+      handleApiError(strings.errors.titleDeviceDetails, error);
     } finally {
       setDeviceLoading(false);
     }
@@ -86,7 +85,7 @@ const DeviceDetails = props => {
 
   const updateDeviceValue = jsonObject => {
     if (jsonObject) {
-      // We are looping, but really only expect one
+      // Loop though all key/values, but really only expect one pair in the current flow
       for (const [key, value] of Object.entries(jsonObject)) {
         updateSubsciberDevice(accessPoint, client, key, value);
       }
@@ -95,81 +94,113 @@ const DeviceDetails = props => {
 
   const updateSubsciberDevice = async (accessPointToUpdate, clientToUpdate, keyToUpdate, valueToUpdate) => {
     if (!subscriberDevicesApi) {
+      // This is expected to be temporary
       return;
     }
 
     try {
       if (!accessPointToUpdate || !clientToUpdate || !keyToUpdate || !valueToUpdate) {
-        showGeneralError(strings.errors.titleNetwork, strings.errors.internal);
+        showGeneralError(strings.errors.titleDeviceDetails, strings.errors.internal);
         return;
       }
 
       // Get the most current subscriber devices, we want to be as current as possible to ensure we have the latest
       // values before updating the new information
       const responseGet = await subscriberDevicesApi.getSubscriberDevices(accessPointToUpdate.id);
-      if (responseGet && responseGet.data) {
-        let subscriberDevices = responseGet.data.devices;
-        let deviceToUpdate = subscriberDevices.find(deviceTemp => deviceTemp.macAddress === clientToUpdate.macAddress);
-
-        // Update the value
-        deviceToUpdate[keyToUpdate] = valueToUpdate;
-
-        const responseModify = await subscriberDevicesApi.get.modifySubscriberDevices(
-          accessPointToUpdate.id,
-          false,
-          subscriberDevices,
-        );
-        console.log(responseModify.data);
-        if (responseModify && responseModify.data) {
-          // Updated - no need to do anyting
-        } else {
-          console.error('Invalid response from modifySubscriberDevices');
-          showGeneralError(strings.errors.titleNetwork, strings.errors.invalidResponse);
-        }
-      } else {
-        console.error('Invalid response from getSubscriberDevices');
-        showGeneralError(strings.errors.titleNetwork, strings.errors.invalidResponse);
+      if (!responseGet || !responseGet.data || !responseGet.data.devices) {
+        console.error('Invalid response from getSubsciberDevice');
+        showGeneralError(strings.errors.titleDeviceDetails, strings.errors.invalidResponse);
+        return;
       }
+
+      let subscriberDevices = responseGet.data.devices;
+      let deviceToUpdate = subscriberDevices.find(deviceTemp => deviceTemp.macAddress === clientToUpdate.macAddress);
+
+      // Update the value for the key (which will update the list as well)
+      deviceToUpdate[keyToUpdate] = valueToUpdate;
+
+      const responseModify = await subscriberDevicesApi.get.modifySubscriberDevices(
+        accessPointToUpdate.id,
+        false,
+        subscriberDevices,
+      );
+      console.log(responseModify.data);
+
+      if (!responseModify || !responseModify.data) {
+        console.error('Invalid response from modifySubscriberDevices');
+        showGeneralError(strings.errors.titleDeviceDetails, strings.errors.invalidResponse);
+      }
+
+      // TODO: Verify the response code once API has been implemented
+      // Do nothing if everything work as expected
     } catch (error) {
-      handleApiError(strings.errors.titleNetwork, error);
+      handleApiError(strings.errors.titleDeviceDetails, error);
     }
   };
 
-  const getClientIcon = () => {
+  const getDeviceIcon = () => {
+    // TODO: Handle proper icon based on device type
     return require('../assets/laptop-solid.png');
   };
 
-  const getClientBadgeIcon = () => {
-    return require('../assets/wifi-solid.png');
+  const getDeviceBadgeIcon = () => {
+    if ('ssid' in client) {
+      return require('../assets/wifi-solid.png');
+    } else {
+      return require('../assets/network-wired-solid.png');
+    }
   };
 
-  const getClientStatusColor = () => {
-    // Random choice for the moment, until the actual device parsing is implemented
-    let choice = Math.floor(Math.random() * 10) % 3;
+  const getDeviceBadgeStatusColor = () => {
+    if ('ssid' in client) {
+      const rssi = client.rssi;
 
-    switch (choice) {
-      case 2:
+      // Handle WIFI status
+      // TODO: Verify this
+      if (rssi <= -80) {
         return errorColor;
-
-      case 1:
+      } else if (rssi > -80 && rssi <= -50) {
         return warnColor;
-
-      default:
-      case 0:
+      } else if (rssi > -50 && rssi < 0) {
         return okColor;
+      } else {
+        return errorColor;
+      }
+    } else {
+      // Wired client
+      // TODO: Check to see if there is more to look at here
+      return okColor;
     }
   };
 
   const getClientName = () => {
-    return client ? client.name : strings.messages.empty;
+    displayValue(client, 'name');
   };
 
-  const onPausePress = async () => {
-    // Handle pause
+  const onPauseUnpauseButtonLabel = () => {
+    if (device && !device.suspended) {
+      return strings.buttons.unpause;
+    }
+
+    return strings.buttons.pause;
+  };
+
+  const onPauseUnpausePress = async () => {
+    if (device) {
+      // Swap the current suspend state
+      updateDeviceValue({ suspended: !device.suspended });
+    } else {
+      showGeneralError(strings.errors.titleDeviceDetails, strings.errors.invalidResponse);
+    }
   };
 
   const getConnectionType = () => {
-    return device ? device.name : strings.messages.empty;
+    // TODO: get proper connection type
+    if ('ssid' in client) {
+      return strings.formatString(strings.deviceDetails.connectionTypeWifi, displayValue(client, 'ssid'));
+    } else {
+      return strings.formatString(strings.deviceDetails.connectionTypeWired, displayValue(client, 'ssid'));
+    }
   };
 
   // Styles
@@ -207,19 +238,19 @@ const DeviceDetails = props => {
           <View style={componentStyles.sectionDevice}>
             <ImageWithBadge
               style={componentStyles.sectionDeviceIcon}
-              source={getClientIcon()}
-              badgeSource={getClientBadgeIcon()}
+              source={getDeviceIcon()}
+              badgeSource={getDeviceBadgeIcon()}
               badgeTintColor={whiteColor}
-              badgeBackgroundColor={getClientStatusColor()}
-              badgeSize="small"
+              badgeBackgroundColor={getDeviceBadgeStatusColor()}
+              badgeSize="large"
             />
             <Text style={componentStyles.sectionDeviceText}>{getClientName()}</Text>
             <ButtonStyled
-              title={strings.buttons.pause}
+              title={onPauseUnpauseButtonLabel()}
               type="outline"
-              onPress={onPausePress}
+              onPress={onPauseUnpausePress}
               size="small"
-              disabled={!client}
+              disabled={!device}
             />
           </View>
 
@@ -228,7 +259,11 @@ const DeviceDetails = props => {
             title={strings.deviceDetails.connectionDetails}
             disableAccordion={true}
             isLoading={deviceLoading}>
-            <ItemTextWithLabel key="status" label={strings.deviceDetails.status} value="Connected" />
+            <ItemTextWithLabel
+              key="status"
+              label={strings.deviceDetails.status}
+              value={strings.deviceDetails.connected}
+            />
             <ItemTextWithLabel key="type" label={strings.deviceDetails.connectionType} value={getConnectionType()} />
           </AccordionSection>
 
@@ -237,44 +272,36 @@ const DeviceDetails = props => {
             title={strings.deviceDetails.deviceDetails}
             disableAccordion={true}
             isLoading={deviceLoading}>
-            <ItemTextWithLabel
-              key="name"
-              label={strings.deviceDetails.name}
-              value={device ? device.name : strings.messages.empty}
-            />
+            <ItemTextWithLabel key="name" label={strings.deviceDetails.name} value={displayValue(device, 'name')} />
             <ItemTextWithLabelEditable
               key="group"
               label={strings.deviceDetails.group}
-              value={device ? device.group : strings.messages.empty}
+              value={displayValue(device, 'group')}
               editKey="group"
               onEdit={updateDeviceValue}
             />
             <ItemTextWithLabelEditable
               key="description"
               label={strings.deviceDetails.description}
-              value={device ? device.description : strings.messages.empty}
+              value={displayValue(device, 'description')}
               editKey="description"
               onEdit={updateDeviceValue}
             />
-            <ItemTextWithLabel
-              key="type"
-              label={strings.deviceDetails.type}
-              value={device ? device.type : strings.messages.empty}
-            />
+            <ItemTextWithLabel key="type" label={strings.deviceDetails.type} value={displayValue(device, 'type')} />
             <ItemTextWithLabel
               key="manufacturer"
               label={strings.deviceDetails.manufacturer}
-              value={device ? device.manufacturer : strings.messages.empty}
+              value={displayValue(device, 'manufacturer')}
             />
             <ItemTextWithLabel
               key="ipAddress"
               label={strings.deviceDetails.ipAddress}
-              value={device ? device.ip : strings.messages.empty}
+              value={displayValue(device, 'ip')}
             />
             <ItemTextWithLabel
               key="macAddress"
               label={strings.deviceDetails.macAddress}
-              value={device ? device.macAddress : strings.messages.empty}
+              value={displayValue(device, 'macAddress')}
             />
           </AccordionSection>
         </View>

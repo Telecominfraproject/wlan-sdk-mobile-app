@@ -13,6 +13,16 @@ export function showGeneralMessage(message) {
   Alert.alert(strings.messages.titleMessage, message);
 }
 
+export function displayValue(obj, key) {
+  if (obj && key) {
+    if (key in obj) {
+      return obj[key];
+    }
+  }
+
+  return strings.messages.empty;
+}
+
 export function logStringifyPretty(obj, title) {
   if (title) {
     console.log(title, JSON.stringify(obj, null, '\t'));
