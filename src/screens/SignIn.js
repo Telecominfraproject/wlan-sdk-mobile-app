@@ -1,9 +1,10 @@
 import React, { useState, useEffect, createRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearSession, setSession } from '../store/SessionSlice';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
+import { clearSession, setSession } from '../store/SessionSlice';
+import { clearSubscriber, setSubscriber } from '../store/SubscriberSlice';
 import { strings } from '../localization/LocalizationStrings';
-import { pageStyle, pageItemStyle, primaryColor, blackColor } from '../AppStyle';
+import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View, Image, TextInput, ActivityIndicator } from 'react-native';
 import ButtonStyled from '../components/ButtonStyled';
 import { logStringifyPretty, showGeneralError } from '../Utils';
@@ -15,6 +16,7 @@ import {
   setCredentials,
   getCredentials,
   clearCredentials,
+  subscriberInformationApi,
 } from '../api/apiHandler';
 import Divider from '../components/Divider';
 
@@ -50,6 +52,7 @@ const SignIn = props => {
     if (!email || !password) {
       showGeneralError(strings.errors.titleSignIn, strings.errors.emptyFields);
     } else {
+      // Save the credentials, and start the sign-in process (which will use the credentials)
       await setCredentials(email, password);
       signIn();
     }
@@ -59,62 +62,124 @@ const SignIn = props => {
     try {
       setLoading(true);
 
-      // Make sure to clear any session information, this ensures error messaging is handled properly as well
+      // Make sure to clear any session/subscriber information (this will ensure proper API error message as well, see 403 errors)
       dispatch(clearSession());
+      dispatch(clearSubscriber());
 
       const credentials = await getCredentials();
       if (!credentials) {
+        // Credentials are expected at this point, return an error if not found
         clearCredentials();
-        showGeneralError(strings.errors.titleSignIn, 'No credentials');
-      } else {
-        const response = await authenticationApi.getAccessToken({
-          userId: credentials.username,
-          password: credentials.password,
+        showGeneralError(strings.errors.titleSignIn, strings.error.noCredentials);
+        return;
+      }
+
+      const response = await authenticationApi.getAccessToken({
+        userId: credentials.username,
+        password: credentials.password,
+      });
+
+      logStringifyPretty(response.data, response.request.responseURL);
+
+      if (!response || !response.data) {
+        // Error - unexpected response
+        setLoading(false);
+        showGeneralError(strings.errors.titleSignIn, strings.errors.invalidResponse);
+      } else if (response.data.method && response.data.created) {
+        // Handle Multi-Factor Authentication
+        props.navigation.navigate('MFACode', { credentials });
+      } else if (response.data.userMustChangePassword) {
+        // Handle Password Reset
+        props.navigation.navigate('ResetPassword', {
+          userId: email,
+          password: password,
         });
+      } else {
+        // Valid session retrieved, so save it
         dispatch(setSession(response.data));
 
-        logStringifyPretty(response.data, response.request.responseURL);
-
-        if (response.data.method && response.data.created) {
-          // MFA
-          props.navigation.navigate('MFACode', { credentials });
-        } else if (response.data.userMustChangePassword) {
-          // Must reset password
-          props.navigation.navigate('ResetPassword', {
-            userId: email,
-            password: password,
-          });
-        } else {
-          // Update the system endpoints and navigate to the main view.
-          getSystemEndpointsNavigateToMain();
-        }
+        // Update the system endpoints and continue the sign-in process
+        getSystemEndpoints();
       }
     } catch (error) {
       // Clear the loading state
       setLoading(false);
 
+      // Clear any saved credentials, make them re-enter them
       clearCredentials();
 
       handleApiError(strings.errors.titleSignIn, error);
     }
   };
 
-  const getSystemEndpointsNavigateToMain = async () => {
+  const getSystemEndpoints = async () => {
     try {
       // The system info is necessary before moving on to the next view as it'll provide
       // the endpoints needed for communicating with the other systems
       const response = await authenticationApi.getSystemInfo();
-
       console.log(response.data);
+      if (!response || !response.data) {
+        // Error - unexpected response
+        setLoading(false);
+        showGeneralError(strings.errors.titleSignIn, strings.errors.invalidResponse);
+      } else {
+        // Set the system info - this will validate as well, so an error might be thrown.
+        // Need to wait for this to complete before navigating
+        await setApiSystemInfo(response.data);
 
-      // Set the system info - this will validate as well, so an error might be thrown.
-      // Need to wait for this to complete before navigating
-      await setApiSystemInfo(response.data);
-
-      // Replace to the main screen. Use replace to ensure no back button
-      props.navigation.replace('Main');
+        // Next get the Subscriber Information
+        getSubscriberNavigateToMain();
+      }
     } catch (error) {
       // Make sure the loading state is done in all cases
+      setLoading(false);
+
+      handleApiError(strings.errors.titleSystemSetup, error);
+    }
+  };
+
+  const getSubscriberNavigateToMain = async () => {
+    try {
+      if (!subscriberInformationApi) {
+        // If the API is not currently available then just keep going. This is temporary until the
+        // API has been completed. This is just expected sample data.
+        dispatch(
+          setSubscriber({
+            firstName: 'Bill',
+            initials: 'BT',
+            lastName: 'Tester',
+            phoneNumber: '555-665-2342',
+            secondaryEmail: 'user@example.com',
+            accessPoints: {
+              list: [
+                {
+                  macAddress: '03a5e579bc3242e2',
+                  name: 'Access Point',
+                  id: 'access_id_1',
+                },
+              ],
+            },
+          }),
+        );
+
+        props.navigation.replace('Main');
+        return;
+      }
+
+      const response = await subscriberInformationApi.getSubscriberInfo();
+      console.log(response.data);
+      if (!response || !response.data) {
+        // Error - unexpected response
+        setLoading(false);
+        showGeneralError(strings.errors.titleSignIn, strings.errors.invalidResponse);
+      } else {
+        // Set the subscriber information
+        await dispatch(setSubscriber(response.data));
+
+        // Replace to the main screen. Use replace to ensure no back button
+        props.navigation.replace('Main');
+      }
+    } catch (error) {
       setLoading(false);
 
       handleApiError(strings.errors.titleSystemSetup, error);

@@ -17,6 +17,7 @@ import {
   ClientsApiFactory,
   InternetConnectionApiFactory,
   SubscriberDevicesApiFactory,
+  SubscriberInformationApiFactory,
   WiFiClientsApiFactory,
   WiFiNetworksApiFactory,
   Configuration as UserPortalConfiguration,
@@ -58,6 +59,7 @@ var baseUrlUserPortalApi = null;
 var accessPointsApi = null;
 var internetConnectionApi = null;
 var subscriberDevicesApi = null;
+var subscriberInformationApi = null;
 var wifiClientsApi = null;
 var wifiNetworksApi = null;
 var wiredClientsApi = null;
@@ -91,6 +93,9 @@ function generateApis() {
     : null;
   subscriberDevicesApi = baseUrlUserPortalApi
     ? new SubscriberDevicesApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
+    : null;
+  subscriberInformationApi = baseUrlUserPortalApi
+    ? new SubscriberInformationApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
     : null;
   wifiClientsApi = baseUrlUserPortalApi
     ? new WiFiClientsApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
@@ -223,6 +228,7 @@ export {
   accessPointsApi,
   internetConnectionApi,
   subscriberDevicesApi,
+  subscriberInformationApi,
   wifiClientsApi,
   wifiNetworksApi,
   wiredClientsApi,

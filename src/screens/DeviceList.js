@@ -1,15 +1,17 @@
 import React, { useCallback, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import { marginTopDefault, okColor, warnColor, errorColor, pageStyle } from '../AppStyle';
 import { StyleSheet, View, ScrollView, SafeAreaView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { wifiClientsApi, wiredClientsApi, handleApiError } from '../api/apiHandler';
 import { showGeneralError } from '../Utils';
+import { selectCurrentAccessPoint } from '../store/SubscriberSlice';
 import AccordionSection from '../components/AccordionSection';
 import ItemTextWithIcon from '../components/ItemTextWithIcon';
 
 const DeviceList = props => {
-  const accessPoint = {};
+  const accessPoint = useSelector(selectCurrentAccessPoint);
   const [wiredClients, setWiredClients] = useState();
   const [loadingWiredClients, setLoadingWiredClients] = useState(false);
   const [wifiClients, setWifiClients] = useState();
@@ -20,7 +22,6 @@ const DeviceList = props => {
   // infinite loops.
   useFocusEffect(
     useCallback(() => {
-      // TODO: Get the current accessPoint Id from state
       getWiredClients(accessPoint);
       getWifiClients(accessPoint);
 
