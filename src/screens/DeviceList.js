@@ -1,18 +1,24 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
-import { marginTopDefault, okColor, warnColor, errorColor, pageStyle } from '../AppStyle';
+import { marginTopDefault, pageStyle, whiteColor } from '../AppStyle';
 import { StyleSheet, View, ScrollView, SafeAreaView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { wifiClientsApi, wiredClientsApi, handleApiError } from '../api/apiHandler';
-import { showGeneralError } from '../Utils';
+import {
+  showGeneralError,
+  displayValue,
+  getClientIcon,
+  getClientConnectionIcon,
+  getClientConnectionStatusColor,
+} from '../Utils';
 import { selectCurrentAccessPoint } from '../store/SubscriberSlice';
 import AccordionSection from '../components/AccordionSection';
 import ItemTextWithIcon from '../components/ItemTextWithIcon';
 
 const DeviceList = props => {
   const accessPoint = useSelector(selectCurrentAccessPoint);
-  const [wiredClients, setWiredClients] = useState();
+  const [wiredClients, setWiredClients] = useState([{ name: 'teasdas', macAddress: 'asdada234242' }]);
   const [loadingWiredClients, setLoadingWiredClients] = useState(false);
   const [wifiClients, setWifiClients] = useState();
   const [loadingWifiClients, setLoadingWifiClients] = useState(false);
@@ -51,15 +57,17 @@ const DeviceList = props => {
       }
 
       const response = await wiredClientsApi.getWiredClients(accessPointToQuery.id);
-      console.log(response.data);
-      if (response && response.data) {
-        setWiredClients(response.data);
-      } else {
+      if (!response || !response.data) {
+        console.log(response);
         console.error('Invalid response from getWiredClients');
-        showGeneralError(strings.errors.titleNetwork, strings.errors.invalidResponse);
+        showGeneralError(strings.errors.titleDeviceList, strings.errors.invalidResponse);
+        return;
       }
+
+      console.log(response.data);
+      setWiredClients(response.data);
     } catch (error) {
-      handleApiError(strings.errors.titleNetwork, error);
+      handleApiError(strings.errors.titleDeviceList, error);
     } finally {
       setLoadingWiredClients(false);
     }
@@ -84,47 +92,36 @@ const DeviceList = props => {
       }
 
       const response = await wifiClientsApi.getWifiClients(accessPointToQuery.id);
-      console.log(response.data);
-      if (response && response.data) {
-        setWifiClients(response.data);
-      } else {
+      if (!response || !response.data) {
+        console.log(response);
         console.error('Invalid response from getWifiClients');
-        showGeneralError(strings.errors.titleNetwork, strings.errors.invalidResponse);
+        showGeneralError(strings.errors.titleDeviceList, strings.errors.invalidResponse);
+        return;
       }
+
+      console.log(response.data);
+      setWifiClients(response.data);
     } catch (error) {
-      handleApiError(strings.errors.titleNetwork, error);
+      handleApiError(strings.errors.titleDeviceList, error);
     } finally {
       setLoadingWifiClients(false);
     }
   };
 
   const getClientName = client => {
-    if (!client) {
-      return strings.messages.empty;
-    }
-
-    return client.name;
+    return displayValue(client, 'name');
   };
 
-  const getClientIcon = client => {
-    return require('../assets/laptop-solid.png');
+  const getClientMainIcon = client => {
+    return getClientIcon(client);
   };
 
-  const getClientIconTint = client => {
-    // Random choice for the moment, until the actual device parsing is implemented
-    let choice = Math.floor(Math.random() * 10) % 3;
+  const getClientBadgeIcon = client => {
+    return getClientConnectionIcon(client);
+  };
 
-    switch (choice) {
-      case 2:
-        return errorColor;
-
-      case 1:
-        return warnColor;
-
-      default:
-      case 0:
-        return okColor;
-    }
+  const getClientBadgeIconTint = client => {
+    return getClientConnectionStatusColor(client);
   };
 
   const onClientPress = async client => {
@@ -152,8 +149,10 @@ const DeviceList = props => {
                   <ItemTextWithIcon
                     label={getClientName(item)}
                     key={item.macAddress}
-                    icon={getClientIcon(item)}
-                    iconTintColor={getClientIconTint(item)}
+                    icon={getClientMainIcon(item)}
+                    badgeSource={getClientBadgeIcon(item)}
+                    badgeTintColor={whiteColor}
+                    badgeBackgroundColor={getClientBadgeIconTint(item)}
                     onPress={() => onClientPress(item)}
                   />
                 );
@@ -170,8 +169,10 @@ const DeviceList = props => {
                   <ItemTextWithIcon
                     label={getClientName(item)}
                     key={item.macAddress}
-                    icon={getClientIcon(item)}
-                    iconTintColor={getClientIconTint(item)}
+                    icon={getClientMainIcon(item)}
+                    badgeSource={getClientBadgeIcon(item)}
+                    badgeTintColor={whiteColor}
+                    badgeBackgroundColor={getClientBadgeIconTint(item)}
                     onPress={() => onClientPress(item)}
                   />
                 );

@@ -1,6 +1,7 @@
 import React from 'react';
 import { blackColor, paddingHorizontalDefault, heightCellDefault } from '../AppStyle';
 import { StyleSheet, TouchableOpacity, View, Text, Image } from 'react-native';
+import ImageWithBadge from '../components/ImageWithBadge';
 
 const ItemTextWithIcon = props => {
   const componentStyles = StyleSheet.create({
@@ -41,7 +42,14 @@ const ItemTextWithIcon = props => {
         <Text style={componentStyles.textLabel} numberOfLines={1}>
           {props.label}
         </Text>
-        <Image style={componentStyles.icon} source={props.icon} />
+        <ImageWithBadge
+          style={componentStyles.icon}
+          source={props.icon}
+          badgeSize="small"
+          badgeSource={props.badgeSource}
+          badgeBackgroundColor={props.badgeBackgroundColor}
+          badgeTintColor={props.badgeTintColor}
+        />
         <Image style={componentStyles.iconCaret} source={require('../assets/angle-right-solid.png')} />
       </View>
     </TouchableOpacity>

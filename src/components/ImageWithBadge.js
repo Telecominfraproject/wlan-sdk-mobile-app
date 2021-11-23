@@ -57,7 +57,7 @@ const ImageWithBadge = props => {
       justifyContent: 'center',
       alignItems: 'center',
       // Visual properties
-      borderRadius: 10,
+      borderRadius: 8,
       backgroundColor: props.badgeBackgroundColor,
     },
     badgeSmall: {

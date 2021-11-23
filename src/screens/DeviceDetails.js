@@ -1,19 +1,16 @@
 import React, { useCallback, useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
-import {
-  marginTopDefault,
-  paddingHorizontalDefault,
-  borderRadiusDefault,
-  pageStyle,
-  whiteColor,
-  errorColor,
-  warnColor,
-  okColor,
-} from '../AppStyle';
+import { marginTopDefault, paddingHorizontalDefault, borderRadiusDefault, pageStyle, whiteColor } from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, Text } from 'react-native';
 import { subscriberDevicesApi, handleApiError } from '../api/apiHandler';
 import { useFocusEffect } from '@react-navigation/native';
-import { showGeneralError, displayValue } from '../Utils';
+import {
+  showGeneralError,
+  displayValue,
+  getClientIcon,
+  getClientConnectionIcon,
+  getClientConnectionStatusColor,
+} from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
 import ImageWithBadge from '../components/ImageWithBadge';
@@ -61,14 +58,15 @@ const DeviceDetails = props => {
       }
 
       const response = await subscriberDevicesApi.getSubscriberDevices(accessPointToQuery.id);
-      console.log(response.data);
 
       if (!response || !response.data || !response.data.devices) {
+        console.log(response);
         console.error('Invalid response from getSubsciberDevice');
         showGeneralError(strings.errors.titleDeviceDetails, strings.errors.invalidResponse);
         return;
       }
 
+      console.log(response.data);
       const foundDevice = response.data.devices.find(deviceTemp => deviceTemp.macAddress === clientToQuery.macAddress);
       if (foundDevice) {
         setDevice(foundDevice);
@@ -108,6 +106,7 @@ const DeviceDetails = props => {
       // values before updating the new information
       const responseGet = await subscriberDevicesApi.getSubscriberDevices(accessPointToUpdate.id);
       if (!responseGet || !responseGet.data || !responseGet.data.devices) {
+        console.log(responseGet);
         console.error('Invalid response from getSubsciberDevice');
         showGeneralError(strings.errors.titleDeviceDetails, strings.errors.invalidResponse);
         return;
@@ -124,13 +123,14 @@ const DeviceDetails = props => {
         false,
         subscriberDevices,
       );
-      console.log(responseModify.data);
 
       if (!responseModify || !responseModify.data) {
+        console.log(responseModify);
         console.error('Invalid response from modifySubscriberDevices');
         showGeneralError(strings.errors.titleDeviceDetails, strings.errors.invalidResponse);
       }
 
+      console.log(responseModify.data);
       // TODO: Verify the response code once API has been implemented
       // Do nothing if everything work as expected
     } catch (error) {
@@ -139,42 +139,19 @@ const DeviceDetails = props => {
   };
 
   const getDeviceIcon = () => {
-    // TODO: Handle proper icon based on device type
-    return require('../assets/laptop-solid.png');
+    return getClientIcon(client);
   };
 
   const getDeviceBadgeIcon = () => {
-    if ('ssid' in client) {
-      return require('../assets/wifi-solid.png');
-    } else {
-      return require('../assets/network-wired-solid.png');
-    }
+    return getClientConnectionIcon(client);
   };
 
   const getDeviceBadgeStatusColor = () => {
-    if ('ssid' in client) {
-      const rssi = client.rssi;
-
-      // Handle WIFI status
-      // TODO: Verify this
-      if (rssi <= -80) {
-        return errorColor;
-      } else if (rssi > -80 && rssi <= -50) {
-        return warnColor;
-      } else if (rssi > -50 && rssi < 0) {
-        return okColor;
-      } else {
-        return errorColor;
-      }
-    } else {
-      // Wired client
-      // TODO: Check to see if there is more to look at here
-      return okColor;
-    }
+    return getClientConnectionStatusColor(client);
   };
 
-  const getClientName = () => {
-    displayValue(client, 'name');
+  const getDeviceName = () => {
+    return displayValue(client, 'name');
   };
 
   const onPauseUnpauseButtonLabel = () => {
@@ -244,7 +221,7 @@ const DeviceDetails = props => {
               badgeBackgroundColor={getDeviceBadgeStatusColor()}
               badgeSize="large"
             />
-            <Text style={componentStyles.sectionDeviceText}>{getClientName()}</Text>
+            <Text style={componentStyles.sectionDeviceText}>{getDeviceName()}</Text>
             <ButtonStyled
               title={onPauseUnpauseButtonLabel()}
               type="outline"
