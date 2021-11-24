@@ -209,7 +209,7 @@ const SignIn = props => {
                 <ButtonStyled title={strings.buttons.signIn} type="filled" onPress={onSignInPress} />
               </View>
 
-              <Divider marginVertical={30} />
+              <Divider marginVertical={20} />
 
               {/* Sign Up */}
               <Text>{strings.signIn.noAccount}</Text>
