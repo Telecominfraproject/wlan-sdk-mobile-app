@@ -1,8 +1,8 @@
 import React, { createRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
-import { authenticationApi, handleApiError } from '../api/apiHandler';
-import { showGeneralMessage, showGeneralError } from '../Utils';
+import { accessProcessApi, handleApiError } from '../api/apiHandler';
+import { logStringifyPretty } from '../Utils';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, TextInput, ActivityIndicator, Image, Text } from 'react-native';
@@ -15,7 +15,18 @@ export default function SignUp(props) {
   const [password, setPassword] = useState();
   const passwordRef = createRef();
 
-  const onSubmit = async () => {};
+  const onSubmit = async () => {
+    try {
+      setLoading(true);
+      // TODO user id?
+      const response = await accessProcessApi.userSignUp('signUp', email, undefined, { newPassword: password });
+      logStringifyPretty(response);
+    } catch (error) {
+      handleApiError(strings.errors.titleSignUp, error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const onPrivacyPolicyPress = async () => {
     props.navigation.navigate('PrivacyPolicy');
@@ -36,6 +47,11 @@ export default function SignUp(props) {
 
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
+      {loading && (
+        <View style={pageItemStyle.loadingContainer}>
+          <ActivityIndicator size="large" color={primaryColor} animating={loading} />
+        </View>
+      )}
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.container}>
           <View style={pageItemStyle.container}>

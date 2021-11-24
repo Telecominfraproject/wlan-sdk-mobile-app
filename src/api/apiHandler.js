@@ -21,6 +21,7 @@ import {
   WiFiClientsApiFactory,
   WiFiNetworksApiFactory,
   Configuration as UserPortalConfiguration,
+  AccessProcessApiFactory,
 } from './generated/owUserPortalApi';
 import { DevicesApiFactory, Configuration as GatewayConfiguration } from './generated/owGatewayApi';
 import {
@@ -57,6 +58,7 @@ var emailApi = null;
 const userPortalConfig = new UserPortalConfiguration();
 var baseUrlUserPortalApi = null;
 var accessPointsApi = null;
+var accessProcessApi = null;
 var internetConnectionApi = null;
 var subscriberDevicesApi = null;
 var subscriberInformationApi = null;
@@ -87,6 +89,9 @@ function generateApis() {
   baseUrlUserPortalApi = getBaseUrlForApi('owuserport');
   accessPointsApi = baseUrlUserPortalApi
     ? new AccessPointsApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
+    : null;
+  accessProcessApi = baseUrlUserPortalApi
+    ? new AccessProcessApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
     : null;
   internetConnectionApi = baseUrlUserPortalApi
     ? new InternetConnectionApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
@@ -226,6 +231,7 @@ function handleApiError(title, error) {
 export {
   authenticationApi,
   accessPointsApi,
+  accessProcessApi,
   internetConnectionApi,
   subscriberDevicesApi,
   subscriberInformationApi,
