@@ -1,9 +1,13 @@
 import React from 'react';
 import { paddingHorizontalDefault, heightCellDefault, primaryColor } from '../AppStyle';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Pressable, Alert } from 'react-native';
 import ButtonStyled from '../components/ButtonStyled';
 
 const ItemTextWithLabel = props => {
+  const onPress = () => {
+    Alert.alert(props.label, props.value, undefined, { cancelable: true });
+  };
+
   const componentStyles = StyleSheet.create({
     container: {
       height: heightCellDefault,
@@ -38,14 +42,14 @@ const ItemTextWithLabel = props => {
 
   return (
     <View style={componentStyles.container}>
-      <View style={componentStyles.containerText}>
+      <Pressable style={componentStyles.containerText} onPress={onPress}>
         <Text style={componentStyles.textLabel} numberOfLines={1}>
           {props.label}
         </Text>
         <Text style={componentStyles.textValue} numberOfLines={1}>
           {props.value}
         </Text>
-      </View>
+      </Pressable>
       {props.buttonTitle ? (
         <ButtonStyled
           title={props.buttonTitle}
