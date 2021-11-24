@@ -1,27 +1,24 @@
 import React, { useState } from 'react';
+import { strings } from '../localization/LocalizationStrings';
 import { pageItemStyle, pageStyle, primaryColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, ActivityIndicator, TextInput, View } from 'react-native';
-import ButtonStyled from '../components/ButtonStyled';
-import { strings } from '../localization/LocalizationStrings';
 import { authenticationApi, handleApiError } from '../api/apiHandler';
 import { logStringifyPretty, showGeneralMessage, showGeneralError, completeSignIn } from '../Utils';
-import { store } from '../store/Store';
+import ButtonStyled from '../components/ButtonStyled';
 
 export default function MfaCode(props) {
-  const state = store.getState();
-  const session = state.session.value;
-  const uuid = session.uuid;
-  const { credentials } = props.route.params;
+  const mfaInfo = props.route.params.mfaInfo;
   const [loading, setLoading] = useState(false);
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState();
 
   const onSubmitPress = async () => {
     try {
       setLoading(true);
 
+      // Send in the MFA Code to get the session information
       const response = await authenticationApi.getAccessToken(
         {
-          uuid: uuid,
+          uuid: mfaInfo.uuid,
           answer: code,
         },
         undefined,
@@ -41,18 +38,16 @@ export default function MfaCode(props) {
 
       logStringifyPretty(response.data, response.request.responseURL);
 
-      if (response.data.userMustChangePassword) {
-        // Must reset password
-        props.navigation.navigate('ResetPassword', {
-          userId: credentials.username,
-          password: credentials.password,
-        });
-      } else {
+      if (response.data.access_token) {
         // Process the rest of the sign in process
         await completeSignIn(props.navigation, response.data);
+      } else {
+        // Throw an error if we do not get what is expected
+        throw new Error(strings.errors.invalidResponse);
       }
     } catch (error) {
       setLoading(false);
+
       handleApiError(strings.errors.titleMfa, error);
     }
   };
@@ -61,9 +56,10 @@ export default function MfaCode(props) {
     try {
       setLoading(true);
 
+      // Resend the code to the user via the method they have configured
       const response = await authenticationApi.getAccessToken(
         {
-          uuid: uuid,
+          uuid: mfaInfo.uuid,
         },
         undefined,
         undefined,
@@ -79,7 +75,8 @@ export default function MfaCode(props) {
       }
 
       logStringifyPretty(response.data, response.request.responseURL);
-      if (response.status === 200) {
+
+      if (response.data.Code === 0) {
         showGeneralMessage(strings.messages.requestSent);
       } else {
         showGeneralError(strings.errors.titleMfa, strings.errors.invalidResponse);

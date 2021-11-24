@@ -4,7 +4,7 @@ import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { clearSession } from '../store/SessionSlice';
 import { clearSubscriber } from '../store/SubscriberSlice';
 import { strings } from '../localization/LocalizationStrings';
-import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
+import { pageStyle, pageItemStyle, primaryColor, infoColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View, Image, TextInput, ActivityIndicator } from 'react-native';
 import ButtonStyled from '../components/ButtonStyled';
 import { logStringifyPretty, showGeneralError, completeSignIn } from '../Utils';
@@ -77,8 +77,6 @@ const SignIn = props => {
         password: credentials.password,
       });
 
-      logStringifyPretty(response.data, response.request.responseURL);
-
       if (!response || !response.data) {
         console.log(response);
         console.error('Invalid response from getAccessToken (sign-in)');
@@ -87,18 +85,24 @@ const SignIn = props => {
         return;
       }
 
-      if (response.data.method && response.data.created) {
-        // Handle Multi-Factor Authentication
-        props.navigation.navigate('MfaCode', { credentials });
-      } else if (response.data.userMustChangePassword) {
-        // Handle Password Reset
-        props.navigation.navigate('ResetPassword', {
-          userId: email,
-          password: password,
+      logStringifyPretty(response.data, response.request.responseURL);
+
+      if (response.data.method) {
+        // If the data returns a 'method' then we must handle Multi-Factor Authentication, in the response
+        // there are three items: method, uuid, created, this will be passed to the MFA handler
+        props.navigation.navigate('MfaCode', {
+          mfaInfo: response.data,
         });
-      } else {
+
+        // Clear the loading state in case we come back to this view
+        setLoading(false);
+      } else if (response.data.access_token) {
         // Process the rest of the sign in process
         await completeSignIn(props.navigation, response.data);
+      } else {
+        console.log(response);
+        // Throw an error if we do not get what is expected
+        throw new Error(strings.errors.invalidResponse);
       }
     } catch (error) {
       // Clear the loading state
