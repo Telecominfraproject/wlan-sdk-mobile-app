@@ -10,7 +10,7 @@ import {
   paddingVerticalDefault,
 } from '../AppStyle';
 import { StyleSheet, SafeAreaView, View, ScrollView } from 'react-native';
-import { logStringifyPretty, showGeneralMessage, signOut } from '../Utils';
+import { logStringifyPretty, showGeneralMessage, completeSignOut } from '../Utils';
 import { emailApi, getCredentials, handleApiError, userManagementApi } from '../api/apiHandler';
 import { MfaAuthInfoMethodEnum } from '../api/generated/owSecurityApi';
 import { useFocusEffect } from '@react-navigation/native';
@@ -91,7 +91,7 @@ const Profile = props => {
   };
 
   const onSignOutPress = async () => {
-    signOut(props.navigation);
+    completeSignOut(props.navigation);
   };
 
   const onChangePasswordPress = async () => {

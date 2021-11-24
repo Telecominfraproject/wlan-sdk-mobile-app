@@ -3,11 +3,9 @@ import { pageItemStyle, pageStyle, primaryColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, ActivityIndicator, TextInput, View } from 'react-native';
 import ButtonStyled from '../components/ButtonStyled';
 import { strings } from '../localization/LocalizationStrings';
-import { authenticationApi, handleApiError, setApiSystemInfo } from '../api/apiHandler';
-import { logStringifyPretty, showGeneralMessage, signOut } from '../Utils';
+import { authenticationApi, handleApiError } from '../api/apiHandler';
+import { logStringifyPretty, showGeneralMessage, showGeneralError, completeSignIn } from '../Utils';
 import { store } from '../store/Store';
-import { useDispatch } from 'react-redux';
-import { setSession } from '../store/SessionSlice';
 
 export default function MfaCode(props) {
   const state = store.getState();
@@ -16,11 +14,11 @@ export default function MfaCode(props) {
   const { credentials } = props.route.params;
   const [loading, setLoading] = useState(false);
   const [code, setCode] = useState('');
-  const dispatch = useDispatch();
 
-  const validateCode = async () => {
+  const onSubmitPress = async () => {
     try {
       setLoading(true);
+
       const response = await authenticationApi.getAccessToken(
         {
           uuid: uuid,
@@ -32,9 +30,16 @@ export default function MfaCode(props) {
         undefined,
         true,
       );
-      logStringifyPretty(response.data, response.request.responseURL);
 
-      dispatch(setSession(response.data));
+      if (!response || !response.data) {
+        console.log(response);
+        console.error('Invalid response from getAccessToken (send MFA)');
+        setLoading(false);
+        showGeneralError(strings.errors.titleMfa, strings.errors.invalidResponse);
+        return;
+      }
+
+      logStringifyPretty(response.data, response.request.responseURL);
 
       if (response.data.userMustChangePassword) {
         // Must reset password
@@ -42,8 +47,9 @@ export default function MfaCode(props) {
           userId: credentials.username,
           password: credentials.password,
         });
-      } else if (response.status === 200) {
-        getSystemEndpointsNavigateToMain();
+      } else {
+        // Process the rest of the sign in process
+        await completeSignIn(props.navigation, response.data);
       }
     } catch (error) {
       setLoading(false);
@@ -51,32 +57,10 @@ export default function MfaCode(props) {
     }
   };
 
-  const getSystemEndpointsNavigateToMain = async () => {
-    try {
-      // The system info is necessary before moving on to the next view as it'll provide
-      // the endpoints needed for communicating with the other systems
-      const response = await authenticationApi.getSystemInfo();
-
-      logStringifyPretty(response.data, response.request.responseURL);
-
-      // Set the system info - this will validate as well, so an error might be thrown.
-      // Need to wait for this to complete before navigating
-      await setApiSystemInfo(response.data);
-
-      setLoading(false);
-
-      // Replace to the main screen. Use replace to ensure no back button
-      props.navigation.replace('Main');
-    } catch (error) {
-      // Make sure the loading state is done in all cases
-      setLoading(false);
-      handleApiError(strings.errors.titleSystemSetup, error);
-    }
-  };
-
-  const resendValidationCode = async () => {
+  const onResendCodePress = async () => {
     try {
       setLoading(true);
+
       const response = await authenticationApi.getAccessToken(
         {
           uuid: uuid,
@@ -86,19 +70,25 @@ export default function MfaCode(props) {
         undefined,
         true,
       );
+
+      if (!response || !response.data) {
+        console.log(response);
+        console.error('Invalid response from getAccessToken (resend code)');
+        showGeneralError(strings.errors.titleMfa, strings.errors.invalidResponse);
+        return;
+      }
+
       logStringifyPretty(response.data, response.request.responseURL);
       if (response.status === 200) {
         showGeneralMessage(strings.messages.requestSent);
+      } else {
+        showGeneralError(strings.errors.titleMfa, strings.errors.invalidResponse);
       }
-      setLoading(false);
     } catch (error) {
       handleApiError(strings.errors.titleMfa, error);
-      signOut(props.navigation);
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const onSignOutPress = async () => {
-    signOut(props.navigation);
   };
 
   return (
@@ -118,17 +108,14 @@ export default function MfaCode(props) {
               autoCapitalize="none"
               textContentType="oneTimeCode"
               returnKeyType="send"
-              onSubmitEditing={validateCode}
+              onSubmitEditing={onSubmitPress}
             />
           </View>
           <View style={pageItemStyle.containerButton}>
-            <ButtonStyled title={strings.buttons.resendCode} type="text" onPress={resendValidationCode} />
+            <ButtonStyled title={strings.buttons.resendCode} type="text" onPress={onResendCodePress} />
           </View>
           <View style={pageItemStyle.containerButton}>
-            <ButtonStyled title={strings.buttons.submit} type="filled" onPress={validateCode} disabled={loading} />
-          </View>
-          <View style={pageItemStyle.containerButton}>
-            <ButtonStyled title={strings.buttons.signOut} type="outline" onPress={onSignOutPress} disabled={loading} />
+            <ButtonStyled title={strings.buttons.submit} type="filled" onPress={onSubmitPress} disabled={loading} />
           </View>
         </View>
       </ScrollView>
