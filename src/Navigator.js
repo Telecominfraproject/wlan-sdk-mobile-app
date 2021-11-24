@@ -99,6 +99,7 @@ const Navigator = () => {
         <Tab.Screen
           name="Dashboard"
           component={DashboardNavigator}
+          listeners={({ navigation, route }) => ({ tabPress: event => handleTabPress(event, navigation, route) })}
           options={{
             tabBarIcon: ({ color }) => (
               <Image
@@ -111,6 +112,7 @@ const Navigator = () => {
         <Tab.Screen
           name="Network"
           component={NetworkNavigator}
+          listeners={({ navigation, route }) => ({ tabPress: event => handleTabPress(event, navigation, route) })}
           options={{
             tabBarIcon: ({ color }) => (
               <Image
@@ -123,6 +125,7 @@ const Navigator = () => {
         <Tab.Screen
           name="Devices"
           component={DeviceNavigator}
+          listeners={({ navigation, route }) => ({ tabPress: event => handleTabPress(event, navigation, route) })}
           options={{
             tabBarIcon: ({ color }) => (
               <Image
@@ -135,6 +138,7 @@ const Navigator = () => {
         <Tab.Screen
           name="Profile"
           component={ProfileNavigator}
+          listeners={({ navigation, route }) => ({ tabPress: event => handleTabPress(event, navigation, route) })}
           options={{
             tabBarIcon: ({ color }) => (
               <Image
@@ -147,6 +151,16 @@ const Navigator = () => {
       </Tab.Navigator>
     );
   }
+
+  const handleTabPress = (event, navigation, route) => {
+    event.preventDefault();
+
+    // Reset to the base navigation on the route when the button is pressed
+    navigation.reset({
+      index: 0,
+      routes: [{ name: route.name }],
+    });
+  };
 
   return (
     <NavigationContainer>
