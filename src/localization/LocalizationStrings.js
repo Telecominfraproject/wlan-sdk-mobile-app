@@ -28,6 +28,7 @@ export const strings = new LocalizedStrings({
       titleProfile: 'Profile Error',
       titleResetPassword: 'Reset Password Error',
       titleSignIn: 'Sign In Error',
+      titleSignUp: 'Sign Up Error',
       titleSms: 'SMS Error',
       titleSystemSetup: 'System Setup Error',
       titleUpdate: 'Update Error',

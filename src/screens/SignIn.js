@@ -208,16 +208,16 @@ const SignIn = props => {
               <View style={pageItemStyle.containerButton}>
                 <ButtonStyled title={strings.buttons.signIn} type="filled" onPress={onSignInPress} />
               </View>
+
+              <Divider marginVertical={30} />
+
+              {/* Sign Up */}
+              <Text>{strings.signIn.noAccount}</Text>
+              <View style={pageItemStyle.containerButton}>
+                <ButtonStyled title={strings.buttons.signUp} type={'outline'} onPress={onSignUp} />
+              </View>
             </View>
           )}
-
-          <Divider marginVertical={30} />
-
-          {/* Sign Up */}
-          <Text>{strings.signIn.noAccount}</Text>
-          <View style={pageItemStyle.containerButton}>
-            <ButtonStyled title={strings.buttons.signUp} type={'outline'} onPress={onSignUp} />
-          </View>
 
           {/* Bottom Buttons */}
           <View style={signInStyle.fillView} />

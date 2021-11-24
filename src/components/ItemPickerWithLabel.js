@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { grayColor, paddingHorizontalDefault, primaryColor, whiteColor } from '../AppStyle';
+import { grayColor, heightCellDefault, paddingHorizontalDefault, primaryColor, whiteColor } from '../AppStyle';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 export default function ItemPickerWithLabel(props) {
@@ -8,6 +8,8 @@ export default function ItemPickerWithLabel(props) {
   const [items, setItems] = useState(props.items ?? []);
   const placeholder = props.placeholder ?? 'Select an item';
   const label = props.label ?? '';
+  const borderWidth = props.borderWidth ?? 0;
+  const borderRadius = props.borderRadius ?? 0;
 
   const onChangeValue = value => {
     if (props.onChangeValue) {
@@ -18,6 +20,7 @@ export default function ItemPickerWithLabel(props) {
   const componentStyles = StyleSheet.create({
     container: {
       width: '100%',
+      height: heightCellDefault,
       // Layout
       flexDirection: 'column',
       flexWrap: 'nowrap',
@@ -31,11 +34,10 @@ export default function ItemPickerWithLabel(props) {
       color: primaryColor,
     },
     picker: {
-      borderWidth: 0,
-      borderRadius: 0,
-    },
-    pickerContainer: {
-      paddingVertical: 5,
+      height: 28,
+      borderWidth,
+      borderRadius,
+      paddingHorizontal: 0,
     },
     dropDownContainer: {
       borderWidth: 1,
@@ -61,7 +63,6 @@ export default function ItemPickerWithLabel(props) {
         setValue={props.setValue}
         setItems={setItems}
         style={componentStyles.picker}
-        containerStyle={componentStyles.pickerContainer}
         dropDownContainerStyle={componentStyles.dropDownContainer}
         onChangeValue={value => onChangeValue(value)}
       />
