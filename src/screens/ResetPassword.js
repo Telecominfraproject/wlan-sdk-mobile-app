@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle } from '../AppStyle';
-import { StyleSheet, View, Text, TextInput, Alert, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, TextInput, ActivityIndicator } from 'react-native';
 import ButtonStyled from '../components/ButtonStyled';
-import { authenticationApi, handleApiError, setCredentials } from '../api/apiHandler';
-import { logStringifyPretty, showGeneralMessage } from '../Utils';
-import { setSession } from '../store/SessionSlice';
-import { useDispatch } from 'react-redux';
+import { authenticationApi, clearCredentials, handleApiError } from '../api/apiHandler';
+import { logStringifyPretty, showGeneralError, showGeneralMessage } from '../Utils';
 
 export default function ResetPassword(props) {
   const { userId, password } = props.route.params;
@@ -15,7 +13,6 @@ export default function ResetPassword(props) {
   const [pattern, setPattern] = useState();
   const [loading, setLoading] = useState(false);
   const confirmRef = useRef();
-  const dispatch = useDispatch();
 
   useEffect(() => {
     getPattern();
@@ -37,14 +34,15 @@ export default function ResetPassword(props) {
       logStringifyPretty(response.data);
       setPattern(response.data.passwordPattern);
     } catch (error) {
-      handleApiError('Profile Error', error);
+      handleApiError(strings.errors.titleResetPassword, error);
     }
   };
 
   const onSubmit = async () => {
     if (checkPassword()) {
-      setLoading(true);
       try {
+        setLoading(true);
+
         const response = await authenticationApi.getAccessToken(
           {
             userId: userId,
@@ -53,57 +51,45 @@ export default function ResetPassword(props) {
           },
           newPassword,
         );
-        logStringifyPretty(response.data, 'onSubmit');
+        logStringifyPretty(response.data, 'getAccessToken');
 
-        // updates session and credentials
-        dispatch(setSession(response.data));
-        await updateCredentials();
+        // Clear any current credentials - as the password has now changed
+        clearCredentials();
 
-        showGeneralMessage(strings.messages.requestSent);
-        setLoading(false);
+        // Show the succcess message
+        showGeneralMessage(strings.messages.passwordChanged);
 
         props.navigation.replace('SignIn');
       } catch (error) {
-        handleApiError(strings.errors.titleResetPassword, error);
         setLoading(false);
+        handleApiError(strings.errors.titleResetPassword, error);
       }
-    }
-  };
-
-  const updateCredentials = async () => {
-    try {
-      await setCredentials(userId, newPassword);
-    } catch (error) {
-      console.error('updateCredentials', error);
-      handleApiError(strings.errors.titleResetPassword, error);
     }
   };
 
   const checkPassword = () => {
     const valid = validatePassword(newPassword);
 
-    if (newPassword === password) {
-      Alert.alert(strings.errors.titleResetPassword, strings.errors.samePassword);
-      return false;
-    }
     if (newPassword !== confirmPassword) {
-      Alert.alert(strings.errors.titleResetPassword, strings.errors.mismatchPassword);
+      showGeneralError(strings.errors.titleResetPassword, strings.errors.mismatchPassword);
+      return false;
+    } else if (!valid) {
+      showGeneralError(strings.errors.titleResetPassword, strings.errors.badFormat);
+      return false;
+    } else if (newPassword === password) {
+      showGeneralError(strings.errors.titleResetPassword, strings.errors.samePassword);
       return false;
     }
-    if (!valid) {
-      Alert.alert(strings.errors.titleResetPassword, strings.errors.badFormat);
-      return false;
-    }
-    return valid && newPassword !== password && newPassword === confirmPassword;
+
+    return true;
   };
 
   const validatePassword = passwordToCheck => {
-    // const reg = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
     const reg = new RegExp(pattern, 'g');
     return reg.test(passwordToCheck);
   };
 
-  const resetPasswordStyle = StyleSheet.create({
+  const componentStyles = StyleSheet.create({
     requirementsContainer: {
       marginTop: 20,
     },
@@ -145,7 +131,7 @@ export default function ResetPassword(props) {
         <ButtonStyled title={strings.buttons.submit} type="filled" onPress={onSubmit} disabled={loading} />
       </View>
       <View style={pageItemStyle.container}>
-        <View style={resetPasswordStyle.requirementsContainer}>
+        <View style={componentStyles.requirementsContainer}>
           <Text>{`\u2022 ${strings.passwordRequirements.req1}`}</Text>
           <Text>{`\u2022 ${strings.passwordRequirements.req2}`}</Text>
           <Text>{`\u2022 ${strings.passwordRequirements.req3}`}</Text>
