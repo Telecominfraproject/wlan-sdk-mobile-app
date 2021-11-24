@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { heightCellDefault, paddingHorizontalDefault, primaryColor, placeholderColor } from '../AppStyle';
 
 export default function ItemTextWithLabelEditable(props) {
@@ -48,6 +48,14 @@ export default function ItemTextWithLabelEditable(props) {
 
   const showPlaceholder = () => {
     return props.value ? false : true;
+  };
+
+  const onPress = () => {
+    if (props.disabled) {
+      Alert.alert(props.label, props.value, undefined, { cancelable: true });
+    } else {
+      setEdit(true);
+    }
   };
 
   const componentStyles = StyleSheet.create({
@@ -105,7 +113,7 @@ export default function ItemTextWithLabelEditable(props) {
   });
 
   return (
-    <Pressable style={componentStyles.container} disabled={props.disabled || loading} onPress={() => setEdit(true)}>
+    <Pressable style={componentStyles.container} disabled={loading} onPress={onPress}>
       <View style={componentStyles.containerText}>
         <Text style={componentStyles.textLabel} numberOfLines={1}>
           {props.label}
