@@ -75,7 +75,6 @@ export default function SignUp(props) {
                   placeholder={strings.placeholders.email}
                   autoComplete="email"
                   autoCapitalize="none"
-                  autoFocus={true}
                   keyboardType="email-address"
                   textContentType="emailAddress"
                   returnKeyType="go"

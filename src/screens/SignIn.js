@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
-import { clearSession, setSession } from '../store/SessionSlice';
+import { clearSession } from '../store/SessionSlice';
 import { clearSubscriber } from '../store/SubscriberSlice';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
@@ -180,7 +180,6 @@ const SignIn = props => {
                   placeholder={strings.placeholders.email}
                   autoComplete="email"
                   autoCapitalize="none"
-                  autoFocus={true}
                   keyboardType="email-address"
                   textContentType="username"
                   returnKeyType="next"
