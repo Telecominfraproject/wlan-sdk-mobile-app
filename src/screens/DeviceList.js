@@ -4,7 +4,7 @@ import { strings } from '../localization/LocalizationStrings';
 import { marginTopDefault, pageStyle, whiteColor } from '../AppStyle';
 import { StyleSheet, View, ScrollView, SafeAreaView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { wifiClientsApi, wiredClientsApi, handleApiError } from '../api/apiHandler';
+import { wifiClientsApi, wiredClientsApi, handleApiError, wifiNetworksApi } from '../api/apiHandler';
 import {
   showGeneralError,
   displayValue,
@@ -15,9 +15,33 @@ import {
 import { selectCurrentAccessPoint } from '../store/SubscriberSlice';
 import AccordionSection from '../components/AccordionSection';
 import ItemTextWithIcon from '../components/ItemTextWithIcon';
+import WifiNetworkSelector from '../components/WifiNetworkSelector';
 
 const DeviceList = props => {
   const accessPoint = useSelector(selectCurrentAccessPoint);
+  const [wifiNetworks, setWifiNetworks] = useState([
+    {
+      type: 'main',
+      name: 'main network',
+      password: 'string',
+      encryption: 'string',
+      bands: ['2G'],
+    },
+    {
+      type: 'second',
+      name: '2ndnetwork',
+      password: 'string',
+      encryption: 'string',
+      bands: ['2G'],
+    },
+    // {
+    //   type: 'third',
+    //   name: '3rd',
+    //   password: 'string',
+    //   encryption: 'string',
+    //   bands: ['2G'],
+    // },
+  ]);
   const [wiredClients, setWiredClients] = useState([{ name: 'teasdas', macAddress: 'asdada234242' }]);
   const [loadingWiredClients, setLoadingWiredClients] = useState(false);
   const [wifiClients, setWifiClients] = useState();
@@ -28,6 +52,7 @@ const DeviceList = props => {
   // infinite loops.
   useFocusEffect(
     useCallback(() => {
+      getWifiNetworks(accessPoint);
       getWiredClients(accessPoint);
       getWifiClients(accessPoint);
 
@@ -37,6 +62,34 @@ const DeviceList = props => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.navigation, accessPoint]),
   );
+
+  const getWifiNetworks = async accessPointToQuery => {
+    if (!wifiNetworksApi) {
+      return;
+    }
+
+    try {
+      if (!accessPointToQuery) {
+        // If there is no access point to query, then clear the wifi networks as well
+        setWifiNetworks(null);
+        return;
+      }
+
+      const response = await wifiNetworksApi.getWifiNetworks(accessPointToQuery.id, false);
+
+      if (!response || !response.data) {
+        console.log(response);
+        console.error('Invalid response from getWifiNetworks');
+        showGeneralError(strings.errors.titleDashboard, strings.errors.invalidResponse);
+        return;
+      }
+
+      console.log(response.data);
+      setWifiNetworks(response.data);
+    } catch (error) {
+      handleApiError(strings.errors.titleDashboard, error);
+    }
+  };
 
   const getWiredClients = async accessPointToQuery => {
     if (!wiredClientsApi) {
@@ -128,6 +181,10 @@ const DeviceList = props => {
     props.navigation.navigate('DeviceDetails', { accessPoint: accessPoint, client: client });
   };
 
+  const onSelectNetwork = network => {
+    console.log('onSelectNetwork', network);
+  };
+
   // Styles
   const componentStyles = StyleSheet.create({
     sectionAccordion: {
@@ -139,6 +196,8 @@ const DeviceList = props => {
     <SafeAreaView style={pageStyle.safeAreaView}>
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.container}>
+          <WifiNetworkSelector networks={wifiNetworks} onSelect={onSelectNetwork} />
+
           <AccordionSection
             style={componentStyles.sectionAccordion}
             title={strings.deviceList.wiredClients}
