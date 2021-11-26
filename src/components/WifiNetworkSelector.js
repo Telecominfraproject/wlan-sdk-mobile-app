@@ -18,8 +18,10 @@ export default function WifiNetworkSelector(props) {
 
   const getNetworkItems = () => {
     if (networks.length > 0) {
-      let formatted = networks.map((network, index) => ({ label: network.name, value: index }));
-      setNetworkItems(formatted);
+      let items = networks.map((network, index) => ({ label: network.name, value: index }));
+      setNetworkItems(items);
+    } else {
+      setNetworkItems([]);
     }
   };
 
