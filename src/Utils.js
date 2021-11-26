@@ -104,11 +104,11 @@ export async function completeSignIn(navigation, session) {
         initials: 'BT',
         lastName: 'Tester',
         phoneNumber: '555-665-2342',
-        secondaryEmail: 'user@example.com',
+        secondaryEmail: 'billTester@example.com',
         accessPoints: {
           list: [
             {
-              macAddress: '03a5e579bc3242e2',
+              macAddress: '00:10:5e:00:53:af',
               name: 'Access Point',
               id: 'access_id_1',
             },

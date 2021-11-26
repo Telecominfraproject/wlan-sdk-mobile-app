@@ -22,29 +22,31 @@ const DeviceList = props => {
   const [wifiNetworks, setWifiNetworks] = useState([
     {
       type: 'main',
-      name: 'main network',
+      name: 'Main Network',
       password: 'string',
       encryption: 'string',
       bands: ['2G'],
     },
     {
-      type: 'second',
-      name: '2ndnetwork',
+      type: 'guest',
+      name: 'Guest Network',
       password: 'string',
       encryption: 'string',
-      bands: ['2G'],
+      bands: ['5G'],
     },
     // {
-    //   type: 'third',
-    //   name: '3rd',
+    //   type: 'other',
+    //   name: 'Client Network',
     //   password: 'string',
     //   encryption: 'string',
     //   bands: ['2G'],
     // },
   ]);
-  const [wiredClients, setWiredClients] = useState([{ name: 'teasdas', macAddress: 'asdada234242' }]);
+  const [wiredClients, setWiredClients] = useState([{ name: 'Mac Book Pro', macAddress: '43:e1:55:23:59:12' }]);
   const [loadingWiredClients, setLoadingWiredClients] = useState(false);
-  const [wifiClients, setWifiClients] = useState();
+  const [wifiClients, setWifiClients] = useState([
+    { name: 'Lenovo Legion 5', macAddress: '11:ed:20:12:52:ee', ssid: 'Main Network' },
+  ]);
   const [loadingWifiClients, setLoadingWifiClients] = useState(false);
 
   // Refresh the information only anytime there is a navigation change and this has come into focus
