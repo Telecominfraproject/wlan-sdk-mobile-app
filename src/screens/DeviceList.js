@@ -80,14 +80,14 @@ const DeviceList = props => {
       if (!response || !response.data) {
         console.log(response);
         console.error('Invalid response from getWifiNetworks');
-        showGeneralError(strings.errors.titleDashboard, strings.errors.invalidResponse);
+        showGeneralError(strings.errors.titleDeviceList, strings.errors.invalidResponse);
         return;
       }
 
       console.log(response.data);
       setWifiNetworks(response.data);
     } catch (error) {
-      handleApiError(strings.errors.titleDashboard, error);
+      handleApiError(strings.errors.titleDeviceList, error);
     }
   };
 

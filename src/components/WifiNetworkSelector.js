@@ -10,12 +10,13 @@ export default function WifiNetworkSelector(props) {
   const [selected, setSelected] = useState(0);
   const networks = props.networks ?? [];
 
-  // Update network options
+  // Update network options when the networks changes
   useEffect(() => {
     getNetworkItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [networks]);
 
+  // Update network options
   const getNetworkItems = () => {
     if (networks.length > 0) {
       let items = networks.map((network, index) => ({ label: network.name, value: index }));
