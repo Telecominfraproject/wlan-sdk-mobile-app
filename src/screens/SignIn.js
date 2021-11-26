@@ -138,7 +138,7 @@ const SignIn = props => {
     props.navigation.navigate('TermsConditions');
   };
 
-  const signInStyle = StyleSheet.create({
+  const componentStyles = StyleSheet.create({
     containerForm: {
       flexDirection: 'column',
       flexWrap: 'nowrap',
@@ -164,17 +164,17 @@ const SignIn = props => {
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.container}>
           <View style={pageItemStyle.container}>
-            <Image style={signInStyle.headerImage} source={{ uri: brandInfo.iconUri }} />
+            <Image style={componentStyles.headerImage} source={{ uri: brandInfo.iconUri }} />
           </View>
           <View style={pageItemStyle.container}>
             <Text style={pageItemStyle.title}>{strings.signIn.title}</Text>
           </View>
           {loading ? (
-            <View style={pageItemStyle.container}>
+            <View style={[pageItemStyle.container, componentStyles.fillView]}>
               <ActivityIndicator size="large" color={primaryColor} animating={loading} />
             </View>
           ) : (
-            <View style={signInStyle.containerForm}>
+            <View style={componentStyles.containerForm}>
               <View style={pageItemStyle.container}>
                 <Text style={pageItemStyle.description}>{strings.signIn.description}</Text>
               </View>
@@ -223,7 +223,7 @@ const SignIn = props => {
           )}
 
           {/* Bottom Buttons */}
-          <View style={signInStyle.fillView} />
+          <View style={componentStyles.fillView} />
           <View style={pageItemStyle.containerButton}>
             <ButtonStyled title={strings.buttons.changeBrand} type="text" onPress={onChangeBrandPress} />
           </View>

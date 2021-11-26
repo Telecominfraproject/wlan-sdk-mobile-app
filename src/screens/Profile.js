@@ -206,7 +206,7 @@ const Profile = props => {
   };
 
   // Styles
-  const styles = StyleSheet.create({
+  const componentStyles = StyleSheet.create({
     section: {
       marginTop: marginTopDefault,
     },
@@ -240,14 +240,14 @@ const Profile = props => {
           {/* Account Information */}
           {!profile ? (
             <AccordionSection
-              style={styles.section}
+              style={componentStyles.section}
               title={strings.profile.accountInfo}
               isLoading={loading}
               disableAccordion={true}
             />
           ) : (
             <AccordionSection
-              style={styles.accountSection}
+              style={componentStyles.accountSection}
               title={strings.profile.accountInfo}
               isLoading={loading}
               disableAccordion={true}>
@@ -282,13 +282,13 @@ const Profile = props => {
           {/* Buttons */}
           <View style={pageItemStyle.containerButtons}>
             <ButtonStyled
-              style={styles.buttonLeft}
+              style={componentStyles.buttonLeft}
               title={strings.buttons.changePassword}
               type="outline"
               onPress={onChangePasswordPress}
             />
             <ButtonStyled
-              style={styles.buttonRight}
+              style={componentStyles.buttonRight}
               title={strings.buttons.signOut}
               type="outline"
               onPress={onSignOutPress}
@@ -297,7 +297,7 @@ const Profile = props => {
 
           {/* Notifications */}
           <AccordionSection
-            style={styles.section}
+            style={componentStyles.section}
             title={strings.profile.notifications}
             isLoading={loading}
             disableAccordion={true}>
@@ -311,7 +311,7 @@ const Profile = props => {
 
           {/* App */}
           <AccordionSection
-            style={styles.section}
+            style={componentStyles.section}
             title={strings.profile.app}
             isLoading={false}
             disableAccordion={true}>

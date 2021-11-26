@@ -228,7 +228,7 @@ const Dashboard = props => {
     props.navigation.navigate('Network');
   };
 
-  const dashboardStyle = StyleSheet.create({
+  const componentStyles = StyleSheet.create({
     container: {
       flex: 1,
       justifyContent: 'space-between',
@@ -261,47 +261,47 @@ const Dashboard = props => {
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
-        <View style={[pageStyle.container, dashboardStyle.container]}>
-          <TouchableOpacity style={dashboardStyle.touchableContainer} onPress={onNetworkPress}>
-            <View style={dashboardStyle.itemContainer} onPress={onNetworkPress}>
-              <Text style={dashboardStyle.networkNameLabel}>{displayValue(accessPoint, 'name')}</Text>
-              <Text style={dashboardStyle.iconLabel}>{strings.dashboard.network}</Text>
+        <View style={[pageStyle.container, componentStyles.container]}>
+          <TouchableOpacity style={componentStyles.touchableContainer} onPress={onNetworkPress}>
+            <View style={componentStyles.itemContainer} onPress={onNetworkPress}>
+              <Text style={componentStyles.networkNameLabel}>{displayValue(accessPoint, 'name')}</Text>
+              <Text style={componentStyles.iconLabel}>{strings.dashboard.network}</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={dashboardStyle.touchableContainer} onPress={onInternetPress}>
-            <View style={dashboardStyle.itemContainer} onPress={onInternetPress}>
+          <TouchableOpacity style={componentStyles.touchableContainer} onPress={onInternetPress}>
+            <View style={componentStyles.itemContainer} onPress={onInternetPress}>
               <ImageWithBadge
-                style={dashboardStyle.icon}
+                style={componentStyles.icon}
                 source={require('../assets/globe-solid.png')}
                 badgeSource={getInternetBadge()}
                 badgeBackgroundColor={getInternetBadgeBackgroundColor()}
                 badgeTintColor={whiteColor}
               />
-              <Text style={dashboardStyle.iconLabel}>{strings.dashboard.internet}</Text>
+              <Text style={componentStyles.iconLabel}>{strings.dashboard.internet}</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={dashboardStyle.touchableContainer} onPress={onGuestNetworkPress}>
-            <View style={dashboardStyle.itemContainer} onPress={onGuestNetworkPress}>
+          <TouchableOpacity style={componentStyles.touchableContainer} onPress={onGuestNetworkPress}>
+            <View style={componentStyles.itemContainer} onPress={onGuestNetworkPress}>
               <ImageWithBadge
-                style={dashboardStyle.icon}
+                style={componentStyles.icon}
                 source={require('../assets/wifi-solid.png')}
                 badgeSource={getGuestNetworkBadge()}
                 badgeBackgroundColor={getGuestNetworkBadgeBackgroundColor()}
                 badgeTintColor={whiteColor}
               />
-              <Text style={dashboardStyle.iconLabel}>{strings.dashboard.guestNetwork}</Text>
+              <Text style={componentStyles.iconLabel}>{strings.dashboard.guestNetwork}</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={dashboardStyle.touchableContainer} onPress={onConnectedDevicePress}>
-            <View style={dashboardStyle.itemContainer} onPress={onConnectedDevicePress}>
+          <TouchableOpacity style={componentStyles.touchableContainer} onPress={onConnectedDevicePress}>
+            <View style={componentStyles.itemContainer} onPress={onConnectedDevicePress}>
               <ImageWithBadge
-                style={dashboardStyle.icon}
+                style={componentStyles.icon}
                 source={require('../assets/laptop-solid.png')}
                 badgeText={getConnectedDeviceBadgeText()}
                 badgeBackgroundColor={getConnectedDeviceBadgeBackgroundColor()}
                 badgeTintColor={whiteColor}
               />
-              <Text style={dashboardStyle.iconLabel}>{strings.dashboard.connectedDevices}</Text>
+              <Text style={componentStyles.iconLabel}>{strings.dashboard.connectedDevices}</Text>
             </View>
           </TouchableOpacity>
         </View>

@@ -53,7 +53,7 @@ const BrandSelector = props => {
     });
   };
 
-  const brandingSelectorStyle = StyleSheet.create({
+  const componentStyles = StyleSheet.create({
     containerBrands: {
       flexDirection: 'column',
       flexWrap: 'nowrap',
@@ -92,7 +92,7 @@ const BrandSelector = props => {
                 />
               </View>
               <View style={[pageItemStyle.container]}>
-                <View style={brandingSelectorStyle.containerList}>
+                <View style={componentStyles.containerList}>
                   {(filtered ? filteredBrands : brands).map(item => {
                     return <ItemBrand brand={item} key={item.id} onPress={() => onCompanySelect(item)} />;
                   })}
