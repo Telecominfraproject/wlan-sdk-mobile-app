@@ -176,7 +176,7 @@ const DeviceDetails = props => {
     if ('ssid' in client) {
       return strings.formatString(strings.deviceDetails.connectionTypeWifi, displayValue(client, 'ssid'));
     } else {
-      return strings.formatString(strings.deviceDetails.connectionTypeWired, displayValue(client, 'ssid'));
+      return strings.formatString(strings.deviceDetails.connectionTypeWired, displayValue(client, 'speed'));
     }
   };
 
