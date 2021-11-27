@@ -131,13 +131,7 @@ export default function ResetPassword(props) {
         <ButtonStyled title={strings.buttons.submit} type="filled" onPress={onSubmit} disabled={loading} />
       </View>
       <View style={pageItemStyle.container}>
-        <View style={componentStyles.requirementsContainer}>
-          <Text>{`\u2022 ${strings.passwordRequirements.req1}`}</Text>
-          <Text>{`\u2022 ${strings.passwordRequirements.req2}`}</Text>
-          <Text>{`\u2022 ${strings.passwordRequirements.req3}`}</Text>
-          <Text>{`\u2022 ${strings.passwordRequirements.req4}`}</Text>
-          <Text>{`\u2022 ${strings.passwordRequirements.req5}`}</Text>
-        </View>
+        <View style={componentStyles.requirementsContainer}></View>
       </View>
     </View>
   );

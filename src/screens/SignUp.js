@@ -99,13 +99,7 @@ export default function SignUp(props) {
                 <ButtonStyled title={strings.buttons.signUp} type="filled" onPress={onSubmit} />
               </View>
               <View style={pageItemStyle.container}>
-                <View style={componentStyles.requirementsContainer}>
-                  <Text>{`\u2022 ${strings.passwordRequirements.req1}`}</Text>
-                  <Text>{`\u2022 ${strings.passwordRequirements.req2}`}</Text>
-                  <Text>{`\u2022 ${strings.passwordRequirements.req3}`}</Text>
-                  <Text>{`\u2022 ${strings.passwordRequirements.req4}`}</Text>
-                  <Text>{`\u2022 ${strings.passwordRequirements.req5}`}</Text>
-                </View>
+                <View style={componentStyles.requirementsContainer}></View>
               </View>
             </>
           )}

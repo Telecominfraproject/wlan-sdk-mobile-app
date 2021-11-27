@@ -15,7 +15,7 @@ import {
 import { selectCurrentAccessPoint } from '../store/SubscriberSlice';
 import AccordionSection from '../components/AccordionSection';
 import ItemTextWithIcon from '../components/ItemTextWithIcon';
-import WifiNetworkSelector from '../components/WifiNetworkSelector';
+import ButtonSelector from '../components/ButtonSelector';
 
 const DeviceList = props => {
   const accessPoint = useSelector(selectCurrentAccessPoint);
@@ -34,13 +34,13 @@ const DeviceList = props => {
       encryption: 'string',
       bands: ['5G'],
     },
-    // {
-    //   type: 'other',
-    //   name: 'Client Network',
-    //   password: 'string',
-    //   encryption: 'string',
-    //   bands: ['2G'],
-    // },
+    {
+      type: 'other',
+      name: 'Client Network',
+      password: 'string',
+      encryption: 'string',
+      bands: ['2G'],
+    },
   ]);
   const [wiredClients, setWiredClients] = useState([{ name: 'Mac Book Pro', macAddress: '43:e1:55:23:59:12' }]);
   const [loadingWiredClients, setLoadingWiredClients] = useState(false);
@@ -198,7 +198,7 @@ const DeviceList = props => {
     <SafeAreaView style={pageStyle.safeAreaView}>
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.container}>
-          <WifiNetworkSelector networks={wifiNetworks} onSelect={onSelectNetwork} />
+          <ButtonSelector options={wifiNetworks} maxButtons={2} onSelect={onSelectNetwork} />
 
           <AccordionSection
             style={componentStyles.sectionAccordion}

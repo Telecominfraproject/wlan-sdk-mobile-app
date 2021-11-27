@@ -112,13 +112,6 @@ export const strings = new LocalizedStrings({
       title: 'Reset Password',
       description: 'Please enter your email to reset your password.',
     },
-    passwordRequirements: {
-      req1: 'Must be at least 8 characters long',
-      req2: 'Must contain 1 uppercase letter',
-      req3: 'Must contain 1 lowercase letter',
-      req4: 'Must contain 1 digit',
-      req5: 'Must contain 1 special character',
-    },
     privacyPolicy: {
       title: 'Privacy Policy',
       content: 'This is the privacy policy.',
