@@ -34,13 +34,13 @@ const DeviceList = props => {
       encryption: 'string',
       bands: ['5G'],
     },
-    {
+   /* {
       type: 'other',
       name: 'Client Network',
       password: 'string',
       encryption: 'string',
       bands: ['2G'],
-    },
+    },*/
   ]);
   const [wiredClients, setWiredClients] = useState([{ name: 'Mac Book Pro', macAddress: '43:e1:55:23:59:12' }]);
   const [loadingWiredClients, setLoadingWiredClients] = useState(false);
@@ -192,14 +192,16 @@ const DeviceList = props => {
     sectionAccordion: {
       marginTop: marginTopDefault,
     },
+    networkSwitcher: {
+      marginTop: marginTopDefault,
+      height: 30,
+    },
   });
 
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.container}>
-          <ButtonSelector options={wifiNetworks} maxButtons={2} onSelect={onSelectNetwork} />
-
           <AccordionSection
             style={componentStyles.sectionAccordion}
             title={strings.deviceList.wiredClients}
@@ -219,6 +221,13 @@ const DeviceList = props => {
                 );
               })}
           </AccordionSection>
+
+          <ButtonSelector
+            style={componentStyles.networkSwitcher}
+            options={wifiNetworks}
+            maxButtons={2}
+            onSelect={onSelectNetwork}
+          />
 
           <AccordionSection
             style={componentStyles.sectionAccordion}

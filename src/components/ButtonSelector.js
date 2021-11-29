@@ -10,7 +10,7 @@ export default function ButtonSelector(props) {
   const options = props.options ?? [];
   const maxButtons = props.maxButtons ?? 2;
   const titleKey = props.titleKey ?? 'name';
-  const height = props.height ?? heightCellDefault;
+  const height = props.style.height ?? heightCellDefault;
 
   // Update items when the options list change
   useEffect(() => {
@@ -58,6 +58,11 @@ export default function ButtonSelector(props) {
   const componentStyles = StyleSheet.create({
     container: {
       flexDirection: 'row',
+      margin: props.style ? props.style.margin : 0,
+      marginBottom: props.style ? props.style.marginBottom : 0,
+      marginTop: props.style ? props.style.marginTop : 0,
+      marginLeft: props.style ? props.style.marginLeft : 0,
+      marginRight: props.style ? props.style.marginRight : 0,
     },
     // dropdown
     dropdown: {
