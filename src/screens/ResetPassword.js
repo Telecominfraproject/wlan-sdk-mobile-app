@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle } from '../AppStyle';
-import { StyleSheet, View, Text, TextInput, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, TextInput, ActivityIndicator } from 'react-native';
 import ButtonStyled from '../components/ButtonStyled';
 import { authenticationApi, clearCredentials, handleApiError } from '../api/apiHandler';
 import { logStringifyPretty, showGeneralError, showGeneralMessage } from '../Utils';
+import BulletList from '../components/BulletList';
 
 export default function ResetPassword(props) {
   const { userId, password } = props.route.params;
@@ -130,9 +131,7 @@ export default function ResetPassword(props) {
       <View style={pageItemStyle.containerButton}>
         <ButtonStyled title={strings.buttons.submit} type="filled" onPress={onSubmit} disabled={loading} />
       </View>
-      <View style={pageItemStyle.container}>
-        <View style={componentStyles.requirementsContainer}></View>
-      </View>
+      <BulletList containerStyle={componentStyles.requirementsContainer} />
     </View>
   );
 }

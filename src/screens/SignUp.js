@@ -7,6 +7,7 @@ import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, TextInput, ActivityIndicator, Image, Text } from 'react-native';
 import ButtonStyled from '../components/ButtonStyled';
+import BulletList from '../components/BulletList';
 
 export default function SignUp(props) {
   const brandInfo = useSelector(selectBrandInfo);
@@ -98,9 +99,7 @@ export default function SignUp(props) {
               <View style={pageItemStyle.containerButton}>
                 <ButtonStyled title={strings.buttons.signUp} type="filled" onPress={onSubmit} />
               </View>
-              <View style={pageItemStyle.container}>
-                <View style={componentStyles.requirementsContainer}></View>
-              </View>
+              <BulletList containerStyle={componentStyles.requirementsContainer} />
             </>
           )}
           <View style={componentStyles.fillView} />

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import { marginTopDefault, pageStyle, whiteColor } from '../AppStyle';
@@ -34,7 +34,7 @@ const DeviceList = props => {
       encryption: 'string',
       bands: ['5G'],
     },
-   /* {
+    /* {
       type: 'other',
       name: 'Client Network',
       password: 'string',
@@ -42,11 +42,15 @@ const DeviceList = props => {
       bands: ['2G'],
     },*/
   ]);
+  const [selectedWifi, setSelectedWifi] = useState(wifiNetworks[0]);
   const [wiredClients, setWiredClients] = useState([{ name: 'Mac Book Pro', macAddress: '43:e1:55:23:59:12' }]);
   const [loadingWiredClients, setLoadingWiredClients] = useState(false);
-  const [wifiClients, setWifiClients] = useState([
+  const testWifiClients = [
     { name: 'Lenovo Legion 5', macAddress: '11:ed:20:12:52:ee', ssid: 'Main Network' },
-  ]);
+    { name: 'Tablet Main', macAddress: 'string', ssid: 'Main Network' },
+    { name: 'Phone Guest', macAddress: 'string', ssid: 'Guest Network' },
+  ];
+  const [wifiClients, setWifiClients] = useState(testWifiClients);
   const [loadingWifiClients, setLoadingWifiClients] = useState(false);
 
   // Refresh the information only anytime there is a navigation change and this has come into focus
@@ -88,6 +92,7 @@ const DeviceList = props => {
 
       console.log(response.data);
       setWifiNetworks(response.data);
+      setSelectedWifi(response.data[0]);
     } catch (error) {
       handleApiError(strings.errors.titleDeviceList, error);
     }
@@ -185,7 +190,19 @@ const DeviceList = props => {
 
   const onSelectNetwork = network => {
     console.log('onSelectNetwork', network);
+    // Update wifi clients
+    // getWifiClients(accessPoint);
+    setSelectedWifi(network);
   };
+
+  useEffect(() => {
+    if (selectedWifi) {
+      // let filtered = wifiClients.filter(client => client.ssid === selectedWifi.name);
+      let filtered = testWifiClients.filter(client => client.ssid === selectedWifi.name);
+      setWifiClients(filtered);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedWifi]);
 
   // Styles
   const componentStyles = StyleSheet.create({
