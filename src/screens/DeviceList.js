@@ -26,6 +26,7 @@ const DeviceList = props => {
       password: 'string',
       encryption: 'string',
       bands: ['2G'],
+      ssid: 'Main Network',
     },
     {
       type: 'guest',
@@ -33,14 +34,16 @@ const DeviceList = props => {
       password: 'string',
       encryption: 'string',
       bands: ['5G'],
+      ssid: 'Guest Network',
     },
-    /* {
+    {
       type: 'other',
       name: 'Client Network',
       password: 'string',
       encryption: 'string',
       bands: ['2G'],
-    },*/
+      ssid: 'Client Network',
+    },
   ]);
   const [selectedWifi, setSelectedWifi] = useState(wifiNetworks[0]);
   const [wiredClients, setWiredClients] = useState([{ name: 'Mac Book Pro', macAddress: '43:e1:55:23:59:12' }]);
@@ -198,7 +201,7 @@ const DeviceList = props => {
   useEffect(() => {
     if (selectedWifi) {
       // let filtered = wifiClients.filter(client => client.ssid === selectedWifi.name);
-      let filtered = testWifiClients.filter(client => client.ssid === selectedWifi.name);
+      let filtered = testWifiClients.filter(client => client.ssid === selectedWifi.ssid);
       setWifiClients(filtered);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
