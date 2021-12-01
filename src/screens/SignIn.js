@@ -2,9 +2,9 @@ import React, { useState, useEffect, createRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { clearSession } from '../store/SessionSlice';
-import { clearSubscriber } from '../store/SubscriberSlice';
+import { clearSubscriber, selectCurrentAccessPoint } from '../store/SubscriberSlice';
 import { strings } from '../localization/LocalizationStrings';
-import { pageStyle, pageItemStyle, primaryColor, infoColor } from '../AppStyle';
+import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View, Image, TextInput, ActivityIndicator } from 'react-native';
 import ButtonStyled from '../components/ButtonStyled';
 import { logStringifyPretty, showGeneralError, completeSignIn } from '../Utils';
@@ -21,6 +21,7 @@ import Divider from '../components/Divider';
 const SignIn = props => {
   const dispatch = useDispatch();
   const brandInfo = useSelector(selectBrandInfo);
+  const accessPoint = useSelector(selectCurrentAccessPoint);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [loading, setLoading] = useState(false);
@@ -97,6 +98,12 @@ const SignIn = props => {
         // Clear the loading state in case we come back to this view
         setLoading(false);
       } else if (response.data.access_token) {
+        // No registered device, go to registration
+        if (!accessPoint) {
+          props.navigation.navigate('DeviceRegistration', { session: response.data });
+          return;
+        }
+
         // Process the rest of the sign in process
         await completeSignIn(props.navigation, response.data);
       } else {

@@ -23,6 +23,7 @@ import ResetPassword from './screens/ResetPassword';
 import SignIn from './screens/SignIn';
 import SignUp from './screens/SignUp';
 import TermsConditions from './screens/TermsConditions';
+import DeviceRegistration from './screens/DeviceRegistration';
 
 const Navigator = () => {
   const brandInfo = useSelector(selectBrandInfo);
@@ -220,6 +221,11 @@ const Navigator = () => {
           name="PhoneVerification"
           component={PhoneVerification}
           options={{ title: strings.navigator.phoneVerification }}
+        />
+        <Stack.Screen
+          name="DeviceRegistration"
+          component={DeviceRegistration}
+          options={{ title: strings.navigator.deviceRegistration }}
         />
         <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
       </Stack.Navigator>
