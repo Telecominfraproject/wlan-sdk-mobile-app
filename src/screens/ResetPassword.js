@@ -8,30 +8,27 @@ import BulletList from '../components/BulletList';
 import ButtonStyled from '../components/ButtonStyled';
 
 export default function ResetPassword(props) {
-  const { userId, password } = props.route.params;
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const userId = props.route.params.userId;
+  const [currentPassword, setCurrentPassword] = useState();
+  const [newPassword, setNewPassword] = useState();
+  const [confirmPassword, setConfirmPassword] = useState();
   const [pattern, setPattern] = useState();
   const [loading, setLoading] = useState(false);
-  const confirmRef = useRef();
+  const newPasswordRef = useRef();
+  const confirmPasswordRef = useRef();
 
   useEffect(() => {
-    getPattern();
-    // No dependencies as this is only to run once on mount. There are plenty of
-    // hacks around this eslint warning, but disabling it makes the most sense.
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    getPasswordPattern();
+  }, []);
 
-  const getPattern = async () => {
+  const getPasswordPattern = async () => {
     try {
-      const response = await authenticationApi.getAccessToken(
-        {
-          userId: userId,
-          password: password,
-        },
-        undefined,
-        undefined,
-        true,
-      );
+      const response = await authenticationApi.getAccessToken({}, undefined, undefined, true);
+
+      if (!response || !response.data) {
+        throw new Error(strings.errors.invalidResponse);
+      }
+
       logStringifyPretty(response.data);
       setPattern(response.data.passwordPattern);
     } catch (error) {
@@ -47,18 +44,26 @@ export default function ResetPassword(props) {
         const response = await authenticationApi.getAccessToken(
           {
             userId: userId,
-            password: password,
+            password: currentPassword,
             newPassword: newPassword,
           },
           newPassword,
         );
-        logStringifyPretty(response.data, 'getAccessToken');
+
+        if (!response || !response.data) {
+          throw new Error(strings.errors.invalidResponse);
+        }
+
+        logStringifyPretty(response.data, 'getAccessToken (Password)');
 
         // Clear any current credentials - as the password has now changed
         clearCredentials();
 
         // Show the succcess message
         showGeneralMessage(strings.messages.passwordChanged);
+
+        // Clear any loading flag
+        setLoading(false);
 
         props.navigation.replace('SignIn');
       } catch (error) {
@@ -77,17 +82,18 @@ export default function ResetPassword(props) {
     } else if (!valid) {
       showGeneralError(strings.errors.titleResetPassword, strings.errors.badFormat);
       return false;
-    } else if (newPassword === password) {
-      showGeneralError(strings.errors.titleResetPassword, strings.errors.samePassword);
-      return false;
     }
 
     return true;
   };
 
   const validatePassword = passwordToCheck => {
-    const reg = new RegExp(pattern, 'g');
-    return reg.test(passwordToCheck);
+    if (pattern) {
+      const reg = new RegExp(pattern, 'g');
+      return reg.test(passwordToCheck);
+    } else {
+      return true;
+    }
   };
 
   const componentStyles = StyleSheet.create({
@@ -106,19 +112,32 @@ export default function ResetPassword(props) {
       <View style={pageItemStyle.container}>
         <TextInput
           style={pageItemStyle.inputText}
+          placeholder={strings.placeholders.currentPassword}
+          secureTextEntry={true}
+          onChangeText={text => setCurrentPassword(text)}
+          autoCapitalize="none"
+          textContentType="password"
+          returnKeyType="next"
+          onSubmitEditing={() => newPasswordRef.current.focus()}
+        />
+      </View>
+      <View style={pageItemStyle.container}>
+        <TextInput
+          style={pageItemStyle.inputText}
+          ref={newPasswordRef}
           placeholder={strings.placeholders.newPassword}
           secureTextEntry={true}
           onChangeText={text => setNewPassword(text)}
           autoCapitalize="none"
           textContentType="newPassword"
           returnKeyType="next"
-          onSubmitEditing={() => confirmRef.current.focus()}
+          onSubmitEditing={() => confirmPasswordRef.current.focus()}
         />
       </View>
       <View style={pageItemStyle.container}>
         <TextInput
           style={pageItemStyle.inputText}
-          ref={confirmRef}
+          ref={confirmPasswordRef}
           placeholder={strings.placeholders.confirmPassword}
           secureTextEntry={true}
           onChangeText={text => setConfirmPassword(text)}
