@@ -80,9 +80,9 @@ const Dashboard = props => {
   };
 
   const getGuestNetwork = () => {
-    if (wifiNetworks && wifiNetworks.networks) {
+    if (wifiNetworks && wifiNetworks.wifiNetworks) {
       // Return the first guest network
-      return wifiNetworks.networks.find(network => network.type === 'guest');
+      return wifiNetworks.wifiNetworks.find(network => network.type === 'guest');
     }
 
     return null;

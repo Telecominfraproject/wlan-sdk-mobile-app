@@ -180,8 +180,8 @@ const Network = props => {
             disableAccordion={true}
             isLoading={subscriberInformationLoading}>
             {wifiNetworks &&
-              wifiNetworks.networks &&
-              wifiNetworks.networks.map(item => {
+              wifiNetworks.wifiNetworks &&
+              wifiNetworks.wifiNetworks.map(item => {
                 return (
                   <ItemTextWithIcon
                     label={getWifiNetworkLabel(item)}

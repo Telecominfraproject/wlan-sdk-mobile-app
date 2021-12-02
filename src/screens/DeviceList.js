@@ -47,8 +47,8 @@ const DeviceList = props => {
 
     let wifiNetworkToFilter = selectedWifi;
     if (!wifiNetworkToFilter) {
-      if (wifiNetworks && wifiNetworks.networks) {
-        wifiNetworkToFilter = wifiNetworks.networks[0];
+      if (wifiNetworks && wifiNetworks.wifiNetworks) {
+        wifiNetworkToFilter = wifiNetworks.wifiNetworks[0];
       }
     }
 
@@ -207,7 +207,7 @@ const DeviceList = props => {
 
           <ButtonSelector
             style={componentStyles.networkSwitcher}
-            options={wifiNetworks.networks}
+            options={wifiNetworks.wifiNetworks}
             maxButtons={2}
             onSelect={onSelectNetwork}
           />
