@@ -27,7 +27,7 @@ export const strings = new LocalizedStrings({
       titleMfa: 'Multi-Factor Authentication Error',
       titleNetwork: 'Network Error',
       titleProfile: 'Profile Error',
-      titleResetPassword: 'Reset Password Error',
+      titleChangePassword: 'Change Password Error',
       titleSignIn: 'Sign In Error',
       titleSignUp: 'Sign Up Error',
       titleSms: 'SMS Error',
@@ -125,6 +125,11 @@ export const strings = new LocalizedStrings({
     termsConditions: {
       title: 'Terms & Conditions',
       content: 'These are the terms and conditions.',
+    },
+    passwordChange: {
+      title: 'Password Change',
+      descriptionForced: 'You must change your password to continue.',
+      description: 'Enter in your current password and a new password.',
     },
     deviceRegistration: {
       description:

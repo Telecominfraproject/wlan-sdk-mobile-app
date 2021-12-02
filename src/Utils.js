@@ -173,7 +173,7 @@ export async function completeSignIn(navigation, userId, password, sessionData, 
     // Check for password reset handling
     if (error.response && error.response.status === 403 && error.response.data && error.response.data.ErrorCode === 1) {
       // The password reset error code is 1, just navigate to the Reset Password screen
-      navigation.navigate('ResetPassword', { userId: userId });
+      navigation.navigate('ChangePasswordForced', { userId: userId, forced: true });
       return;
     }
 
