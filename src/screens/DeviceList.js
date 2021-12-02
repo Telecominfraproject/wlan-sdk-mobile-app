@@ -20,6 +20,7 @@ import ItemTextWithIcon from '../components/ItemTextWithIcon';
 import ButtonSelector from '../components/ButtonSelector';
 
 const DeviceList = props => {
+  const selectedNetworkName = props.route.params ? props.route.params.networkName : null;
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);

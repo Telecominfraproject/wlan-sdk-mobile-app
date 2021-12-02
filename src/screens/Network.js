@@ -113,9 +113,9 @@ const Network = props => {
     }
   };
 
-  const onWifiNetworkPress = async () => {
+  const onWifiNetworkPress = async item => {
     // TODO: Implement
-    props.navigation.navigate('DeviceList');
+    props.navigation.navigate('Devices', { networkName: item.name });
   };
 
   const onUpdateFirmwarePress = async () => {
