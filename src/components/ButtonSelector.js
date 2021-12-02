@@ -1,31 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { borderRadiusDefault, heightCellDefault, primaryColor, whiteColor } from '../AppStyle';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 export default function ButtonSelector(props) {
   const [open, setOpen] = useState(false);
-  const [items, setItems] = useState([]);
   const [selected, setSelected] = useState(0);
   const options = props.options ?? [];
   const maxButtons = props.maxButtons ?? 2;
   const titleKey = props.titleKey ?? 'name';
   const height = props.style.height ?? heightCellDefault;
+  const items = useMemo(() => getItems(options), [options]);
 
   // Update items when the options list change
-  useEffect(() => {
-    getItems();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [options]);
+  //auseEffect(() => {
+  //  getItems();
+  //}, [options]);a
 
-  const getItems = () => {
-    if (options.length > 0) {
-      let itemsArr = options.map((option, index) => ({ label: option[titleKey], value: index }));
-      setItems(itemsArr);
+  function getItems(optionsInput) {
+    if (optionsInput.length > 0) {
+      return optionsInput.map((option, index) => ({ label: option[titleKey], value: index }));
     } else {
-      setItems([]);
+      return [];
     }
-  };
+  }
 
   const onSelect = index => {
     setSelected(index);
