@@ -183,7 +183,10 @@ function handleApiError(title, error) {
         break;
 
       case 403:
-        if (session === null) {
+        if (error.response.data && error.response.data.ErrorDescription) {
+          // Otherwise indicate their token failed
+          message = error.response.data.ErrorDescription;
+        } else if (session === null) {
           // If not currently signed in then return a credentials error
           message = strings.errors.credentials;
         } else {
