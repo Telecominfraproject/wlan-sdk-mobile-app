@@ -119,8 +119,6 @@ export const pageItemStyle = StyleSheet.create({
     // Layout
     height: 44,
     width: '100%',
-    paddingTop: 5,
-    paddingBottom: 5,
     paddingLeft: 10,
     paddingRight: 10,
     // Background and Border

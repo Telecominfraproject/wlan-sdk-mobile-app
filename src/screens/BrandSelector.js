@@ -31,7 +31,7 @@ const BrandSelector = props => {
   const [filtered, setFiltered] = useState(false);
   const [filteredBrands, setFilteredBrands] = useState();
 
-  const filterBrands = searchText => {
+  const onSearch = searchText => {
     if (searchText) {
       let searchTextLowerCase = searchText.toLowerCase();
       setFiltered(true);
@@ -87,7 +87,7 @@ const BrandSelector = props => {
                 <TextInputWithIcon
                   style={pageItemStyle.inputText}
                   placeholder="Search"
-                  onChangeText={search => filterBrands(search)}
+                  onChangeText={search => onSearch(search)}
                   source={require('../assets/search-solid.png')}
                 />
               </View>
