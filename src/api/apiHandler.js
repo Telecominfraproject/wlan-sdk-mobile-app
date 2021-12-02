@@ -8,28 +8,19 @@ import { setSystemInfo } from '../store/SystemInfoSlice';
 import { showGeneralError } from '../Utils';
 import {
   AuthenticationApiFactory,
-  Configuration as SecurityConfiguration,
-  EmailApiFactory,
-  UserManagementApiFactory,
-} from './generated/owSecurityApi';
-import {
-  AccessPointsApiFactory,
   ClientsApiFactory,
-  InternetConnectionApiFactory,
-  SubscriberDevicesApiFactory,
+  DeviceCommandsApiFactory,
   SubscriberInformationApiFactory,
   WiFiClientsApiFactory,
-  WiFiNetworksApiFactory,
   Configuration as UserPortalConfiguration,
-  AccessProcessApiFactory,
 } from './generated/owUserPortalApi';
-import { DevicesApiFactory, Configuration as GatewayConfiguration } from './generated/owGatewayApi';
 import {
   hasInternetCredentials,
   setInternetCredentials,
   getInternetCredentials,
   resetInternetCredentials,
 } from 'react-native-keychain';
+import { EmailApiFactory } from './generated/owSecurityApi';
 
 const axiosInstance = axios.create({});
 axiosInstance.interceptors.request.use(
@@ -47,74 +38,36 @@ axiosInstance.interceptors.request.use(
   },
 );
 
-// Setup the Security APIs
-const securityConfig = new SecurityConfiguration();
-var baseUrlSecurityApi = null;
-var authenticationApi = null;
-var userManagementApi = null;
-var emailApi = null;
-
 // Setup the User Portal APIs
 const userPortalConfig = new UserPortalConfiguration();
-var baseUrlUserPortalApi = null;
-var accessPointsApi = null;
-var accessProcessApi = null;
-var internetConnectionApi = null;
-var subscriberDevicesApi = null;
+var baseUrlUserPortalUrl = null;
+var authenticationApi = null;
+var deviceCommandsApi = null;
 var subscriberInformationApi = null;
-var wifiClientsApi = null;
-var wifiNetworksApi = null;
 var wiredClientsApi = null;
-
-// Setup the Gateway APIs
-const gatewayConfig = new GatewayConfiguration();
-var baseUrlGatewayApi = null;
-var devicesApi = null;
+var wifiClientsApi = null;
 
 store.subscribe(generateApis);
 generateApis();
 
 function generateApis() {
-  // Setup the Security Portal
-  baseUrlSecurityApi = getBaseUrlForApi('owsec');
-  authenticationApi = baseUrlSecurityApi
-    ? new AuthenticationApiFactory(securityConfig, baseUrlSecurityApi, axiosInstance)
-    : null;
-  userManagementApi = baseUrlSecurityApi
-    ? new UserManagementApiFactory(securityConfig, baseUrlSecurityApi, axiosInstance)
-    : null;
-  emailApi = baseUrlSecurityApi ? new EmailApiFactory(securityConfig, baseUrlSecurityApi, axiosInstance) : null;
-
   // Setup the User Portal (TODO - also add to the setApiSystemInfo)
-  baseUrlUserPortalApi = getBaseUrlForApi('owuserport');
-  accessPointsApi = baseUrlUserPortalApi
-    ? new AccessPointsApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
+  baseUrlUserPortalUrl = getBaseUrlForApi('owuserport');
+  authenticationApi = baseUrlUserPortalUrl
+    ? new AuthenticationApiFactory(userPortalConfig, baseUrlUserPortalUrl, axiosInstance)
     : null;
-  accessProcessApi = baseUrlUserPortalApi
-    ? new AccessProcessApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
+  deviceCommandsApi = baseUrlUserPortalUrl
+    ? new DeviceCommandsApiFactory(userPortalConfig, baseUrlUserPortalUrl, axiosInstance)
     : null;
-  internetConnectionApi = baseUrlUserPortalApi
-    ? new InternetConnectionApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
+  subscriberInformationApi = baseUrlUserPortalUrl
+    ? new SubscriberInformationApiFactory(userPortalConfig, baseUrlUserPortalUrl, axiosInstance)
     : null;
-  subscriberDevicesApi = baseUrlUserPortalApi
-    ? new SubscriberDevicesApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
+  wifiClientsApi = baseUrlUserPortalUrl
+    ? new WiFiClientsApiFactory(userPortalConfig, baseUrlUserPortalUrl, axiosInstance)
     : null;
-  subscriberInformationApi = baseUrlUserPortalApi
-    ? new SubscriberInformationApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
+  wiredClientsApi = baseUrlUserPortalUrl
+    ? new ClientsApiFactory(userPortalConfig, baseUrlUserPortalUrl, axiosInstance)
     : null;
-  wifiClientsApi = baseUrlUserPortalApi
-    ? new WiFiClientsApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
-    : null;
-  wifiNetworksApi = baseUrlUserPortalApi
-    ? new WiFiNetworksApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
-    : null;
-  wiredClientsApi = baseUrlUserPortalApi
-    ? new ClientsApiFactory(userPortalConfig, baseUrlUserPortalApi, axiosInstance)
-    : null;
-
-  // Setup the Gateway Portal
-  baseUrlGatewayApi = getBaseUrlForApi('owgw');
-  devicesApi = baseUrlGatewayApi ? new DevicesApiFactory(gatewayConfig, baseUrlGatewayApi, axiosInstance) : null;
 }
 
 // Get the base URL from the System Info. This is returned in a call to SystemInfo and it
@@ -172,19 +125,49 @@ function setApiSystemInfo(systemInfo) {
 }
 
 async function hasCredentials() {
-  return hasInternetCredentials(baseUrlSecurityApi);
+  return hasInternetCredentials(baseUrlUserPortalUrl);
 }
 
 async function setCredentials(email, password) {
-  return setInternetCredentials(baseUrlSecurityApi, email, password);
+  return setInternetCredentials(baseUrlUserPortalUrl, email, password);
 }
 
 async function getCredentials() {
-  return getInternetCredentials(baseUrlSecurityApi);
+  return getInternetCredentials(baseUrlUserPortalUrl);
 }
 
 async function clearCredentials() {
-  return resetInternetCredentials(baseUrlSecurityApi);
+  return resetInternetCredentials(baseUrlUserPortalUrl);
+}
+
+function getSubscriberAccessPointInfo(subscriberInformation, accessPointId, key) {
+  if (!subscriberInformation) {
+    return null;
+  }
+
+  // A null 'accessPointId' will select the first access point in the list
+  // A null 'key' will return the access point found, if any
+
+  let accessPoint = null;
+  let accessPoints = subscriberInformation.accessPoints;
+  let accessPointsList = accessPoints ? accessPoints.list : null;
+
+  if (!accessPointsList || accessPointsList.length === 0) {
+    return null;
+  }
+
+  if (!accessPointId) {
+    // If no access point set, use the first one
+    accessPoint = accessPointsList[0];
+  } else {
+    accessPoint = accessPointsList.find(item => item.id === accessPointId);
+  }
+
+  if (!key) {
+    return accessPoint;
+  } else {
+    return accessPoint[key];
+  }
 }
 
 function handleApiError(title, error) {
@@ -230,17 +213,11 @@ function handleApiError(title, error) {
 
 export {
   authenticationApi,
-  accessPointsApi,
-  accessProcessApi,
-  internetConnectionApi,
-  subscriberDevicesApi,
+  deviceCommandsApi,
   subscriberInformationApi,
   wifiClientsApi,
-  wifiNetworksApi,
   wiredClientsApi,
-  userManagementApi,
-  emailApi,
-  devicesApi,
+  getSubscriberAccessPointInfo,
   handleApiError,
   setApiSystemInfo,
   hasCredentials,

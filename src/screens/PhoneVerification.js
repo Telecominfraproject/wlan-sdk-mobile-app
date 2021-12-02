@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, View, SafeAreaView, TextInput, ActivityIndicator } from 'react-native';
-import { emailApi, handleApiError, userManagementApi } from '../api/apiHandler';
+import { handleApiError } from '../api/apiHandler';
 import { logStringifyPretty, showGeneralError, showGeneralMessage } from '../Utils';
 import { strings } from '../localization/LocalizationStrings';
 import { pageItemStyle, pageStyle, primaryColor } from '../AppStyle';
@@ -14,9 +14,10 @@ export default function PhoneVerification(props) {
   const validatePhone = async () => {
     try {
       setLoading(true);
-      const response = await emailApi.sendATestSMS(undefined, true, code, { to: phone });
-      logStringifyPretty(response.data);
-      showGeneralMessage(response.data.Details);
+      // TODO: Need updated API
+      //const response = await emailApi.sendATestSMS(undefined, true, code, { to: phone });
+      //logStringifyPretty(response.data);
+      //showGeneralMessage(response.data.Details);
       setLoading(false);
       updateUser();
     } catch (err) {
@@ -37,10 +38,14 @@ export default function PhoneVerification(props) {
       id: profile.Id,
       userTypeProprietaryInfo: { mfa, mobiles: [mobile] },
     };
+
     try {
       setLoading(true);
-      const response = await userManagementApi.updateUser(profile.Id, undefined, userInfo);
-      logStringifyPretty(response.data);
+
+      // TODO: Need updated API
+      //const response = await userManagementApi.updateUser(profile.Id, undefined, userInfo);
+      //logStringifyPretty(response.data);
+
       setLoading(false);
       props.navigation.navigate('Profile');
     } catch (err) {
@@ -52,9 +57,11 @@ export default function PhoneVerification(props) {
   const resendCode = async () => {
     try {
       setLoading(true);
-      const response = await emailApi.sendATestSMS(true, undefined, undefined, { to: phone });
-      logStringifyPretty(response.data);
-      showGeneralMessage(response.data.Details);
+
+      // TODO: Need updated API
+      //const response = await emailApi.sendATestSMS(true, undefined, undefined, { to: phone });
+      //logStringifyPretty(response.data);
+      //showGeneralMessage(response.data.Details);
     } catch (err) {
       handleApiError('resendCode', err);
     } finally {

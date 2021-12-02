@@ -1,15 +1,19 @@
-import React, { useCallback, useState } from 'react';
+import React, { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import { marginTopDefault, paddingHorizontalDefault, borderRadiusDefault, pageStyle, whiteColor } from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, Text } from 'react-native';
-import { subscriberDevicesApi, handleApiError } from '../api/apiHandler';
-import { useFocusEffect } from '@react-navigation/native';
+import { selectCurrentAccessPointId } from '../store/CurrentAccessPointIdSlice';
+import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
+import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
 import {
   showGeneralError,
   displayValue,
+  getDeviceFromClient,
   getClientIcon,
   getClientConnectionIcon,
   getClientConnectionStatusColor,
+  updateSubscriberDevice,
 } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
@@ -18,125 +22,14 @@ import ItemTextWithLabel from '../components/ItemTextWithLabel';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 
 const DeviceDetails = props => {
-  const accessPoint = props.route.params.accessPoint;
+  const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const client = props.route.params.client;
-  const [device, setDevice] = useState();
-  const [deviceLoading, setDeviceLoading] = useState(false);
-
-  // Refresh the information only anytime there is a navigation change and this has come into focus
-  // Need to becareful here as useFocusEffect is also called during re-render so it can result in
-  // infinite loops.
-  useFocusEffect(
-    useCallback(() => {
-      if (accessPoint && client) {
-        getSubsciberDevice(accessPoint, client);
-      }
-
-      // Return function of what should be done on 'focus out'
-      return () => {};
-      // Disable the eslint warning, as we want to change only on navigation changes
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.navigation, accessPoint, client]),
+  const subscriberInformation = useSelector(selectSubscriberInformation);
+  const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
+  const device = useMemo(
+    () => getDeviceFromClient(client, subscriberInformation, currentAccessPointId),
+    [subscriberInformation, currentAccessPointId, client],
   );
-
-  const getSubsciberDevice = async (accessPointToQuery, clientToQuery) => {
-    if (!subscriberDevicesApi) {
-      // This is expected to be temporary
-      return;
-    }
-
-    try {
-      if (!accessPointToQuery || !clientToQuery) {
-        showGeneralError(strings.errors.titleDeviceDetails, strings.errors.internal);
-        return;
-      }
-
-      if (!device) {
-        // Only set the loading flag is there is currently no information. If there is already
-        // information consider this a refresh so no need to show the user.
-        setDeviceLoading(true);
-      }
-
-      const response = await subscriberDevicesApi.getSubscriberDevices(accessPointToQuery.id);
-
-      if (!response || !response.data || !response.data.devices) {
-        console.log(response);
-        console.error('Invalid response from getSubsciberDevice');
-        showGeneralError(strings.errors.titleDeviceDetails, strings.errors.invalidResponse);
-        return;
-      }
-
-      console.log(response.data);
-      const foundDevice = response.data.devices.find(deviceTemp => deviceTemp.macAddress === clientToQuery.macAddress);
-      if (foundDevice) {
-        setDevice(foundDevice);
-      } else {
-        setDevice(null);
-        showGeneralError(strings.errors.titleDeviceDetails, strings.errors.noSubscriberDevice);
-      }
-    } catch (error) {
-      handleApiError(strings.errors.titleDeviceDetails, error);
-    } finally {
-      setDeviceLoading(false);
-    }
-  };
-
-  const updateDeviceValue = jsonObject => {
-    if (jsonObject) {
-      // Loop though all key/values, but really only expect one pair in the current flow
-      for (const [key, value] of Object.entries(jsonObject)) {
-        updateSubsciberDevice(accessPoint, client, key, value);
-      }
-    }
-  };
-
-  const updateSubsciberDevice = async (accessPointToUpdate, clientToUpdate, keyToUpdate, valueToUpdate) => {
-    if (!subscriberDevicesApi) {
-      // This is expected to be temporary
-      return;
-    }
-
-    try {
-      if (!accessPointToUpdate || !clientToUpdate || !keyToUpdate || !valueToUpdate) {
-        showGeneralError(strings.errors.titleDeviceDetails, strings.errors.internal);
-        return;
-      }
-
-      // Get the most current subscriber devices, we want to be as current as possible to ensure we have the latest
-      // values before updating the new information
-      const responseGet = await subscriberDevicesApi.getSubscriberDevices(accessPointToUpdate.id);
-      if (!responseGet || !responseGet.data || !responseGet.data.devices) {
-        console.log(responseGet);
-        console.error('Invalid response from getSubsciberDevice');
-        showGeneralError(strings.errors.titleDeviceDetails, strings.errors.invalidResponse);
-        return;
-      }
-
-      let subscriberDevices = responseGet.data.devices;
-      let deviceToUpdate = subscriberDevices.find(deviceTemp => deviceTemp.macAddress === clientToUpdate.macAddress);
-
-      // Update the value for the key (which will update the list as well)
-      deviceToUpdate[keyToUpdate] = valueToUpdate;
-
-      const responseModify = await subscriberDevicesApi.get.modifySubscriberDevices(
-        accessPointToUpdate.id,
-        false,
-        subscriberDevices,
-      );
-
-      if (!responseModify || !responseModify.data) {
-        console.log(responseModify);
-        console.error('Invalid response from modifySubscriberDevices');
-        showGeneralError(strings.errors.titleDeviceDetails, strings.errors.invalidResponse);
-      }
-
-      console.log(responseModify.data);
-      // TODO: Verify the response code once API has been implemented
-      // Do nothing if everything work as expected
-    } catch (error) {
-      handleApiError(strings.errors.titleDeviceDetails, error);
-    }
-  };
 
   const getDeviceIcon = () => {
     return getClientIcon(client);
@@ -162,10 +55,16 @@ const DeviceDetails = props => {
     return strings.buttons.pause;
   };
 
+  const updateDeviceValue = jsonObject => {
+    if (jsonObject) {
+      updateSubscriberDevice(subscriberInformation, currentAccessPointId, device, jsonObject);
+    }
+  };
+
   const onPauseUnpausePress = async () => {
     if (device) {
       // Swap the current suspend state
-      updateDeviceValue({ suspended: !device.suspended });
+      updateSubscriberDevice(subscriberInformation, currentAccessPointId, device, { suspended: !device.suspended });
     } else {
       showGeneralError(strings.errors.titleDeviceDetails, strings.errors.invalidResponse);
     }
@@ -235,7 +134,7 @@ const DeviceDetails = props => {
             style={componentStyles.sectionAccordion}
             title={strings.deviceDetails.connectionDetails}
             disableAccordion={true}
-            isLoading={deviceLoading}>
+            isLoading={subscriberInformationLoading}>
             <ItemTextWithLabel
               key="status"
               label={strings.deviceDetails.status}
@@ -248,7 +147,7 @@ const DeviceDetails = props => {
             style={componentStyles.sectionAccordion}
             title={strings.deviceDetails.deviceDetails}
             disableAccordion={true}
-            isLoading={deviceLoading}>
+            isLoading={subscriberInformationLoading}>
             <ItemTextWithLabel key="name" label={strings.deviceDetails.name} value={displayValue(device, 'name')} />
             <ItemTextWithLabelEditable
               key="group"

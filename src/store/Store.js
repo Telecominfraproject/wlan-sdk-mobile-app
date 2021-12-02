@@ -4,20 +4,24 @@ import { persistStore, persistReducer } from 'redux-persist';
 import FSStorage from 'redux-persist-fs-storage';
 import brandInfoReducer from './BrandInfoSlice';
 import sessionReducer from './SessionSlice';
-import subscriberReducer from './SubscriberSlice';
+import currentAccessPointIdReducer from './CurrentAccessPointIdSlice';
+import subscriberInformationReducer from './SubscriberInformationSlice';
+import subscriberInformationLoadingReducer from './SubscriberInformationLoadingSlice';
 import systemInfoReducer from './SystemInfoSlice';
 
 const persistConfig = {
   key: 'root',
   keyPrefix: '', // the redux-persist default is `persist:` which doesn't work with some file systems
-  blacklist: ['session', 'subscriber'], // session and subscriber are not persisted, new token is retrieved via credential storage if needed
+  blacklist: ['currentAccessPointId', 'session', 'subscriberInformation', 'subscriberInformationLoading'], // session and subscriber are not persisted, new token is retrieved via credential storage if needed
   storage: FSStorage(),
 };
 
 const rootReducer = combineReducers({
   brandInfo: brandInfoReducer,
+  currentAccessPointId: currentAccessPointIdReducer,
   session: sessionReducer,
-  subscriber: subscriberReducer,
+  subscriberInformation: subscriberInformationReducer,
+  subscriberInformationLoading: subscriberInformationLoadingReducer,
   systemInfo: systemInfoReducer,
 });
 

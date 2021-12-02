@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import {
@@ -12,10 +12,11 @@ import {
   okColor,
 } from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, Text } from 'react-native';
-import { internetConnectionApi, wifiNetworksApi, handleApiError } from '../api/apiHandler';
-import { selectCurrentAccessPoint } from '../store/SubscriberSlice';
-import { useFocusEffect } from '@react-navigation/native';
-import { showGeneralError, displayValue } from '../Utils';
+import { selectCurrentAccessPointId } from '../store/CurrentAccessPointIdSlice';
+import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
+import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
+import { getSubscriberAccessPointInfo } from '../api/apiHandler';
+import { displayValue } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
 import ImageWithBadge from '../components/ImageWithBadge';
@@ -23,98 +24,21 @@ import ItemTextWithIcon from '../components/ItemTextWithIcon';
 import ItemTextWithLabel from '../components/ItemTextWithLabel';
 
 const Network = props => {
-  const accessPoint = useSelector(selectCurrentAccessPoint);
-  const [wifiNetworks, setWifiNetworks] = useState();
-  const [wifiNetworksLoading, setWifiNetworksLoading] = useState(false);
-  const [internetConnection, setInternetConnection] = useState();
-  const [internetConnectionLoading, setInternetConnectionLoading] = useState(false);
-
-  // Refresh the information only anytime there is a navigation change and this has come into focus
-  // Need to becareful here as useFocusEffect is also called during re-render so it can result in
-  // infinite loops.
-  useFocusEffect(
-    useCallback(() => {
-      getWifiNetworks(accessPoint);
-      getInternetConnection(accessPoint);
-
-      // Return function of what should be done on 'focus out'
-      return () => {};
-      // Disable the eslint warning, as we want to change only on navigation changes
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.navigation, accessPoint]),
+  const currentAccessPointId = useSelector(selectCurrentAccessPointId);
+  const subscriberInformation = useSelector(selectSubscriberInformation);
+  const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
+  const accessPoint = useMemo(
+    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, null),
+    [subscriberInformation, currentAccessPointId],
   );
-
-  const getWifiNetworks = async accessPointToQuery => {
-    if (!wifiNetworksApi) {
-      return;
-    }
-
-    try {
-      if (!accessPointToQuery) {
-        // If there is no access point to query, then clear the wifi networks as well
-        setWifiNetworks(null);
-        return;
-      }
-
-      if (!wifiNetworks) {
-        // Only set the loading flag is there is currently no information. If there is already
-        // information consider this a refresh so no need to show the user.
-        setWifiNetworksLoading(true);
-      }
-
-      const response = await wifiNetworksApi.getWifiNetworks(accessPointToQuery.id, false);
-
-      if (!response || !response.data) {
-        console.log(response);
-        console.error('Invalid response from getWifiNetworks');
-        showGeneralError(strings.errors.titleNetwork, strings.errors.invalidResponse);
-        return;
-      }
-
-      console.log(response.data);
-      setWifiNetworks(response.data);
-    } catch (error) {
-      handleApiError(strings.errors.titleNetwork, error);
-    } finally {
-      setWifiNetworksLoading(false);
-    }
-  };
-
-  const getInternetConnection = async accessPointToQuery => {
-    if (!internetConnectionApi) {
-      return;
-    }
-
-    try {
-      if (!accessPointToQuery) {
-        // If there is no access point to query, then clear the internet connection as well
-        setInternetConnection(null);
-        return;
-      }
-
-      if (!internetConnection) {
-        // Only set the loading flag is there is currently no information. If there is already
-        // information consider this a refresh so no need to show the user.
-        setInternetConnectionLoading(true);
-      }
-
-      const response = await internetConnectionApi.getInternetConnectionSettings(accessPointToQuery.id, false);
-
-      if (!response || !response.data) {
-        console.log(response);
-        console.error('Invalid response from getInternetConnectionSettings');
-        showGeneralError(strings.errors.titleNetwork, strings.errors.invalidResponse);
-        return;
-      }
-
-      console.log(response.data);
-      setInternetConnection(response.data);
-    } catch (error) {
-      handleApiError(strings.errors.titleNetwork, error);
-    } finally {
-      setInternetConnectionLoading(false);
-    }
-  };
+  const internetConnection = useMemo(
+    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'internetConnection'),
+    [subscriberInformation, currentAccessPointId],
+  );
+  const wifiNetworks = useMemo(
+    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'wifiNetworks'),
+    [subscriberInformation, currentAccessPointId],
+  );
 
   const getAccessPointIcon = () => {
     // TODO: Implement
@@ -254,9 +178,10 @@ const Network = props => {
             style={componentStyles.sectionAccordion}
             title={strings.network.networks}
             disableAccordion={true}
-            isLoading={wifiNetworksLoading}>
+            isLoading={subscriberInformationLoading}>
             {wifiNetworks &&
-              wifiNetworks.map(item => {
+              wifiNetworks.networks &&
+              wifiNetworks.networks.map(item => {
                 return (
                   <ItemTextWithIcon
                     label={getWifiNetworkLabel(item)}
@@ -293,7 +218,7 @@ const Network = props => {
             style={componentStyles.sectionAccordion}
             title={strings.network.internetSettings}
             disableAccordion={true}
-            isLoading={internetConnectionLoading}>
+            isLoading={subscriberInformationLoading}>
             <ItemTextWithLabel
               label={strings.network.ipAdddress}
               value={displayValue(internetConnection, 'ipAddress')}

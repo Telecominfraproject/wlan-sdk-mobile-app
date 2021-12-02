@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle } from '../AppStyle';
 import { StyleSheet, View, TextInput, ActivityIndicator } from 'react-native';
-import ButtonStyled from '../components/ButtonStyled';
 import { authenticationApi, clearCredentials, handleApiError } from '../api/apiHandler';
 import { logStringifyPretty, showGeneralError, showGeneralMessage } from '../Utils';
 import BulletList from '../components/BulletList';
+import ButtonStyled from '../components/ButtonStyled';
 
 export default function ResetPassword(props) {
   const { userId, password } = props.route.params;

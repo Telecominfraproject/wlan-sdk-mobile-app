@@ -422,15 +422,28 @@ components:
     AccessPoint:
       type: object
       properties:
+        id:
+          type: string
+          format: uuid
         macAddress:
           type: string
         name:
           type: string
-        id:
-          type: string
-          format: uuid
+        subscriberDevices:
+          $ref: '#/components/schemas/SubscriberDeviceList'
+        ipReservations:
+          $ref: '#/components/schemas/IPReservationList'
         address:
           $ref: '#/components/schemas/Location'
+        wifiNetworks:
+          $ref: '#/components/schemas/WifiNetworkList'
+        internetConnection:
+          $ref: '#/components/schemas/InternetConnection'
+        deviceMode:
+          $ref: '#/components/schemas/HomeDeviceMode'
+        dnsConfiguration:
+          $ref: '#/components/schemas/DnsConfiguration'
+
 
     AccessPointList:
       type: object
@@ -495,63 +508,180 @@ components:
           type: string
           format: password
 
+    MFAChallengeRequest:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        question:
+          type: string
+        created:
+          type: integer
+          format: integer64
+        method:
+          type: string
+
+    MFAChallengeResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        answer:
+          type: string
+
+    WebTokenRequest:
+      description: User Id and password.
+      type: object
+      required:
+        - userId
+        - password
+      properties:
+        userId:
+          type: string
+          default: support@example.com
+        password:
+          type: string
+          default: support
+        newPassword:
+          type: string
+          default: support
+        refreshToken:
+          type: string
+      example:
+        userId: support@example.com
+        password: support
+
+    WebTokenResult:
+      description: Login and Refresh Tokens to be used in subsequent API calls.
+      type: object
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        token_type:
+          type: string
+        expires_in:
+          type: integer
+          format: int32
+        idle_timeout:
+          type: integer
+          format: int32
+        username:
+          type: string
+        created:
+          type: integer
+          format: int64
+        userMustChangePassword:
+          type: boolean
+        errorCode:
+          type: integer     # 0 = no error, 1 = passwordAlreadyUsed, 2=invalidPassword
+        aclTemplate:
+          $ref: '#/components/schemas/WebTokenAclTemplate'
+
+    AclTemplate:
+      type: object
+      properties:
+        Read:
+          type: boolean
+        ReadWrite:
+          type: boolean
+        ReadWriteCreate:
+          type: boolean
+        Delete:
+          type: boolean
+        PortalLogin:
+          type: boolean
+
+    WebTokenAclTemplate:
+      type: object
+      properties:
+        aclTemplate:
+          $ref: '#/components/schemas/AclTemplate'
+
 paths:
-  /accessPoints:
-    get:
-      tags:
-        - Access Points
-      summary: Retrieve information about user devices
-      operationId: getSubscriberAccessPointList
-      responses:
-        200:
-          $ref: '#/components/schemas/AccessPointList'
+  /oauth2:
     post:
       tags:
-        - Access Points
-      summary: Add/register a new device for a subscriber
-      operationId: addSubscriberAccessPoint
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AccessPoint'
-      responses:
-        200:
-          $ref: '#/components/schemas/AccessPointList'
-        400:
-          $ref: '#/components/responses/BadRequest'
-    put:
-      tags:
-        - Access Points
-      summary: Modify an existing device for a subscriber
-      operationId: modifySubscriberAccessPoint
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AccessPoint'
-      responses:
-        200:
-          $ref: '#/components/schemas/AccessPointList'
-        400:
-          $ref: '#/components/responses/BadRequest'
-    delete:
-      tags:
-        - Access Points
-      summary: Delete an access point that is no longer in use.
-      operationId: deleteSubscriberAccessPoint
+        - Authentication
+      summary: Get access token - to be used as Bearer token header for all other API requests.
+      operationId: getAccessToken
       parameters:
         - in: query
-          name: deviceId
+          name: newPassword
+          description: used when a user is trying to change her password. This will be the new password.
           schema:
             type: string
-            format: uuid
-          required: true
+          required: false
+        - in: query
+          name: forgotPassword
+          description: A user forgot her password. She needs to present her e-mail address in the userId and set this to true
+          schema:
+            type: boolean
+          required: false
+        - in: query
+          name: requirements
+          description: A user forgot her password. She needs to present her e-mail address in the userId and set this to true
+          schema:
+            type: boolean
+          required: false
+        - in: query
+          name: resendMFACode
+          schema:
+            type: boolean
+          required: false
+        - in: query
+          name: completeMFAChallenge
+          schema:
+            type: boolean
+          required: false
+      requestBody:
+        description: User id and password
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/WebTokenRequest'
+                - $ref: '#/components/schemas/MFAChallengeResponse'
       responses:
         200:
-          $ref: '#/components/responses/Success'
-        400:
-          $ref: '#/components/responses/BadRequest'
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/WebTokenResult'
+                  - $ref: '#/components/schemas/MFAChallengeRequest'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  /oauth2/{token}:
+    delete:
+      tags:
+        - Authentication
+      summary: Revoke a token.
+      operationId: removeAccessToken
+      parameters:
+        - in: path
+          name: token
+          schema:
+            type:
+              string
+          required: true
+      responses:
+        204:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/Success'
+        403:
+          $ref: '#/components/responses/Unauthorized'
         404:
           $ref: '#/components/responses/NotFound'
 
@@ -579,254 +709,6 @@ paths:
           $ref: '#/components/schemas/SubscriberInfo'
         400:
           $ref: '#/components/responses/Error'
-
-  /internetConnection:
-    get:
-      tags:
-        - Internet Connection
-      summary: Read the current internet connection settings
-      operationId: getInternetConnectionSettings
-      parameters:
-        - in: query
-          name: deviceId
-          schema:
-            type: string
-            format: uuid
-          required: true
-        - in: query
-          name: default
-          schema:
-            type: boolean
-            default: false
-          required: false
-      responses:
-        200:
-          $ref: '#/components/schemas/InternetConnection'
-
-    put:
-      tags:
-        - Internet Connection
-      summary: Modify the current internet connection settings
-      operationId: modifyInternetConnectionSettings
-      parameters:
-        - in: query
-          name: deviceId
-          schema:
-            type: string
-            format: uuid
-          required: true
-        - in: query
-          name: reset
-          schema:
-            type: boolean
-            default: false
-          required: false
-      requestBody:
-        description: Information used to modify the current internet connection settings
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/InternetConnection'
-
-      responses:
-        200:
-          $ref: '#/components/schemas/InternetConnection'
-        400:
-          $ref: '#/components/responses/BadRequest'
-
-  /homeDeviceMode:
-    get:
-      tags:
-        - Device Mode
-      summary: Read the Home Device Mode
-      operationId: getHomeDeviceMode
-      parameters:
-        - in: query
-          name: deviceId
-          schema:
-            type: string
-            format: uuid
-          required: true
-        - in: query
-          name: default
-          schema:
-            type: boolean
-            default: false
-          required: false
-      responses:
-        200:
-          $ref: '#/components/schemas/HomeDeviceMode'
-    put:
-      tags:
-        - Device Mode
-      summary: Modify the current device mode settings
-      operationId: modifyHomeDeviceMode
-      parameters:
-        - in: query
-          name: deviceId
-          schema:
-            type: string
-            format: uuid
-          required: true
-        - in: query
-          name: reset
-          schema:
-            type: boolean
-            default: false
-          required: false
-      requestBody:
-        description: Information used to modify the current device mode settings
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/HomeDeviceMode'
-      responses:
-        200:
-          $ref: '#/components/schemas/HomeDeviceMode'
-        400:
-          $ref: '#/components/responses/BadRequest'
-
-  /ipReservations:
-    get:
-      tags:
-        - IP Reservations
-      summary: Retreive the list of IP Reservations
-      operationId: getIPReservationList
-      parameters:
-        - in: query
-          name: deviceId
-          schema:
-            type: string
-            format: uuid
-          required: true
-      responses:
-        200:
-          description: Successfully retrieved list of IP Reservations
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IPReservationList'
-    put:
-      tags:
-        - IP Reservations
-      summary: Add A new IP reservation
-      operationId: addIPReservation
-      parameters:
-        - in: query
-          name: deviceId
-          schema:
-            type: string
-            format: uuid
-          required: true
-        - in: query
-          name: replace
-          schema:
-            type: boolean
-            default: false
-          required: false
-      requestBody:
-        description: List of IP reservations to maintain for this device.
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/IPReservationList'
-      responses:
-        200:
-          description: Reservations modified
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IPReservationList'
-        400:
-          $ref: '#/components/responses/BadRequest'
-
-    delete:
-      tags:
-        - IP Reservations
-      summary: Delete an IP Reservation
-      operationId: deleteIPReservation
-      parameters:
-        - in: query
-          name: deviceId
-          schema:
-            type: string
-            format: uuid
-          required: true
-        - in: query
-          name: macAddress
-          schema:
-            type: string
-            format: mac-address
-          required: false
-        - in: query
-          name: name
-          schema:
-            type: string
-          required: false
-      responses:
-        200:
-          $ref: '#/components/responses/Success'
-        400:
-          $ref: '#/components/responses/BadRequest'
-
-  /wifiNetworks:
-    get:
-      tags:
-        - WiFi Networks
-      summary: Get the list of defined WiFI networks
-      operationId: getWifiNetworks
-      parameters:
-        - in: query
-          name: deviceId
-          schema:
-            type: string
-            format: uuid
-          required: true
-        - in: query
-          name: default
-          schema:
-            type: boolean
-            default: false
-          required: false
-      responses:
-        200:
-          description: Succesfully get the list of WiFI networks
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WifiNetwork'
-
-    put:
-      tags:
-        - WiFi Networks
-      summary: Update the list of WiFi networks
-      operationId: modifyWiFiNetworks
-      parameters:
-        - in: query
-          name: deviceId
-          schema:
-            type: string
-            format: uuid
-          required: true
-        - in: query
-          name: reset
-          schema:
-            type: boolean
-            default: false
-          required: false
-      responses:
-        200:
-          description: Succesfully get the list of WiFI networks
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WifiNetwork'
-        400:
-          $ref: '#/components/responses/BadRequest'
 
   /wiredClients:
     get:
@@ -870,111 +752,38 @@ paths:
               schema:
                 $ref: '#/components/schemas/AssociationList'
 
-  /subscriberDevices:
-    get:
-      tags:
-        - Subscriber Devices
-      summary: Get the list of subscriber devices
-      operationId: getSubscriberDevices
-      parameters:
-        - in: query
-          name: deviceId
-          schema:
-            type: string
-            format: uuid
-          required: true
-      responses:
-        200:
-          description: Successfully retrieve subscriber devices
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SubscriberDeviceList'
-    put:
-      tags:
-        - Subscriber Devices
-      summary: Update the list of subscriber devices
-      operationId: modifySubscriberDevices
-      parameters:
-        - in: query
-          name: deviceId
-          schema:
-            type: string
-            format: uuid
-          required: true
-        - in: query
-          name: reset
-          schema:
-            type: boolean
-            default: false
-          required: false
-      requestBody:
-        description: List of devices
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SubscriberDeviceList'
-      responses:
-        200:
-          description: Successfully updated the list
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SubscriberDeviceList'
-        400:
-          $ref: '#/components/responses/BadRequest'
-
-  /login:
+  /action:
     post:
       tags:
-        - Access Process
-      summary: User is requesting a signup for a new user ID
-      operationId: userSignUp
+        - Device Commands
+      summary: Sending different commands to a device
+      operationId: oerfirmAnAction
       parameters:
         - in: query
           name: action
-          required: true
           schema:
             type: string
             enum:
-              - signUp
-              - verifyEmail
-              - forgotPassword
-              - setpassword
-        - in: query
-          name: email
-          required: true
-          schema:
-            type: string
-            format: email
-        - in: query
-          name: id
-          required: false
-          schema:
-            type: string
-            format: uuid
+              - reboot
+              - blink
+              - upgrade
+              - factory
+              - refresh
       requestBody:
-        required: false
         content:
           application/json:
             schema:
-              oneOf:
-                - $ref: '#/components/schemas/PasswordChange'
-                - $ref: '#/components/schemas/PasswordCreation'
+              type: object
+              properties:
+                mac:
+                  type: string
+                when:
+                  type: integer
+                  format: int64
+
       responses:
         200:
-          description: signup in progress
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    format: uuid
-                  error:
-                    type: string
-                  errorCode:
-                    type: integer
+          $ref: '#/components/responses/Success'
         400:
           $ref: '#/components/responses/BadRequest'
+

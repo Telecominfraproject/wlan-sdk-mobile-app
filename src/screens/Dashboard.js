@@ -1,148 +1,38 @@
-import React, { useCallback, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, okColor, infoColor, errorColor, primaryColor, whiteColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
-import { selectCurrentAccessPoint } from '../store/SubscriberSlice';
-import { internetConnectionApi, wifiNetworksApi, subscriberDevicesApi, handleApiError } from '../api/apiHandler';
-import { showGeneralError, displayValue } from '../Utils';
+import { selectCurrentAccessPointId } from '../store/CurrentAccessPointIdSlice';
+import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
+import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
+import { getSubscriberAccessPointInfo } from '../api/apiHandler';
+import { displayValue } from '../Utils';
 import ImageWithBadge from '../components/ImageWithBadge';
 
 const Dashboard = props => {
-  const accessPoint = useSelector(selectCurrentAccessPoint);
-  const [internetConnection, setInternetConnection] = useState();
-  const [internetConnectionLoading, setInternetConnectionLoading] = useState(false);
-  const [wifiNetworks, setWifiNetworks] = useState();
-  const [wifiNetworksLoading, setWifiNetworksLoading] = useState(false);
-  const [subscriberDevices, setSubscriberDevices] = useState();
-  const [subscriberDevicesLoading, setSubscriberDevicesLoading] = useState(false);
-
-  // Refresh the information only anytime there is a navigation change and this has come into focus
-  // Need to becareful here as useFocusEffect is also called during re-render so it can result in
-  // infinite loops.
-  useFocusEffect(
-    useCallback(() => {
-      getInternetConnection(accessPoint);
-      getWifiNetworks(accessPoint);
-      getSubsciberDevices(accessPoint);
-
-      // Return function of what should be done on 'focus out'
-      return () => {};
-      // Disable the eslint warning, as we want to change only on navigation changes
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.navigation, accessPoint]),
+  const currentAccessPointId = useSelector(selectCurrentAccessPointId);
+  const subscriberInformation = useSelector(selectSubscriberInformation);
+  const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
+  const accessPoint = useMemo(
+    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, null),
+    [subscriberInformation, currentAccessPointId],
+  );
+  const internetConnection = useMemo(
+    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'internetConnection'),
+    [subscriberInformation, currentAccessPointId],
+  );
+  const subscriberDevices = useMemo(
+    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'subscriberDevices'),
+    [subscriberInformation, currentAccessPointId],
+  );
+  const wifiNetworks = useMemo(
+    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'wifiNetworks'),
+    [subscriberInformation, currentAccessPointId],
   );
 
-  const getInternetConnection = async accessPointToQuery => {
-    if (!internetConnectionApi) {
-      return;
-    }
-
-    try {
-      if (!accessPointToQuery) {
-        // If there is no access point to query, then clear the internet connection as well
-        internetConnection(null);
-        return;
-      }
-
-      if (!internetConnection) {
-        // Only set the loading flag is there is currently no information. If there is already
-        // information consider this a refresh so no need to show the user.
-        setInternetConnectionLoading(true);
-      }
-
-      const response = await internetConnectionApi.getInternetConnectionSettings(accessPointToQuery.id, false);
-
-      if (!response || !response.data) {
-        console.log(response);
-        console.error('Invalid response from getInternetConnectionSettings');
-        showGeneralError(strings.errors.titleDashboard, strings.errors.invalidResponse);
-        return;
-      }
-
-      console.log(response.data);
-      setInternetConnection(response.data);
-    } catch (error) {
-      handleApiError(strings.errors.titleDashboard, error);
-    } finally {
-      setInternetConnectionLoading(false);
-    }
-  };
-
-  const getWifiNetworks = async accessPointToQuery => {
-    if (!wifiNetworksApi) {
-      return;
-    }
-
-    try {
-      if (!accessPointToQuery) {
-        // If there is no access point to query, then clear the wifi networks as well
-        setWifiNetworks(null);
-        return;
-      }
-
-      if (!wifiNetworks) {
-        // Only set the loading flag is there is currently no information. If there is already
-        // information consider this a refresh so no need to show the user.
-        setWifiNetworksLoading(true);
-      }
-
-      const response = await wifiNetworksApi.getWifiNetworks(accessPointToQuery.id, false);
-
-      if (!response || !response.data) {
-        console.log(response);
-        console.error('Invalid response from getWifiNetworks');
-        showGeneralError(strings.errors.titleDashboard, strings.errors.invalidResponse);
-        return;
-      }
-
-      console.log(response.data);
-      setWifiNetworks(response.data);
-    } catch (error) {
-      handleApiError(strings.errors.titleDashboard, error);
-    } finally {
-      setWifiNetworksLoading(false);
-    }
-  };
-
-  const getSubsciberDevices = async accessPointToQuery => {
-    if (!subscriberDevicesApi) {
-      return;
-    }
-
-    try {
-      if (!accessPointToQuery) {
-        showGeneralError(strings.errors.titleDashboard, strings.errors.internal);
-        return;
-      }
-
-      if (!subscriberDevices) {
-        // Only set the loading flag is there is currently no information. If there is already
-        // information consider this a refresh so no need to show the user.
-        setSubscriberDevicesLoading(true);
-      }
-
-      const response = await subscriberDevicesApi.getSubscriberDevices(accessPointToQuery.id);
-
-      if (!response || !response.data) {
-        console.log(response);
-        console.error('Invalid response from getSubscriberDevices');
-        showGeneralError(strings.errors.titleDashboard, strings.errors.invalidResponse);
-        return;
-      }
-
-      console.log(response.data);
-      setSubscriberDevices(response.data);
-    } catch (error) {
-      handleApiError(strings.errors.titleDashboard, error);
-    } finally {
-      setSubscriberDevicesLoading(false);
-    }
-  };
-
   const getInternetBadge = () => {
-    if (internetConnectionLoading) {
+    if (subscriberInformationLoading) {
       return require('../assets/question-solid.png');
     } else if (internetConnection && internetConnection.ipAddress) {
       return require('../assets/check-solid.png');
@@ -152,7 +42,7 @@ const Dashboard = props => {
   };
 
   const getInternetBadgeBackgroundColor = () => {
-    if (internetConnectionLoading) {
+    if (subscriberInformationLoading) {
       return infoColor;
     } else if (internetConnection && internetConnection.ipAddress) {
       return okColor;
@@ -162,7 +52,7 @@ const Dashboard = props => {
   };
 
   const getGuestNetworkBadge = () => {
-    if (wifiNetworksLoading) {
+    if (subscriberInformationLoading) {
       return require('../assets/question-solid.png');
     } else {
       const guestNetwork = getGuestNetwork();
@@ -176,7 +66,7 @@ const Dashboard = props => {
   };
 
   const getGuestNetworkBadgeBackgroundColor = () => {
-    if (wifiNetworksLoading) {
+    if (subscriberInformationLoading) {
       return infoColor;
     } else {
       const guestNetwork = getGuestNetwork();
@@ -189,27 +79,27 @@ const Dashboard = props => {
     }
   };
 
+  const getGuestNetwork = () => {
+    if (wifiNetworks && wifiNetworks.networks) {
+      // Return the first guest network
+      return wifiNetworks.networks.find(network => network.type === 'guest');
+    }
+
+    return null;
+  };
+
   const getConnectedDeviceBadgeText = () => {
-    if (subscriberDevicesLoading) {
+    if (subscriberInformationLoading) {
       return '-';
-    } else if (!subscriberDevices) {
-      return '0';
+    } else if (subscriberDevices && subscriberDevices.devices.length) {
+      return subscriberDevices.devices.length;
     } else {
-      return subscriberDevices.length;
+      return '0';
     }
   };
 
   const getConnectedDeviceBadgeBackgroundColor = () => {
     return infoColor;
-  };
-
-  const getGuestNetwork = () => {
-    if (wifiNetworks) {
-      // Return first guest network
-      return wifiNetworks.find(network => network.type === 'guest');
-    }
-
-    return null;
   };
 
   const onNetworkPress = async () => {

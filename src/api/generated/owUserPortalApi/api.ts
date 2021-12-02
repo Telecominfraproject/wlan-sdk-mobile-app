@@ -42,6 +42,12 @@ export interface AccessPoint {
    * @type {string}
    * @memberof AccessPoint
    */
+  id?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof AccessPoint
+   */
   macAddress?: string;
   /**
    *
@@ -51,16 +57,46 @@ export interface AccessPoint {
   name?: string;
   /**
    *
-   * @type {string}
+   * @type {SubscriberDeviceList}
    * @memberof AccessPoint
    */
-  id?: string;
+  subscriberDevices?: SubscriberDeviceList;
+  /**
+   *
+   * @type {IPReservationList}
+   * @memberof AccessPoint
+   */
+  ipReservations?: IPReservationList;
   /**
    *
    * @type {Location}
    * @memberof AccessPoint
    */
   address?: Location;
+  /**
+   *
+   * @type {WifiNetworkList}
+   * @memberof AccessPoint
+   */
+  wifiNetworks?: WifiNetworkList;
+  /**
+   *
+   * @type {InternetConnection}
+   * @memberof AccessPoint
+   */
+  internetConnection?: InternetConnection;
+  /**
+   *
+   * @type {HomeDeviceMode}
+   * @memberof AccessPoint
+   */
+  deviceMode?: HomeDeviceMode;
+  /**
+   *
+   * @type {DnsConfiguration}
+   * @memberof AccessPoint
+   */
+  dnsConfiguration?: DnsConfiguration;
 }
 /**
  *
@@ -130,6 +166,43 @@ export interface AccessTimes {
    * @memberof AccessTimes
    */
   schedule?: Array<AccessTime>;
+}
+/**
+ *
+ * @export
+ * @interface AclTemplate
+ */
+export interface AclTemplate {
+  /**
+   *
+   * @type {boolean}
+   * @memberof AclTemplate
+   */
+  Read?: boolean;
+  /**
+   *
+   * @type {boolean}
+   * @memberof AclTemplate
+   */
+  ReadWrite?: boolean;
+  /**
+   *
+   * @type {boolean}
+   * @memberof AclTemplate
+   */
+  ReadWriteCreate?: boolean;
+  /**
+   *
+   * @type {boolean}
+   * @memberof AclTemplate
+   */
+  Delete?: boolean;
+  /**
+   *
+   * @type {boolean}
+   * @memberof AclTemplate
+   */
+  PortalLogin?: boolean;
 }
 /**
  *
@@ -441,27 +514,21 @@ export interface IPReservationList {
 /**
  *
  * @export
- * @interface InlineResponse200
+ * @interface InlineObject
  */
-export interface InlineResponse200 {
+export interface InlineObject {
   /**
    *
    * @type {string}
-   * @memberof InlineResponse200
+   * @memberof InlineObject
    */
-  id?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof InlineResponse200
-   */
-  error?: string;
+  mac?: string;
   /**
    *
    * @type {number}
-   * @memberof InlineResponse200
+   * @memberof InlineObject
    */
-  errorCode?: number;
+  when?: number;
 }
 /**
  *
@@ -595,6 +662,56 @@ export interface Location {
    * @memberof Location
    */
   mobiles?: Array<string>;
+}
+/**
+ *
+ * @export
+ * @interface MFAChallengeRequest
+ */
+export interface MFAChallengeRequest {
+  /**
+   *
+   * @type {string}
+   * @memberof MFAChallengeRequest
+   */
+  uuid?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof MFAChallengeRequest
+   */
+  question?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof MFAChallengeRequest
+   */
+  created?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof MFAChallengeRequest
+   */
+  method?: string;
+}
+/**
+ *
+ * @export
+ * @interface MFAChallengeResponse
+ */
+export interface MFAChallengeResponse {
+  /**
+   *
+   * @type {string}
+   * @memberof MFAChallengeResponse
+   */
+  uuid?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof MFAChallengeResponse
+   */
+  answer?: string;
 }
 /**
  *
@@ -820,6 +937,117 @@ export interface SubscriberInfo {
 /**
  *
  * @export
+ * @interface WebTokenAclTemplate
+ */
+export interface WebTokenAclTemplate {
+  /**
+   *
+   * @type {AclTemplate}
+   * @memberof WebTokenAclTemplate
+   */
+  aclTemplate?: AclTemplate;
+}
+/**
+ * User Id and password.
+ * @export
+ * @interface WebTokenRequest
+ */
+export interface WebTokenRequest {
+  /**
+   *
+   * @type {string}
+   * @memberof WebTokenRequest
+   */
+  userId: string;
+  /**
+   *
+   * @type {string}
+   * @memberof WebTokenRequest
+   */
+  password: string;
+  /**
+   *
+   * @type {string}
+   * @memberof WebTokenRequest
+   */
+  newPassword?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof WebTokenRequest
+   */
+  refreshToken?: string;
+}
+/**
+ * Login and Refresh Tokens to be used in subsequent API calls.
+ * @export
+ * @interface WebTokenResult
+ */
+export interface WebTokenResult {
+  /**
+   *
+   * @type {string}
+   * @memberof WebTokenResult
+   */
+  access_token?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof WebTokenResult
+   */
+  refresh_token?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof WebTokenResult
+   */
+  token_type?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof WebTokenResult
+   */
+  expires_in?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof WebTokenResult
+   */
+  idle_timeout?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof WebTokenResult
+   */
+  username?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof WebTokenResult
+   */
+  created?: number;
+  /**
+   *
+   * @type {boolean}
+   * @memberof WebTokenResult
+   */
+  userMustChangePassword?: boolean;
+  /**
+   *
+   * @type {number}
+   * @memberof WebTokenResult
+   */
+  errorCode?: number;
+  /**
+   *
+   * @type {WebTokenAclTemplate}
+   * @memberof WebTokenResult
+   */
+  aclTemplate?: WebTokenAclTemplate;
+}
+/**
+ *
+ * @export
  * @interface WifiNetwork
  */
 export interface WifiNetwork {
@@ -902,20 +1130,35 @@ export interface WifiNetworkList {
 }
 
 /**
- * AccessPointsApi - axios parameter creator
+ * AuthenticationApi - axios parameter creator
  * @export
  */
-export const AccessPointsApiAxiosParamCreator = function (configuration?: Configuration) {
+export const AuthenticationApiAxiosParamCreator = function (configuration?: Configuration) {
   return {
     /**
      *
-     * @summary Add/register a new device for a subscriber
-     * @param {AccessPoint} [accessPoint]
+     * @summary Get access token - to be used as Bearer token header for all other API requests.
+     * @param {WebTokenRequest | MFAChallengeResponse} webTokenRequestMFAChallengeResponse User id and password
+     * @param {string} [newPassword] used when a user is trying to change her password. This will be the new password.
+     * @param {boolean} [forgotPassword] A user forgot her password. She needs to present her e-mail address in the userId and set this to true
+     * @param {boolean} [requirements] A user forgot her password. She needs to present her e-mail address in the userId and set this to true
+     * @param {boolean} [resendMFACode]
+     * @param {boolean} [completeMFAChallenge]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    addSubscriberAccessPoint: async (accessPoint?: AccessPoint, options: any = {}): Promise<RequestArgs> => {
-      const localVarPath = `/accessPoints`;
+    getAccessToken: async (
+      webTokenRequestMFAChallengeResponse: WebTokenRequest | MFAChallengeResponse,
+      newPassword?: string,
+      forgotPassword?: boolean,
+      requirements?: boolean,
+      resendMFACode?: boolean,
+      completeMFAChallenge?: boolean,
+      options: any = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'webTokenRequestMFAChallengeResponse' is not null or undefined
+      assertParamExists('getAccessToken', 'webTokenRequestMFAChallengeResponse', webTokenRequestMFAChallengeResponse);
+      const localVarPath = `/oauth2`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
       let baseOptions;
@@ -934,12 +1177,36 @@ export const AccessPointsApiAxiosParamCreator = function (configuration?: Config
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
+      if (newPassword !== undefined) {
+        localVarQueryParameter['newPassword'] = newPassword;
+      }
+
+      if (forgotPassword !== undefined) {
+        localVarQueryParameter['forgotPassword'] = forgotPassword;
+      }
+
+      if (requirements !== undefined) {
+        localVarQueryParameter['requirements'] = requirements;
+      }
+
+      if (resendMFACode !== undefined) {
+        localVarQueryParameter['resendMFACode'] = resendMFACode;
+      }
+
+      if (completeMFAChallenge !== undefined) {
+        localVarQueryParameter['completeMFAChallenge'] = completeMFAChallenge;
+      }
+
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
       setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
       let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
       localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-      localVarRequestOptions.data = serializeDataIfNeeded(accessPoint, localVarRequestOptions, configuration);
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        webTokenRequestMFAChallengeResponse,
+        localVarRequestOptions,
+        configuration,
+      );
 
       return {
         url: toPathString(localVarUrlObj),
@@ -948,15 +1215,15 @@ export const AccessPointsApiAxiosParamCreator = function (configuration?: Config
     },
     /**
      *
-     * @summary Delete an access point that is no longer in use.
-     * @param {string} deviceId
+     * @summary Revoke a token.
+     * @param {string} token
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    deleteSubscriberAccessPoint: async (deviceId: string, options: any = {}): Promise<RequestArgs> => {
-      // verify required parameter 'deviceId' is not null or undefined
-      assertParamExists('deleteSubscriberAccessPoint', 'deviceId', deviceId);
-      const localVarPath = `/accessPoints`;
+    removeAccessToken: async (token: string, options: any = {}): Promise<RequestArgs> => {
+      // verify required parameter 'token' is not null or undefined
+      assertParamExists('removeAccessToken', 'token', token);
+      const localVarPath = `/oauth2/{token}`.replace(`{${'token'}}`, encodeURIComponent(String(token)));
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
       let baseOptions;
@@ -975,87 +1242,9 @@ export const AccessPointsApiAxiosParamCreator = function (configuration?: Config
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
-      if (deviceId !== undefined) {
-        localVarQueryParameter['deviceId'] = deviceId;
-      }
-
       setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
       let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
       localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-    /**
-     *
-     * @summary Retrieve information about user devices
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    getSubscriberAccessPointList: async (options: any = {}): Promise<RequestArgs> => {
-      const localVarPath = `/accessPoints`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication ApiKeyAuth required
-      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
-
-      // authentication bearerAuth required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
-      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-    /**
-     *
-     * @summary Modify an existing device for a subscriber
-     * @param {AccessPoint} [accessPoint]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    modifySubscriberAccessPoint: async (accessPoint?: AccessPoint, options: any = {}): Promise<RequestArgs> => {
-      const localVarPath = `/accessPoints`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication ApiKeyAuth required
-      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
-
-      // authentication bearerAuth required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      localVarHeaderParameter['Content-Type'] = 'application/json';
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
-      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-      localVarRequestOptions.data = serializeDataIfNeeded(accessPoint, localVarRequestOptions, configuration);
 
       return {
         url: toPathString(localVarUrlObj),
@@ -1066,360 +1255,171 @@ export const AccessPointsApiAxiosParamCreator = function (configuration?: Config
 };
 
 /**
- * AccessPointsApi - functional programming interface
+ * AuthenticationApi - functional programming interface
  * @export
  */
-export const AccessPointsApiFp = function (configuration?: Configuration) {
-  const localVarAxiosParamCreator = AccessPointsApiAxiosParamCreator(configuration);
+export const AuthenticationApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = AuthenticationApiAxiosParamCreator(configuration);
   return {
     /**
      *
-     * @summary Add/register a new device for a subscriber
-     * @param {AccessPoint} [accessPoint]
+     * @summary Get access token - to be used as Bearer token header for all other API requests.
+     * @param {WebTokenRequest | MFAChallengeResponse} webTokenRequestMFAChallengeResponse User id and password
+     * @param {string} [newPassword] used when a user is trying to change her password. This will be the new password.
+     * @param {boolean} [forgotPassword] A user forgot her password. She needs to present her e-mail address in the userId and set this to true
+     * @param {boolean} [requirements] A user forgot her password. She needs to present her e-mail address in the userId and set this to true
+     * @param {boolean} [resendMFACode]
+     * @param {boolean} [completeMFAChallenge]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async addSubscriberAccessPoint(
-      accessPoint?: AccessPoint,
+    async getAccessToken(
+      webTokenRequestMFAChallengeResponse: WebTokenRequest | MFAChallengeResponse,
+      newPassword?: string,
+      forgotPassword?: boolean,
+      requirements?: boolean,
+      resendMFACode?: boolean,
+      completeMFAChallenge?: boolean,
       options?: any,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.addSubscriberAccessPoint(accessPoint, options);
-      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-    },
-    /**
-     *
-     * @summary Delete an access point that is no longer in use.
-     * @param {string} deviceId
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async deleteSubscriberAccessPoint(
-      deviceId: string,
-      options?: any,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.deleteSubscriberAccessPoint(deviceId, options);
-      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-    },
-    /**
-     *
-     * @summary Retrieve information about user devices
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async getSubscriberAccessPointList(
-      options?: any,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getSubscriberAccessPointList(options);
-      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-    },
-    /**
-     *
-     * @summary Modify an existing device for a subscriber
-     * @param {AccessPoint} [accessPoint]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async modifySubscriberAccessPoint(
-      accessPoint?: AccessPoint,
-      options?: any,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.modifySubscriberAccessPoint(accessPoint, options);
-      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-    },
-  };
-};
-
-/**
- * AccessPointsApi - factory interface
- * @export
- */
-export const AccessPointsApiFactory = function (
-  configuration?: Configuration,
-  basePath?: string,
-  axios?: AxiosInstance,
-) {
-  const localVarFp = AccessPointsApiFp(configuration);
-  return {
-    /**
-     *
-     * @summary Add/register a new device for a subscriber
-     * @param {AccessPoint} [accessPoint]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    addSubscriberAccessPoint(accessPoint?: AccessPoint, options?: any): AxiosPromise<void> {
-      return localVarFp.addSubscriberAccessPoint(accessPoint, options).then(request => request(axios, basePath));
-    },
-    /**
-     *
-     * @summary Delete an access point that is no longer in use.
-     * @param {string} deviceId
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    deleteSubscriberAccessPoint(deviceId: string, options?: any): AxiosPromise<object> {
-      return localVarFp.deleteSubscriberAccessPoint(deviceId, options).then(request => request(axios, basePath));
-    },
-    /**
-     *
-     * @summary Retrieve information about user devices
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    getSubscriberAccessPointList(options?: any): AxiosPromise<void> {
-      return localVarFp.getSubscriberAccessPointList(options).then(request => request(axios, basePath));
-    },
-    /**
-     *
-     * @summary Modify an existing device for a subscriber
-     * @param {AccessPoint} [accessPoint]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    modifySubscriberAccessPoint(accessPoint?: AccessPoint, options?: any): AxiosPromise<void> {
-      return localVarFp.modifySubscriberAccessPoint(accessPoint, options).then(request => request(axios, basePath));
-    },
-  };
-};
-
-/**
- * AccessPointsApi - object-oriented interface
- * @export
- * @class AccessPointsApi
- * @extends {BaseAPI}
- */
-export class AccessPointsApi extends BaseAPI {
-  /**
-   *
-   * @summary Add/register a new device for a subscriber
-   * @param {AccessPoint} [accessPoint]
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof AccessPointsApi
-   */
-  public addSubscriberAccessPoint(accessPoint?: AccessPoint, options?: any) {
-    return AccessPointsApiFp(this.configuration)
-      .addSubscriberAccessPoint(accessPoint, options)
-      .then(request => request(this.axios, this.basePath));
-  }
-
-  /**
-   *
-   * @summary Delete an access point that is no longer in use.
-   * @param {string} deviceId
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof AccessPointsApi
-   */
-  public deleteSubscriberAccessPoint(deviceId: string, options?: any) {
-    return AccessPointsApiFp(this.configuration)
-      .deleteSubscriberAccessPoint(deviceId, options)
-      .then(request => request(this.axios, this.basePath));
-  }
-
-  /**
-   *
-   * @summary Retrieve information about user devices
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof AccessPointsApi
-   */
-  public getSubscriberAccessPointList(options?: any) {
-    return AccessPointsApiFp(this.configuration)
-      .getSubscriberAccessPointList(options)
-      .then(request => request(this.axios, this.basePath));
-  }
-
-  /**
-   *
-   * @summary Modify an existing device for a subscriber
-   * @param {AccessPoint} [accessPoint]
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof AccessPointsApi
-   */
-  public modifySubscriberAccessPoint(accessPoint?: AccessPoint, options?: any) {
-    return AccessPointsApiFp(this.configuration)
-      .modifySubscriberAccessPoint(accessPoint, options)
-      .then(request => request(this.axios, this.basePath));
-  }
-}
-
-/**
- * AccessProcessApi - axios parameter creator
- * @export
- */
-export const AccessProcessApiAxiosParamCreator = function (configuration?: Configuration) {
-  return {
-    /**
-     *
-     * @summary User is requesting a signup for a new user ID
-     * @param {'signUp' | 'verifyEmail' | 'forgotPassword' | 'setpassword'} action
-     * @param {string} email
-     * @param {string} [id]
-     * @param {PasswordChange | PasswordCreation} [passwordChangePasswordCreation]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    userSignUp: async (
-      action: 'signUp' | 'verifyEmail' | 'forgotPassword' | 'setpassword',
-      email: string,
-      id?: string,
-      passwordChangePasswordCreation?: PasswordChange | PasswordCreation,
-      options: any = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'action' is not null or undefined
-      assertParamExists('userSignUp', 'action', action);
-      // verify required parameter 'email' is not null or undefined
-      assertParamExists('userSignUp', 'email', email);
-      const localVarPath = `/login`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication ApiKeyAuth required
-      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
-
-      // authentication bearerAuth required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      if (action !== undefined) {
-        localVarQueryParameter['action'] = action;
-      }
-
-      if (email !== undefined) {
-        localVarQueryParameter['email'] = email;
-      }
-
-      if (id !== undefined) {
-        localVarQueryParameter['id'] = id;
-      }
-
-      localVarHeaderParameter['Content-Type'] = 'application/json';
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
-      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-      localVarRequestOptions.data = serializeDataIfNeeded(
-        passwordChangePasswordCreation,
-        localVarRequestOptions,
-        configuration,
-      );
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-  };
-};
-
-/**
- * AccessProcessApi - functional programming interface
- * @export
- */
-export const AccessProcessApiFp = function (configuration?: Configuration) {
-  const localVarAxiosParamCreator = AccessProcessApiAxiosParamCreator(configuration);
-  return {
-    /**
-     *
-     * @summary User is requesting a signup for a new user ID
-     * @param {'signUp' | 'verifyEmail' | 'forgotPassword' | 'setpassword'} action
-     * @param {string} email
-     * @param {string} [id]
-     * @param {PasswordChange | PasswordCreation} [passwordChangePasswordCreation]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async userSignUp(
-      action: 'signUp' | 'verifyEmail' | 'forgotPassword' | 'setpassword',
-      email: string,
-      id?: string,
-      passwordChangePasswordCreation?: PasswordChange | PasswordCreation,
-      options?: any,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<InlineResponse200>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.userSignUp(
-        action,
-        email,
-        id,
-        passwordChangePasswordCreation,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<WebTokenResult | MFAChallengeRequest>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.getAccessToken(
+        webTokenRequestMFAChallengeResponse,
+        newPassword,
+        forgotPassword,
+        requirements,
+        resendMFACode,
+        completeMFAChallenge,
         options,
       );
       return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
     },
-  };
-};
-
-/**
- * AccessProcessApi - factory interface
- * @export
- */
-export const AccessProcessApiFactory = function (
-  configuration?: Configuration,
-  basePath?: string,
-  axios?: AxiosInstance,
-) {
-  const localVarFp = AccessProcessApiFp(configuration);
-  return {
     /**
      *
-     * @summary User is requesting a signup for a new user ID
-     * @param {'signUp' | 'verifyEmail' | 'forgotPassword' | 'setpassword'} action
-     * @param {string} email
-     * @param {string} [id]
-     * @param {PasswordChange | PasswordCreation} [passwordChangePasswordCreation]
+     * @summary Revoke a token.
+     * @param {string} token
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    userSignUp(
-      action: 'signUp' | 'verifyEmail' | 'forgotPassword' | 'setpassword',
-      email: string,
-      id?: string,
-      passwordChangePasswordCreation?: PasswordChange | PasswordCreation,
+    async removeAccessToken(
+      token: string,
       options?: any,
-    ): AxiosPromise<InlineResponse200> {
-      return localVarFp
-        .userSignUp(action, email, id, passwordChangePasswordCreation, options)
-        .then(request => request(axios, basePath));
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Success>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.removeAccessToken(token, options);
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
     },
   };
 };
 
 /**
- * AccessProcessApi - object-oriented interface
+ * AuthenticationApi - factory interface
  * @export
- * @class AccessProcessApi
+ */
+export const AuthenticationApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = AuthenticationApiFp(configuration);
+  return {
+    /**
+     *
+     * @summary Get access token - to be used as Bearer token header for all other API requests.
+     * @param {WebTokenRequest | MFAChallengeResponse} webTokenRequestMFAChallengeResponse User id and password
+     * @param {string} [newPassword] used when a user is trying to change her password. This will be the new password.
+     * @param {boolean} [forgotPassword] A user forgot her password. She needs to present her e-mail address in the userId and set this to true
+     * @param {boolean} [requirements] A user forgot her password. She needs to present her e-mail address in the userId and set this to true
+     * @param {boolean} [resendMFACode]
+     * @param {boolean} [completeMFAChallenge]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getAccessToken(
+      webTokenRequestMFAChallengeResponse: WebTokenRequest | MFAChallengeResponse,
+      newPassword?: string,
+      forgotPassword?: boolean,
+      requirements?: boolean,
+      resendMFACode?: boolean,
+      completeMFAChallenge?: boolean,
+      options?: any,
+    ): AxiosPromise<WebTokenResult | MFAChallengeRequest> {
+      return localVarFp
+        .getAccessToken(
+          webTokenRequestMFAChallengeResponse,
+          newPassword,
+          forgotPassword,
+          requirements,
+          resendMFACode,
+          completeMFAChallenge,
+          options,
+        )
+        .then(request => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary Revoke a token.
+     * @param {string} token
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    removeAccessToken(token: string, options?: any): AxiosPromise<Success> {
+      return localVarFp.removeAccessToken(token, options).then(request => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * AuthenticationApi - object-oriented interface
+ * @export
+ * @class AuthenticationApi
  * @extends {BaseAPI}
  */
-export class AccessProcessApi extends BaseAPI {
+export class AuthenticationApi extends BaseAPI {
   /**
    *
-   * @summary User is requesting a signup for a new user ID
-   * @param {'signUp' | 'verifyEmail' | 'forgotPassword' | 'setpassword'} action
-   * @param {string} email
-   * @param {string} [id]
-   * @param {PasswordChange | PasswordCreation} [passwordChangePasswordCreation]
+   * @summary Get access token - to be used as Bearer token header for all other API requests.
+   * @param {WebTokenRequest | MFAChallengeResponse} webTokenRequestMFAChallengeResponse User id and password
+   * @param {string} [newPassword] used when a user is trying to change her password. This will be the new password.
+   * @param {boolean} [forgotPassword] A user forgot her password. She needs to present her e-mail address in the userId and set this to true
+   * @param {boolean} [requirements] A user forgot her password. She needs to present her e-mail address in the userId and set this to true
+   * @param {boolean} [resendMFACode]
+   * @param {boolean} [completeMFAChallenge]
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
-   * @memberof AccessProcessApi
+   * @memberof AuthenticationApi
    */
-  public userSignUp(
-    action: 'signUp' | 'verifyEmail' | 'forgotPassword' | 'setpassword',
-    email: string,
-    id?: string,
-    passwordChangePasswordCreation?: PasswordChange | PasswordCreation,
+  public getAccessToken(
+    webTokenRequestMFAChallengeResponse: WebTokenRequest | MFAChallengeResponse,
+    newPassword?: string,
+    forgotPassword?: boolean,
+    requirements?: boolean,
+    resendMFACode?: boolean,
+    completeMFAChallenge?: boolean,
     options?: any,
   ) {
-    return AccessProcessApiFp(this.configuration)
-      .userSignUp(action, email, id, passwordChangePasswordCreation, options)
+    return AuthenticationApiFp(this.configuration)
+      .getAccessToken(
+        webTokenRequestMFAChallengeResponse,
+        newPassword,
+        forgotPassword,
+        requirements,
+        resendMFACode,
+        completeMFAChallenge,
+        options,
+      )
+      .then(request => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @summary Revoke a token.
+   * @param {string} token
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof AuthenticationApi
+   */
+  public removeAccessToken(token: string, options?: any) {
+    return AuthenticationApiFp(this.configuration)
+      .removeAccessToken(token, options)
       .then(request => request(this.axios, this.basePath));
   }
 }
@@ -1542,76 +1542,25 @@ export class ClientsApi extends BaseAPI {
 }
 
 /**
- * DeviceModeApi - axios parameter creator
+ * DeviceCommandsApi - axios parameter creator
  * @export
  */
-export const DeviceModeApiAxiosParamCreator = function (configuration?: Configuration) {
+export const DeviceCommandsApiAxiosParamCreator = function (configuration?: Configuration) {
   return {
     /**
      *
-     * @summary Read the Home Device Mode
-     * @param {string} deviceId
-     * @param {boolean} [_default]
+     * @summary Sending different commands to a device
+     * @param {'reboot' | 'blink' | 'upgrade' | 'factory' | 'refresh'} [action]
+     * @param {InlineObject} [inlineObject]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getHomeDeviceMode: async (deviceId: string, _default?: boolean, options: any = {}): Promise<RequestArgs> => {
-      // verify required parameter 'deviceId' is not null or undefined
-      assertParamExists('getHomeDeviceMode', 'deviceId', deviceId);
-      const localVarPath = `/homeDeviceMode`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication ApiKeyAuth required
-      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
-
-      // authentication bearerAuth required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      if (deviceId !== undefined) {
-        localVarQueryParameter['deviceId'] = deviceId;
-      }
-
-      if (_default !== undefined) {
-        localVarQueryParameter['default'] = _default;
-      }
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
-      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-    /**
-     *
-     * @summary Modify the current device mode settings
-     * @param {string} deviceId
-     * @param {boolean} [reset]
-     * @param {HomeDeviceMode} [homeDeviceMode] Information used to modify the current device mode settings
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    modifyHomeDeviceMode: async (
-      deviceId: string,
-      reset?: boolean,
-      homeDeviceMode?: HomeDeviceMode,
+    oerfirmAnAction: async (
+      action?: 'reboot' | 'blink' | 'upgrade' | 'factory' | 'refresh',
+      inlineObject?: InlineObject,
       options: any = {},
     ): Promise<RequestArgs> => {
-      // verify required parameter 'deviceId' is not null or undefined
-      assertParamExists('modifyHomeDeviceMode', 'deviceId', deviceId);
-      const localVarPath = `/homeDeviceMode`;
+      const localVarPath = `/action`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
       let baseOptions;
@@ -1619,7 +1568,7 @@ export const DeviceModeApiAxiosParamCreator = function (configuration?: Configur
         baseOptions = configuration.baseOptions;
       }
 
-      const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options };
+      const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
@@ -1630,12 +1579,8 @@ export const DeviceModeApiAxiosParamCreator = function (configuration?: Configur
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
-      if (deviceId !== undefined) {
-        localVarQueryParameter['deviceId'] = deviceId;
-      }
-
-      if (reset !== undefined) {
-        localVarQueryParameter['reset'] = reset;
+      if (action !== undefined) {
+        localVarQueryParameter['action'] = action;
       }
 
       localVarHeaderParameter['Content-Type'] = 'application/json';
@@ -1643,7 +1588,7 @@ export const DeviceModeApiAxiosParamCreator = function (configuration?: Configur
       setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
       let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
       localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-      localVarRequestOptions.data = serializeDataIfNeeded(homeDeviceMode, localVarRequestOptions, configuration);
+      localVarRequestOptions.data = serializeDataIfNeeded(inlineObject, localVarRequestOptions, configuration);
 
       return {
         url: toPathString(localVarUrlObj),
@@ -1654,973 +1599,83 @@ export const DeviceModeApiAxiosParamCreator = function (configuration?: Configur
 };
 
 /**
- * DeviceModeApi - functional programming interface
+ * DeviceCommandsApi - functional programming interface
  * @export
  */
-export const DeviceModeApiFp = function (configuration?: Configuration) {
-  const localVarAxiosParamCreator = DeviceModeApiAxiosParamCreator(configuration);
+export const DeviceCommandsApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = DeviceCommandsApiAxiosParamCreator(configuration);
   return {
     /**
      *
-     * @summary Read the Home Device Mode
-     * @param {string} deviceId
-     * @param {boolean} [_default]
+     * @summary Sending different commands to a device
+     * @param {'reboot' | 'blink' | 'upgrade' | 'factory' | 'refresh'} [action]
+     * @param {InlineObject} [inlineObject]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async getHomeDeviceMode(
-      deviceId: string,
-      _default?: boolean,
-      options?: any,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getHomeDeviceMode(deviceId, _default, options);
-      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-    },
-    /**
-     *
-     * @summary Modify the current device mode settings
-     * @param {string} deviceId
-     * @param {boolean} [reset]
-     * @param {HomeDeviceMode} [homeDeviceMode] Information used to modify the current device mode settings
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async modifyHomeDeviceMode(
-      deviceId: string,
-      reset?: boolean,
-      homeDeviceMode?: HomeDeviceMode,
-      options?: any,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.modifyHomeDeviceMode(
-        deviceId,
-        reset,
-        homeDeviceMode,
-        options,
-      );
-      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-    },
-  };
-};
-
-/**
- * DeviceModeApi - factory interface
- * @export
- */
-export const DeviceModeApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-  const localVarFp = DeviceModeApiFp(configuration);
-  return {
-    /**
-     *
-     * @summary Read the Home Device Mode
-     * @param {string} deviceId
-     * @param {boolean} [_default]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    getHomeDeviceMode(deviceId: string, _default?: boolean, options?: any): AxiosPromise<void> {
-      return localVarFp.getHomeDeviceMode(deviceId, _default, options).then(request => request(axios, basePath));
-    },
-    /**
-     *
-     * @summary Modify the current device mode settings
-     * @param {string} deviceId
-     * @param {boolean} [reset]
-     * @param {HomeDeviceMode} [homeDeviceMode] Information used to modify the current device mode settings
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    modifyHomeDeviceMode(
-      deviceId: string,
-      reset?: boolean,
-      homeDeviceMode?: HomeDeviceMode,
-      options?: any,
-    ): AxiosPromise<void> {
-      return localVarFp
-        .modifyHomeDeviceMode(deviceId, reset, homeDeviceMode, options)
-        .then(request => request(axios, basePath));
-    },
-  };
-};
-
-/**
- * DeviceModeApi - object-oriented interface
- * @export
- * @class DeviceModeApi
- * @extends {BaseAPI}
- */
-export class DeviceModeApi extends BaseAPI {
-  /**
-   *
-   * @summary Read the Home Device Mode
-   * @param {string} deviceId
-   * @param {boolean} [_default]
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof DeviceModeApi
-   */
-  public getHomeDeviceMode(deviceId: string, _default?: boolean, options?: any) {
-    return DeviceModeApiFp(this.configuration)
-      .getHomeDeviceMode(deviceId, _default, options)
-      .then(request => request(this.axios, this.basePath));
-  }
-
-  /**
-   *
-   * @summary Modify the current device mode settings
-   * @param {string} deviceId
-   * @param {boolean} [reset]
-   * @param {HomeDeviceMode} [homeDeviceMode] Information used to modify the current device mode settings
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof DeviceModeApi
-   */
-  public modifyHomeDeviceMode(deviceId: string, reset?: boolean, homeDeviceMode?: HomeDeviceMode, options?: any) {
-    return DeviceModeApiFp(this.configuration)
-      .modifyHomeDeviceMode(deviceId, reset, homeDeviceMode, options)
-      .then(request => request(this.axios, this.basePath));
-  }
-}
-
-/**
- * IPReservationsApi - axios parameter creator
- * @export
- */
-export const IPReservationsApiAxiosParamCreator = function (configuration?: Configuration) {
-  return {
-    /**
-     *
-     * @summary Add A new IP reservation
-     * @param {string} deviceId
-     * @param {boolean} [replace]
-     * @param {IPReservationList} [iPReservationList] List of IP reservations to maintain for this device.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    addIPReservation: async (
-      deviceId: string,
-      replace?: boolean,
-      iPReservationList?: IPReservationList,
-      options: any = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'deviceId' is not null or undefined
-      assertParamExists('addIPReservation', 'deviceId', deviceId);
-      const localVarPath = `/ipReservations`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication ApiKeyAuth required
-      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
-
-      // authentication bearerAuth required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      if (deviceId !== undefined) {
-        localVarQueryParameter['deviceId'] = deviceId;
-      }
-
-      if (replace !== undefined) {
-        localVarQueryParameter['replace'] = replace;
-      }
-
-      localVarHeaderParameter['Content-Type'] = 'application/json';
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
-      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-      localVarRequestOptions.data = serializeDataIfNeeded(iPReservationList, localVarRequestOptions, configuration);
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-    /**
-     *
-     * @summary Delete an IP Reservation
-     * @param {string} deviceId
-     * @param {string} [macAddress]
-     * @param {string} [name]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    deleteIPReservation: async (
-      deviceId: string,
-      macAddress?: string,
-      name?: string,
-      options: any = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'deviceId' is not null or undefined
-      assertParamExists('deleteIPReservation', 'deviceId', deviceId);
-      const localVarPath = `/ipReservations`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication ApiKeyAuth required
-      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
-
-      // authentication bearerAuth required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      if (deviceId !== undefined) {
-        localVarQueryParameter['deviceId'] = deviceId;
-      }
-
-      if (macAddress !== undefined) {
-        localVarQueryParameter['macAddress'] = macAddress;
-      }
-
-      if (name !== undefined) {
-        localVarQueryParameter['name'] = name;
-      }
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
-      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-    /**
-     *
-     * @summary Retreive the list of IP Reservations
-     * @param {string} deviceId
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    getIPReservationList: async (deviceId: string, options: any = {}): Promise<RequestArgs> => {
-      // verify required parameter 'deviceId' is not null or undefined
-      assertParamExists('getIPReservationList', 'deviceId', deviceId);
-      const localVarPath = `/ipReservations`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication ApiKeyAuth required
-      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
-
-      // authentication bearerAuth required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      if (deviceId !== undefined) {
-        localVarQueryParameter['deviceId'] = deviceId;
-      }
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
-      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-  };
-};
-
-/**
- * IPReservationsApi - functional programming interface
- * @export
- */
-export const IPReservationsApiFp = function (configuration?: Configuration) {
-  const localVarAxiosParamCreator = IPReservationsApiAxiosParamCreator(configuration);
-  return {
-    /**
-     *
-     * @summary Add A new IP reservation
-     * @param {string} deviceId
-     * @param {boolean} [replace]
-     * @param {IPReservationList} [iPReservationList] List of IP reservations to maintain for this device.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async addIPReservation(
-      deviceId: string,
-      replace?: boolean,
-      iPReservationList?: IPReservationList,
-      options?: any,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IPReservationList>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.addIPReservation(
-        deviceId,
-        replace,
-        iPReservationList,
-        options,
-      );
-      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-    },
-    /**
-     *
-     * @summary Delete an IP Reservation
-     * @param {string} deviceId
-     * @param {string} [macAddress]
-     * @param {string} [name]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async deleteIPReservation(
-      deviceId: string,
-      macAddress?: string,
-      name?: string,
+    async oerfirmAnAction(
+      action?: 'reboot' | 'blink' | 'upgrade' | 'factory' | 'refresh',
+      inlineObject?: InlineObject,
       options?: any,
     ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.deleteIPReservation(
-        deviceId,
-        macAddress,
-        name,
-        options,
-      );
-      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-    },
-    /**
-     *
-     * @summary Retreive the list of IP Reservations
-     * @param {string} deviceId
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async getIPReservationList(
-      deviceId: string,
-      options?: any,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<IPReservationList>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getIPReservationList(deviceId, options);
+      const localVarAxiosArgs = await localVarAxiosParamCreator.oerfirmAnAction(action, inlineObject, options);
       return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
     },
   };
 };
 
 /**
- * IPReservationsApi - factory interface
+ * DeviceCommandsApi - factory interface
  * @export
  */
-export const IPReservationsApiFactory = function (
+export const DeviceCommandsApiFactory = function (
   configuration?: Configuration,
   basePath?: string,
   axios?: AxiosInstance,
 ) {
-  const localVarFp = IPReservationsApiFp(configuration);
+  const localVarFp = DeviceCommandsApiFp(configuration);
   return {
     /**
      *
-     * @summary Add A new IP reservation
-     * @param {string} deviceId
-     * @param {boolean} [replace]
-     * @param {IPReservationList} [iPReservationList] List of IP reservations to maintain for this device.
+     * @summary Sending different commands to a device
+     * @param {'reboot' | 'blink' | 'upgrade' | 'factory' | 'refresh'} [action]
+     * @param {InlineObject} [inlineObject]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    addIPReservation(
-      deviceId: string,
-      replace?: boolean,
-      iPReservationList?: IPReservationList,
+    oerfirmAnAction(
+      action?: 'reboot' | 'blink' | 'upgrade' | 'factory' | 'refresh',
+      inlineObject?: InlineObject,
       options?: any,
-    ): AxiosPromise<IPReservationList> {
-      return localVarFp
-        .addIPReservation(deviceId, replace, iPReservationList, options)
-        .then(request => request(axios, basePath));
-    },
-    /**
-     *
-     * @summary Delete an IP Reservation
-     * @param {string} deviceId
-     * @param {string} [macAddress]
-     * @param {string} [name]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    deleteIPReservation(deviceId: string, macAddress?: string, name?: string, options?: any): AxiosPromise<object> {
-      return localVarFp
-        .deleteIPReservation(deviceId, macAddress, name, options)
-        .then(request => request(axios, basePath));
-    },
-    /**
-     *
-     * @summary Retreive the list of IP Reservations
-     * @param {string} deviceId
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    getIPReservationList(deviceId: string, options?: any): AxiosPromise<IPReservationList> {
-      return localVarFp.getIPReservationList(deviceId, options).then(request => request(axios, basePath));
+    ): AxiosPromise<object> {
+      return localVarFp.oerfirmAnAction(action, inlineObject, options).then(request => request(axios, basePath));
     },
   };
 };
 
 /**
- * IPReservationsApi - object-oriented interface
+ * DeviceCommandsApi - object-oriented interface
  * @export
- * @class IPReservationsApi
+ * @class DeviceCommandsApi
  * @extends {BaseAPI}
  */
-export class IPReservationsApi extends BaseAPI {
+export class DeviceCommandsApi extends BaseAPI {
   /**
    *
-   * @summary Add A new IP reservation
-   * @param {string} deviceId
-   * @param {boolean} [replace]
-   * @param {IPReservationList} [iPReservationList] List of IP reservations to maintain for this device.
+   * @summary Sending different commands to a device
+   * @param {'reboot' | 'blink' | 'upgrade' | 'factory' | 'refresh'} [action]
+   * @param {InlineObject} [inlineObject]
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
-   * @memberof IPReservationsApi
+   * @memberof DeviceCommandsApi
    */
-  public addIPReservation(deviceId: string, replace?: boolean, iPReservationList?: IPReservationList, options?: any) {
-    return IPReservationsApiFp(this.configuration)
-      .addIPReservation(deviceId, replace, iPReservationList, options)
-      .then(request => request(this.axios, this.basePath));
-  }
-
-  /**
-   *
-   * @summary Delete an IP Reservation
-   * @param {string} deviceId
-   * @param {string} [macAddress]
-   * @param {string} [name]
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof IPReservationsApi
-   */
-  public deleteIPReservation(deviceId: string, macAddress?: string, name?: string, options?: any) {
-    return IPReservationsApiFp(this.configuration)
-      .deleteIPReservation(deviceId, macAddress, name, options)
-      .then(request => request(this.axios, this.basePath));
-  }
-
-  /**
-   *
-   * @summary Retreive the list of IP Reservations
-   * @param {string} deviceId
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof IPReservationsApi
-   */
-  public getIPReservationList(deviceId: string, options?: any) {
-    return IPReservationsApiFp(this.configuration)
-      .getIPReservationList(deviceId, options)
-      .then(request => request(this.axios, this.basePath));
-  }
-}
-
-/**
- * InternetConnectionApi - axios parameter creator
- * @export
- */
-export const InternetConnectionApiAxiosParamCreator = function (configuration?: Configuration) {
-  return {
-    /**
-     *
-     * @summary Read the current internet connection settings
-     * @param {string} deviceId
-     * @param {boolean} [_default]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    getInternetConnectionSettings: async (
-      deviceId: string,
-      _default?: boolean,
-      options: any = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'deviceId' is not null or undefined
-      assertParamExists('getInternetConnectionSettings', 'deviceId', deviceId);
-      const localVarPath = `/internetConnection`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication ApiKeyAuth required
-      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
-
-      // authentication bearerAuth required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      if (deviceId !== undefined) {
-        localVarQueryParameter['deviceId'] = deviceId;
-      }
-
-      if (_default !== undefined) {
-        localVarQueryParameter['default'] = _default;
-      }
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
-      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-    /**
-     *
-     * @summary Modify the current internet connection settings
-     * @param {string} deviceId
-     * @param {boolean} [reset]
-     * @param {InternetConnection} [internetConnection] Information used to modify the current internet connection settings
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    modifyInternetConnectionSettings: async (
-      deviceId: string,
-      reset?: boolean,
-      internetConnection?: InternetConnection,
-      options: any = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'deviceId' is not null or undefined
-      assertParamExists('modifyInternetConnectionSettings', 'deviceId', deviceId);
-      const localVarPath = `/internetConnection`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication ApiKeyAuth required
-      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
-
-      // authentication bearerAuth required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      if (deviceId !== undefined) {
-        localVarQueryParameter['deviceId'] = deviceId;
-      }
-
-      if (reset !== undefined) {
-        localVarQueryParameter['reset'] = reset;
-      }
-
-      localVarHeaderParameter['Content-Type'] = 'application/json';
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
-      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-      localVarRequestOptions.data = serializeDataIfNeeded(internetConnection, localVarRequestOptions, configuration);
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-  };
-};
-
-/**
- * InternetConnectionApi - functional programming interface
- * @export
- */
-export const InternetConnectionApiFp = function (configuration?: Configuration) {
-  const localVarAxiosParamCreator = InternetConnectionApiAxiosParamCreator(configuration);
-  return {
-    /**
-     *
-     * @summary Read the current internet connection settings
-     * @param {string} deviceId
-     * @param {boolean} [_default]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async getInternetConnectionSettings(
-      deviceId: string,
-      _default?: boolean,
-      options?: any,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getInternetConnectionSettings(
-        deviceId,
-        _default,
-        options,
-      );
-      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-    },
-    /**
-     *
-     * @summary Modify the current internet connection settings
-     * @param {string} deviceId
-     * @param {boolean} [reset]
-     * @param {InternetConnection} [internetConnection] Information used to modify the current internet connection settings
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async modifyInternetConnectionSettings(
-      deviceId: string,
-      reset?: boolean,
-      internetConnection?: InternetConnection,
-      options?: any,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.modifyInternetConnectionSettings(
-        deviceId,
-        reset,
-        internetConnection,
-        options,
-      );
-      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-    },
-  };
-};
-
-/**
- * InternetConnectionApi - factory interface
- * @export
- */
-export const InternetConnectionApiFactory = function (
-  configuration?: Configuration,
-  basePath?: string,
-  axios?: AxiosInstance,
-) {
-  const localVarFp = InternetConnectionApiFp(configuration);
-  return {
-    /**
-     *
-     * @summary Read the current internet connection settings
-     * @param {string} deviceId
-     * @param {boolean} [_default]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    getInternetConnectionSettings(deviceId: string, _default?: boolean, options?: any): AxiosPromise<void> {
-      return localVarFp
-        .getInternetConnectionSettings(deviceId, _default, options)
-        .then(request => request(axios, basePath));
-    },
-    /**
-     *
-     * @summary Modify the current internet connection settings
-     * @param {string} deviceId
-     * @param {boolean} [reset]
-     * @param {InternetConnection} [internetConnection] Information used to modify the current internet connection settings
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    modifyInternetConnectionSettings(
-      deviceId: string,
-      reset?: boolean,
-      internetConnection?: InternetConnection,
-      options?: any,
-    ): AxiosPromise<void> {
-      return localVarFp
-        .modifyInternetConnectionSettings(deviceId, reset, internetConnection, options)
-        .then(request => request(axios, basePath));
-    },
-  };
-};
-
-/**
- * InternetConnectionApi - object-oriented interface
- * @export
- * @class InternetConnectionApi
- * @extends {BaseAPI}
- */
-export class InternetConnectionApi extends BaseAPI {
-  /**
-   *
-   * @summary Read the current internet connection settings
-   * @param {string} deviceId
-   * @param {boolean} [_default]
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof InternetConnectionApi
-   */
-  public getInternetConnectionSettings(deviceId: string, _default?: boolean, options?: any) {
-    return InternetConnectionApiFp(this.configuration)
-      .getInternetConnectionSettings(deviceId, _default, options)
-      .then(request => request(this.axios, this.basePath));
-  }
-
-  /**
-   *
-   * @summary Modify the current internet connection settings
-   * @param {string} deviceId
-   * @param {boolean} [reset]
-   * @param {InternetConnection} [internetConnection] Information used to modify the current internet connection settings
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof InternetConnectionApi
-   */
-  public modifyInternetConnectionSettings(
-    deviceId: string,
-    reset?: boolean,
-    internetConnection?: InternetConnection,
+  public oerfirmAnAction(
+    action?: 'reboot' | 'blink' | 'upgrade' | 'factory' | 'refresh',
+    inlineObject?: InlineObject,
     options?: any,
   ) {
-    return InternetConnectionApiFp(this.configuration)
-      .modifyInternetConnectionSettings(deviceId, reset, internetConnection, options)
-      .then(request => request(this.axios, this.basePath));
-  }
-}
-
-/**
- * SubscriberDevicesApi - axios parameter creator
- * @export
- */
-export const SubscriberDevicesApiAxiosParamCreator = function (configuration?: Configuration) {
-  return {
-    /**
-     *
-     * @summary Get the list of subscriber devices
-     * @param {string} deviceId
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    getSubscriberDevices: async (deviceId: string, options: any = {}): Promise<RequestArgs> => {
-      // verify required parameter 'deviceId' is not null or undefined
-      assertParamExists('getSubscriberDevices', 'deviceId', deviceId);
-      const localVarPath = `/subscriberDevices`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication ApiKeyAuth required
-      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
-
-      // authentication bearerAuth required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      if (deviceId !== undefined) {
-        localVarQueryParameter['deviceId'] = deviceId;
-      }
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
-      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-    /**
-     *
-     * @summary Update the list of subscriber devices
-     * @param {string} deviceId
-     * @param {boolean} [reset]
-     * @param {SubscriberDeviceList} [subscriberDeviceList] List of devices
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    modifySubscriberDevices: async (
-      deviceId: string,
-      reset?: boolean,
-      subscriberDeviceList?: SubscriberDeviceList,
-      options: any = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'deviceId' is not null or undefined
-      assertParamExists('modifySubscriberDevices', 'deviceId', deviceId);
-      const localVarPath = `/subscriberDevices`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication ApiKeyAuth required
-      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
-
-      // authentication bearerAuth required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      if (deviceId !== undefined) {
-        localVarQueryParameter['deviceId'] = deviceId;
-      }
-
-      if (reset !== undefined) {
-        localVarQueryParameter['reset'] = reset;
-      }
-
-      localVarHeaderParameter['Content-Type'] = 'application/json';
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
-      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-      localVarRequestOptions.data = serializeDataIfNeeded(subscriberDeviceList, localVarRequestOptions, configuration);
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-  };
-};
-
-/**
- * SubscriberDevicesApi - functional programming interface
- * @export
- */
-export const SubscriberDevicesApiFp = function (configuration?: Configuration) {
-  const localVarAxiosParamCreator = SubscriberDevicesApiAxiosParamCreator(configuration);
-  return {
-    /**
-     *
-     * @summary Get the list of subscriber devices
-     * @param {string} deviceId
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async getSubscriberDevices(
-      deviceId: string,
-      options?: any,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SubscriberDeviceList>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getSubscriberDevices(deviceId, options);
-      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-    },
-    /**
-     *
-     * @summary Update the list of subscriber devices
-     * @param {string} deviceId
-     * @param {boolean} [reset]
-     * @param {SubscriberDeviceList} [subscriberDeviceList] List of devices
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async modifySubscriberDevices(
-      deviceId: string,
-      reset?: boolean,
-      subscriberDeviceList?: SubscriberDeviceList,
-      options?: any,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SubscriberDeviceList>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.modifySubscriberDevices(
-        deviceId,
-        reset,
-        subscriberDeviceList,
-        options,
-      );
-      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-    },
-  };
-};
-
-/**
- * SubscriberDevicesApi - factory interface
- * @export
- */
-export const SubscriberDevicesApiFactory = function (
-  configuration?: Configuration,
-  basePath?: string,
-  axios?: AxiosInstance,
-) {
-  const localVarFp = SubscriberDevicesApiFp(configuration);
-  return {
-    /**
-     *
-     * @summary Get the list of subscriber devices
-     * @param {string} deviceId
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    getSubscriberDevices(deviceId: string, options?: any): AxiosPromise<SubscriberDeviceList> {
-      return localVarFp.getSubscriberDevices(deviceId, options).then(request => request(axios, basePath));
-    },
-    /**
-     *
-     * @summary Update the list of subscriber devices
-     * @param {string} deviceId
-     * @param {boolean} [reset]
-     * @param {SubscriberDeviceList} [subscriberDeviceList] List of devices
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    modifySubscriberDevices(
-      deviceId: string,
-      reset?: boolean,
-      subscriberDeviceList?: SubscriberDeviceList,
-      options?: any,
-    ): AxiosPromise<SubscriberDeviceList> {
-      return localVarFp
-        .modifySubscriberDevices(deviceId, reset, subscriberDeviceList, options)
-        .then(request => request(axios, basePath));
-    },
-  };
-};
-
-/**
- * SubscriberDevicesApi - object-oriented interface
- * @export
- * @class SubscriberDevicesApi
- * @extends {BaseAPI}
- */
-export class SubscriberDevicesApi extends BaseAPI {
-  /**
-   *
-   * @summary Get the list of subscriber devices
-   * @param {string} deviceId
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof SubscriberDevicesApi
-   */
-  public getSubscriberDevices(deviceId: string, options?: any) {
-    return SubscriberDevicesApiFp(this.configuration)
-      .getSubscriberDevices(deviceId, options)
-      .then(request => request(this.axios, this.basePath));
-  }
-
-  /**
-   *
-   * @summary Update the list of subscriber devices
-   * @param {string} deviceId
-   * @param {boolean} [reset]
-   * @param {SubscriberDeviceList} [subscriberDeviceList] List of devices
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof SubscriberDevicesApi
-   */
-  public modifySubscriberDevices(
-    deviceId: string,
-    reset?: boolean,
-    subscriberDeviceList?: SubscriberDeviceList,
-    options?: any,
-  ) {
-    return SubscriberDevicesApiFp(this.configuration)
-      .modifySubscriberDevices(deviceId, reset, subscriberDeviceList, options)
+    return DeviceCommandsApiFp(this.configuration)
+      .oerfirmAnAction(action, inlineObject, options)
       .then(request => request(this.axios, this.basePath));
   }
 }
@@ -2927,225 +1982,6 @@ export class WiFiClientsApi extends BaseAPI {
   public getWifiClients(deviceId: string, options?: any) {
     return WiFiClientsApiFp(this.configuration)
       .getWifiClients(deviceId, options)
-      .then(request => request(this.axios, this.basePath));
-  }
-}
-
-/**
- * WiFiNetworksApi - axios parameter creator
- * @export
- */
-export const WiFiNetworksApiAxiosParamCreator = function (configuration?: Configuration) {
-  return {
-    /**
-     *
-     * @summary Get the list of defined WiFI networks
-     * @param {string} deviceId
-     * @param {boolean} [_default]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    getWifiNetworks: async (deviceId: string, _default?: boolean, options: any = {}): Promise<RequestArgs> => {
-      // verify required parameter 'deviceId' is not null or undefined
-      assertParamExists('getWifiNetworks', 'deviceId', deviceId);
-      const localVarPath = `/wifiNetworks`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication ApiKeyAuth required
-      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
-
-      // authentication bearerAuth required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      if (deviceId !== undefined) {
-        localVarQueryParameter['deviceId'] = deviceId;
-      }
-
-      if (_default !== undefined) {
-        localVarQueryParameter['default'] = _default;
-      }
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
-      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-    /**
-     *
-     * @summary Update the list of WiFi networks
-     * @param {string} deviceId
-     * @param {boolean} [reset]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    modifyWiFiNetworks: async (deviceId: string, reset?: boolean, options: any = {}): Promise<RequestArgs> => {
-      // verify required parameter 'deviceId' is not null or undefined
-      assertParamExists('modifyWiFiNetworks', 'deviceId', deviceId);
-      const localVarPath = `/wifiNetworks`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication ApiKeyAuth required
-      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
-
-      // authentication bearerAuth required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      if (deviceId !== undefined) {
-        localVarQueryParameter['deviceId'] = deviceId;
-      }
-
-      if (reset !== undefined) {
-        localVarQueryParameter['reset'] = reset;
-      }
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
-      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-  };
-};
-
-/**
- * WiFiNetworksApi - functional programming interface
- * @export
- */
-export const WiFiNetworksApiFp = function (configuration?: Configuration) {
-  const localVarAxiosParamCreator = WiFiNetworksApiAxiosParamCreator(configuration);
-  return {
-    /**
-     *
-     * @summary Get the list of defined WiFI networks
-     * @param {string} deviceId
-     * @param {boolean} [_default]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async getWifiNetworks(
-      deviceId: string,
-      _default?: boolean,
-      options?: any,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<WifiNetwork>>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getWifiNetworks(deviceId, _default, options);
-      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-    },
-    /**
-     *
-     * @summary Update the list of WiFi networks
-     * @param {string} deviceId
-     * @param {boolean} [reset]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async modifyWiFiNetworks(
-      deviceId: string,
-      reset?: boolean,
-      options?: any,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<WifiNetwork>>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.modifyWiFiNetworks(deviceId, reset, options);
-      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-    },
-  };
-};
-
-/**
- * WiFiNetworksApi - factory interface
- * @export
- */
-export const WiFiNetworksApiFactory = function (
-  configuration?: Configuration,
-  basePath?: string,
-  axios?: AxiosInstance,
-) {
-  const localVarFp = WiFiNetworksApiFp(configuration);
-  return {
-    /**
-     *
-     * @summary Get the list of defined WiFI networks
-     * @param {string} deviceId
-     * @param {boolean} [_default]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    getWifiNetworks(deviceId: string, _default?: boolean, options?: any): AxiosPromise<Array<WifiNetwork>> {
-      return localVarFp.getWifiNetworks(deviceId, _default, options).then(request => request(axios, basePath));
-    },
-    /**
-     *
-     * @summary Update the list of WiFi networks
-     * @param {string} deviceId
-     * @param {boolean} [reset]
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    modifyWiFiNetworks(deviceId: string, reset?: boolean, options?: any): AxiosPromise<Array<WifiNetwork>> {
-      return localVarFp.modifyWiFiNetworks(deviceId, reset, options).then(request => request(axios, basePath));
-    },
-  };
-};
-
-/**
- * WiFiNetworksApi - object-oriented interface
- * @export
- * @class WiFiNetworksApi
- * @extends {BaseAPI}
- */
-export class WiFiNetworksApi extends BaseAPI {
-  /**
-   *
-   * @summary Get the list of defined WiFI networks
-   * @param {string} deviceId
-   * @param {boolean} [_default]
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof WiFiNetworksApi
-   */
-  public getWifiNetworks(deviceId: string, _default?: boolean, options?: any) {
-    return WiFiNetworksApiFp(this.configuration)
-      .getWifiNetworks(deviceId, _default, options)
-      .then(request => request(this.axios, this.basePath));
-  }
-
-  /**
-   *
-   * @summary Update the list of WiFi networks
-   * @param {string} deviceId
-   * @param {boolean} [reset]
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof WiFiNetworksApi
-   */
-  public modifyWiFiNetworks(deviceId: string, reset?: boolean, options?: any) {
-    return WiFiNetworksApiFp(this.configuration)
-      .modifyWiFiNetworks(deviceId, reset, options)
       .then(request => request(this.axios, this.basePath));
   }
 }

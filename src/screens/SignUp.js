@@ -1,11 +1,11 @@
 import React, { createRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
-import { accessProcessApi, handleApiError } from '../api/apiHandler';
-import { logStringifyPretty } from '../Utils';
-import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, TextInput, ActivityIndicator, Image, Text } from 'react-native';
+import { handleApiError } from '../api/apiHandler';
+import { logStringifyPretty } from '../Utils';
+import { selectBrandInfo } from '../store/BrandInfoSlice';
 import ButtonStyled from '../components/ButtonStyled';
 import BulletList from '../components/BulletList';
 
@@ -19,9 +19,9 @@ export default function SignUp(props) {
   const onSubmit = async () => {
     try {
       setLoading(true);
-      // TODO user id?
-      const response = await accessProcessApi.userSignUp('signUp', email, undefined, { newPassword: password });
-      logStringifyPretty(response);
+      // TODO: Need updated API
+      //const response = await accessProcessApi.userSignUp('signUp', email, undefined, { newPassword: password });
+      //logStringifyPretty(response);
     } catch (error) {
       handleApiError(strings.errors.titleSignUp, error);
     } finally {

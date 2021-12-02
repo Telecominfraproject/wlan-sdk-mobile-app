@@ -11,7 +11,7 @@ import {
 } from '../AppStyle';
 import { StyleSheet, SafeAreaView, View, ScrollView } from 'react-native';
 import { logStringifyPretty, showGeneralMessage, completeSignOut } from '../Utils';
-import { emailApi, getCredentials, handleApiError, userManagementApi } from '../api/apiHandler';
+import { getCredentials, handleApiError } from '../api/apiHandler';
 import { MfaAuthInfoMethodEnum } from '../api/generated/owSecurityApi';
 import { useFocusEffect } from '@react-navigation/native';
 import { store } from '../store/Store';
@@ -47,8 +47,9 @@ const Profile = props => {
     try {
       setLoading(true);
 
-      const response = await userManagementApi.getUsers();
-      const userProfile = response.data.users.find(user => user.email === session.username);
+      // TODO: Need updated API
+      //const response = await userManagementApi.getUsers();
+      const userProfile = null; // response.data.users.find(user => user.email === session.username);
       if (userProfile) {
         logStringifyPretty(userProfile, 'getProfile');
         setProfile(userProfile);
@@ -80,9 +81,11 @@ const Profile = props => {
         name: data.name,
         userTypeProprietaryInfo: data.userTypeProprietaryInfo,
       };
-      const response = await userManagementApi.updateUser(data.Id, undefined, userInfo);
-      logStringifyPretty(response.data);
-      setProfile(response.data);
+
+      // TODO: Need updated API
+      //const response = await userManagementApi.updateUser(data.Id, undefined, userInfo);
+      //logStringifyPretty(response.data);
+      //setProfile(response.data);
     } catch (error) {
       handleApiError(strings.errors.titleUpdate, error);
     } finally {
@@ -192,8 +195,9 @@ const Profile = props => {
     try {
       setLoading(true);
 
-      const response = await emailApi.sendATestSMS(true, undefined, undefined, { to: phone });
-      logStringifyPretty(response.data);
+      // TODO: Need updated API
+      //const response = await emailApi.sendATestSMS(true, undefined, undefined, { to: phone });
+      //logStringifyPretty(response.data);
       showGeneralMessage(strings.messages.codeSent);
       setLoading(false);
 
