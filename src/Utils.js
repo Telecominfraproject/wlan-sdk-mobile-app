@@ -301,7 +301,7 @@ export async function completeSignIn(navigation, userId, password, sessionData, 
         throw new Error(strings.errors.invalidResponse);
       }
 
-      console.log(responseSubscriber.data);
+      logStringifyPretty(responseSubscriber.data, responseSubscriber.request.responseURL);
       store.dispatch(setSubscriberInformation(responseSubscriber.data));
     }
 
