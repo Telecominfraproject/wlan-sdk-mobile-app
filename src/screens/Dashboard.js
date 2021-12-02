@@ -132,6 +132,7 @@ const Dashboard = props => {
       alignItems: 'center',
     },
     networkNameLabel: {
+      textAlign: 'center',
       fontSize: 48,
       color: okColor,
       textTransform: 'uppercase',
@@ -154,7 +155,9 @@ const Dashboard = props => {
         <View style={[pageStyle.container, componentStyles.container]}>
           <TouchableOpacity style={componentStyles.touchableContainer} onPress={onNetworkPress}>
             <View style={componentStyles.itemContainer} onPress={onNetworkPress}>
-              <Text style={componentStyles.networkNameLabel}>{displayValue(accessPoint, 'name')}</Text>
+              <Text style={componentStyles.networkNameLabel} numberOfLines={2}>
+                {displayValue(accessPoint, 'name')}
+              </Text>
               <Text style={componentStyles.iconLabel}>{strings.dashboard.network}</Text>
             </View>
           </TouchableOpacity>
