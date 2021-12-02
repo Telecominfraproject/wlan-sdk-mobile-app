@@ -67,6 +67,7 @@ export const strings = new LocalizedStrings({
       addPhone: 'Add Phone',
       code: 'Code',
       confirmPassword: 'Confirm Password',
+      currentPassword: 'Current Password',
       deviceName: 'Device Name',
       email: 'Email',
       macAddress: 'Mac Address',

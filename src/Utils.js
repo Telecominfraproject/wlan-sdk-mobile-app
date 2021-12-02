@@ -3,15 +3,152 @@ import { strings } from './localization/LocalizationStrings';
 import { errorColor, warnColor, okColor } from './AppStyle';
 import { store } from './store/Store';
 import { clearSession, setSession } from './store/SessionSlice';
-import { setSubscriberInformation } from './store/SubscriberInformationSlice';
+import { setSubscriberInformation, clearSubscriberInformation } from './store/SubscriberInformationSlice';
 import {
-  setApiSystemInfo,
-  clearCredentials,
   authenticationApi,
   subscriberInformationApi,
   getSubscriberAccessPointInfo,
+  clearCredentials,
   handleApiError,
 } from './api/apiHandler';
+
+const testSubscriberJson = {
+  firstName: 'Bill',
+  lastName: 'Tester',
+  initials: 'BT',
+  phoneNumber: '555-665-2342',
+  secondaryEmail: 'billTester@example.com',
+  accessPoints: {
+    list: [
+      {
+        id: 'access_id_1',
+        macAddress: '00105e0053af',
+        name: 'Access Point',
+        subscriberDevices: {
+          created: 0,
+          modified: 0,
+          devices: [
+            {
+              name: 'string',
+              description: 'string',
+              macAddress: 'string',
+              manufacturer: 'string',
+              firstContact: 0,
+              lastContact: 0,
+              group: 'string',
+              icon: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+              suspended: true,
+              ip: 'string',
+              created: 0,
+              modified: 0,
+              schedule: {
+                description: 'string',
+                created: 0,
+                modified: 0,
+                schedule: [
+                  {
+                    description: 'string',
+                    day: 'string',
+                    rangeList: ['string'],
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        ipReservations: {
+          created: 0,
+          modified: 0,
+          reservations: [
+            {
+              nickname: 'string',
+              ipAddress: '198.51.100.42',
+              macAddress: 'string',
+            },
+          ],
+        },
+        address: {
+          buildingName: 'string',
+          addressLines: ['string'],
+          city: 'string',
+          state: 'string',
+          postal: 'string',
+          country: 'string',
+          phones: ['string'],
+          mobiles: ['string'],
+        },
+        wifiNetworks: {
+          created: 0,
+          modified: 0,
+          networks: [
+            {
+              type: 'main',
+              name: 'Main Network',
+              password: 'string',
+              encryption: 'string',
+              bands: ['2G'],
+            },
+            {
+              type: 'guest',
+              name: 'Guest Network',
+              password: 'string',
+              encryption: 'string',
+              bands: ['2G'],
+            },
+          ],
+        },
+        internetConnection: {
+          type: 'manual',
+          username: 'string',
+          password: 'string',
+          ipAddress: '198.51.100.42',
+          subnetMask: '198.51.100.42',
+          defaultGateway: '198.51.100.42',
+          primaryDns: '198.51.100.42',
+          secondaryDns: '198.51.100.42',
+          created: 0,
+          modified: 0,
+        },
+        deviceMode: {
+          type: 'automatic',
+          enableLEDS: true,
+          subnet: '198.51.100.42',
+          subnetMask: '198.51.100.42',
+          startIP: '198.51.100.42',
+          endIP: '198.51.100.42',
+          created: 0,
+          modified: 0,
+        },
+        dnsConfiguration: {
+          ISP: true,
+          custom: true,
+          primary: '198.51.100.42',
+          seconfary: '198.51.100.42',
+        },
+      },
+    ],
+  },
+  serviceAddress: {
+    buildingName: 'string',
+    addressLines: ['string'],
+    city: 'string',
+    state: 'string',
+    postal: 'string',
+    country: 'string',
+    phones: ['string'],
+    mobiles: ['string'],
+  },
+  billingAddress: {
+    buildingName: 'string',
+    addressLines: ['string'],
+    city: 'string',
+    state: 'string',
+    postal: 'string',
+    country: 'string',
+    phones: ['string'],
+    mobiles: ['string'],
+  },
+};
 
 export function showGeneralError(title, message) {
   console.error(title + ' -> ' + message);
@@ -101,169 +238,98 @@ export function completeSignOut(navigation) {
   });
 }
 
-export async function completeSignIn(navigation, session) {
-  store.dispatch(setSession(session));
+export async function completeSignIn(navigation, userId, password, sessionData, setLoadingFn) {
+  try {
+    let responseData = sessionData;
 
-  // The system info is necessary before moving on to the next view as it'll provide
-  // the endpoints needed for communicating with the other systems
-  if (authenticationApi) {
-    // TODO: This is no longer needed
-    const responseSystem = await authenticationApi.getSystemInfo();
-    if (!responseSystem || !responseSystem.data) {
-      throw new Error(strings.errors.invalidResponse);
+    if (setLoadingFn) {
+      // Loading has started
+      setLoadingFn(true);
     }
 
-    console.log(responseSystem.data);
-    setApiSystemInfo(responseSystem.data);
-  }
+    if (!sessionData) {
+      // Make sure to clear any session/subscriber information (this will ensure proper API error message as well, see 403 errors)
+      store.dispatch(clearSession());
+      store.dispatch(clearSubscriberInformation());
 
-  // Get the subscriber info, allows for  main access point
-  if (!subscriberInformationApi) {
-    // If the API is not currently available then just keep going. This is temporary until the
-    // API has been completed. This is just expected sample data.
-    store.dispatch(
-      setSubscriberInformation({
-        firstName: 'Bill',
-        initials: 'BT',
-        lastName: 'Tester',
-        phoneNumber: '555-665-2342',
-        secondaryEmail: 'billTester@example.com',
-        accessPoints: {
-          list: [
-            {
-              id: 'access_id_1',
-              macAddress: '00105e0053af',
-              name: 'Access Point',
-              subscriberDevices: {
-                created: 0,
-                modified: 0,
-                devices: [
-                  {
-                    name: 'string',
-                    description: 'string',
-                    macAddress: 'string',
-                    manufacturer: 'string',
-                    firstContact: 0,
-                    lastContact: 0,
-                    group: 'string',
-                    icon: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-                    suspended: true,
-                    ip: 'string',
-                    created: 0,
-                    modified: 0,
-                    schedule: {
-                      description: 'string',
-                      created: 0,
-                      modified: 0,
-                      schedule: [
-                        {
-                          description: 'string',
-                          day: 'string',
-                          rangeList: ['string'],
-                        },
-                      ],
-                    },
-                  },
-                ],
-              },
-              ipReservations: {
-                created: 0,
-                modified: 0,
-                reservations: [
-                  {
-                    nickname: 'string',
-                    ipAddress: '198.51.100.42',
-                    macAddress: 'string',
-                  },
-                ],
-              },
-              address: {
-                buildingName: 'string',
-                addressLines: ['string'],
-                city: 'string',
-                state: 'string',
-                postal: 'string',
-                country: 'string',
-                phones: ['string'],
-                mobiles: ['string'],
-              },
-              wifiNetworks: {
-                created: 0,
-                modified: 0,
-                networks: [
-                  {
-                    type: 'main',
-                    name: 'Main Network',
-                    password: 'string',
-                    encryption: 'string',
-                    bands: ['2G'],
-                  },
-                ],
-              },
-              internetConnection: {
-                type: 'manual',
-                username: 'string',
-                password: 'string',
-                ipAddress: '198.51.100.42',
-                subnetMask: '198.51.100.42',
-                defaultGateway: '198.51.100.42',
-                primaryDns: '198.51.100.42',
-                secondaryDns: '198.51.100.42',
-                created: 0,
-                modified: 0,
-              },
-              deviceMode: {
-                type: 'automatic',
-                enableLEDS: true,
-                subnet: '198.51.100.42',
-                subnetMask: '198.51.100.42',
-                startIP: '198.51.100.42',
-                endIP: '198.51.100.42',
-                created: 0,
-                modified: 0,
-              },
-              dnsConfiguration: {
-                ISP: true,
-                custom: true,
-                primary: '198.51.100.42',
-                seconfary: '198.51.100.42',
-              },
-            },
-          ],
-        },
-        serviceAddress: {
-          buildingName: 'string',
-          addressLines: ['string'],
-          city: 'string',
-          state: 'string',
-          postal: 'string',
-          country: 'string',
-          phones: ['string'],
-          mobiles: ['string'],
-        },
-        billingAddress: {
-          buildingName: 'string',
-          addressLines: ['string'],
-          city: 'string',
-          state: 'string',
-          postal: 'string',
-          country: 'string',
-          phones: ['string'],
-          mobiles: ['string'],
-        },
-      }),
-    );
-  } else {
-    const responseSubscriber = await subscriberInformationApi.getSubscriberInfo();
-    if (!responseSubscriber || !responseSubscriber.data) {
-      throw new Error(strings.errors.invalidResponse);
+      const response = await authenticationApi.getAccessToken({
+        userId: userId,
+        password: password,
+      });
+
+      if (!response || !response.data) {
+        throw new Error(strings.errors.invalidResponse);
+      }
+
+      responseData = response.data;
+      logStringifyPretty(responseData, response.request.responseURL);
     }
 
-    console.log(responseSubscriber.data);
-    store.dispatch(setSubscriberInformation(responseSubscriber.data));
-  }
+    if (responseData.method) {
+      // If the data returns a 'method' then we must handle Multi-Factor Authentication, in the response
+      // there are three items: method, uuid, created, this will be passed to the MFA handler
+      if (setLoadingFn) {
+        setLoadingFn(false);
+      }
 
-  navigation.replace('Main');
+      navigation.navigate('MfaCode', { userId: userId, mfaInfo: responseData });
+    } else {
+      switch (responseData.errorCode) {
+        case 0:
+          // Success - process the rest of the sign in process
+          break;
+
+        default:
+          if (responseData.ErrorDescription) {
+            throw new Error(responseData.ErrorDescription);
+          } else {
+            throw new Error(strings.errors.invalidResponse);
+          }
+      }
+    }
+
+    store.dispatch(setSession(responseData));
+
+    // Get the subscriber info
+    if (!subscriberInformationApi) {
+      // If the API is not currently available then just keep going. This is temporary until the
+      // API has been completed. This is just expected sample data.
+      store.dispatch(setSubscriberInformation(testSubscriberJson));
+    } else {
+      const responseSubscriber = await subscriberInformationApi.getSubscriberInfo();
+      if (!responseSubscriber || !responseSubscriber.data) {
+        throw new Error(strings.errors.invalidResponse);
+      }
+
+      console.log(responseSubscriber.data);
+      store.dispatch(setSubscriberInformation(responseSubscriber.data));
+    }
+
+    // Completed sign-in
+    if (setLoadingFn) {
+      setLoadingFn(false);
+    }
+
+    navigation.replace('Main');
+  } catch (error) {
+    if (setLoadingFn) {
+      // Clear the loading state
+      setLoadingFn(false);
+    }
+
+    // Clear any saved credentials, make the user re-enter them
+    clearCredentials();
+
+    // Check for password reset handling
+    if (error.response && error.response.status === 403 && error.response.data && error.response.data.ErrorCode === 1) {
+      // The password reset error code is 1, just navigate to the Reset Password screen
+      navigation.navigate('ResetPassword', { userId: userId });
+      return;
+    }
+
+    // Throw the error to be handled by the callers exception handler
+    throw error;
+  }
 }
 
 export async function updateSubscriberDevice(subscriberInformation, accessPointId, device, jsonObject) {

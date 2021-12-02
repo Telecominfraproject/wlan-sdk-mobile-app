@@ -18,14 +18,14 @@ const BrandSelector = props => {
       name: 'Lindsay Broadband',
       iconUri: 'https://lindsaybb.arilia.com/assets/LindsayBB_Logo.png',
       primaryColor: '#f16b1f',
-      baseUrlSecurityApi: 'https://lindsay.arilia.com:16001',
+      baseUrlApi: 'https://lindsay.arilia.com:16006',
     },
     {
       id: '14oranges',
       name: '14 Oranges',
       iconUri: 'https://14oranges-ui.arilia.com/assets/14Oranges_Logo.png',
       primaryColor: '#0f5eaa',
-      baseUrlSecurityApi: 'https://14oranges.arilia.com:16001',
+      baseUrlApi: 'https://14oranges.arilia.com:16006',
     },
   ]);
   const [filtered, setFiltered] = useState(false);

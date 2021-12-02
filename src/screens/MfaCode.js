@@ -3,10 +3,11 @@ import { strings } from '../localization/LocalizationStrings';
 import { pageItemStyle, pageStyle, primaryColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, ActivityIndicator, TextInput, View } from 'react-native';
 import { authenticationApi, handleApiError } from '../api/apiHandler';
-import { logStringifyPretty, showGeneralMessage, showGeneralError, completeSignIn } from '../Utils';
+import { logStringifyPretty, showGeneralMessage, completeSignIn } from '../Utils';
 import ButtonStyled from '../components/ButtonStyled';
 
 export default function MfaCode(props) {
+  const userId = props.route.params.userId;
   const mfaInfo = props.route.params.mfaInfo;
   const [loading, setLoading] = useState(false);
   const [code, setCode] = useState();
@@ -29,25 +30,13 @@ export default function MfaCode(props) {
       );
 
       if (!response || !response.data) {
-        console.log(response);
-        console.error('Invalid response from getAccessToken (send MFA)');
-        setLoading(false);
-        showGeneralError(strings.errors.titleMfa, strings.errors.invalidResponse);
-        return;
+        throw new Error(strings.errors.invalidResponse);
       }
 
       logStringifyPretty(response.data, response.request.responseURL);
 
-      if (response.data.access_token) {
-        // Process the rest of the sign in process
-        await completeSignIn(props.navigation, response.data);
-      } else {
-        // Throw an error if we do not get what is expected
-        throw new Error(strings.errors.invalidResponse);
-      }
+      await completeSignIn(props.navigation, userId, null, response.data, setLoading);
     } catch (error) {
-      setLoading(false);
-
       handleApiError(strings.errors.titleMfa, error);
     }
   };
@@ -68,10 +57,7 @@ export default function MfaCode(props) {
       );
 
       if (!response || !response.data) {
-        console.log(response);
-        console.error('Invalid response from getAccessToken (resend code)');
-        showGeneralError(strings.errors.titleMfa, strings.errors.invalidResponse);
-        return;
+        throw new Error(strings.errors.invalidResponse);
       }
 
       logStringifyPretty(response.data, response.request.responseURL);
@@ -79,7 +65,7 @@ export default function MfaCode(props) {
       if (response.data.Code === 0) {
         showGeneralMessage(strings.messages.requestSent);
       } else {
-        showGeneralError(strings.errors.titleMfa, strings.errors.invalidResponse);
+        throw new Error(strings.errors.invalidResponse);
       }
     } catch (error) {
       handleApiError(strings.errors.titleMfa, error);

@@ -1,27 +1,16 @@
 import React, { useState, useEffect, createRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
-import { clearSession } from '../store/SessionSlice';
-import { clearSubscriber } from '../store/SubscriberInformationSlice';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View, Image, TextInput, ActivityIndicator } from 'react-native';
 import ButtonStyled from '../components/ButtonStyled';
-import { logStringifyPretty, showGeneralError, completeSignIn } from '../Utils';
-import {
-  handleApiError,
-  authenticationApi,
-  hasCredentials,
-  setCredentials,
-  getCredentials,
-  clearCredentials,
-} from '../api/apiHandler';
+import { showGeneralError, completeSignIn } from '../Utils';
+import { handleApiError, hasCredentials, setCredentials, getCredentials } from '../api/apiHandler';
 import Divider from '../components/Divider';
 
 const SignIn = props => {
-  const dispatch = useDispatch();
   const brandInfo = useSelector(selectBrandInfo);
-  const accessPoint = null; //useSelector(selectCurrentAccessPoint);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [loading, setLoading] = useState(false);
@@ -59,65 +48,16 @@ const SignIn = props => {
 
   const signIn = async () => {
     try {
-      setLoading(true);
-
-      // Make sure to clear any session/subscriber information (this will ensure proper API error message as well, see 403 errors)
-      dispatch(clearSession());
-      dispatch(clearSubscriber());
-
       const credentials = await getCredentials();
       if (!credentials) {
         // Credentials are expected at this point, return an error if not found
-        clearCredentials();
-        showGeneralError(strings.errors.titleSignIn, strings.errors.noCredentials);
-        return;
+        throw new Error(strings.errors.noCredentials);
       }
 
-      const response = await authenticationApi.getAccessToken({
-        userId: credentials.username,
-        password: credentials.password,
-      });
-
-      if (!response || !response.data) {
-        console.log(response);
-        console.error('Invalid response from getAccessToken (sign-in)');
-        setLoading(false);
-        showGeneralError(strings.errors.titleSignIn, strings.errors.invalidResponse);
-        return;
-      }
-
-      logStringifyPretty(response.data, response.request.responseURL);
-
-      if (response.data.method) {
-        // If the data returns a 'method' then we must handle Multi-Factor Authentication, in the response
-        // there are three items: method, uuid, created, this will be passed to the MFA handler
-        props.navigation.navigate('MfaCode', {
-          mfaInfo: response.data,
-        });
-
-        // Clear the loading state in case we come back to this view
-        setLoading(false);
-      } else if (response.data.access_token) {
-        // No registered device, go to registration
-        if (!accessPoint) {
-          props.navigation.navigate('DeviceRegistration', { session: response.data });
-          return;
-        }
-
-        // Process the rest of the sign in process
-        await completeSignIn(props.navigation, response.data);
-      } else {
-        console.log(response);
-        // Throw an error if we do not get what is expected
-        throw new Error(strings.errors.invalidResponse);
-      }
+      // Handle the sign in process
+      await completeSignIn(props.navigation, credentials.username, credentials.password, null, setLoading);
     } catch (error) {
-      // Clear the loading state
-      setLoading(false);
-
-      // Clear any saved credentials, make them re-enter them
-      clearCredentials();
-
+      // Handle the error.
       handleApiError(strings.errors.titleSignIn, error);
     }
   };
@@ -224,7 +164,7 @@ const SignIn = props => {
               {/* Sign Up */}
               <Text>{strings.signIn.noAccount}</Text>
               <View style={pageItemStyle.containerButton}>
-                <ButtonStyled title={strings.buttons.signUp} type={'outline'} onPress={onSignUp} />
+                <ButtonStyled title={strings.buttons.signUp} type="outline" onPress={onSignUp} />
               </View>
             </View>
           )}

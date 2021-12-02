@@ -20,7 +20,6 @@ import {
   getInternetCredentials,
   resetInternetCredentials,
 } from 'react-native-keychain';
-import { EmailApiFactory } from './generated/owSecurityApi';
 
 const axiosInstance = axios.create({});
 axiosInstance.interceptors.request.use(
@@ -40,33 +39,33 @@ axiosInstance.interceptors.request.use(
 
 // Setup the User Portal APIs
 const userPortalConfig = new UserPortalConfiguration();
-var baseUrlUserPortalUrl = null;
+var baseUserPortalUrl = null;
 var authenticationApi = null;
 var deviceCommandsApi = null;
 var subscriberInformationApi = null;
 var wiredClientsApi = null;
 var wifiClientsApi = null;
 
+// TODO: Generate APIs should handle only state changes it cares about
 store.subscribe(generateApis);
 generateApis();
 
 function generateApis() {
-  // Setup the User Portal (TODO - also add to the setApiSystemInfo)
-  baseUrlUserPortalUrl = getBaseUrlForApi('owuserport');
-  authenticationApi = baseUrlUserPortalUrl
-    ? new AuthenticationApiFactory(userPortalConfig, baseUrlUserPortalUrl, axiosInstance)
+  baseUserPortalUrl = getBaseUrlForApi('owuserport');
+  authenticationApi = baseUserPortalUrl
+    ? new AuthenticationApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
     : null;
-  deviceCommandsApi = baseUrlUserPortalUrl
-    ? new DeviceCommandsApiFactory(userPortalConfig, baseUrlUserPortalUrl, axiosInstance)
+  deviceCommandsApi = baseUserPortalUrl
+    ? new DeviceCommandsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
     : null;
-  subscriberInformationApi = baseUrlUserPortalUrl
-    ? new SubscriberInformationApiFactory(userPortalConfig, baseUrlUserPortalUrl, axiosInstance)
+  subscriberInformationApi = baseUserPortalUrl
+    ? new SubscriberInformationApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
     : null;
-  wifiClientsApi = baseUrlUserPortalUrl
-    ? new WiFiClientsApiFactory(userPortalConfig, baseUrlUserPortalUrl, axiosInstance)
+  wifiClientsApi = baseUserPortalUrl
+    ? new WiFiClientsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
     : null;
-  wiredClientsApi = baseUrlUserPortalUrl
-    ? new ClientsApiFactory(userPortalConfig, baseUrlUserPortalUrl, axiosInstance)
+  wiredClientsApi = baseUserPortalUrl
+    ? new ClientsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
     : null;
 }
 
@@ -75,12 +74,12 @@ function generateApis() {
 function getBaseUrlForApi(type) {
   const state = store.getState();
 
-  if (type === 'owsec') {
+  if (type === 'owuserport') {
     // The owsec currently comes from the branding information, while all
     // other information is from the endpoints API
     const brandInfo = state.brandInfo.value;
-    if (brandInfo && brandInfo.baseUrlSecurityApi) {
-      return brandInfo.baseUrlSecurityApi + '/api/v1';
+    if (brandInfo && brandInfo.baseUrlApi) {
+      return brandInfo.baseUrlApi + '/api/v1';
     }
   } else {
     const systemInfo = state.systemInfo.value;
@@ -125,19 +124,19 @@ function setApiSystemInfo(systemInfo) {
 }
 
 async function hasCredentials() {
-  return hasInternetCredentials(baseUrlUserPortalUrl);
+  return hasInternetCredentials(baseUserPortalUrl);
 }
 
 async function setCredentials(email, password) {
-  return setInternetCredentials(baseUrlUserPortalUrl, email, password);
+  return setInternetCredentials(baseUserPortalUrl, email, password);
 }
 
 async function getCredentials() {
-  return getInternetCredentials(baseUrlUserPortalUrl);
+  return getInternetCredentials(baseUserPortalUrl);
 }
 
 async function clearCredentials() {
-  return resetInternetCredentials(baseUrlUserPortalUrl);
+  return resetInternetCredentials(baseUserPortalUrl);
 }
 
 function getSubscriberAccessPointInfo(subscriberInformation, accessPointId, key) {
@@ -176,6 +175,7 @@ function handleApiError(title, error) {
   let message = strings.errors.unknown;
 
   if (error.response) {
+    console.log(error.response);
     switch (error.response.status) {
       case 400:
       case 404:
