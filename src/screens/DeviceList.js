@@ -47,7 +47,13 @@ const DeviceList = props => {
 
     let wifiNetworkToFilter = selectedWifi;
     if (!wifiNetworkToFilter) {
-      wifiNetworkToFilter = wifiNetworks.networks[0];
+      if (wifiNetworks && wifiNetworks.networks) {
+        wifiNetworkToFilter = wifiNetworks.networks[0];
+      }
+    }
+
+    if (!wifiNetworkToFilter) {
+      return null;
     }
 
     let f = wifiClients.filter(client => client.ssid === wifiNetworkToFilter.name);
