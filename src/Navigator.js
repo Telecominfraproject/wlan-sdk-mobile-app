@@ -30,7 +30,10 @@ import DeviceRegistration from './screens/DeviceRegistration';
 const Navigator = () => {
   const brandInfo = useSelector(selectBrandInfo);
   const subscriberInformation = useSelector(selectSubscriberInformation);
-  const accessPoint = useMemo(() => getSubscriberAccessPointInfo(null, null, null), [subscriberInformation]);
+  const accessPoint = useMemo(
+    () => getSubscriberAccessPointInfo(subscriberInformation, null, null),
+    [subscriberInformation],
+  );
 
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
