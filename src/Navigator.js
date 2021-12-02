@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { strings } from './localization/LocalizationStrings';
 import { primaryColor, blackColor, grayBackgroundcolor } from './AppStyle';
 import { useSelector } from 'react-redux';
@@ -7,6 +7,8 @@ import { StyleSheet, Image, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { selectSubscriberInformation } from './store/SubscriberInformationSlice';
+import { getSubscriberAccessPointInfo } from './api/apiHandler';
 
 import BrandSelector from './screens/BrandSelector';
 import Dashboard from './screens/Dashboard';
@@ -27,6 +29,9 @@ import DeviceRegistration from './screens/DeviceRegistration';
 
 const Navigator = () => {
   const brandInfo = useSelector(selectBrandInfo);
+  const subscriberInformation = useSelector(selectSubscriberInformation);
+  const accessPoint = useMemo(() => getSubscriberAccessPointInfo(null, null, null), [subscriberInformation]);
+
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
   const DashboardStack = createNativeStackNavigator();
@@ -52,6 +57,18 @@ const Navigator = () => {
           options={{ title: strings.navigator.dashboard }}
         />
       </DashboardStack.Navigator>
+    );
+  }
+
+  function DeviceRegistrationNavigator() {
+    return (
+      <NetworkStack.Navigator screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
+        <DeviceStack.Screen
+          name="DeviceRegistration"
+          component={DeviceRegistration}
+          options={{ title: strings.navigator.deviceRegistration }}
+        />
+      </NetworkStack.Navigator>
     );
   }
 
@@ -97,45 +114,65 @@ const Navigator = () => {
           tabBarActiveTintColor: primaryColor,
           headerShown: false,
         }}>
-        <Tab.Screen
-          name="Dashboard"
-          component={DashboardNavigator}
-          listeners={({ navigation, route }) => ({ tabPress: event => handleTabPress(event, navigation, route) })}
-          options={{
-            tabBarIcon: ({ color }) => (
-              <Image
-                source={require('./assets/tachometer-alt-solid.png')}
-                style={[componentStyles.tabIcon, { tintColor: color }]}
-              />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Network"
-          component={NetworkNavigator}
-          listeners={({ navigation, route }) => ({ tabPress: event => handleTabPress(event, navigation, route) })}
-          options={{
-            tabBarIcon: ({ color }) => (
-              <Image
-                source={require('./assets/wifi-solid.png')}
-                style={[componentStyles.tabIcon, { tintColor: color }]}
-              />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Devices"
-          component={DeviceNavigator}
-          listeners={({ navigation, route }) => ({ tabPress: event => handleTabPress(event, navigation, route) })}
-          options={{
-            tabBarIcon: ({ color }) => (
-              <Image
-                source={require('./assets/laptop-solid.png')}
-                style={[componentStyles.tabIcon, { tintColor: color }]}
-              />
-            ),
-          }}
-        />
+        {accessPoint ? (
+          <>
+            <Tab.Screen
+              name="Dashboard"
+              component={DashboardNavigator}
+              listeners={({ navigation, route }) => ({ tabPress: event => handleTabPress(event, navigation, route) })}
+              options={{
+                tabBarIcon: ({ color }) => (
+                  <Image
+                    source={require('./assets/tachometer-alt-solid.png')}
+                    style={[componentStyles.tabIcon, { tintColor: color }]}
+                  />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="Network"
+              component={NetworkNavigator}
+              listeners={({ navigation, route }) => ({ tabPress: event => handleTabPress(event, navigation, route) })}
+              options={{
+                tabBarIcon: ({ color }) => (
+                  <Image
+                    source={require('./assets/wifi-solid.png')}
+                    style={[componentStyles.tabIcon, { tintColor: color }]}
+                  />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="Devices"
+              component={DeviceNavigator}
+              listeners={({ navigation, route }) => ({ tabPress: event => handleTabPress(event, navigation, route) })}
+              options={{
+                tabBarIcon: ({ color }) => (
+                  <Image
+                    source={require('./assets/laptop-solid.png')}
+                    style={[componentStyles.tabIcon, { tintColor: color }]}
+                  />
+                ),
+              }}
+            />
+          </>
+        ) : (
+          <>
+            <Tab.Screen
+              name="Register"
+              component={DeviceRegistrationNavigator}
+              listeners={({ navigation, route }) => ({ tabPress: event => handleTabPress(event, navigation, route) })}
+              options={{
+                tabBarIcon: ({ color }) => (
+                  <Image
+                    source={require('./assets/wifi-solid.png')}
+                    style={[componentStyles.tabIcon, { tintColor: color }]}
+                  />
+                ),
+              }}
+            />
+          </>
+        )}
         <Tab.Screen
           name="Profile"
           component={ProfileNavigator}
@@ -221,11 +258,6 @@ const Navigator = () => {
           name="PhoneVerification"
           component={PhoneVerification}
           options={{ title: strings.navigator.phoneVerification }}
-        />
-        <Stack.Screen
-          name="DeviceRegistration"
-          component={DeviceRegistration}
-          options={{ title: strings.navigator.deviceRegistration }}
         />
         <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
       </Stack.Navigator>

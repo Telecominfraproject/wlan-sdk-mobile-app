@@ -70,7 +70,7 @@ export const strings = new LocalizedStrings({
       currentPassword: 'Current Password',
       deviceName: 'Device Name',
       email: 'Email',
-      macAddress: 'Mac Address',
+      macAddress: 'MAC Address',
       newPassword: 'New Password',
       password: 'Password',
       phoneNumber: 'Phone Number',
@@ -125,6 +125,10 @@ export const strings = new LocalizedStrings({
     termsConditions: {
       title: 'Terms & Conditions',
       content: 'These are the terms and conditions.',
+    },
+    deviceRegistration: {
+      description:
+        'No access point is currently registed on this account. Please register an access point to continue.',
     },
     dashboard: {
       network: 'Network',
