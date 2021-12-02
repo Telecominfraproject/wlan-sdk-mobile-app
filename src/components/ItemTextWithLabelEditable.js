@@ -21,7 +21,7 @@ export default function ItemTextWithLabelEditable(props) {
     }
   }, [edit]);
 
-  const onEditComplete = () => {
+  const onEditComplete = async () => {
     if (value === props.value) {
       // If the new value is the same as the initial value, just return.
       setEdit(false);
@@ -31,11 +31,20 @@ export default function ItemTextWithLabelEditable(props) {
     try {
       setLoading(true);
 
-      if (props.editKey) {
-        props.onEdit({ [props.editKey]: value });
-      } else {
-        props.onEdit(value);
+      if (props.onEdit) {
+        let updatedValue = null;
+        if (props.editKey) {
+          updatedValue = { [props.editKey]: value };
+        } else {
+          updatedValue = value;
+        }
+
+        // The following should work with async and non-async functions alike. It'll ensure
+        // that the function completes before it continuing
+        await Promise.resolve(props.onEdit(updatedValue));
       }
+    } catch (error) {
+      // Do nothing
     } finally {
       setLoading(false);
       setEdit(false);
@@ -123,6 +132,7 @@ export default function ItemTextWithLabelEditable(props) {
             ref={inputRef}
             style={componentStyles.input}
             value={value}
+            editable={!loading}
             placeholder={props.placeholder}
             onChangeText={text => setValue(text)}
             onEndEditing={onEditComplete}

@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import {
   marginTopDefault,
@@ -10,11 +11,12 @@ import {
   paddingVerticalDefault,
 } from '../AppStyle';
 import { StyleSheet, SafeAreaView, View, ScrollView } from 'react-native';
-import { logStringifyPretty, showGeneralMessage, completeSignOut } from '../Utils';
+import { showGeneralMessage, completeSignOut } from '../Utils';
 import { getCredentials, handleApiError } from '../api/apiHandler';
 import { MfaAuthInfoMethodEnum } from '../api/generated/owSecurityApi';
-import { useFocusEffect } from '@react-navigation/native';
-import { store } from '../store/Store';
+import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
+import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
+import { displayValue, modifySubscriberInformation } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
 import ItemTextWithIcon from '../components/ItemTextWithIcon';
@@ -23,101 +25,51 @@ import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
 
 const Profile = props => {
-  const state = store.getState();
-  const session = state.session.value;
-  const [loading, setLoading] = useState(false);
-  const [profile, setProfile] = useState();
+  const subscriberInformation = useSelector(selectSubscriberInformation);
+  const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
   const [mfaValue, setMfaValue] = useState('off');
 
-  // Refresh the getProfile only anytime there is a navigation change and this has come into focus
-  // Need to becareful here as useFocusEffect is also called during re-render so it can result in
-  // infinite loops.
-  useFocusEffect(
-    useCallback(() => {
-      getProfile();
-
-      // Return function of what should be done on 'focus out'
-      return () => {};
-      // Disable the eslint warning, as we want to change only on navigation changes
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.navigation]),
-  );
-
-  const getProfile = async () => {
+  const onEditUserInformation = async val => {
     try {
-      setLoading(true);
-
-      // TODO: Need updated API
-      //const response = await userManagementApi.getUsers();
-      const userProfile = null; // response.data.users.find(user => user.email === session.username);
-      if (userProfile) {
-        logStringifyPretty(userProfile, 'getProfile');
-        setProfile(userProfile);
-      } else {
-        handleApiError(strings.errors.titleProfile, strings.errors.userNotFound);
-      }
-    } catch (error) {
-      handleApiError(strings.errors.titleProfile, error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateProfile = val => {
-    if (profile) {
-      updateUser({ ...profile, ...val });
-    } else {
-      console.error('No profile to update!');
-    }
-  };
-
-  // Update the user profile information
-  const updateUser = async data => {
-    try {
-      setLoading(true);
-
-      const userInfo = {
-        id: data.Id,
-        name: data.name,
-        userTypeProprietaryInfo: data.userTypeProprietaryInfo,
-      };
-
-      // TODO: Need updated API
-      //const response = await userManagementApi.updateUser(data.Id, undefined, userInfo);
-      //logStringifyPretty(response.data);
-      //setProfile(response.data);
+      await modifySubscriberInformation(val);
     } catch (error) {
       handleApiError(strings.errors.titleUpdate, error);
-    } finally {
-      setLoading(false);
+      // Need to throw the error to ensure the caller cleans up
+      throw error;
     }
   };
 
-  const onSignOutPress = async () => {
-    completeSignOut(props.navigation);
+  const onEditUserInformationMobile = async phoneInfo => {
+    if (phoneInfo) {
+      // Phone info will be of the format {'phone_<n>' : "<phone number>"}, need to parse out the values
+      // Only expect one, but this will handle multiple
+      for (const value of Object.values(phoneInfo)) {
+        sendSmsCode(value);
+      }
+    }
   };
 
-  const onChangePasswordPress = async () => {
-    const credentials = await getCredentials();
-    logStringifyPretty(credentials);
-    props.navigation.navigate('ChangePassword', {
-      userId: credentials.username,
-      password: credentials.password,
-    });
+  const sendSmsCode = async phone => {
+    try {
+      // TODO: Need updated API
+      //const response = await emailApi.sendATestSMS(true, undefined, undefined, { to: phone });
+      //logStringifyPretty(response.data);
+      showGeneralMessage(strings.messages.codeSent);
+
+      // Navigate to the Phone Verification
+      props.navigation.navigate('PhoneVerification', { phone });
+    } catch (err) {
+      handleApiError(strings.errors.titleSms, err);
+    }
   };
 
-  // Notifications
-  const onNotificationPrefPress = () => {};
-  const onNotificationHistoryPress = () => {};
-
-  // MFA Handling
   const onMfaChange = async method => {
+    // TODO: Need updated API
     const proprietaryInfo = {
       mfa: {
         enabled: false,
         method: null,
       },
-      mobiles: profile.userTypeProprietaryInfo.mobiles,
     };
 
     switch (method) {
@@ -133,81 +85,23 @@ const Profile = props => {
         proprietaryInfo.mfa.method = null;
     }
 
-    updateProfile({ userTypeProprietaryInfo: proprietaryInfo });
+    //onEditUserInformation({ userTypeProprietaryInfo: proprietaryInfo });
   };
 
-  useEffect(() => {
-    if (profile) {
-      let mfa = profile.userTypeProprietaryInfo.mfa;
-      let val = mfa.enabled ? mfa.method : 'off';
-      setMfaValue(val);
-    }
-  }, [profile]);
-
-  // Phone Numbers
-  const renderPhoneNumberFields = () => {
-    let views = [];
-
-    if (profile) {
-      let mobiles = profile.userTypeProprietaryInfo.mobiles;
-      if (mobiles.length > 0) {
-        views = mobiles.map((mobile, index) => {
-          return (
-            <ItemTextWithLabelEditable
-              label={strings.profile.phone + ' ' + (index + 1)}
-              value={mobile.number}
-              key={'phone' + index}
-              editKey={'phone_' + index}
-              placeholder={strings.placeholders.phoneNumber}
-              onEdit={phoneInfo => onEditMobile(phoneInfo)}
-            />
-          );
-        });
-      }
-
-      // Add a empty field to allow for adding new phone numbers. Currently not supporting deletion
-      let phoneIndex = mobiles ? mobiles.length : 0;
-      views.push(
-        <ItemTextWithLabelEditable
-          label={phoneIndex === 0 ? strings.profile.phone : strings.profile.phone + ' ' + (phoneIndex + 1)}
-          key={'phone' + phoneIndex}
-          editKey={'phone_' + phoneIndex}
-          placeholder={strings.placeholders.phoneNumber}
-          onEdit={phoneInfo => onEditMobile(phoneInfo)}
-        />,
-      );
-    }
-
-    return views;
+  const onChangePasswordPress = async () => {
+    const credentials = await getCredentials();
+    props.navigation.navigate('ChangePassword', {
+      userId: credentials.username,
+    });
   };
 
-  const onEditMobile = async phoneInfo => {
-    if (phoneInfo) {
-      // Phone info will be of the format {'phone_<n>' : "<phone number>"}, need to parse out the values
-      // Only expect one, but this will handle multiple
-      for (const value of Object.values(phoneInfo)) {
-        sendSmsCode(value);
-      }
-    }
+  const onSignOutPress = async () => {
+    completeSignOut(props.navigation);
   };
 
-  const sendSmsCode = async phone => {
-    try {
-      setLoading(true);
-
-      // TODO: Need updated API
-      //const response = await emailApi.sendATestSMS(true, undefined, undefined, { to: phone });
-      //logStringifyPretty(response.data);
-      showGeneralMessage(strings.messages.codeSent);
-      setLoading(false);
-
-      // Navigate to the Phone Verification
-      props.navigation.navigate('PhoneVerification', { phone, profile });
-    } catch (err) {
-      setLoading(false);
-      handleApiError(strings.errors.titleSms, err);
-    }
-  };
+  // Notifications
+  const onNotificationPrefPress = () => {};
+  const onNotificationHistoryPress = () => {};
 
   // Styles
   const componentStyles = StyleSheet.create({
@@ -216,7 +110,6 @@ const Profile = props => {
     },
     accountSection: {
       marginTop: marginTopDefault,
-      zIndex: 1,
     },
     item: {
       paddingVertical: paddingVerticalDefault,
@@ -241,47 +134,50 @@ const Profile = props => {
     <SafeAreaView style={pageStyle.safeAreaView}>
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.container}>
-          {/* Account Information */}
-          {!profile ? (
-            <AccordionSection
-              style={componentStyles.section}
-              title={strings.profile.accountInfo}
-              isLoading={loading}
-              disableAccordion={true}
+          <AccordionSection
+            style={componentStyles.accountSection}
+            title={strings.profile.accountInfo}
+            isLoading={subscriberInformationLoading}
+            disableAccordion={true}>
+            <ItemTextWithLabelEditable
+              key="firstName"
+              label={strings.profile.firstName}
+              value={displayValue(subscriberInformation, 'firstName')}
+              editKey="firstName"
+              onEdit={onEditUserInformation}
             />
-          ) : (
-            <AccordionSection
-              style={componentStyles.accountSection}
-              title={strings.profile.accountInfo}
-              isLoading={loading}
-              disableAccordion={true}>
-              <ItemTextWithLabelEditable
-                key="name"
-                label={strings.profile.name}
-                value={profile ? profile.name : null}
-                editKey="name"
-                onEdit={updateProfile}
-              />
-              <ItemTextWithLabel key="email" label={strings.profile.email} value={session ? session.username : null} />
-              {renderPhoneNumberFields()}
-
-              {/* MFA */}
-              {profile.userTypeProprietaryInfo.mfa && (
-                <ItemPickerWithLabel
-                  label={strings.profile.mfa}
-                  loading={loading}
-                  value={mfaValue}
-                  setValue={setMfaValue}
-                  items={[
-                    { label: strings.profile.off, value: 'off' },
-                    { label: strings.profile.email, value: MfaAuthInfoMethodEnum.Email },
-                    { label: strings.profile.sms, value: MfaAuthInfoMethodEnum.Sms },
-                  ]}
-                  onChangeValue={onMfaChange}
-                />
-              )}
-            </AccordionSection>
-          )}
+            <ItemTextWithLabelEditable
+              key="lastName"
+              label={strings.profile.lastName}
+              value={displayValue(subscriberInformation, 'lastName')}
+              editKey="lastName"
+              onEdit={onEditUserInformation}
+            />
+            <ItemTextWithLabel
+              key="email"
+              label={strings.profile.email}
+              value={displayValue(subscriberInformation, 'userId')}
+            />
+            <ItemTextWithLabelEditable
+              key="phoneNumber"
+              label={strings.profile.phone}
+              value={displayValue(subscriberInformation, 'phoneNumber')}
+              editKey="phoneNumber"
+              onEdit={onEditUserInformationMobile}
+            />
+            <ItemPickerWithLabel
+              key="mfa"
+              label={strings.profile.mfa}
+              value={mfaValue}
+              setValue={setMfaValue}
+              items={[
+                { label: strings.profile.off, value: 'off' },
+                { label: strings.profile.email, value: MfaAuthInfoMethodEnum.Email },
+                { label: strings.profile.sms, value: MfaAuthInfoMethodEnum.Sms },
+              ]}
+              onChangeValue={onMfaChange}
+            />
+          </AccordionSection>
 
           {/* Buttons */}
           <View style={pageItemStyle.containerButtons}>
@@ -303,7 +199,7 @@ const Profile = props => {
           <AccordionSection
             style={componentStyles.section}
             title={strings.profile.notifications}
-            isLoading={loading}
+            isLoading={false}
             disableAccordion={true}>
             <ItemTextWithIcon key="prefs" label={strings.profile.notificationPref} onPress={onNotificationPrefPress} />
             <ItemTextWithIcon

@@ -13,7 +13,7 @@ import {
   getClientIcon,
   getClientConnectionIcon,
   getClientConnectionStatusColor,
-  updateSubscriberDevice,
+  modifySubscriberDevice,
 } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
@@ -57,14 +57,14 @@ const DeviceDetails = props => {
 
   const updateDeviceValue = jsonObject => {
     if (jsonObject) {
-      updateSubscriberDevice(subscriberInformation, currentAccessPointId, device, jsonObject);
+      modifySubscriberDevice(subscriberInformation, currentAccessPointId, device, jsonObject);
     }
   };
 
   const onPauseUnpausePress = async () => {
     if (device) {
       // Swap the current suspend state
-      updateSubscriberDevice(subscriberInformation, currentAccessPointId, device, { suspended: !device.suspended });
+      modifySubscriberDevice(subscriberInformation, currentAccessPointId, device, { suspended: !device.suspended });
     } else {
       showGeneralError(strings.errors.titleDeviceDetails, strings.errors.invalidResponse);
     }
