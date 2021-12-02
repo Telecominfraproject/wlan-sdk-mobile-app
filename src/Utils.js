@@ -260,7 +260,7 @@ export async function completeSignIn(navigation, session) {
     }
 
     console.log(responseSubscriber.data);
-    store.dispatch(setSubscriberInformation(responseSystem.data));
+    store.dispatch(setSubscriberInformation(responseSubscriber.data));
   }
 
   navigation.replace('Main');
