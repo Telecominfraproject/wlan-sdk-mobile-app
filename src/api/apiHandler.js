@@ -22,23 +22,19 @@ import {
 } from 'react-native-keychain';
 
 const axiosInstance = axios.create({});
-axiosInstance.interceptors.request.use(
-  config => {
-    const state = store.getState();
-    const session = state.session.value;
-    if (session) {
-      config.headers.Authorization = 'Bearer ' + session.access_token;
-    }
 
-    return config;
-  },
-  error => {
-    Promise.reject(error);
-  },
-);
+function getAccessToken() {
+  const state = store.getState();
+  const session = state.session.value;
+  if (session) {
+    return session.access_token;
+  }
+
+  return null;
+}
 
 // Setup the User Portal APIs
-const userPortalConfig = new UserPortalConfiguration();
+const userPortalConfig = new UserPortalConfiguration({ accessToken: getAccessToken });
 var baseUserPortalUrl = null;
 var authenticationApi = null;
 var deviceCommandsApi = null;
