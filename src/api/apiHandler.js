@@ -165,7 +165,9 @@ function getSubscriberAccessPointInfo(subscriberInformation, accessPointId, key)
   if (!key) {
     return accessPoint;
   } else {
-    return accessPoint[key];
+    if (accessPoint) {
+      return accessPoint[key];
+    }
   }
 }
 

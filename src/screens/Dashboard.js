@@ -1,16 +1,18 @@
 import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
-import { pageStyle, okColor, infoColor, errorColor, primaryColor, whiteColor } from '../AppStyle';
+import { pageStyle, okColor, infoColor, errorColor, primaryColor, whiteColor, grayBackgroundcolor } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import { selectCurrentAccessPointId } from '../store/CurrentAccessPointIdSlice';
+import { selectCurrentAccessPointId, setCurrentAccessPointId } from '../store/CurrentAccessPointIdSlice';
 import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
 import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
 import { getSubscriberAccessPointInfo } from '../api/apiHandler';
 import { displayValue } from '../Utils';
 import ImageWithBadge from '../components/ImageWithBadge';
+import ButtonSelector from '../components/ButtonSelector';
 
 const Dashboard = props => {
+  const dispatch = useDispatch();
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
@@ -29,6 +31,80 @@ const Dashboard = props => {
   const wifiNetworks = useMemo(
     () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'wifiNetworks'),
     [subscriberInformation, currentAccessPointId],
+  );
+  const accessPoints = useMemo(
+    () => subscriberInformation.accessPoints.list,
+    /*() => [
+      ...subscriberInformation.accessPoints.list,
+      {
+        address: {
+          addressLines: [],
+          buildingName: '',
+          city: '',
+          country: '',
+          mobiles: [],
+          phones: [],
+          postal: '',
+          state: '',
+        },
+        deviceMode: {
+          created: 1638467981,
+          enableLEDS: true,
+          endIP: '',
+          modified: 1638467981,
+          startIP: '',
+          subnet: '',
+          subnetMask: '',
+          type: 'nat',
+        },
+        dnsConfiguration: {
+          ISP: true,
+          custom: false,
+          primary: '',
+          secondary: '',
+        },
+        id: '123-321',
+        internetConnection: {
+          created: 1638467981,
+          defaultGateway: '',
+          ipAddress: '',
+          modified: 1638467981,
+          password: '',
+          primaryDns: '',
+          secondaryDns: '',
+          subNetMask: '',
+          type: 'automatic',
+          username: '',
+        },
+        ipReservations: {
+          created: 140188505938256,
+          id: '',
+          modified: 140187598507616,
+          reservations: [],
+        },
+        macAddress: '000000000000',
+        name: 'My Second Access Point',
+        subscriberDevices: {
+          created: 17,
+          devices: [],
+          modified: 140187598361808,
+        },
+        wifiNetworks: {
+          created: 1638467981,
+          modified: 1638467981,
+          wifiNetworks: [
+            {
+              bands: ['2G', '5G'],
+              encryption: 'wpa2',
+              name: 'HomeWifi',
+              password: 'OpenWifi',
+              type: 'main',
+            },
+          ],
+        },
+      },
+    ],*/
+    [subscriberInformation],
   );
 
   const getInternetBadge = () => {
@@ -102,6 +178,11 @@ const Dashboard = props => {
     return infoColor;
   };
 
+  const onAccessPointSelect = selected => {
+    if (selected) {
+      dispatch(setCurrentAccessPointId(selected.id));
+    }
+  };
   const onNetworkPress = async () => {
     props.navigation.navigate('Network');
   };
@@ -137,6 +218,11 @@ const Dashboard = props => {
       color: okColor,
       textTransform: 'uppercase',
     },
+    networkCaret: {
+      width: 20,
+      height: 20,
+      resizeMode: 'contain',
+    },
     icon: {
       height: 80,
       width: 80,
@@ -147,20 +233,39 @@ const Dashboard = props => {
       marginTop: 10,
       fontSize: 12,
     },
+    dropdown: {
+      borderWidth: 0,
+      backgroundColor: grayBackgroundcolor,
+      borderColor: primaryColor,
+    },
   });
 
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={[pageStyle.container, componentStyles.container]}>
-          <TouchableOpacity style={componentStyles.touchableContainer} onPress={onNetworkPress}>
-            <View style={componentStyles.itemContainer} onPress={onNetworkPress}>
-              <Text style={componentStyles.networkNameLabel} numberOfLines={2}>
-                {displayValue(accessPoint, 'name')}
-              </Text>
+          {accessPoints.length > 1 ? (
+            <View style={componentStyles.itemContainer}>
+              <ButtonSelector
+                maxButtons={0}
+                options={accessPoints}
+                titleKey={'name'}
+                onSelect={selected => onAccessPointSelect(selected)}
+                labelStyle={componentStyles.networkNameLabel}
+                dropdownStyle={componentStyles.dropdown}
+                height={200}
+                numberOfLines={3}
+              />
               <Text style={componentStyles.iconLabel}>{strings.dashboard.network}</Text>
             </View>
-          </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={componentStyles.touchableContainer} onPress={onNetworkPress}>
+              <View style={componentStyles.itemContainer}>
+                <Text style={componentStyles.networkNameLabel}>{displayValue(accessPoint, 'name')}</Text>
+                <Text style={componentStyles.iconLabel}>{strings.dashboard.network}</Text>
+              </View>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity style={componentStyles.touchableContainer} onPress={onInternetPress}>
             <View style={componentStyles.itemContainer} onPress={onInternetPress}>
               <ImageWithBadge
