@@ -103,23 +103,6 @@ export function logStringifyPretty(obj, title) {
 }
 
 export async function completeSignOut(navigation) {
-  // Clear the token, if one exists
-  try {
-    const state = store.getState();
-    const session = state.session.value;
-
-    console.log("sign out");
-    console.log(session);
-
-    if (session && session.access_token) {
-      const response = await authenticationApi.removeAccessToken(session.access_token);
-      console.log(response);
-    }
-  } catch (error) {
-    console.log(error);
-    console.warn('Failed in removing token on Sign Out');
-  }
-
   store.dispatch(clearSession());
   clearCredentials();
 
