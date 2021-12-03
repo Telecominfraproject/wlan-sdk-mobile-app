@@ -3,9 +3,15 @@ import LocalizedStrings from 'react-native-localization';
 export const strings = new LocalizedStrings({
   en: {
     errors: {
+      apiAccessDenied: 'Access denied. Trying signing in again.',
+      apiPasswordAlreadyUsed: 'Password already in use, please select a different password.',
+      apiPasswordChangeRequired: 'Password must be changed to continue.',
+      apiInvalidCredentials: 'Invalid credentials, check username and/or password.',
+      apiInvalidToken: 'Token is no longer valid, please sign in again.',
+      apiPasswordInvalid: 'Password is invalid',
+      apiUsernamePendingVerification: 'Email requires validation',
       badEmail: 'Please enter a valid email.',
-      badFormat: 'Please match the requested format.',
-      credentials: 'Invalid credentials, check username and/or password.',
+      badPasswordFormat: 'Please match the requested password format.',
       emptyField: '{0} field must not be empty.',
       emptyFields: 'Please fill in all fields',
       failedToConnect: 'Failed to connect to server, check connections.',
@@ -18,7 +24,6 @@ export const strings = new LocalizedStrings({
       noSubscriberDevice: 'Device not found',
       mismatchPassword: 'Password mismatch.',
       missingEndpoints: 'System is not set up correct - missing configuration information.',
-      samePassword: 'Password is the same as old password.',
       titleAccessPointCommand: 'Access Point Command Error',
       titleDashboard: 'Dashboard',
       titleDeviceDetails: 'Device Error',
@@ -34,7 +39,6 @@ export const strings = new LocalizedStrings({
       titleSms: 'SMS Error',
       titleSystemSetup: 'System Setup Error',
       titleUpdate: 'Update Error',
-      token: 'Credentials no longer valid, please sign-in again.',
       unknown: 'Unknown error.',
       userNotFound: 'User not found.',
       validationError: 'Validation Error',

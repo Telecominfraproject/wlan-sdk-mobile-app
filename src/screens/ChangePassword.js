@@ -81,7 +81,7 @@ export default function ResetPassword(props) {
       showGeneralError(strings.errors.titleChangePassword, strings.errors.mismatchPassword);
       return false;
     } else if (!validatePassword(newPassword)) {
-      showGeneralError(strings.errors.titleChangePassword, strings.errors.badFormat);
+      showGeneralError(strings.errors.titleChangePassword, strings.errors.badPasswordFormat);
       return false;
     }
 

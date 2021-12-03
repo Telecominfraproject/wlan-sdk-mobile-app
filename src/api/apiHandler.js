@@ -172,8 +172,6 @@ function getSubscriberAccessPointInfo(subscriberInformation, accessPointId, key)
 }
 
 function handleApiError(title, error) {
-  const state = store.getState();
-  const session = state.session.value;
   let message = strings.errors.unknown;
 
   if (error.response) {
@@ -185,16 +183,7 @@ function handleApiError(title, error) {
         break;
 
       case 403:
-        if (error.response.data && error.response.data.ErrorDescription) {
-          // Otherwise indicate their token failed
-          message = error.response.data.ErrorDescription;
-        } else if (session === null) {
-          // If not currently signed in then return a credentials error
-          message = strings.errors.credentials;
-        } else {
-          // Otherwise indicate their token failed
-          message = strings.errors.token;
-        }
+        message = get403ErrorFromData(error.response.data);
         break;
 
       default:
@@ -214,6 +203,44 @@ function handleApiError(title, error) {
   }
 
   showGeneralError(title, message);
+}
+
+function get403ErrorFromData(error) {
+  console.log(error);
+  let code = error ? error.ErrorCode : null;
+
+  if (code) {
+    switch (code) {
+      case 1:
+        return strings.errors.apiPasswordChangeRequired;
+
+      case 2:
+        return strings.errors.apiInvalidCredentials;
+
+      case 3:
+        return strings.errors.apiPasswordAlreadyUsed;
+
+      case 4:
+        return strings.errors.apiUsernamePendingVerification;
+
+      case 5:
+        return strings.errors.apiPasswordInvalid;
+
+      case 6:
+        return strings.errors.apiAccessDenied;
+
+      case 7:
+        return strings.errors.apiInvalidToken;
+
+      default:
+        if (error.ErrorDescription) {
+          return error.ErrorDescription;
+        }
+    }
+  }
+
+  // Return the following if nothing else fits
+  return strings.errors.apiInvalidToken;
 }
 
 export {
