@@ -12,7 +12,7 @@ export default function ButtonSelector(props) {
   const titleKey = props.titleKey ?? 'name';
   const labelStyle = props.labelStyle ?? {};
   const dropdownStyle = props.dropdownStyle ?? {};
-  const height = props.height ?? heightCellDefault;
+  const height = props.height ?? props.style.height ?? heightCellDefault;
   const numberOfLines = props.numberOfLines ?? 2;
   const formattedItems = useMemo(() => formatOptions(options), [options]);
 
