@@ -208,7 +208,7 @@ const DeviceList = props => {
 
           <ButtonSelector
             style={componentStyles.networkSwitcher}
-            options={wifiNetworks.wifiNetworks}
+            options={wifiNetworks ? wifiNetworks.wifiNetworks : []}
             maxButtons={2}
             onSelect={onSelectNetwork}
           />
