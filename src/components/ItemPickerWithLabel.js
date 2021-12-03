@@ -8,12 +8,17 @@ export default function ItemPickerWithLabel(props) {
   const [items, setItems] = useState(props.items ?? []);
   const placeholder = props.placeholder ?? 'Select an item';
   const label = props.label ?? '';
-  const borderWidth = props.borderWidth ?? 0;
-  const borderRadius = props.borderRadius ?? 0;
 
-  const onChangeValue = value => {
-    if (props.onChangeValue) {
-      props.onChangeValue(value);
+  const onChangeValue = async value => {
+    try {
+      if (props.onChangeValue) {
+        let updateValue = props.changeKey ? { [props.changeKey]: value } : value;
+        // Use a promise to ensure we can call Async functions. By using Promise.resolve
+        // it ensures the caller is async regardless of wether it is or not.
+        await Promise.resolve(props.onChangeValue(updateValue));
+      }
+    } catch (error) {
+      // Do nothing
     }
   };
 
@@ -35,9 +40,9 @@ export default function ItemPickerWithLabel(props) {
     },
     picker: {
       height: 28,
-      borderWidth,
-      borderRadius,
       paddingHorizontal: 0,
+      borderWidth: props.style && props.style.borderWidth ? props.style.borderWidth : undefined,
+      borderRadius: props.style && props.style.borderRadius ? props.style.borderRadius : undefined,
     },
     dropDownContainer: {
       borderWidth: 1,
