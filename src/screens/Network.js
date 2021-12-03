@@ -168,7 +168,7 @@ const Network = props => {
   const sendAccessPointCommand = async (action, successMessage) => {
     try {
       // TODO: Verify this is funcitoning and the function call is corrected!
-      const response = await deviceCommandsApi.oerfirmAnAction(action, { mac: accessPoint.macAddress, when: 0 });
+      const response = await deviceCommandsApi.performAnAction(action, { mac: accessPoint.macAddress, when: 0 });
 
       if (!response || !response.data) {
         throw new Error(strings.errors.invalidResponse);

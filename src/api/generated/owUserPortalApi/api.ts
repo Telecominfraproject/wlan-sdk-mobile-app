@@ -57,6 +57,12 @@ export interface AccessPoint {
   name?: string;
   /**
    *
+   * @type {string}
+   * @memberof AccessPoint
+   */
+  deviceType?: string;
+  /**
+   *
    * @type {SubscriberDeviceList}
    * @memberof AccessPoint
    */
@@ -458,7 +464,7 @@ export interface HomeDeviceMode {
 export enum HomeDeviceModeTypeEnum {
   Bridge = 'bridge',
   Manual = 'manual',
-  Automatic = 'automatic',
+  Nat = 'nat',
 }
 
 /**
@@ -745,6 +751,48 @@ export interface PasswordCreation {
    */
   newPassword?: string;
 }
+/**
+ *
+ * @export
+ * @interface SubMfaConfig
+ */
+export interface SubMfaConfig {
+  /**
+   *
+   * @type {string}
+   * @memberof SubMfaConfig
+   */
+  id?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof SubMfaConfig
+   */
+  type?: SubMfaConfigTypeEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof SubMfaConfig
+   */
+  email?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof SubMfaConfig
+   */
+  sms?: string;
+}
+
+/**
+ * @export
+ * @enum {string}
+ */
+export enum SubMfaConfigTypeEnum {
+  Disabled = 'disabled',
+  Sms = 'sms',
+  Email = 'email',
+}
+
 /**
  *
  * @export
@@ -1141,7 +1189,7 @@ export const AuthenticationApiAxiosParamCreator = function (configuration?: Conf
      * @param {WebTokenRequest | MFAChallengeResponse} webTokenRequestMFAChallengeResponse User id and password
      * @param {string} [newPassword] used when a user is trying to change her password. This will be the new password.
      * @param {boolean} [forgotPassword] A user forgot her password. She needs to present her e-mail address in the userId and set this to true
-     * @param {boolean} [requirements] A user forgot her password. She needs to present her e-mail address in the userId and set this to true
+     * @param {boolean} [requirements] A user forgot her password. This will provided the password requirements.
      * @param {boolean} [resendMFACode]
      * @param {boolean} [completeMFAChallenge]
      * @param {*} [options] Override http request option.
@@ -1267,7 +1315,7 @@ export const AuthenticationApiFp = function (configuration?: Configuration) {
      * @param {WebTokenRequest | MFAChallengeResponse} webTokenRequestMFAChallengeResponse User id and password
      * @param {string} [newPassword] used when a user is trying to change her password. This will be the new password.
      * @param {boolean} [forgotPassword] A user forgot her password. She needs to present her e-mail address in the userId and set this to true
-     * @param {boolean} [requirements] A user forgot her password. She needs to present her e-mail address in the userId and set this to true
+     * @param {boolean} [requirements] A user forgot her password. This will provided the password requirements.
      * @param {boolean} [resendMFACode]
      * @param {boolean} [completeMFAChallenge]
      * @param {*} [options] Override http request option.
@@ -1327,7 +1375,7 @@ export const AuthenticationApiFactory = function (
      * @param {WebTokenRequest | MFAChallengeResponse} webTokenRequestMFAChallengeResponse User id and password
      * @param {string} [newPassword] used when a user is trying to change her password. This will be the new password.
      * @param {boolean} [forgotPassword] A user forgot her password. She needs to present her e-mail address in the userId and set this to true
-     * @param {boolean} [requirements] A user forgot her password. She needs to present her e-mail address in the userId and set this to true
+     * @param {boolean} [requirements] A user forgot her password. This will provided the password requirements.
      * @param {boolean} [resendMFACode]
      * @param {boolean} [completeMFAChallenge]
      * @param {*} [options] Override http request option.
@@ -1380,7 +1428,7 @@ export class AuthenticationApi extends BaseAPI {
    * @param {WebTokenRequest | MFAChallengeResponse} webTokenRequestMFAChallengeResponse User id and password
    * @param {string} [newPassword] used when a user is trying to change her password. This will be the new password.
    * @param {boolean} [forgotPassword] A user forgot her password. She needs to present her e-mail address in the userId and set this to true
-   * @param {boolean} [requirements] A user forgot her password. She needs to present her e-mail address in the userId and set this to true
+   * @param {boolean} [requirements] A user forgot her password. This will provided the password requirements.
    * @param {boolean} [resendMFACode]
    * @param {boolean} [completeMFAChallenge]
    * @param {*} [options] Override http request option.
@@ -1555,7 +1603,7 @@ export const DeviceCommandsApiAxiosParamCreator = function (configuration?: Conf
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    oerfirmAnAction: async (
+    performAnAction: async (
       action?: 'reboot' | 'blink' | 'upgrade' | 'factory' | 'refresh',
       inlineObject?: InlineObject,
       options: any = {},
@@ -1613,12 +1661,12 @@ export const DeviceCommandsApiFp = function (configuration?: Configuration) {
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async oerfirmAnAction(
+    async performAnAction(
       action?: 'reboot' | 'blink' | 'upgrade' | 'factory' | 'refresh',
       inlineObject?: InlineObject,
       options?: any,
     ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.oerfirmAnAction(action, inlineObject, options);
+      const localVarAxiosArgs = await localVarAxiosParamCreator.performAnAction(action, inlineObject, options);
       return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
     },
   };
@@ -1643,12 +1691,12 @@ export const DeviceCommandsApiFactory = function (
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    oerfirmAnAction(
+    performAnAction(
       action?: 'reboot' | 'blink' | 'upgrade' | 'factory' | 'refresh',
       inlineObject?: InlineObject,
       options?: any,
     ): AxiosPromise<object> {
-      return localVarFp.oerfirmAnAction(action, inlineObject, options).then(request => request(axios, basePath));
+      return localVarFp.performAnAction(action, inlineObject, options).then(request => request(axios, basePath));
     },
   };
 };
@@ -1669,13 +1717,247 @@ export class DeviceCommandsApi extends BaseAPI {
    * @throws {RequiredError}
    * @memberof DeviceCommandsApi
    */
-  public oerfirmAnAction(
+  public performAnAction(
     action?: 'reboot' | 'blink' | 'upgrade' | 'factory' | 'refresh',
     inlineObject?: InlineObject,
     options?: any,
   ) {
     return DeviceCommandsApiFp(this.configuration)
-      .oerfirmAnAction(action, inlineObject, options)
+      .performAnAction(action, inlineObject, options)
+      .then(request => request(this.axios, this.basePath));
+  }
+}
+
+/**
+ * MFAApi - axios parameter creator
+ * @export
+ */
+export const MFAApiAxiosParamCreator = function (configuration?: Configuration) {
+  return {
+    /**
+     *
+     * @summary Retrieve the current setting for MFA
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getMFS: async (options: any = {}): Promise<RequestArgs> => {
+      const localVarPath = `/submfa`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication ApiKeyAuth required
+      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @summary Retrieve the current setting for MFA
+     * @param {boolean} [startValidation]
+     * @param {boolean} [completeValidation]
+     * @param {string} [challengeCode]
+     * @param {SubMfaConfig} [subMfaConfig]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    modifyMFS: async (
+      startValidation?: boolean,
+      completeValidation?: boolean,
+      challengeCode?: string,
+      subMfaConfig?: SubMfaConfig,
+      options: any = {},
+    ): Promise<RequestArgs> => {
+      const localVarPath = `/submfa`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication ApiKeyAuth required
+      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (startValidation !== undefined) {
+        localVarQueryParameter['startValidation'] = startValidation;
+      }
+
+      if (completeValidation !== undefined) {
+        localVarQueryParameter['completeValidation'] = completeValidation;
+      }
+
+      if (challengeCode !== undefined) {
+        localVarQueryParameter['challengeCode'] = challengeCode;
+      }
+
+      localVarHeaderParameter['Content-Type'] = 'application/json';
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+      localVarRequestOptions.data = serializeDataIfNeeded(subMfaConfig, localVarRequestOptions, configuration);
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * MFAApi - functional programming interface
+ * @export
+ */
+export const MFAApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = MFAApiAxiosParamCreator(configuration);
+  return {
+    /**
+     *
+     * @summary Retrieve the current setting for MFA
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async getMFS(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.getMFS(options);
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+    },
+    /**
+     *
+     * @summary Retrieve the current setting for MFA
+     * @param {boolean} [startValidation]
+     * @param {boolean} [completeValidation]
+     * @param {string} [challengeCode]
+     * @param {SubMfaConfig} [subMfaConfig]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async modifyMFS(
+      startValidation?: boolean,
+      completeValidation?: boolean,
+      challengeCode?: string,
+      subMfaConfig?: SubMfaConfig,
+      options?: any,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.modifyMFS(
+        startValidation,
+        completeValidation,
+        challengeCode,
+        subMfaConfig,
+        options,
+      );
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+    },
+  };
+};
+
+/**
+ * MFAApi - factory interface
+ * @export
+ */
+export const MFAApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+  const localVarFp = MFAApiFp(configuration);
+  return {
+    /**
+     *
+     * @summary Retrieve the current setting for MFA
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getMFS(options?: any): AxiosPromise<void> {
+      return localVarFp.getMFS(options).then(request => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary Retrieve the current setting for MFA
+     * @param {boolean} [startValidation]
+     * @param {boolean} [completeValidation]
+     * @param {string} [challengeCode]
+     * @param {SubMfaConfig} [subMfaConfig]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    modifyMFS(
+      startValidation?: boolean,
+      completeValidation?: boolean,
+      challengeCode?: string,
+      subMfaConfig?: SubMfaConfig,
+      options?: any,
+    ): AxiosPromise<void> {
+      return localVarFp
+        .modifyMFS(startValidation, completeValidation, challengeCode, subMfaConfig, options)
+        .then(request => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * MFAApi - object-oriented interface
+ * @export
+ * @class MFAApi
+ * @extends {BaseAPI}
+ */
+export class MFAApi extends BaseAPI {
+  /**
+   *
+   * @summary Retrieve the current setting for MFA
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof MFAApi
+   */
+  public getMFS(options?: any) {
+    return MFAApiFp(this.configuration)
+      .getMFS(options)
+      .then(request => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @summary Retrieve the current setting for MFA
+   * @param {boolean} [startValidation]
+   * @param {boolean} [completeValidation]
+   * @param {string} [challengeCode]
+   * @param {SubMfaConfig} [subMfaConfig]
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof MFAApi
+   */
+  public modifyMFS(
+    startValidation?: boolean,
+    completeValidation?: boolean,
+    challengeCode?: string,
+    subMfaConfig?: SubMfaConfig,
+    options?: any,
+  ) {
+    return MFAApiFp(this.configuration)
+      .modifyMFS(startValidation, completeValidation, challengeCode, subMfaConfig, options)
       .then(request => request(this.axios, this.basePath));
   }
 }

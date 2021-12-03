@@ -75,7 +75,7 @@ components:
               Code:
                 type: integer
     Error:
-      description: The requested operation was performed.
+      description: The requested operation failed.
       content:
         application/json:
           schema:
@@ -87,7 +87,7 @@ components:
               Code:
                 type: integer
     BadRequest:
-      description: The requested operation was performed.
+      description: The requested operation failed.
       content:
         application/json:
           schema:
@@ -108,7 +108,7 @@ components:
           enum:
             - bridge
             - manual
-            - automatic
+            - nat
           default: automatic
         enableLEDS:
           type: boolean
@@ -429,6 +429,8 @@ components:
           type: string
         name:
           type: string
+        deviceType:
+          type: string
         subscriberDevices:
           $ref: '#/components/schemas/SubscriberDeviceList'
         ipReservations:
@@ -462,7 +464,7 @@ components:
           readOnly: true
         userId:
           type: string
-          format: uuid
+          format: email
           readOnly: true
         firstName:
           type: string
@@ -476,7 +478,6 @@ components:
           type: string
           format: email
         accessPoints:
-          readOnly: true
           $ref: '#/components/schemas/AccessPointList'
         serviceAddress:
           $ref: '#/components/schemas/Location'
@@ -601,6 +602,24 @@ components:
         aclTemplate:
           $ref: '#/components/schemas/AclTemplate'
 
+    SubMfaConfig:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+            - disabled
+            - sms
+            - email
+        email:
+          type: string
+          format: email
+        sms:
+          type: string
+
 paths:
   /oauth2:
     post:
@@ -623,7 +642,7 @@ paths:
           required: false
         - in: query
           name: requirements
-          description: A user forgot her password. She needs to present her e-mail address in the userId and set this to true
+          description: A user forgot her password. This will provided the password requirements.
           schema:
             type: boolean
           required: false
@@ -752,12 +771,54 @@ paths:
               schema:
                 $ref: '#/components/schemas/AssociationList'
 
+  /submfa:
+    get:
+      tags:
+        - MFA
+      summary: Retrieve the current setting for MFA
+      operationId: getMFS
+      responses:
+        200:
+          $ref: '#/components/schemas/SubMfaConfig'
+
+    put:
+      tags:
+        - MFA
+      summary: Retrieve the current setting for MFA
+      operationId: modifyMFS
+      parameters:
+        - in: query
+          name: startValidation
+          schema:
+            type: boolean
+          required: false
+        - in: query
+          name: completeValidation
+          schema:
+            type: boolean
+          required: false
+        - in: query
+          name: challengeCode
+          schema:
+            type: string
+          required: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubMfaConfig'
+      responses:
+        200:
+          $ref: '#/components/schemas/SubMfaConfig'
+        400:
+          $ref: '#/components/responses/BadRequest'
+
   /action:
     post:
       tags:
         - Device Commands
       summary: Sending different commands to a device
-      operationId: oerfirmAnAction
+      operationId: performAnAction
       parameters:
         - in: query
           name: action
@@ -786,4 +847,3 @@ paths:
           $ref: '#/components/responses/Success'
         400:
           $ref: '#/components/responses/BadRequest'
-
