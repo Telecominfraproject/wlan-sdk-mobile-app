@@ -10,13 +10,14 @@ import {
   errorColor,
   warnColor,
   okColor,
+  pageItemStyle,
 } from '../AppStyle';
-import { StyleSheet, SafeAreaView, ScrollView, View, Text } from 'react-native';
+import { StyleSheet, SafeAreaView, ScrollView, View, Text, Alert } from 'react-native';
 import { selectCurrentAccessPointId } from '../store/CurrentAccessPointIdSlice';
 import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
 import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
-import { getSubscriberAccessPointInfo } from '../api/apiHandler';
-import { displayValue } from '../Utils';
+import { getSubscriberAccessPointInfo, deviceCommandsApi, handleApiError } from '../api/apiHandler';
+import { displayValue, showGeneralError } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
 import ImageWithBadge from '../components/ImageWithBadge';
@@ -68,8 +69,8 @@ const Network = props => {
     return require('../assets/wifi-solid.png');
   };
 
-  const onRebootPress = async () => {
-    // TODO: Implement
+  const onRefreshPress = async () => {
+    sendAccessPointCommand('refresh', strings.network.commandRefreshSuccess);
   };
 
   const getWifiNetworkLabel = item => {
@@ -114,13 +115,74 @@ const Network = props => {
   };
 
   const onWifiNetworkPress = async item => {
-    // TODO: Implement
+    // TODO: Confirm
     props.navigation.navigate('Devices', { networkName: item.name });
   };
 
   const onUpdateFirmwarePress = async () => {
-    // TODO: Implement
-    console.log('Upgrade firmware');
+    sendAccessPointCommandWithConfirm(
+      'upgrade',
+      strings.network.commandFirmwareUpdateSuccess,
+      strings.network.confirmFirmwareUpdateSuccess,
+    );
+  };
+
+  const onBlinkLightsPress = async () => {
+    sendAccessPointCommand('blink', strings.network.commandLightBlinkSuccess);
+  };
+
+  const onFactoryResetPress = async () => {
+    sendAccessPointCommandWithConfirm(
+      'factory',
+      strings.network.commandFactoryResetSuccess,
+      strings.network.confirmFactoryResetSuccess,
+    );
+  };
+
+  const onRebootPress = async () => {
+    sendAccessPointCommandWithConfirm(
+      'reboot',
+      strings.network.commandRebootSuccess,
+      strings.network.confirmRebootSuccess,
+    );
+  };
+
+  const sendAccessPointCommandWithConfirm = async (action, successMessage, confirmMessage) => {
+    if (confirmMessage) {
+      Alert.alert(strings.network.confirmTitle, confirmMessage, [
+        {
+          text: strings.buttons.ok,
+          onPress: () => {
+            sendAccessPointCommand(action, successMessage);
+          },
+        },
+        {
+          text: strings.buttons.cancel,
+        },
+      ]);
+    } else {
+      sendAccessPointCommand(action, successMessage);
+    }
+  };
+
+  const sendAccessPointCommand = async (action, successMessage) => {
+    try {
+      // TODO: Verify this is funcitoning and the function call is corrected!
+      const response = await deviceCommandsApi.oerfirmAnAction(action, { mac: accessPoint.macAddress, when: 0 });
+
+      if (!response || !response.data) {
+        throw new Error(strings.errors.invalidResponse);
+      }
+
+      if (response.data.Code === 0) {
+        showGeneralError(strings.errors.titleAccessPointCommand, successMessage);
+      } else {
+        throw new Error(strings.errors.invalidResponse);
+      }
+    } catch (error) {
+      // Handle the error.
+      handleApiError(strings.errors.titleAccessPointCommand, error);
+    }
   };
 
   // Styles
@@ -149,6 +211,14 @@ const Network = props => {
     sectionAccordion: {
       marginTop: marginTopDefault,
     },
+    buttonLeft: {
+      marginRight: paddingHorizontalDefault / 2,
+      flex: 1,
+    },
+    buttonRight: {
+      marginLeft: paddingHorizontalDefault / 2,
+      flex: 1,
+    },
   });
 
   return (
@@ -166,9 +236,9 @@ const Network = props => {
             />
             <Text style={componentStyles.sectionNetworkText}>{displayValue(accessPoint, 'name')}</Text>
             <ButtonStyled
-              title={strings.buttons.reboot}
+              title={strings.buttons.refresh}
               type="outline"
-              onPress={onRebootPress}
+              onPress={onRefreshPress}
               size="small"
               disabled={!accessPoint}
             />
@@ -206,7 +276,13 @@ const Network = props => {
               onButtonPress={onUpdateFirmwarePress}
               buttonDisabled={!accessPoint}
             />
-            <ItemTextWithLabel label={strings.network.productModel} value={displayValue(accessPoint, 'model')} />
+            <ItemTextWithLabel
+              label={strings.network.productModel}
+              value={displayValue(accessPoint, 'model')}
+              buttonTitle={strings.buttons.blink}
+              onButtonPress={onBlinkLightsPress}
+              buttonDisabled={!accessPoint}
+            />
             <ItemTextWithLabel
               label={strings.network.serialNumber}
               value={displayValue(accessPoint, 'serial_number')}
@@ -241,6 +317,22 @@ const Network = props => {
               value={displayValue(internetConnection, 'secondaryDns')}
             />
           </AccordionSection>
+
+          {/* Buttons */}
+          <View style={pageItemStyle.containerButtons}>
+            <ButtonStyled
+              style={componentStyles.buttonLeft}
+              title={strings.buttons.reboot}
+              type="outline"
+              onPress={onRebootPress}
+            />
+            <ButtonStyled
+              style={componentStyles.buttonRight}
+              title={strings.buttons.factoryReset}
+              type="outline"
+              onPress={onFactoryResetPress}
+            />
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
