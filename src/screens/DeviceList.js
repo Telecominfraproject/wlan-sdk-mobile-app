@@ -32,7 +32,7 @@ const DeviceList = props => {
     () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'wifiNetworks'),
     [subscriberInformation, currentAccessPointId],
   );
-  const [selectedWifi, setSelectedWifi] = useState();
+  const [selectedWifi, setSelectedWifi] = useState(selectedNetworkName);
   const [loadingWiredClients, setLoadingWiredClients] = useState(false);
   const [wiredClients, setWiredClients] = useState([{ name: 'Mac Book Pro', macAddress: '43:e1:55:23:59:12' }]);
   const [loadingWifiClients, setLoadingWifiClients] = useState(false);
