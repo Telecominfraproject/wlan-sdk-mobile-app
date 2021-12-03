@@ -6,18 +6,22 @@ import DropDownPicker from 'react-native-dropdown-picker';
 export default function ButtonSelector(props) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(0);
+  const [items, setItems] = useState([]);
   const options = props.options ?? [];
   const maxButtons = props.maxButtons ?? 2;
   const titleKey = props.titleKey ?? 'name';
-  const height = props.style.height ?? heightCellDefault;
-  const items = useMemo(() => getItems(options), [options]);
+  const labelStyle = props.labelStyle ?? {};
+  const dropdownStyle = props.dropdownStyle ?? {};
+  const height = props.height ?? heightCellDefault;
+  const numberOfLines = props.numberOfLines ?? 2;
+  const formattedItems = useMemo(() => formatOptions(options), [options]);
 
   // Update items when the options list change
-  //auseEffect(() => {
-  //  getItems();
-  //}, [options]);a
+  useEffect(() => {
+    setItems(formattedItems);
+  }, [formattedItems]);
 
-  function getItems(optionsInput) {
+  function formatOptions(optionsInput) {
     if (optionsInput.length > 0) {
       return optionsInput.map((option, index) => ({ label: option[titleKey], value: index }));
     } else {
@@ -129,10 +133,11 @@ export default function ButtonSelector(props) {
           setOpen={setOpen}
           setValue={setSelected}
           setItems={setItems}
-          style={componentStyles.dropdown}
+          style={[componentStyles.dropdown, dropdownStyle]}
           dropDownContainerStyle={componentStyles.dropdownContainer}
-          labelStyle={componentStyles.dropdownLabel}
+          labelStyle={[componentStyles.dropdownLabel, labelStyle]}
           onChangeValue={value => onSelect(value)}
+          labelProps={{ numberOfLines: numberOfLines }}
         />
       ) : (
         options.map((option, index) => (
