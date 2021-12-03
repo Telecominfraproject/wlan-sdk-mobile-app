@@ -9,6 +9,7 @@ import { selectSubscriberInformationLoading } from '../store/SubscriberInformati
 import {
   showGeneralError,
   displayValue,
+  displayEditableValue,
   getDeviceFromClient,
   getClientIcon,
   getClientConnectionIcon,
@@ -55,10 +56,8 @@ const DeviceDetails = props => {
     return strings.buttons.pause;
   };
 
-  const updateDeviceValue = jsonObject => {
-    if (jsonObject) {
-      modifySubscriberDevice(subscriberInformation, currentAccessPointId, device, jsonObject);
-    }
+  const updateDeviceValue = async value => {
+    modifySubscriberDevice(subscriberInformation, currentAccessPointId, device, value);
   };
 
   const onPauseUnpausePress = async () => {
@@ -152,14 +151,14 @@ const DeviceDetails = props => {
             <ItemTextWithLabelEditable
               key="group"
               label={strings.deviceDetails.group}
-              value={displayValue(device, 'group')}
+              value={displayEditableValue(device, 'group')}
               editKey="group"
               onEdit={updateDeviceValue}
             />
             <ItemTextWithLabelEditable
               key="description"
               label={strings.deviceDetails.description}
-              value={displayValue(device, 'description')}
+              value={displayEditableValue(device, 'description')}
               editKey="description"
               onEdit={updateDeviceValue}
             />
