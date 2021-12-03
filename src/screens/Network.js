@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import {
@@ -17,14 +17,17 @@ import { selectCurrentAccessPointId } from '../store/CurrentAccessPointIdSlice';
 import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
 import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
 import { getSubscriberAccessPointInfo, deviceCommandsApi, handleApiError } from '../api/apiHandler';
-import { displayValue, showGeneralError } from '../Utils';
+import { displayValue, displayEditableValue, showGeneralError, modifySubscriberDnsInformation } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
 import ImageWithBadge from '../components/ImageWithBadge';
 import ItemTextWithIcon from '../components/ItemTextWithIcon';
 import ItemTextWithLabel from '../components/ItemTextWithLabel';
+import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
+import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
 
 const Network = props => {
+  const [customDnsValue, setCustomDnsValue] = useState(dnsConfiguration ? dnsConfiguration.custom : false);
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
@@ -40,6 +43,14 @@ const Network = props => {
     () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'wifiNetworks'),
     [subscriberInformation, currentAccessPointId],
   );
+  const dnsConfiguration = useMemo(
+    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'dnsConfiguration'),
+    [subscriberInformation, currentAccessPointId],
+  );
+
+  useEffect(() => {
+    setCustomDnsValue(dnsConfiguration.custom);
+  }, [dnsConfiguration.custom]);
 
   const getAccessPointIcon = () => {
     // TODO: Implement
@@ -185,6 +196,17 @@ const Network = props => {
     }
   };
 
+  const onEditCustomDnsSettings = async val => {
+    console.log(val);
+    try {
+      await modifySubscriberDnsInformation(subscriberInformation, currentAccessPointId, val);
+    } catch (error) {
+      handleApiError(strings.errors.titleUpdate, error);
+      // Need to throw the error to ensure the caller cleans up
+      throw error;
+    }
+  };
+
   // Styles
   const componentStyles = StyleSheet.create({
     sectionNetwork: {
@@ -315,6 +337,41 @@ const Network = props => {
             <ItemTextWithLabel
               label={strings.network.secondaryDns}
               value={displayValue(internetConnection, 'secondaryDns')}
+            />
+          </AccordionSection>
+
+          <AccordionSection
+            style={componentStyles.sectionAccordion}
+            title={strings.network.customDnsSettings}
+            disableAccordion={true}
+            isLoading={subscriberInformationLoading}>
+            <ItemPickerWithLabel
+              key="custom"
+              label={strings.network.status}
+              value={customDnsValue}
+              setValue={setCustomDnsValue}
+              items={[
+                { label: strings.network.selectorCustom, value: true },
+                { label: strings.network.selectorIsp, value: false },
+              ]}
+              changeKey="custom"
+              onChangeValue={onEditCustomDnsSettings}
+            />
+            <ItemTextWithLabelEditable
+              key="primary"
+              label={strings.network.primaryDns}
+              value={displayEditableValue(dnsConfiguration, 'primary')}
+              placeholder={strings.messages.empty}
+              editKey="primary"
+              onEdit={onEditCustomDnsSettings}
+            />
+            <ItemTextWithLabelEditable
+              key="secondary"
+              label={strings.network.secondaryDns}
+              value={displayEditableValue(dnsConfiguration, 'secondary')}
+              placeholder={strings.messages.empty}
+              editKey="secondary"
+              onEdit={onEditCustomDnsSettings}
             />
           </AccordionSection>
 

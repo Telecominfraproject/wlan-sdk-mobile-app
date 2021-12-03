@@ -31,6 +31,18 @@ export function displayValue(obj, key) {
   return strings.messages.empty;
 }
 
+export function displayEditableValue(obj, key) {
+  if (obj && key) {
+    if (key in obj) {
+      return obj[key];
+    }
+  }
+
+  // Just return null if not found, editable values should not have anything returned
+  // if there is nothing there.
+  return null;
+}
+
 export function getDeviceFromClient(client, subscriberInformation, accessPointId) {
   if (!client || !subscriberInformation) {
     return null;
@@ -218,18 +230,20 @@ export async function modifySubscriberInformation(updatedJson) {
     throw new Error(strings.errors.invalidResponse);
   }
 
-  // TODO: Verify the response code once API has been fully implemented
   logStringifyPretty(response.data, response.request.responseURL);
-  if (response.data.Code !== 0) {
-    throw new Error(strings.errors.invalidResponse);
-  }
 
-  // Reload the subscriber information, and wait for it
-  await getSubscriberInformation(true);
+  // The response is the subscriber list again, so save the updated information
+  store.dispatch(setSubscriberInformation(response.data));
 }
 
 export async function modifySubscriberDevice(subscriberInformation, accessPointId, device, jsonObject) {
-  if (!accessPointId || !device || !jsonObject) {
+  if (!jsonObject) {
+    // Do nothing
+    return;
+  }
+
+  // accessPointId can be null - it means the first one
+  if (!subscriberInformation || !device) {
     throw new Error(strings.errors.internal);
   }
 
@@ -245,6 +259,50 @@ export async function modifySubscriberDevice(subscriberInformation, accessPointI
   let deviceToUpdate = subscriberDevices.find(item => item.macAddress === device.macAddress);
   for (const [key, value] of Object.entries(jsonObject)) {
     deviceToUpdate[key] = value;
+  }
+
+  await modifySubscriberInformation(updatedSubsciberInformation);
+}
+
+export async function modifySubscriberDnsInformation(subscriberInformation, accessPointId, jsonObject) {
+  if (!jsonObject) {
+    // Do nothing if the object is null or empty
+    return;
+  }
+
+  // accessPointId can be null - it just means use the first access point, so no check for this
+  if (!subscriberInformation) {
+    throw new Error(strings.errors.internal);
+  }
+
+  // Clone the current subscriber information
+  let updatedSubsciberInformation = JSON.parse(JSON.stringify(subscriberInformation));
+  let dnsConfiguration = getSubscriberAccessPointInfo(updatedSubsciberInformation, accessPointId, 'dnsConfiguration');
+  if (!dnsConfiguration) {
+    throw new Error(strings.errors.internal);
+  }
+
+  // Update the values and check to make sure there has been change
+  let changed = false;
+  for (const [key, value] of Object.entries(jsonObject)) {
+    if (dnsConfiguration[key] !== value) {
+      dnsConfiguration[key] = value;
+      changed = true;
+    }
+  }
+
+  // If no change occured, just return. This is very important to avoid
+  // some types of setState infinite loops
+  if (!changed) {
+    return;
+  }
+
+  // There are some dependant values here, make sure they make sense
+  if (dnsConfiguration.custom && (dnsConfiguration.primary || dnsConfiguration.secondary)) {
+    dnsConfiguration.ISP = false;
+  } else {
+    dnsConfiguration.ISP = true;
+    dnsConfiguration.custom = false;
   }
 
   await modifySubscriberInformation(updatedSubsciberInformation);
