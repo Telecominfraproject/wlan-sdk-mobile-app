@@ -1,13 +1,14 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, okColor, infoColor, errorColor, primaryColor, whiteColor, grayBackgroundcolor } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { selectCurrentAccessPointId, setCurrentAccessPointId } from '../store/CurrentAccessPointIdSlice';
 import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
 import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
 import { getSubscriberAccessPointInfo } from '../api/apiHandler';
-import { displayValue } from '../Utils';
+import { displayValue, setSubscriberInformationInterval } from '../Utils';
 import ImageWithBadge from '../components/ImageWithBadge';
 import ButtonSelector from '../components/ButtonSelector';
 
@@ -105,6 +106,22 @@ const Dashboard = props => {
       },
     ],*/
     [subscriberInformation],
+  );
+
+  // Refresh the information only anytime there is a navigation change and this has come into focus
+  // Need to be careful here as useFocusEffect is also called during re-render so it can result in
+  // infinite loops.
+  useFocusEffect(
+    useCallback(() => {
+      var intervalId = setSubscriberInformationInterval(subscriberInformation, null);
+
+      // Return function of what should be done on 'focus out'
+      return () => {
+        clearInterval(intervalId);
+      };
+      // Disable the eslint warning, as we want to change only on navigation changes
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.navigation]),
   );
 
   const getInternetBadge = () => {

@@ -194,7 +194,7 @@ export async function completeSignIn(navigation, userId, password, sessionData, 
   }
 }
 
-export async function getSubscriberInformation(setLoadingFlag) {
+export async function getSubscriberInformation(subscriberInformation, setLoadingFlag) {
   try {
     if (setLoadingFlag) {
       store.dispatch(setSubscriberInformationLoading(true));
@@ -209,11 +209,46 @@ export async function getSubscriberInformation(setLoadingFlag) {
       throw new Error(strings.errors.invalidResponse);
     }
 
-    logStringifyPretty(response.data, response.request.responseURL);
-    store.dispatch(setSubscriberInformation(response.data));
+    // Only update the state if the last modified is different than the current one
+    // This will ensure that there are less UI updates as this will often be linked to renders.
+    if (isFieldDifferent(subscriberInformation, response.data, 'modified')) {
+      logStringifyPretty(response.data, response.request.responseURL);
+      store.dispatch(setSubscriberInformation(response.data));
+    }
   } finally {
-    store.dispatch(setSubscriberInformationLoading(false));
+    if (setLoadingFlag) {
+      store.dispatch(setSubscriberInformationLoading(false));
+    }
   }
+}
+
+export function isFieldDifferent(currentData, newData, field) {
+  let currentValue = currentData ? currentData[field] : null;
+  let newValue = newData ? newData[field] : null;
+
+  if (newValue !== currentValue) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+export function setSubscriberInformationInterval(subscriberInformation, extraUpdateFn) {
+  async function checkSubscriberInformation() {
+    try {
+      await getSubscriberInformation(subscriberInformation, false);
+      if (extraUpdateFn) {
+        await extraUpdateFn();
+      }
+    } catch (error) {
+      // do nothing
+    }
+  }
+
+  let intervalId = setInterval(checkSubscriberInformation, 60000);
+  checkSubscriberInformation();
+
+  return intervalId;
 }
 
 export async function modifySubscriberInformation(updatedJson) {

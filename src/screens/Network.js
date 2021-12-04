@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import {
@@ -13,11 +13,18 @@ import {
   pageItemStyle,
 } from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, Text, Alert } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { selectCurrentAccessPointId } from '../store/CurrentAccessPointIdSlice';
 import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
 import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
 import { getSubscriberAccessPointInfo, deviceCommandsApi, handleApiError } from '../api/apiHandler';
-import { displayValue, displayEditableValue, showGeneralError, modifySubscriberDnsInformation } from '../Utils';
+import {
+  displayValue,
+  displayEditableValue,
+  showGeneralError,
+  modifySubscriberDnsInformation,
+  setSubscriberInformationInterval,
+} from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
 import ImageWithBadge from '../components/ImageWithBadge';
@@ -46,6 +53,22 @@ const Network = props => {
   const dnsConfiguration = useMemo(
     () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'dnsConfiguration'),
     [subscriberInformation, currentAccessPointId],
+  );
+
+  // Refresh the information only anytime there is a navigation change and this has come into focus
+  // Need to be careful here as useFocusEffect is also called during re-render so it can result in
+  // infinite loops.
+  useFocusEffect(
+    useCallback(() => {
+      var intervalId = setSubscriberInformationInterval(subscriberInformation, null);
+
+      // Return function of what should be done on 'focus out'
+      return () => {
+        clearInterval(intervalId);
+      };
+      // Disable the eslint warning, as we want to change only on navigation changes
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.navigation]),
   );
 
   useEffect(() => {

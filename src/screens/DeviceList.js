@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useState, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import { marginTopDefault, pageStyle, whiteColor } from '../AppStyle';
@@ -9,17 +9,19 @@ import { selectSubscriberInformation } from '../store/SubscriberInformationSlice
 import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
 import { wifiClientsApi, wiredClientsApi, getSubscriberAccessPointInfo, handleApiError } from '../api/apiHandler';
 import {
-  showGeneralError,
   displayValue,
   getClientIcon,
   getClientConnectionIcon,
   getClientConnectionStatusColor,
+  setSubscriberInformationInterval,
+  isFieldDifferent,
 } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ItemTextWithIcon from '../components/ItemTextWithIcon';
 import ButtonSelector from '../components/ButtonSelector';
 
 const DeviceList = props => {
+  const isFocusedRef = useRef();
   const selectedNetworkName = props.route.params ? props.route.params.networkName : null;
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const subscriberInformation = useSelector(selectSubscriberInformation);
@@ -33,14 +35,14 @@ const DeviceList = props => {
     [subscriberInformation, currentAccessPointId],
   );
   const [selectedWifi, setSelectedWifi] = useState(selectedNetworkName);
-  const [loadingWiredClients, setLoadingWiredClients] = useState(false);
-  const [wiredClients, setWiredClients] = useState([{ name: 'Mac Book Pro', macAddress: '43:e1:55:23:59:12' }]);
-  const [loadingWifiClients, setLoadingWifiClients] = useState(false);
-  const [wifiClients, setWifiClients] = useState([
-    { name: 'Lenovo Legion 5', macAddress: '11:ed:20:12:52:ee', ssid: 'Main Network' },
-    { name: 'Tablet Main', macAddress: 'string', ssid: 'Main Network' },
-    { name: 'Phone Guest', macAddress: 'string', ssid: 'Guest Network' },
-  ]);
+  const [loadingWiredClients, setLoadingWiredClients] = useState(true); // Only set on initial load
+  const [wiredClients, setWiredClients] = useState();
+  const [wiredClientsErrorReported, setWiredClientsErrorReported] = useState(false);
+  const wiredClientsErrorReportedRef = useRef();
+  const [loadingWifiClients, setLoadingWifiClients] = useState(true); // Only set on initial load
+  const [wifiClients, setWifiClients] = useState();
+  const [wifiClientsErrorReported, setWifiClientsErrorReported] = useState(false);
+  const wifiClientsErrorReportedRef = useRef();
   const filteredWifiClients = useMemo(() => {
     if (!wifiClients) {
       return null;
@@ -57,21 +59,41 @@ const DeviceList = props => {
       return null;
     }
 
-    let f = wifiClients.filter(client => client.ssid === wifiNetworkToFilter.name);
-    console.log(f);
-    return f;
+    return wifiClients.filter(client => client.ssid === wifiNetworkToFilter.name);
   }, [wifiClients, selectedWifi, wifiNetworks]);
+
+  // Need to use refs so that the async tasks can have proper access to these state changes
+  isFocusedRef.current = false;
+  wiredClientsErrorReportedRef.current = wiredClientsErrorReported;
+  wifiClientsErrorReportedRef.current = wifiClientsErrorReported;
 
   // Refresh the information only anytime there is a navigation change and this has come into focus
   // Need to be careful here as useFocusEffect is also called during re-render so it can result in
   // infinite loops.
   useFocusEffect(
     useCallback(() => {
-      getWifiClients(currentAccessPointId);
-      getWiredClients(currentAccessPointId);
+      isFocusedRef.current = true;
 
-      // Return function of what should be done on 'focus out'
-      return () => {};
+      return () => {
+        isFocusedRef.current = false;
+      };
+    }, []),
+  );
+
+  // Refresh the information only anytime there is a navigation change and this has come into focus
+  // Need to be careful here as useFocusEffect is also called during re-render so it can result in
+  // infinite loops.
+  useFocusEffect(
+    useCallback(() => {
+      async function updateClients() {
+        getWifiClients(currentAccessPointId);
+        getWiredClients(currentAccessPointId);
+      }
+      var intervalId = setSubscriberInformationInterval(subscriberInformation, updateClients);
+
+      return () => {
+        clearInterval(intervalId);
+      };
       // Disable the eslint warning, as we want to change only on navigation changes
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.navigation, currentAccessPointId]),
@@ -84,29 +106,35 @@ const DeviceList = props => {
 
     try {
       if (!accessPointIdToQuery) {
-        accessPointIdToQuery = accessPoint.id;
-      }
-
-      if (!wiredClients) {
-        // Only set the loading flag is there is currently no information. If there is already
-        // information consider this a refresh so no need to show the user.
-        setLoadingWiredClients(true);
+        if (accessPoint) {
+          accessPointIdToQuery = accessPoint.id;
+        } else {
+          // None, just return
+          return;
+        }
       }
 
       const response = await wiredClientsApi.getWiredClients(accessPointIdToQuery);
       if (!response || !response.data) {
-        console.log(response);
-        console.error('Invalid response from getWiredClients');
-        showGeneralError(strings.errors.titleDeviceList, strings.errors.invalidResponse);
-        return;
+        throw new Error(strings.errors.invalidResponse);
       }
 
-      console.log(response.data);
-      setWiredClients(response.data);
+      // Clear this flag on success
+      setWiredClientsErrorReported(false);
+
+      if (isFieldDifferent(wiredClients, response.data, 'modified')) {
+        console.log(response.data);
+        setWiredClients(response.data);
+      }
     } catch (error) {
-      handleApiError(strings.errors.titleDeviceList, error);
+      if (isFocusedRef.current && !wiredClientsErrorReportedRef.current) {
+        setWiredClientsErrorReported(true);
+        handleApiError(strings.errors.titleDeviceList, error);
+      }
     } finally {
-      setLoadingWiredClients(false);
+      if (isFocusedRef.current) {
+        setLoadingWiredClients(false);
+      }
     }
   };
 
@@ -117,29 +145,35 @@ const DeviceList = props => {
 
     try {
       if (!accessPointIdToQuery) {
-        accessPointIdToQuery = accessPoint.id;
-      }
-
-      if (!wifiClients) {
-        // Only set the loading flag is there is currently no information. If there is already
-        // information consider this a refresh so no need to show the user.
-        setLoadingWifiClients(true);
+        if (accessPoint) {
+          accessPointIdToQuery = accessPoint.id;
+        } else {
+          // None, just return
+          return;
+        }
       }
 
       const response = await wifiClientsApi.getWifiClients(accessPointIdToQuery);
       if (!response || !response.data) {
-        console.log(response);
-        console.error('Invalid response from getWifiClients');
-        showGeneralError(strings.errors.titleDeviceList, strings.errors.invalidResponse);
-        return;
+        throw new Error(strings.errors.invalidResponse);
       }
 
-      console.log(response.data);
-      setWifiClients(response.data);
+      // Clear this flag on success
+      setWifiClientsErrorReported(false);
+
+      if (isFieldDifferent(wifiClients, response.data, 'modified')) {
+        console.log(response.data);
+        setWifiClients(response.data);
+      }
     } catch (error) {
-      handleApiError(strings.errors.titleDeviceList, error);
+      if (isFocusedRef.current && !wifiClientsErrorReportedRef.current) {
+        setWifiClientsErrorReported(true);
+        handleApiError(strings.errors.titleDeviceList, error);
+      }
     } finally {
-      setLoadingWifiClients(false);
+      if (isFocusedRef.current) {
+        setLoadingWifiClients(false);
+      }
     }
   };
 
@@ -164,9 +198,6 @@ const DeviceList = props => {
   };
 
   const onSelectNetwork = network => {
-    console.log('onSelectNetwork', network);
-    // Update wifi clients
-    // getWifiClients(accessPoint);
     setSelectedWifi(network);
   };
 

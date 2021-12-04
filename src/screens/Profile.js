@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import {
@@ -11,7 +11,8 @@ import {
   paddingVerticalDefault,
 } from '../AppStyle';
 import { StyleSheet, SafeAreaView, View, ScrollView } from 'react-native';
-import { showGeneralMessage, completeSignOut } from '../Utils';
+import { useFocusEffect } from '@react-navigation/native';
+import { showGeneralMessage, completeSignOut, setSubscriberInformationInterval } from '../Utils';
 import { getCredentials, handleApiError } from '../api/apiHandler';
 import { MfaAuthInfoMethodEnum } from '../api/generated/owSecurityApi';
 import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
@@ -28,6 +29,22 @@ const Profile = props => {
   const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
   const [mfaValue, setMfaValue] = useState('off');
+
+  // Refresh the information only anytime there is a navigation change and this has come into focus
+  // Need to be careful here as useFocusEffect is also called during re-render so it can result in
+  // infinite loops.
+  useFocusEffect(
+    useCallback(() => {
+      var intervalId = setSubscriberInformationInterval(subscriberInformation, null);
+
+      // Return function of what should be done on 'focus out'
+      return () => {
+        clearInterval(intervalId);
+      };
+      // Disable the eslint warning, as we want to change only on navigation changes
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.navigation]),
+  );
 
   const onEditUserInformation = async val => {
     try {

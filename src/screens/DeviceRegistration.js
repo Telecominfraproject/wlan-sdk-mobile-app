@@ -1,28 +1,28 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { ActivityIndicator, SafeAreaView, ScrollView, Text, TextInput, View } from 'react-native';
 import { pageItemStyle, pageStyle, primaryColor } from '../AppStyle';
 import { strings } from '../localization/LocalizationStrings';
-import ButtonStyled from '../components/ButtonStyled';
 import { handleApiError } from '../api/apiHandler';
 import { getSubscriberInformation } from '../Utils';
+import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
+import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
+import ButtonStyled from '../components/ButtonStyled';
 
 export default function DeviceRegistration(props) {
-  const [loading, setLoading] = useState(false);
-  const [macAddress, setMacAddress] = useState('');
+  const [macAddress, setMacAddress] = useState();
+  const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
+  const subscriberInformation = useSelector(selectSubscriberInformation);
 
   const onSubmitPress = async () => {
     try {
-      setLoading(true);
-
       // Register a new access point
       // TODO: Need an API here
 
       // Process the rest of the sign in process
-      await getSubscriberInformation(true);
+      await getSubscriberInformation(subscriberInformation, true);
     } catch (error) {
       handleApiError(strings.errors.titleDeviceRegistration, error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -34,9 +34,9 @@ export default function DeviceRegistration(props) {
 
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
-      {loading && (
+      {subscriberInformationLoading && (
         <View style={pageItemStyle.loadingContainer}>
-          <ActivityIndicator size="large" color={primaryColor} animating={loading} />
+          <ActivityIndicator size="large" color={primaryColor} animating={subscriberInformationLoading} />
         </View>
       )}
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
@@ -57,7 +57,12 @@ export default function DeviceRegistration(props) {
             />
           </View>
           <View style={pageItemStyle.containerButton}>
-            <ButtonStyled title={strings.buttons.register} type="filled" onPress={onSubmitPress} disabled={loading} />
+            <ButtonStyled
+              title={strings.buttons.register}
+              type="filled"
+              onPress={onSubmitPress}
+              disabled={subscriberInformationLoading}
+            />
           </View>
         </View>
       </ScrollView>
