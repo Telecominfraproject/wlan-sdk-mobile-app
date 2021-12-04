@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import {
@@ -11,9 +11,8 @@ import {
   paddingVerticalDefault,
 } from '../AppStyle';
 import { StyleSheet, SafeAreaView, View, ScrollView } from 'react-native';
-import { showGeneralMessage, completeSignOut } from '../Utils';
-import { getCredentials, handleApiError } from '../api/apiHandler';
-import { MfaAuthInfoMethodEnum } from '../api/generated/owSecurityApi';
+import { showGeneralMessage, completeSignOut, logStringifyPretty, showGeneralError } from '../Utils';
+import { getCredentials, handleApiError, mfaApi } from '../api/apiHandler';
 import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
 import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
 import { displayValue, modifySubscriberInformation } from '../Utils';
@@ -23,11 +22,37 @@ import ItemTextWithIcon from '../components/ItemTextWithIcon';
 import ItemTextWithLabel from '../components/ItemTextWithLabel';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
+import { useFocusEffect } from '@react-navigation/native';
+import { SubMfaConfigTypeEnum } from '../api/generated/owUserPortalApi';
 
 const Profile = props => {
   const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
-  const [mfaValue, setMfaValue] = useState('off');
+  const [mfaValue, setMfaValue] = useState(SubMfaConfigTypeEnum.Disabled);
+
+  useFocusEffect(
+    useCallback(() => {
+      getMFA();
+      // Return function of what should be done on 'focus out'
+      return () => {};
+    }, []),
+  );
+
+  const getMFA = async () => {
+    try {
+      const response = await mfaApi.getMFS();
+      if (response && response.data) {
+        logStringifyPretty(response.data, response.request.responseURL);
+        // TODO setMfaValue response result
+      } else {
+        console.log(response);
+        console.error('Invalid response from getMFS');
+        showGeneralError(strings.errors.titleMfa, strings.errors.invalidResponse);
+      }
+    } catch (error) {
+      handleApiError(strings.errors.titleMfa, error);
+    }
+  };
 
   const onEditUserInformation = async val => {
     try {
@@ -51,41 +76,54 @@ const Profile = props => {
 
   const sendSmsCode = async phone => {
     try {
-      // TODO: Need updated API
-      //const response = await emailApi.sendATestSMS(true, undefined, undefined, { to: phone });
-      //logStringifyPretty(response.data);
-      showGeneralMessage(strings.messages.codeSent);
+      let mfaConfig = {
+        id: subscriberInformation.id,
+        type: mfaValue,
+        email: subscriberInformation.userId,
+        sms: phone,
+      };
+      // start validation
+      const response = await mfaApi.modifyMFS(true, undefined, undefined, mfaConfig);
+      if (response && response.data) {
+        logStringifyPretty(response.data, response.request.responseURL);
+        showGeneralMessage(response.data.Details);
 
-      // Navigate to the Phone Verification
-      props.navigation.navigate('PhoneVerification', { phone });
+        // Navigate to the Phone Verification
+        props.navigation.navigate('PhoneVerification', { mfaConfig });
+      } else {
+        console.log(response);
+        console.error('Invalid response from modifyMFS');
+        showGeneralError(strings.errors.titleMfa, strings.errors.invalidResponse);
+      }
     } catch (err) {
       handleApiError(strings.errors.titleSms, err);
     }
   };
 
-  const onMfaChange = async method => {
+  const onMfaChange = async type => {
     // TODO: Need updated API
-    const proprietaryInfo = {
-      mfa: {
-        enabled: false,
-        method: null,
-      },
-    };
+    try {
+      let mfaConfig = {
+        id: subscriberInformation.id,
+        type,
+        email: subscriberInformation.userId,
+        sms: subscriberInformation.phoneNumber,
+      };
+      logStringifyPretty(mfaConfig);
 
-    switch (method) {
-      case MfaAuthInfoMethodEnum.Sms:
-      case MfaAuthInfoMethodEnum.Email:
-      case MfaAuthInfoMethodEnum.Voice:
-        proprietaryInfo.mfa.enabled = true;
-        proprietaryInfo.mfa.method = method;
-        break;
+      const response = await mfaApi.modifyMFS(undefined, undefined, undefined, mfaConfig);
 
-      default:
-        proprietaryInfo.mfa.enabled = false;
-        proprietaryInfo.mfa.method = null;
+      if (response && response.data) {
+        logStringifyPretty(response.data, response.request.responseURL);
+      } else {
+        console.log(response);
+        console.error('Invalid response from getMFS');
+        showGeneralError(strings.errors.titleMfa, strings.errors.invalidResponse);
+        // TODO revert mfaValue to original
+      }
+    } catch (error) {
+      handleApiError(strings.errors.titleMfa, error);
     }
-
-    //onEditUserInformation({ userTypeProprietaryInfo: proprietaryInfo });
   };
 
   const onChangePasswordPress = async () => {
@@ -110,6 +148,7 @@ const Profile = props => {
     },
     accountSection: {
       marginTop: marginTopDefault,
+      zIndex: 1, // for mfa dropdown
     },
     item: {
       paddingVertical: paddingVerticalDefault,
@@ -171,9 +210,9 @@ const Profile = props => {
               value={mfaValue}
               setValue={setMfaValue}
               items={[
-                { label: strings.profile.off, value: 'off' },
-                { label: strings.profile.email, value: MfaAuthInfoMethodEnum.Email },
-                { label: strings.profile.sms, value: MfaAuthInfoMethodEnum.Sms },
+                { label: strings.profile.off, value: SubMfaConfigTypeEnum.Disabled },
+                { label: strings.profile.email, value: SubMfaConfigTypeEnum.Email },
+                { label: strings.profile.sms, value: SubMfaConfigTypeEnum.Sms },
               ]}
               onChangeValue={onMfaChange}
             />
