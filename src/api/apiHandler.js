@@ -13,6 +13,7 @@ import {
   SubscriberInformationApiFactory,
   WiFiClientsApiFactory,
   Configuration as UserPortalConfiguration,
+  MFAApiFactory,
 } from './generated/owUserPortalApi';
 import {
   hasInternetCredentials,
@@ -38,6 +39,7 @@ const userPortalConfig = new UserPortalConfiguration({ accessToken: getAccessTok
 var baseUserPortalUrl = null;
 var authenticationApi = null;
 var deviceCommandsApi = null;
+var mfaApi = null;
 var subscriberInformationApi = null;
 var wiredClientsApi = null;
 var wifiClientsApi = null;
@@ -54,6 +56,7 @@ function generateApis() {
   deviceCommandsApi = baseUserPortalUrl
     ? new DeviceCommandsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
     : null;
+  mfaApi = baseUserPortalUrl ? new MFAApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance) : null;
   subscriberInformationApi = baseUserPortalUrl
     ? new SubscriberInformationApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
     : null;
@@ -198,6 +201,10 @@ function handleApiError(title, error) {
     message = error.message;
   }
 
+  if (error.response && error.response.data && error.response.data.ErrorDescription) {
+    message = error.response.data.ErrorDescription;
+  }
+
   showGeneralError(title, message);
 }
 
@@ -242,6 +249,7 @@ function get403ErrorFromData(error) {
 export {
   authenticationApi,
   deviceCommandsApi,
+  mfaApi,
   subscriberInformationApi,
   wifiClientsApi,
   wiredClientsApi,

@@ -1,67 +1,71 @@
 import React, { useState } from 'react';
 import { ScrollView, View, SafeAreaView, TextInput, ActivityIndicator } from 'react-native';
-import { handleApiError } from '../api/apiHandler';
-import { logStringifyPretty, showGeneralError, showGeneralMessage } from '../Utils';
+import { handleApiError, mfaApi } from '../api/apiHandler';
+import { logStringifyPretty, modifySubscriberInformation, showGeneralError, showGeneralMessage } from '../Utils';
 import { strings } from '../localization/LocalizationStrings';
 import { pageItemStyle, pageStyle, primaryColor } from '../AppStyle';
 import ButtonStyled from '../components/ButtonStyled';
+import { useSelector } from 'react-redux';
+import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
 
 export default function PhoneVerification(props) {
-  const { phone, profile } = props.route.params;
+  const { mfaConfig } = props.route.params;
   const [loading, setLoading] = useState(false);
   const [code, setCode] = useState();
+  const subscriberInformation = useSelector(selectSubscriberInformation);
 
   const validatePhone = async () => {
     try {
       setLoading(true);
-      // TODO: Need updated API
-      //const response = await emailApi.sendATestSMS(undefined, true, code, { to: phone });
-      //logStringifyPretty(response.data);
-      //showGeneralMessage(response.data.Details);
-      setLoading(false);
-      updateUser();
+      // complete validation
+      const response = await mfaApi.modifyMFS(undefined, true, code, mfaConfig);
+      if (response && response.data) {
+        logStringifyPretty(response.data, response.request.responseURL);
+        updateSubscriber();
+      } else {
+        console.log(response);
+        console.error('Invalid response from modifyMFS');
+        showGeneralError(strings.errors.titleSms, strings.errors.invalidResponse);
+      }
     } catch (err) {
       showGeneralError(strings.errors.validationError, strings.errors.invalidCode);
+    } finally {
       setLoading(false);
     }
   };
 
-  const updateUser = async () => {
-    const mfa = profile.userTypeProprietaryInfo.mfa;
-    // let mobiles = profile.userTypeProprietaryInfo.mobiles;
-    let mobile = {
-      number: phone,
-      verified: true,
-      primary: true,
-    };
-    let userInfo = {
-      id: profile.Id,
-      userTypeProprietaryInfo: { mfa, mobiles: [mobile] },
-    };
-
+  const updateSubscriber = async () => {
     try {
       setLoading(true);
-
-      // TODO: Need updated API
-      //const response = await userManagementApi.updateUser(profile.Id, undefined, userInfo);
-      //logStringifyPretty(response.data);
-
+      const response = await modifySubscriberInformation({ ...subscriberInformation, phoneNumber: mfaConfig.sms });
       setLoading(false);
-      props.navigation.navigate('Profile');
+
+      if (response && response.data) {
+        logStringifyPretty(response.data, response.request.responseURL);
+        showGeneralMessage(response.data.Details);
+        props.navigation.navigate('Profile');
+      } else {
+        console.log(response);
+        console.error('Invalid response from modifySubscriberInformation');
+        showGeneralError(strings.errors.titleSms, strings.errors.invalidResponse);
+      }
     } catch (err) {
-      handleApiError('updateUser', err);
-      setLoading(false);
+      handleApiError(strings.errors.titleUpdate, err);
     }
   };
 
   const resendCode = async () => {
     try {
       setLoading(true);
-
-      // TODO: Need updated API
-      //const response = await emailApi.sendATestSMS(true, undefined, undefined, { to: phone });
-      //logStringifyPretty(response.data);
-      //showGeneralMessage(response.data.Details);
+      const response = await mfaApi.modifyMFS(true, undefined, undefined, mfaConfig);
+      if (response && response.data) {
+        logStringifyPretty(response.data, response.request.responseURL);
+        showGeneralMessage(response.data.Details);
+      } else {
+        console.log(response);
+        console.error('Invalid response from modifyMFS');
+        showGeneralError(strings.errors.titleSms, strings.errors.invalidResponse);
+      }
     } catch (err) {
       handleApiError('resendCode', err);
     } finally {
