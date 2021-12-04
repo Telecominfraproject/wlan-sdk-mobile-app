@@ -20,6 +20,9 @@ import { selectSubscriberInformationLoading } from '../store/SubscriberInformati
 import { getSubscriberAccessPointInfo, deviceCommandsApi, handleApiError } from '../api/apiHandler';
 import {
   displayValue,
+  displayValueBoolean,
+  displayValueInternetConnectionType,
+  displayValueDeviceModeType,
   displayEditableValue,
   showGeneralError,
   modifySubscriberDnsInformation,
@@ -48,6 +51,10 @@ const Network = props => {
   );
   const wifiNetworks = useMemo(
     () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'wifiNetworks'),
+    [subscriberInformation, currentAccessPointId],
+  );
+  const deviceMode = useMemo(
+    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'deviceMode'),
     [subscriberInformation, currentAccessPointId],
   );
   const dnsConfiguration = useMemo(
@@ -321,13 +328,7 @@ const Network = props => {
               onButtonPress={onUpdateFirmwarePress}
               buttonDisabled={!accessPoint}
             />
-            <ItemTextWithLabel
-              label={strings.network.productModel}
-              value={displayValue(accessPoint, 'model')}
-              buttonTitle={strings.buttons.blink}
-              onButtonPress={onBlinkLightsPress}
-              buttonDisabled={!accessPoint}
-            />
+            <ItemTextWithLabel label={strings.network.productModel} value={displayValue(accessPoint, 'model')} />
             <ItemTextWithLabel
               label={strings.network.serialNumber}
               value={displayValue(accessPoint, 'serial_number')}
@@ -344,7 +345,10 @@ const Network = props => {
               label={strings.network.ipAdddress}
               value={displayValue(internetConnection, 'ipAddress')}
             />
-            <ItemTextWithLabel label={strings.network.type} value={displayValue(internetConnection, 'type')} />
+            <ItemTextWithLabel
+              label={strings.network.type}
+              value={displayValueInternetConnectionType(internetConnection, 'type')}
+            />
             <ItemTextWithLabel
               label={strings.network.subnetMask}
               value={displayValue(internetConnection, 'subnetMask')}
@@ -360,6 +364,25 @@ const Network = props => {
             <ItemTextWithLabel
               label={strings.network.secondaryDns}
               value={displayValue(internetConnection, 'secondaryDns')}
+            />
+          </AccordionSection>
+
+          <AccordionSection
+            style={componentStyles.sectionAccordion}
+            title={strings.network.deviceMode}
+            disableAccordion={true}
+            isLoading={subscriberInformationLoading}>
+            <ItemTextWithLabel label={strings.network.type} value={displayValueDeviceModeType(deviceMode, 'type')} />
+            <ItemTextWithLabel label={strings.network.subnet} value={displayValue(deviceMode, 'subnet')} />
+            <ItemTextWithLabel label={strings.network.subnetMask} value={displayValue(deviceMode, 'subnetMask')} />
+            <ItemTextWithLabel label={strings.network.startIp} value={displayValue(deviceMode, 'startIP')} />
+            <ItemTextWithLabel label={strings.network.endIp} value={displayValue(deviceMode, 'endIP')} />
+            <ItemTextWithLabel
+              label={strings.network.enableLeds}
+              value={displayValueBoolean(deviceMode, 'enableLEDS')}
+              buttonTitle={strings.buttons.blink}
+              onButtonPress={onBlinkLightsPress}
+              buttonDisabled={!accessPoint}
             />
           </AccordionSection>
 

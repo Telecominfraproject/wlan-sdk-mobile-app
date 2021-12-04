@@ -31,6 +31,60 @@ export function displayValue(obj, key) {
   return strings.messages.empty;
 }
 
+export function displayValueBoolean(obj, key) {
+  if (obj && key) {
+    if (key in obj) {
+      return obj[key] ? strings.common.yes : strings.common.no;
+    }
+  }
+
+  return strings.messages.empty;
+}
+
+export function displayValueInternetConnectionType(obj, key) {
+  if (obj && key) {
+    if (key in obj) {
+      switch (obj[key]) {
+        case 'manual':
+          return strings.common.manual;
+
+        case 'pppoe':
+          return strings.common.pppoe;
+
+        case 'automatic':
+          return strings.common.automatic;
+
+        default:
+          return obj[key];
+      }
+    }
+  }
+
+  return strings.messages.empty;
+}
+
+export function displayValueDeviceModeType(obj, key) {
+  if (obj && key) {
+    if (key in obj) {
+      switch (obj[key]) {
+        case 'bridge':
+          return strings.common.bridge;
+
+        case 'manual':
+          return strings.common.manual;
+
+        case 'nat':
+          return strings.common.nat;
+
+        default:
+          return obj[key];
+      }
+    }
+  }
+
+  return strings.messages.empty;
+}
+
 export function displayEditableValue(obj, key) {
   if (obj && key) {
     if (key in obj) {
