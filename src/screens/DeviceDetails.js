@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import { marginTopDefault, paddingHorizontalDefault, borderRadiusDefault, pageStyle, whiteColor } from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, Text } from 'react-native';
+import { getSubscriberAccessPointInfo } from '../api/apiHandler';
 import { selectCurrentAccessPointId } from '../store/CurrentAccessPointIdSlice';
 import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
 import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
@@ -31,6 +32,10 @@ const DeviceDetails = props => {
     () => getDeviceFromClient(client, subscriberInformation, currentAccessPointId),
     [subscriberInformation, currentAccessPointId, client],
   );
+  const ipReservations = useMemo(
+    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'ipReservations'),
+    [subscriberInformation, currentAccessPointId],
+  );
 
   const getDeviceIcon = () => {
     return getClientIcon(client);
@@ -46,6 +51,20 @@ const DeviceDetails = props => {
 
   const getDeviceName = () => {
     return displayValue(client, 'name');
+  };
+
+  const isReserved = () => {
+    let clientMacAddress = client ? client.macAddress : null;
+
+    if (
+      clientMacAddress &&
+      ipReservations.ipReservations &&
+      ipReservations.reservations.find(reservation => reservation.macAddress === clientMacAddress)
+    ) {
+      return true;
+    }
+
+    return false;
   };
 
   const onPauseUnpauseButtonLabel = () => {
@@ -168,11 +187,19 @@ const DeviceDetails = props => {
               label={strings.deviceDetails.manufacturer}
               value={displayValue(device, 'manufacturer')}
             />
-            <ItemTextWithLabel
-              key="ipAddress"
-              label={strings.deviceDetails.ipAddress}
-              value={displayValue(device, 'ip')}
-            />
+            {isReserved() ? (
+              <ItemTextWithLabel
+                key="ipAddressReserved"
+                label={strings.deviceDetails.ipAddressReserved}
+                value={displayValue(device, 'ip')}
+              />
+            ) : (
+              <ItemTextWithLabel
+                key="ipAddress"
+                label={strings.deviceDetails.ipAddress}
+                value={displayValue(device, 'ip')}
+              />
+            )}
             <ItemTextWithLabel
               key="macAddress"
               label={strings.deviceDetails.macAddress}

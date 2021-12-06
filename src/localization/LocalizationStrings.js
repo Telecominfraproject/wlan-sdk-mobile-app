@@ -174,6 +174,7 @@ export const strings = new LocalizedStrings({
       description: 'Description',
       deviceDetails: 'Device Details',
       ipAddress: 'IP Address',
+      ipAddressReserved: 'IP Address (Reserved)',
       group: 'Group',
       macAddress: 'MAC Address',
       manufacturer: 'Manufacturer',
