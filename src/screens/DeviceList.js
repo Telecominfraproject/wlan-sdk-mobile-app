@@ -21,7 +21,8 @@ import ItemTextWithIcon from '../components/ItemTextWithIcon';
 import ButtonSelector from '../components/ButtonSelector';
 
 const DeviceList = props => {
-  const isFocusedRef = useRef();
+  // Need to use refs so that the async tasks can have proper access to these state changes
+  const isFocusedRef = useRef(false);
   const selectedNetworkName = props.route.params ? props.route.params.networkName : null;
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const subscriberInformation = useSelector(selectSubscriberInformation);
@@ -37,12 +38,10 @@ const DeviceList = props => {
   const [selectedWifi, setSelectedWifi] = useState(selectedNetworkName);
   const [loadingWiredClients, setLoadingWiredClients] = useState(true); // Only set on initial load
   const [wiredClients, setWiredClients] = useState();
-  const [wiredClientsErrorReported, setWiredClientsErrorReported] = useState(false);
-  const wiredClientsErrorReportedRef = useRef();
+  const wiredClientsErrorReportedRef = useRef(false);
   const [loadingWifiClients, setLoadingWifiClients] = useState(true); // Only set on initial load
   const [wifiClients, setWifiClients] = useState();
-  const [wifiClientsErrorReported, setWifiClientsErrorReported] = useState(false);
-  const wifiClientsErrorReportedRef = useRef();
+  const wifiClientsErrorReportedRef = useRef(false);
   const filteredWifiClients = useMemo(() => {
     if (!wifiClients) {
       return null;
@@ -61,11 +60,6 @@ const DeviceList = props => {
 
     return wifiClients.filter(client => client.ssid === wifiNetworkToFilter.name);
   }, [wifiClients, selectedWifi, wifiNetworks]);
-
-  // Need to use refs so that the async tasks can have proper access to these state changes
-  isFocusedRef.current = false;
-  wiredClientsErrorReportedRef.current = wiredClientsErrorReported;
-  wifiClientsErrorReportedRef.current = wifiClientsErrorReported;
 
   // Refresh the information only anytime there is a navigation change and this has come into focus
   // Need to be careful here as useFocusEffect is also called during re-render so it can result in
@@ -120,7 +114,7 @@ const DeviceList = props => {
       }
 
       // Clear this flag on success
-      setWiredClientsErrorReported(false);
+      wiredClientsErrorReportedRef.current = false;
 
       if (isFieldDifferent(wiredClients, response.data, 'modified')) {
         console.log(response.data);
@@ -128,7 +122,7 @@ const DeviceList = props => {
       }
     } catch (error) {
       if (isFocusedRef.current && !wiredClientsErrorReportedRef.current) {
-        setWiredClientsErrorReported(true);
+        wiredClientsErrorReportedRef.current = true;
         handleApiError(strings.errors.titleDeviceList, error);
       }
     } finally {
@@ -159,7 +153,7 @@ const DeviceList = props => {
       }
 
       // Clear this flag on success
-      setWifiClientsErrorReported(false);
+      wifiClientsErrorReportedRef.current = false;
 
       if (isFieldDifferent(wifiClients, response.data, 'modified')) {
         console.log(response.data);
@@ -167,7 +161,7 @@ const DeviceList = props => {
       }
     } catch (error) {
       if (isFocusedRef.current && !wifiClientsErrorReportedRef.current) {
-        setWifiClientsErrorReported(true);
+        wifiClientsErrorReportedRef.current = true;
         handleApiError(strings.errors.titleDeviceList, error);
       }
     } finally {
