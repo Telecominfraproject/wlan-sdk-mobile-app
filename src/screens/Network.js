@@ -33,6 +33,7 @@ import {
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
 import ImageWithBadge from '../components/ImageWithBadge';
+import ItemColumnsWithValues from '../components/ItemColumnsWithValues';
 import ItemTextWithIcon from '../components/ItemTextWithIcon';
 import ItemTextWithLabel from '../components/ItemTextWithLabel';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
@@ -61,6 +62,10 @@ const Network = props => {
   );
   const dnsConfiguration = useMemo(
     () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'dnsConfiguration'),
+    [subscriberInformation, currentAccessPointId],
+  );
+  const ipReservations = useMemo(
+    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'ipReservations'),
     [subscriberInformation, currentAccessPointId],
   );
 
@@ -349,7 +354,7 @@ const Network = props => {
             disableAccordion={true}
             isLoading={subscriberInformationLoading}>
             <ItemTextWithLabel
-              label={strings.network.ipAdddress}
+              label={strings.network.ipAddress}
               value={displayValue(internetConnection, 'ipAddress')}
             />
             <ItemTextWithLabel
@@ -427,6 +432,38 @@ const Network = props => {
               onEdit={onEditCustomDnsSettings}
             />
           </AccordionSection>
+
+          {ipReservations.reservations.length ? (
+            <AccordionSection
+              style={componentStyles.sectionAccordion}
+              title={strings.network.ipReservations}
+              disableAccordion={true}
+              isLoading={subscriberInformationLoading}>
+              <ItemColumnsWithValues
+                key="labels"
+                max="2"
+                type="label"
+                values={[strings.network.macAddress, strings.network.ipAddress, strings.network.nickName]}
+              />
+              {ipReservations.reservations.map(item => {
+                return (
+                  <ItemColumnsWithValues
+                    key={item.macAddress}
+                    max="2"
+                    type="value"
+                    values={[item.macAddress, item.ipAddress, item.nickname]}
+                  />
+                );
+              })}
+            </AccordionSection>
+          ) : (
+            <AccordionSection
+              style={componentStyles.sectionAccordion}
+              title={strings.network.ipReservations}
+              disableAccordion={true}
+              isLoading={subscriberInformationLoading}
+            />
+          )}
 
           {/* Buttons */}
           <View style={pageItemStyle.containerButtons}>
