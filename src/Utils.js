@@ -41,6 +41,36 @@ export function displayValueBoolean(obj, key) {
   return strings.messages.empty;
 }
 
+export function displayValueAccessPointType(obj, key) {
+  if (obj && key) {
+    if (key in obj) {
+      switch (obj[key]) {
+        default:
+          return obj[key].toUpperCase().replace('_', ' ');
+      }
+    }
+  }
+
+  return strings.messages.empty;
+}
+
+export function displayValueAccessPointDeviceRole(obj, key) {
+  if (obj && key) {
+    if (key in obj) {
+      switch (obj[key]) {
+        // TOD: Example extender - does not actually exist - just a placeholder. Need a list here.
+        case 'tplink_extender':
+          return strings.common.extender;
+
+        default:
+          return strings.common.router;
+      }
+    }
+  }
+
+  return strings.messages.empty;
+}
+
 export function displayValueInternetConnectionType(obj, key) {
   if (obj && key) {
     if (key in obj) {

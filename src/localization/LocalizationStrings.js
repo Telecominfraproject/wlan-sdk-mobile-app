@@ -83,10 +83,12 @@ export const strings = new LocalizedStrings({
     common: {
       automatic: 'Automatic',
       bridge: 'Bridge',
+      extender: 'Extender',
       manual: 'Manual',
       nat: 'NAT',
       no: 'No',
       pppoe: 'PPPoE',
+      router: 'Router',
       yes: 'Yes',
     },
     buttons: {
@@ -180,6 +182,7 @@ export const strings = new LocalizedStrings({
       type: 'Type',
     },
     network: {
+      accessPointRoleSettings: '{role} Settings',
       commandFactoryResetSuccess: 'Command to reset to factory defaults successfully sent.',
       commandFirmwareUpdateSuccess: 'Command to upgrade firmware successfully sent.',
       commandLightBlinkSuccess: 'Command to blink lights successfully sent.',
@@ -194,7 +197,7 @@ export const strings = new LocalizedStrings({
       endIp: 'End IP',
       enableLeds: 'LEDs Enabled',
       firmware: 'Firmware',
-      guestNetwork: 'Guest Network',
+      guestNetwork: '{0} (Guest Network)',
       internetSettings: 'Internet Settings',
       ipAdddress: 'IP Address',
       macAddress: 'MAC Address',
@@ -202,7 +205,6 @@ export const strings = new LocalizedStrings({
       networks: 'Networks',
       primaryDns: 'Primary DNS',
       productModel: 'Product Model',
-      routerSettings: 'Router Settings',
       secondaryDns: 'Secondary DNS',
       selectorCustom: 'Custom',
       selectorIsp: 'ISP',

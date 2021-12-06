@@ -21,6 +21,8 @@ import { getSubscriberAccessPointInfo, deviceCommandsApi, handleApiError } from 
 import {
   displayValue,
   displayValueBoolean,
+  displayValueAccessPointType,
+  displayValueAccessPointDeviceRole,
   displayValueInternetConnectionType,
   displayValueDeviceModeType,
   displayEditableValue,
@@ -106,7 +108,6 @@ const Network = props => {
   };
 
   const getAccessPointBadgeIcon = () => {
-    // TODO: Implement
     return require('../assets/wifi-solid.png');
   };
 
@@ -125,7 +126,7 @@ const Network = props => {
         return strings.formatString(strings.network.mainNetwork, item.name);
 
       case 'guest':
-        return strings.network.guestNetwork;
+        return strings.formatString(strings.network.guestNetwork, item.name);
 
       default:
         return item.name;
@@ -318,9 +319,15 @@ const Network = props => {
 
           <AccordionSection
             style={componentStyles.sectionAccordion}
-            title={strings.network.routerSettings}
+            title={strings.formatString(strings.network.accessPointRoleSettings, {
+              role: displayValueAccessPointDeviceRole(accessPoint, 'deviceType'),
+            })}
             disableAccordion={true}
             isLoading={false}>
+            <ItemTextWithLabel
+              label={strings.network.type}
+              value={displayValueAccessPointType(accessPoint, 'deviceType')}
+            />
             <ItemTextWithLabel
               label={strings.network.firmware}
               value={displayValue(accessPoint, 'firmware')}
