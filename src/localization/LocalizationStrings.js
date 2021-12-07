@@ -205,7 +205,7 @@ export const strings = new LocalizedStrings({
       macAddress: 'MAC Address',
       mainNetwork: '{0} (Main)',
       networks: 'Networks',
-      nickName: 'Nickname',
+      nickname: 'Nickname',
       primaryDns: 'Primary DNS',
       productModel: 'Product Model',
       secondaryDns: 'Secondary DNS',

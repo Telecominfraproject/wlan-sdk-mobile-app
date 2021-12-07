@@ -8,7 +8,6 @@ import {
   pageStyle,
   whiteColor,
   errorColor,
-  warnColor,
   okColor,
   pageItemStyle,
 } from '../AppStyle';
@@ -419,17 +418,17 @@ const Network = props => {
               isLoading={subscriberInformationLoading}>
               <ItemColumnsWithValues
                 key="labels"
-                max="2"
+                max="3"
                 type="label"
-                values={[strings.network.macAddress, strings.network.ipAddress, strings.network.nickName]}
+                values={[strings.network.ipAddress, strings.network.macAddress, strings.network.nickname]}
               />
               {ipReservations.reservations.map(item => {
                 return (
                   <ItemColumnsWithValues
                     key={item.macAddress}
-                    max="2"
+                    max="3"
                     type="value"
-                    values={[item.macAddress, item.ipAddress, item.nickname]}
+                    values={[item.ipAddress, item.macAddress, item.nickname]}
                   />
                 );
               })}
