@@ -81,7 +81,7 @@ export default function PhoneVerification(props) {
         </View>
       )}
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
-        <View style={pageStyle.container}>
+        <View style={pageStyle.containerPreLogin}>
           <TextInput
             style={pageItemStyle.inputText}
             placeholder={strings.placeholders.code}

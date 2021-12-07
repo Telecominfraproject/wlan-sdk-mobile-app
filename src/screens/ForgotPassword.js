@@ -64,7 +64,7 @@ const ForgotPassword = props => {
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
-        <View style={pageStyle.container}>
+        <View style={pageStyle.containerPreLogin}>
           <View style={pageItemStyle.container}>
             <Image style={pageItemStyle.headerImage} source={{ uri: brandInfo.iconUri }} />
           </View>

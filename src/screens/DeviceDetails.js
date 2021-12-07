@@ -128,7 +128,7 @@ const DeviceDetails = props => {
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
-        <View style={pageStyle.container}>
+        <View style={pageStyle.containerPostLogin}>
           <View style={componentStyles.sectionDevice}>
             <ImageWithBadge
               style={componentStyles.sectionDeviceIcon}

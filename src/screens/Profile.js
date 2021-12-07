@@ -188,7 +188,7 @@ const Profile = props => {
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
-        <View style={pageStyle.container}>
+        <View style={pageStyle.containerPostLogin}>
           <AccordionSection
             style={componentStyles.accountSection}
             title={strings.profile.accountInfo}

@@ -21,7 +21,7 @@ export const warnColor = '#fd9927';
 export const errorColor = '#e3202d';
 
 // Padding and Margins
-export const marginTopDefault = 10;
+export const marginTopDefault = 15;
 export const paddingHorizontalDefault = 10;
 export const paddingVerticalDefault = 5;
 export const heightCellDefault = 50;
@@ -50,7 +50,7 @@ export const pageStyle = StyleSheet.create({
     // scrolling will still happen on views that are larger than the screen height
     flexGrow: 1,
   },
-  container: {
+  containerPreLogin: {
     // Layout
     flexDirection: 'column',
     flexWrap: 'nowrap',
@@ -62,6 +62,23 @@ export const pageStyle = StyleSheet.create({
     paddingBottom: 35,
     paddingRight: 35,
     paddingLeft: 35,
+    backgroundColor: grayBackgroundcolor,
+    // Base Text
+    fontSize: 14,
+    color: blackColor,
+  },
+  containerPostLogin: {
+    // Layout
+    flexDirection: 'column',
+    flexWrap: 'nowrap',
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    // Content
+    paddingTop: 15,
+    paddingBottom: 30,
+    paddingRight: 20,
+    paddingLeft: 20,
     backgroundColor: grayBackgroundcolor,
     // Base Text
     fontSize: 14,
@@ -97,7 +114,7 @@ export const pageItemStyle = StyleSheet.create({
     alignItems: 'center',
   },
   containerButton: {
-    marginTop: 20,
+    marginTop: marginTopDefault,
     // Layout
     flexDirection: 'column',
     flexWrap: 'nowrap',
@@ -106,7 +123,7 @@ export const pageItemStyle = StyleSheet.create({
     width: '100%',
   },
   containerButtons: {
-    marginTop: 20,
+    marginTop: marginTopDefault,
     // Layout
     flexDirection: 'row',
     flexWrap: 'nowrap',

@@ -209,7 +209,7 @@ const DeviceList = props => {
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
-        <View style={pageStyle.container}>
+        <View style={pageStyle.containerPostLogin}>
           <AccordionSection
             style={componentStyles.sectionAccordion}
             title={strings.deviceList.wiredClients}

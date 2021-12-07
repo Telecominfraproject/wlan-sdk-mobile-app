@@ -40,7 +40,7 @@ export default function DeviceRegistration(props) {
         </View>
       )}
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
-        <View style={pageStyle.container}>
+        <View style={pageStyle.containerPostLogin}>
           <View style={pageItemStyle.container}>
             <Text style={pageItemStyle.description}>{strings.deviceRegistration.description}</Text>
           </View>

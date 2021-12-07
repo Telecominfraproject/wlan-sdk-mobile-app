@@ -100,7 +100,7 @@ export default function ResetPassword(props) {
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
-        <View style={pageStyle.container}>
+        <View style={pageStyle.containerPreLogin}>
           {forced ? (
             <>
               <View style={pageItemStyle.container}>

@@ -7,7 +7,7 @@ const TermsConditions = props => {
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
-        <View style={pageStyle.container}>
+        <View style={pageStyle.containerPreLogin}>
           <View style={pageItemStyle.container}>
             <Text style={pageItemStyle.title}>{strings.termsConditions.title}</Text>
           </View>

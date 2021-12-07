@@ -82,7 +82,7 @@ export default function MfaCode(props) {
         </View>
       )}
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
-        <View style={pageStyle.container}>
+        <View style={pageStyle.containerPreLogin}>
           <View style={pageItemStyle.container}>
             <TextInput
               style={pageItemStyle.inputText}

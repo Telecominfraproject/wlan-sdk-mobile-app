@@ -282,7 +282,7 @@ const Network = props => {
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
-        <View style={pageStyle.container}>
+        <View style={pageStyle.containerPostLogin}>
           <View style={componentStyles.sectionNetwork}>
             <ImageWithBadge
               style={componentStyles.sectionNetworkIcon}

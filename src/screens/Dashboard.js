@@ -187,7 +187,7 @@ const Dashboard = props => {
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
-        <View style={[pageStyle.container, componentStyles.container]}>
+        <View style={[pageStyle.containerPostLogin, componentStyles.container]}>
           {accessPoints.length > 1 ? (
             <View style={componentStyles.itemContainer}>
               <ButtonSelector
