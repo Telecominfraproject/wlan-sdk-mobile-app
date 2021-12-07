@@ -33,80 +33,7 @@ const Dashboard = props => {
     () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'wifiNetworks'),
     [subscriberInformation, currentAccessPointId],
   );
-  const accessPoints = useMemo(
-    () => subscriberInformation.accessPoints.list,
-    /*() => [
-      ...subscriberInformation.accessPoints.list,
-      {
-        address: {
-          addressLines: [],
-          buildingName: '',
-          city: '',
-          country: '',
-          mobiles: [],
-          phones: [],
-          postal: '',
-          state: '',
-        },
-        deviceMode: {
-          created: 1638467981,
-          enableLEDS: true,
-          endIP: '',
-          modified: 1638467981,
-          startIP: '',
-          subnet: '',
-          subnetMask: '',
-          type: 'nat',
-        },
-        dnsConfiguration: {
-          ISP: true,
-          custom: false,
-          primary: '',
-          secondary: '',
-        },
-        id: '123-321',
-        internetConnection: {
-          created: 1638467981,
-          defaultGateway: '',
-          ipAddress: '',
-          modified: 1638467981,
-          password: '',
-          primaryDns: '',
-          secondaryDns: '',
-          subNetMask: '',
-          type: 'automatic',
-          username: '',
-        },
-        ipReservations: {
-          created: 140188505938256,
-          id: '',
-          modified: 140187598507616,
-          reservations: [],
-        },
-        macAddress: '000000000000',
-        name: 'My Second Access Point',
-        subscriberDevices: {
-          created: 17,
-          devices: [],
-          modified: 140187598361808,
-        },
-        wifiNetworks: {
-          created: 1638467981,
-          modified: 1638467981,
-          wifiNetworks: [
-            {
-              bands: ['2G', '5G'],
-              encryption: 'wpa2',
-              name: 'HomeWifi',
-              password: 'OpenWifi',
-              type: 'main',
-            },
-          ],
-        },
-      },
-    ],*/
-    [subscriberInformation],
-  );
+  const accessPoints = useMemo(() => subscriberInformation.accessPoints.list, [subscriberInformation]);
 
   // Refresh the information only anytime there is a navigation change and this has come into focus
   // Need to be careful here as useFocusEffect is also called during re-render so it can result in
@@ -295,18 +222,22 @@ const Dashboard = props => {
               <Text style={componentStyles.iconLabel}>{strings.dashboard.internet}</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={componentStyles.touchableContainer} onPress={onGuestNetworkPress}>
-            <View style={componentStyles.itemContainer} onPress={onGuestNetworkPress}>
-              <ImageWithBadge
-                style={componentStyles.icon}
-                source={require('../assets/wifi-solid.png')}
-                badgeSource={getGuestNetworkBadge()}
-                badgeBackgroundColor={getGuestNetworkBadgeBackgroundColor()}
-                badgeTintColor={whiteColor}
-              />
-              <Text style={componentStyles.iconLabel}>{strings.dashboard.guestNetwork}</Text>
-            </View>
-          </TouchableOpacity>
+          {getGuestNetwork() ? (
+            <TouchableOpacity style={componentStyles.touchableContainer} onPress={onGuestNetworkPress}>
+              <View style={componentStyles.itemContainer} onPress={onGuestNetworkPress}>
+                <ImageWithBadge
+                  style={componentStyles.icon}
+                  source={require('../assets/wifi-solid.png')}
+                  badgeSource={getGuestNetworkBadge()}
+                  badgeBackgroundColor={getGuestNetworkBadgeBackgroundColor()}
+                  badgeTintColor={whiteColor}
+                />
+                <Text style={componentStyles.iconLabel}>{strings.dashboard.guestNetwork}</Text>
+              </View>
+            </TouchableOpacity>
+          ) : (
+            <></>
+          )}
           <TouchableOpacity style={componentStyles.touchableContainer} onPress={onConnectedDevicePress}>
             <View style={componentStyles.itemContainer} onPress={onConnectedDevicePress}>
               <ImageWithBadge
