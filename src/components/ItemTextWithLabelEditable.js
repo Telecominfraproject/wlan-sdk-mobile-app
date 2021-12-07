@@ -149,7 +149,7 @@ export default function ItemTextWithLabelEditable(props) {
       {loading ? (
         <ActivityIndicator style={componentStyles.activityIndicator} color={primaryColor} animating={loading} />
       ) : (
-        showEditIcon() && <Image style={componentStyles.editIcon} source={require('../assets/edit_black.png')} />
+        showEditIcon() && <Image style={componentStyles.editIcon} source={require('../assets/pen-solid.png')} />
       )}
     </Pressable>
   );

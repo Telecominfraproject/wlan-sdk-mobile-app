@@ -19,7 +19,7 @@ export default function NavigationHeader(navigation, route, brandInfo) {
       <View style={componentStyles.containerLeft}>
         {Platform.OS === 'ios' && canGoBack && (
           <Pressable onPress={() => navigation.goBack()}>
-            <Image style={componentStyles.button} source={require('../assets/chevron_left_white.png')} />
+            <Image style={componentStyles.button} source={require('../assets/chevron-left-white.png')} />
           </Pressable>
         )}
         {brandInfo && <Image style={componentStyles.logo} source={{ uri: brandInfo.iconUri }} />}

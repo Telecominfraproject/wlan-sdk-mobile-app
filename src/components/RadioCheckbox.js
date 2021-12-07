@@ -14,9 +14,7 @@ export default function RadioCheckbox(props) {
   }, [props.checked]);
 
   const getSource = () => {
-    return checked
-      ? require('../assets/radio_button_checked_black.png')
-      : require('../assets/radio_button_unchecked_black.png');
+    return checked ? require('../assets/radio-button-checked.png') : require('../assets/radio-button-unchecked.png');
   };
 
   const onPress = () => {
