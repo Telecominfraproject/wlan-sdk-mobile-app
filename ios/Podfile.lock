@@ -363,7 +363,7 @@ PODS:
     - React
   - RNKeychain (8.0.0):
     - React-Core
-  - RNScreens (3.10.0):
+  - RNScreens (3.10.1):
     - React-Core
     - React-RCTImage
   - Yoga (1.14.0)
@@ -574,7 +574,7 @@ SPEC CHECKSUMS:
   ReactNativeLocalization: 90a1181b7672309701dd7e5364fbf587319d41c6
   RNFS: 3ab21fa6c56d65566d1fb26c2228e2b6132e5e32
   RNKeychain: 4f63aada75ebafd26f4bc2c670199461eab85d94
-  RNScreens: 03ba504f8c98607ad1f07808e71040e0afa335ec
+  RNScreens: 522705f2e5c9d27efb17f24aceb2bf8335bc7b8e
   Yoga: 2b4a01651f42a32f82e6cef3830a3ba48088237f
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
