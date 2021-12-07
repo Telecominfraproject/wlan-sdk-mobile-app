@@ -127,6 +127,35 @@ export function displayEditableValue(obj, key) {
   return null;
 }
 
+export function getAccessPointIcon(accessPoint) {
+  if (accessPoint && accessPoint.deviceType) {
+    switch (accessPoint.deviceType) {
+      case 'edgecore_eap101':
+        return require('./assets/devices/edgecore_eap101.png');
+
+      case 'edgecore_eap102':
+        return require('./assets/devices/edgecore_eap102.png');
+
+      case 'edgecore_ecw5211':
+        return require('./assets/devices/edgecore_ecw5211.png');
+
+      case 'edgecore_ecw5410':
+        return require('./assets/devices/edgecore_ecw5410.png');
+
+      case 'edgecore_oap100':
+        return require('./assets/devices/edgecore_oap100.png');
+
+      case 'edgecore_spw2ac1200':
+        return require('./assets/devices/edgecore_spw2ac1200.png');
+
+      case 'edgecore_ssw2ac2600':
+        return require('./assets/devices/edgecore_ssw2ac2600.png');
+    }
+  }
+
+  return require('./assets/devices/hdd-solid.png');
+}
+
 export function getDeviceFromClient(client, subscriberInformation, accessPointId) {
   if (!client || !subscriberInformation) {
     return null;

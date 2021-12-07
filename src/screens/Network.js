@@ -26,6 +26,7 @@ import {
   displayValueInternetConnectionType,
   displayValueDeviceModeType,
   displayEditableValue,
+  getAccessPointIcon,
   showGeneralError,
   modifySubscriberDnsInformation,
   setSubscriberInformationInterval,
@@ -88,11 +89,6 @@ const Network = props => {
   useEffect(() => {
     setCustomDnsValue(dnsConfiguration.custom);
   }, [dnsConfiguration.custom]);
-
-  const getAccessPointIcon = () => {
-    // TODO: Implement
-    return require('../assets/wifi-solid.png');
-  };
 
   const getAccessPointStatusColor = () => {
     // TODO: Implement
@@ -286,11 +282,11 @@ const Network = props => {
           <View style={componentStyles.sectionNetwork}>
             <ImageWithBadge
               style={componentStyles.sectionNetworkIcon}
-              source={getAccessPointIcon()}
+              source={getAccessPointIcon(accessPoint)}
               badgeSource={getAccessPointBadgeIcon()}
               badgeTintColor={whiteColor}
               badgeBackgroundColor={getAccessPointStatusColor()}
-              badgeSize="small"
+              badgeSize="large"
             />
             <Text style={componentStyles.sectionNetworkText}>{displayValue(accessPoint, 'name')}</Text>
             <ButtonStyled

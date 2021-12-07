@@ -45,3 +45,17 @@ To run use the following
 To run either iOS or Android simulator builds:
 - yarn react-native ios-run
 - yarn react-native android-run
+
+## Developer Extra Functions
+To generate the APIs from OpenAPI yaml you can run the following commands:
+- yarn generate:userportal-apis
+- yarn generate:security-apis
+- yarn generate:gateway-apis
+- yarn generate:provisioning-apis
+
+Currently only userportal-apis is needed, the others are currently here for expected future enhancement. !! The userportal-apis generation is dependent on the file /api/open-api/userportal.yaml. This file will need to be updated manually to have any changes. The other generations use a direct link to an URL and they will automatically get the latest.
+
+To generate resized device images from raw files run the following:
+- yarn generate:assets
+
+Note that this requires ImageMagic to be installed. See https://github.com/kevva/resize-img-cli. The files in this directory should match exactly the names of the deviceTypes for the Access Points. As well, this will require a code change to associate the correct file with the correct image. 
