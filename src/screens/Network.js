@@ -90,26 +90,20 @@ const Network = props => {
     setCustomDnsValue(dnsConfiguration.custom);
   }, [dnsConfiguration.custom]);
 
-  const getAccessPointStatusColor = () => {
-    // TODO: Implement
-    // Random choice for the moment, until the actual device parsing is implemented
-    let choice = Math.floor(Math.random() * 10) % 3;
-
-    switch (choice) {
-      case 2:
-        return errorColor;
-
-      case 1:
-        return warnColor;
-
-      default:
-      case 0:
-        return okColor;
+  const getAccessPointBadgeIconColor = () => {
+    if (internetConnection && internetConnection.ipAddress) {
+      return okColor;
+    } else {
+      return errorColor;
     }
   };
 
   const getAccessPointBadgeIcon = () => {
-    return require('../assets/wifi-solid.png');
+    if (internetConnection && internetConnection.ipAddress) {
+      return require('../assets/check-solid.png');
+    } else {
+      return require('../assets/times-solid.png');
+    }
   };
 
   const onRefreshPress = async () => {
@@ -117,7 +111,6 @@ const Network = props => {
   };
 
   const getWifiNetworkLabel = item => {
-    // TODO: Ensure this is correct
     if (!item) {
       return strings.messages.empty;
     }
@@ -135,26 +128,15 @@ const Network = props => {
   };
 
   const getWifiNetworkIcon = item => {
-    // TODO: Implement
     return require('../assets/wifi-solid.png');
   };
 
   const getWifiNetworkIconTint = item => {
-    // TODO: Implement
-    // Random choice for the moment, until the actual device parsing is implemented
-    let choice = Math.floor(Math.random() * 10) % 3;
-
-    switch (choice) {
-      case 2:
-        return errorColor;
-
-      case 1:
-        return warnColor;
-
-      default:
-      case 0:
-        return okColor;
+    if (item && item.bands && item.bands.length) {
+      return okColor;
     }
+
+    return errorColor;
   };
 
   const onWifiNetworkPress = async item => {
@@ -210,7 +192,7 @@ const Network = props => {
 
   const sendAccessPointCommand = async (action, successMessage) => {
     try {
-      // TODO: Verify this is funcitoning and the function call is corrected!
+      // TODO: Verify this is functioning and the function call is corrected!
       const response = await deviceCommandsApi.performAnAction(action, { mac: accessPoint.macAddress, when: 0 });
 
       if (!response || !response.data) {
@@ -285,7 +267,7 @@ const Network = props => {
               source={getAccessPointIcon(accessPoint)}
               badgeSource={getAccessPointBadgeIcon()}
               badgeTintColor={whiteColor}
-              badgeBackgroundColor={getAccessPointStatusColor()}
+              badgeBackgroundColor={getAccessPointBadgeIconColor()}
               badgeSize="large"
             />
             <Text style={componentStyles.sectionNetworkText}>{displayValue(accessPoint, 'name')}</Text>

@@ -111,10 +111,10 @@ const Dashboard = props => {
   const getConnectedDeviceBadgeText = () => {
     if (subscriberInformationLoading) {
       return '-';
-    } else if (subscriberDevices && subscriberDevices.devices.length) {
+    } else if (subscriberDevices && subscriberDevices.devices) {
       return subscriberDevices.devices.length;
     } else {
-      return '0';
+      return '?';
     }
   };
 
