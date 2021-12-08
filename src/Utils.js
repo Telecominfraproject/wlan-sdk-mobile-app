@@ -455,3 +455,94 @@ export async function modifySubscriberDnsInformation(subscriberInformation, acce
 
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
+
+export async function deleteSubscriberIpReservation(subscriberInformation, accessPointId, ipReservationIpAddress) {
+  if (!ipReservationIpAddress) {
+    // Do nothing if the object is null or empty
+    return;
+  }
+
+  // accessPointId can be null - it just means use the first access point, so no check for this
+  if (!subscriberInformation) {
+    throw new Error(strings.errors.internal);
+  }
+
+  // Clone the current subscriber information
+  let updatedSubsciberInformation = JSON.parse(JSON.stringify(subscriberInformation));
+  let ipReservations = getSubscriberAccessPointInfo(updatedSubsciberInformation, accessPointId, 'ipReservations');
+  if (!ipReservations) {
+    throw new Error(strings.errors.internal);
+  }
+
+  let changed = false;
+  let updatedReservations = ipReservations.reservations.filter(function (item) {
+    if (item.ipAddress === ipReservationIpAddress) {
+      changed = true;
+      return false;
+    }
+
+    return true;
+  });
+
+  // If no change occured, just return. This is very important to avoid
+  // some types of setState infinite loops
+  if (!changed) {
+    return;
+  }
+
+  ipReservations.reservations = updatedReservations;
+  await modifySubscriberInformation(updatedSubsciberInformation);
+}
+
+export async function addSubscriberIpReservation(subscriberInformation, accessPointId, ipReservationJsonObject) {
+  if (!ipReservationJsonObject) {
+    // Do nothing if the object is null or empty
+    return;
+  }
+
+  // accessPointId can be null - it just means use the first access point, so no check for this
+  if (!subscriberInformation) {
+    throw new Error(strings.errors.internal);
+  }
+
+  // Clone the current subscriber information
+  let updatedSubsciberInformation = JSON.parse(JSON.stringify(subscriberInformation));
+  let ipReservations = getSubscriberAccessPointInfo(updatedSubsciberInformation, accessPointId, 'ipReservations');
+  if (!ipReservations) {
+    throw new Error(strings.errors.internal);
+  }
+
+  ipReservations.reservations.push(ipReservationJsonObject);
+  await modifySubscriberInformation(updatedSubsciberInformation);
+}
+
+export async function updateSubscriberIpReservation(
+  subscriberInformation,
+  accessPointId,
+  oldIpReservationIpAddress,
+  ipReservationJsonObject,
+) {
+  if (!oldIpReservationIpAddress || !ipReservationJsonObject) {
+    // Do nothing if the object is null or empty
+    return;
+  }
+
+  // accessPointId can be null - it just means use the first access point, so no check for this
+  if (!subscriberInformation) {
+    throw new Error(strings.errors.internal);
+  }
+
+  // Clone the current subscriber information
+  let updatedSubsciberInformation = JSON.parse(JSON.stringify(subscriberInformation));
+  let ipReservations = getSubscriberAccessPointInfo(updatedSubsciberInformation, accessPointId, 'ipReservations');
+  if (!ipReservations) {
+    throw new Error(strings.errors.internal);
+  }
+
+  let reservationToUpdate = ipReservations.reservations.find(item => item.ipAddress === oldIpReservationIpAddress);
+  for (const [key, value] of Object.entries(ipReservationJsonObject)) {
+    reservationToUpdate[key] = value;
+  }
+
+  await modifySubscriberInformation(updatedSubsciberInformation);
+}

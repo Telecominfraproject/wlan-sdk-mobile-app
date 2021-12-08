@@ -10,12 +10,16 @@ const AccordionSection = props => {
     return props.title;
   };
 
+  const hasAdd = () => {
+    return props.showAdd ? true : false;
+  };
+
   const hasAccordion = () => {
     return props.disableAccordion ? false : true;
   };
 
   const getChildrenCount = () => {
-    return React.Children.count(props.children);
+    return props.children ? React.Children.count(props.children) : 0;
   };
 
   const getCaretIcon = () => {
@@ -28,7 +32,7 @@ const AccordionSection = props => {
 
   const childrenWithSeparators = () => {
     if (!props.children) {
-      return props.children;
+      return null;
     }
 
     let children = props.children;
@@ -46,7 +50,11 @@ const AccordionSection = props => {
     return childrenFlattened.map((child, index) => {
       return [
         child,
-        index !== childrenFlattened.length - 1 && <View key={'seperator_' + index} style={componentStyles.separator} />,
+        index !== childrenFlattened.length - 1 ? (
+          <View key={'seperator_' + index} style={componentStyles.separator} />
+        ) : (
+          <View key={'seperator_' + index} />
+        ),
       ];
     });
   };
@@ -69,10 +77,10 @@ const AccordionSection = props => {
     headerContainer: {
       flexDirection: 'row',
       flexWrap: 'nowrap',
-      flex: 0,
-      width: '100%',
       alignItems: 'center',
       justifyContent: 'space-between',
+      flex: 0,
+      width: '100%',
       paddingHorizontal: paddingHorizontalDefault,
       height: 44,
       // Visual
@@ -83,13 +91,22 @@ const AccordionSection = props => {
     headerEndContainer: {
       flexDirection: 'row',
       flexWrap: 'nowrap',
-      flex: 0,
       alignItems: 'center',
+      flex: 0,
     },
     headerText: {
       fontSize: 12,
       textTransform: 'uppercase',
       color: whiteColor,
+    },
+    addIcon: {
+      width: 16,
+      height: 16,
+      resizeMode: 'contain',
+      tintColor: whiteColor,
+    },
+    spacer: {
+      width: paddingHorizontalDefault,
     },
     headerCaret: {
       height: 16,
@@ -134,14 +151,20 @@ const AccordionSection = props => {
       <TouchableOpacity style={componentStyles.touchableContainer} onPress={onHeaderPress} disabled={!hasAccordion()}>
         <View style={componentStyles.headerContainer}>
           <Text style={componentStyles.headerText}>{getTitle()}</Text>
-          {hasAccordion() ? (
-            <View style={componentStyles.headerEndContainer}>
-              <Text style={componentStyles.headerText}>{getChildrenCount()}</Text>
-              <Image style={componentStyles.headerCaret} source={getCaretIcon()} />
-            </View>
-          ) : (
-            <View />
-          )}
+          <View style={componentStyles.headerEndContainer}>
+            {hasAdd() && (
+              <TouchableOpacity onPress={props.onAddPress}>
+                <Image style={componentStyles.addIcon} source={require('../assets/plus-solid.png')} />
+              </TouchableOpacity>
+            )}
+            {hasAccordion() && hasAdd() && <View style={componentStyles.spacer} />}
+            {hasAccordion() && (
+              <>
+                <Text style={componentStyles.headerText}>{getChildrenCount()}</Text>
+                <Image style={componentStyles.headerCaret} source={getCaretIcon()} />
+              </>
+            )}
+          </View>
         </View>
       </TouchableOpacity>
       {showChildren ? (

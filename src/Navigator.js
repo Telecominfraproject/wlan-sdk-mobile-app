@@ -14,6 +14,7 @@ import BrandSelector from './screens/BrandSelector';
 import Dashboard from './screens/Dashboard';
 import DeviceDetails from './screens/DeviceDetails';
 import DeviceList from './screens/DeviceList';
+import IpReservation from './screens/IpReservation';
 import ForgotPassword from './screens/ForgotPassword';
 import NavigationHeader from './components/NavigationHeader';
 import Network from './screens/Network';
@@ -79,6 +80,11 @@ const Navigator = () => {
     return (
       <NetworkStack.Navigator screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
         <DeviceStack.Screen name="NetworkScreen" component={Network} options={{ title: strings.navigator.network }} />
+        <DeviceStack.Screen
+          name="IpReservation"
+          component={IpReservation}
+          options={{ title: strings.navigator.ipReservation }}
+        />
       </NetworkStack.Navigator>
     );
   }
