@@ -227,6 +227,9 @@ export const strings = new LocalizedStrings({
       subnetMask: 'Subnet Mask',
       type: 'Type',
     },
+    ipReservation: {
+      title: 'IP Reservation',
+    },
     profile: {
       accountInfo: 'Account Information',
       app: 'App',
