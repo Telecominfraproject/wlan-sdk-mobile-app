@@ -30,12 +30,21 @@ const Profile = props => {
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
   const [mfaValue, setMfaValue] = useState(SubMfaConfigTypeEnum.Disabled);
 
+  // Refresh the information only anytime there is a navigation change and this has come into focus
+  // Need to be careful here as useFocusEffect is also called during re-render so it can result in
+  // infinite loops.
   useFocusEffect(
     useCallback(() => {
+      var intervalId = setSubscriberInformationInterval(subscriberInformation, null);
       getMFA();
+
       // Return function of what should be done on 'focus out'
-      return () => {};
-    }, []),
+      return () => {
+        clearInterval(intervalId);
+      };
+      // Disable the eslint warning, as we want to change only on navigation changes
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.navigation]),
   );
 
   const getMFA = async () => {
@@ -53,22 +62,6 @@ const Profile = props => {
       handleApiError(strings.errors.titleMfa, error);
     }
   };
-
-  // Refresh the information only anytime there is a navigation change and this has come into focus
-  // Need to be careful here as useFocusEffect is also called during re-render so it can result in
-  // infinite loops.
-  useFocusEffect(
-    useCallback(() => {
-      var intervalId = setSubscriberInformationInterval(subscriberInformation, null);
-
-      // Return function of what should be done on 'focus out'
-      return () => {
-        clearInterval(intervalId);
-      };
-      // Disable the eslint warning, as we want to change only on navigation changes
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.navigation]),
-  );
 
   const onEditUserInformation = async val => {
     try {
@@ -196,6 +189,7 @@ const Profile = props => {
             disableAccordion={true}>
             <ItemTextWithLabelEditable
               key="firstName"
+              type="firstName"
               label={strings.profile.firstName}
               value={displayValue(subscriberInformation, 'firstName')}
               editKey="firstName"
@@ -203,6 +197,7 @@ const Profile = props => {
             />
             <ItemTextWithLabelEditable
               key="lastName"
+              type="lastName"
               label={strings.profile.lastName}
               value={displayValue(subscriberInformation, 'lastName')}
               editKey="lastName"
@@ -215,6 +210,7 @@ const Profile = props => {
             />
             <ItemTextWithLabelEditable
               key="phoneNumber"
+              type="phone"
               label={strings.profile.phone}
               value={displayValue(subscriberInformation, 'phoneNumber')}
               editKey="phoneNumber"
