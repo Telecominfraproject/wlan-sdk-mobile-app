@@ -455,3 +455,9 @@ export async function modifySubscriberDnsInformation(subscriberInformation, acce
 
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
+
+export function tabScrollToTop(ref) {
+  if (ref.current) {
+    ref.current.scrollTo({ y: 0, animated: true });
+  }
+}

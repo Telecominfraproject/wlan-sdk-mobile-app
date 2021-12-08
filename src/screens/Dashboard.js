@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, okColor, infoColor, errorColor, primaryColor, whiteColor, grayBackgroundcolor } from '../AppStyle';
@@ -8,11 +8,12 @@ import { selectCurrentAccessPointId, setCurrentAccessPointId } from '../store/Cu
 import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
 import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
 import { getSubscriberAccessPointInfo } from '../api/apiHandler';
-import { displayValue, setSubscriberInformationInterval } from '../Utils';
+import { displayValue, setSubscriberInformationInterval, tabScrollToTop } from '../Utils';
 import ImageWithBadge from '../components/ImageWithBadge';
 import ButtonSelector from '../components/ButtonSelector';
 
 const Dashboard = props => {
+  const scrollRef = useRef();
   const dispatch = useDispatch();
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const subscriberInformation = useSelector(selectSubscriberInformation);
@@ -40,6 +41,7 @@ const Dashboard = props => {
   // infinite loops.
   useFocusEffect(
     useCallback(() => {
+      tabScrollToTop(scrollRef);
       var intervalId = setSubscriberInformationInterval(subscriberInformation, null);
 
       // Return function of what should be done on 'focus out'
@@ -186,7 +188,7 @@ const Dashboard = props => {
 
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
-      <ScrollView contentContainerStyle={pageStyle.scrollView}>
+      <ScrollView ref={scrollRef} contentContainerStyle={pageStyle.scrollView}>
         <View style={[pageStyle.containerPostLogin, componentStyles.container]}>
           {accessPoints.length > 1 ? (
             <View style={componentStyles.itemContainer}>

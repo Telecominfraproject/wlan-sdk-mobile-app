@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import React, { useMemo, useState, useEffect, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import {
@@ -29,6 +29,7 @@ import {
   showGeneralError,
   modifySubscriberDnsInformation,
   setSubscriberInformationInterval,
+  tabScrollToTop,
 } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
@@ -40,6 +41,7 @@ import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
 
 const Network = props => {
+  const scrollRef = useRef();
   const [customDnsValue, setCustomDnsValue] = useState(dnsConfiguration ? dnsConfiguration.custom : false);
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const subscriberInformation = useSelector(selectSubscriberInformation);
@@ -74,6 +76,7 @@ const Network = props => {
   // infinite loops.
   useFocusEffect(
     useCallback(() => {
+      tabScrollToTop(scrollRef);
       var intervalId = setSubscriberInformationInterval(subscriberInformation, null);
 
       // Return function of what should be done on 'focus out'
@@ -258,7 +261,7 @@ const Network = props => {
 
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
-      <ScrollView contentContainerStyle={pageStyle.scrollView}>
+      <ScrollView ref={scrollRef} contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.containerPostLogin}>
           <View style={componentStyles.sectionNetwork}>
             <ImageWithBadge

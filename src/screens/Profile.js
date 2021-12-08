@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import {
@@ -12,7 +12,7 @@ import {
 } from '../AppStyle';
 import { StyleSheet, SafeAreaView, View, ScrollView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { showGeneralMessage, completeSignOut, logStringifyPretty, showGeneralError } from '../Utils';
+import { showGeneralMessage, completeSignOut, logStringifyPretty, showGeneralError, tabScrollToTop } from '../Utils';
 import { getCredentials, handleApiError, mfaApi } from '../api/apiHandler';
 import { SubMfaConfigTypeEnum } from '../api/generated/owUserPortalApi';
 import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
@@ -26,6 +26,7 @@ import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
 
 const Profile = props => {
+  const scrollRef = useRef();
   const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
   const [mfaValue, setMfaValue] = useState(SubMfaConfigTypeEnum.Disabled);
@@ -35,6 +36,7 @@ const Profile = props => {
   // infinite loops.
   useFocusEffect(
     useCallback(() => {
+      tabScrollToTop(scrollRef);
       var intervalId = setSubscriberInformationInterval(subscriberInformation, null);
       getMFA();
 
@@ -180,7 +182,7 @@ const Profile = props => {
 
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
-      <ScrollView contentContainerStyle={pageStyle.scrollView}>
+      <ScrollView ref={scrollRef} contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.containerPostLogin}>
           <AccordionSection
             style={componentStyles.accountSection}
