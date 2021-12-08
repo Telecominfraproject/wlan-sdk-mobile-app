@@ -18,6 +18,7 @@ export const strings = new LocalizedStrings({
       internal: 'Internal error.',
       invalidCode: 'Invalid code.',
       invalidEmail: 'Invalid email provided.',
+      invalidField: 'This field is invalid - please revert or continue editing.',
       invalidResponse: 'Invalid response recieved from the server.',
       noAccessPoint: 'No access point found.',
       noCredentials: 'No credentials provided.',

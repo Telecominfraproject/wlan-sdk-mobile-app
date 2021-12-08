@@ -1,11 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { heightCellDefault, paddingHorizontalDefault, primaryColor, placeholderColor } from '../AppStyle';
+import {
+  heightCellDefault,
+  paddingHorizontalDefault,
+  primaryColor,
+  placeholderColor,
+  blackColor,
+  errorColor,
+} from '../AppStyle';
+import { strings } from '../localization/LocalizationStrings';
 
 export default function ItemTextWithLabelEditable(props) {
+  const { type = '' } = props;
   const [loading, setLoading] = useState(false);
   const [edit, setEdit] = useState(false);
   const [value, setValue] = useState(props.value);
+  const [valid, setValid] = useState(true);
   const inputRef = useRef();
 
   // If the props.value changes, make sure to update the internal value
@@ -21,7 +31,95 @@ export default function ItemTextWithLabelEditable(props) {
     }
   }, [edit]);
 
+  const onChangeText = text => {
+    // only validate if there's a type
+    if (type) {
+      // validate the input for only accepted characters
+      if (validateInput(text)) {
+        setValue(text);
+        // validate the new value
+        setValid(validateText(text));
+      } else {
+        // validate the unchanged value
+        setValid(validateText(value));
+      }
+    } else {
+      setValue(text);
+    }
+  };
+
+  // acceptable inputs
+  const validateInput = text => {
+    if (!text) {
+      return true;
+    }
+    let re = '';
+    switch (type) {
+      case 'email':
+        re = /^[\S]*$/;
+        break;
+      case 'ipv4':
+        re = /^[.0-9]*$/;
+        break;
+      case 'ipv6':
+      case 'ipv4|ipv6':
+        re = /^[.:0-9a-fA-F]*$/;
+        break;
+      case 'mac':
+        re = /^[0-9a-f]*$/;
+        break;
+      case 'phone':
+        re = /^[0-9 ()+-]*$/;
+        break;
+      case 'firstName':
+      case 'lastName':
+        re = /^[a-zA-Z-]+$/;
+        break;
+    }
+    return type ? re.test(text) : true;
+  };
+
+  // validates whole text
+  const validateText = text => {
+    if (!text) {
+      return true;
+    }
+    let re = '';
+    switch (type) {
+      case 'email':
+        re = /\S+@\S+\.\S+/;
+        break;
+      case 'ipv4':
+        re = /^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}$/;
+        break;
+      case 'ipv6':
+        re =
+          /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/;
+        break;
+      case 'ipv4|ipv6':
+        re =
+          /(^\s*((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))\s*$)|(^\s*((?=.{1,255}$)[0-9A-Za-z](?:(?:[0-9A-Za-z]|\b-){0,61}[0-9A-Za-z])?(?:\.[0-9A-Za-z](?:(?:[0-9A-Za-z]|\b-){0,61}[0-9A-Za-z])?)*\.?)\s*$)|(^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$)/;
+        break;
+      case 'mac':
+        re = /^([0-9a-f]{1,2}){5}([0-9a-f]{1,2})$/;
+        break;
+      case 'phone':
+        re = /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/;
+        break;
+      case 'firstName':
+      case 'lastName':
+        re = /^[a-zA-Z-]{2,}$/;
+        break;
+    }
+    return type ? re.test(text) : true;
+  };
+
   const onEditComplete = async () => {
+    if (value && !valid) {
+      Alert.alert(strings.errors.validationError, strings.errors.invalidField, undefined, { cancelable: true });
+      return;
+    }
+
     if (value === props.value) {
       // If the new value is the same as the initial value, just return.
       setEdit(false);
@@ -97,6 +195,7 @@ export default function ItemTextWithLabelEditable(props) {
       borderTopWidth: 0,
       borderRightWidth: 0,
       borderBottomWidth: 0,
+      color: valid ? blackColor : errorColor,
     },
     textLabel: {
       fontSize: 11,
@@ -134,9 +233,10 @@ export default function ItemTextWithLabelEditable(props) {
             value={value}
             editable={!loading}
             placeholder={props.placeholder}
-            onChangeText={text => setValue(text)}
+            onChangeText={onChangeText}
             onEndEditing={onEditComplete}
             onSubmitEditing={onEditComplete}
+            maxLength={type === 'firstName' || type === 'lastName' ? 26 : null}
           />
         ) : (
           <Text

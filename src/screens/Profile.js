@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import {
@@ -12,7 +12,7 @@ import {
 } from '../AppStyle';
 import { StyleSheet, SafeAreaView, View, ScrollView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { showGeneralMessage, completeSignOut, logStringifyPretty, showGeneralError } from '../Utils';
+import { showGeneralMessage, completeSignOut, logStringifyPretty, showGeneralError, tabScrollToTop } from '../Utils';
 import { getCredentials, handleApiError, mfaApi } from '../api/apiHandler';
 import { SubMfaConfigTypeEnum } from '../api/generated/owUserPortalApi';
 import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
@@ -26,16 +26,27 @@ import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
 
 const Profile = props => {
+  const scrollRef = useRef();
   const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
   const [mfaValue, setMfaValue] = useState(SubMfaConfigTypeEnum.Disabled);
 
+  // Refresh the information only anytime there is a navigation change and this has come into focus
+  // Need to be careful here as useFocusEffect is also called during re-render so it can result in
+  // infinite loops.
   useFocusEffect(
     useCallback(() => {
+      tabScrollToTop(scrollRef);
+      var intervalId = setSubscriberInformationInterval(subscriberInformation, null);
       getMFA();
+
       // Return function of what should be done on 'focus out'
-      return () => {};
-    }, []),
+      return () => {
+        clearInterval(intervalId);
+      };
+      // Disable the eslint warning, as we want to change only on navigation changes
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.navigation]),
   );
 
   const getMFA = async () => {
@@ -53,22 +64,6 @@ const Profile = props => {
       handleApiError(strings.errors.titleMfa, error);
     }
   };
-
-  // Refresh the information only anytime there is a navigation change and this has come into focus
-  // Need to be careful here as useFocusEffect is also called during re-render so it can result in
-  // infinite loops.
-  useFocusEffect(
-    useCallback(() => {
-      var intervalId = setSubscriberInformationInterval(subscriberInformation, null);
-
-      // Return function of what should be done on 'focus out'
-      return () => {
-        clearInterval(intervalId);
-      };
-      // Disable the eslint warning, as we want to change only on navigation changes
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.navigation]),
-  );
 
   const onEditUserInformation = async val => {
     try {
@@ -187,7 +182,7 @@ const Profile = props => {
 
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
-      <ScrollView contentContainerStyle={pageStyle.scrollView}>
+      <ScrollView ref={scrollRef} contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.containerPostLogin}>
           <AccordionSection
             style={componentStyles.accountSection}
@@ -196,6 +191,7 @@ const Profile = props => {
             disableAccordion={true}>
             <ItemTextWithLabelEditable
               key="firstName"
+              type="firstName"
               label={strings.profile.firstName}
               value={displayValue(subscriberInformation, 'firstName')}
               editKey="firstName"
@@ -203,6 +199,7 @@ const Profile = props => {
             />
             <ItemTextWithLabelEditable
               key="lastName"
+              type="lastName"
               label={strings.profile.lastName}
               value={displayValue(subscriberInformation, 'lastName')}
               editKey="lastName"
@@ -215,6 +212,7 @@ const Profile = props => {
             />
             <ItemTextWithLabelEditable
               key="phoneNumber"
+              type="phone"
               label={strings.profile.phone}
               value={displayValue(subscriberInformation, 'phoneNumber')}
               editKey="phoneNumber"

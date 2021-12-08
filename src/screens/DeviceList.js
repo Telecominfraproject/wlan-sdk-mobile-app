@@ -15,6 +15,7 @@ import {
   getClientConnectionStatusColor,
   setSubscriberInformationInterval,
   isFieldDifferent,
+  tabScrollToTop,
 } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ItemTextWithIcon from '../components/ItemTextWithIcon';
@@ -22,6 +23,7 @@ import ButtonSelector from '../components/ButtonSelector';
 
 const DeviceList = props => {
   // Need to use refs so that the async tasks can have proper access to these state changes
+  const scrollRef = useRef();
   const isFocusedRef = useRef(false);
   const selectedNetworkName = props.route.params ? props.route.params.networkName : null;
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
@@ -79,6 +81,8 @@ const DeviceList = props => {
   // infinite loops.
   useFocusEffect(
     useCallback(() => {
+      tabScrollToTop(scrollRef);
+
       async function updateClients() {
         getWifiClients(currentAccessPointId);
         getWiredClients(currentAccessPointId);
@@ -208,7 +212,7 @@ const DeviceList = props => {
 
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
-      <ScrollView contentContainerStyle={pageStyle.scrollView}>
+      <ScrollView ref={scrollRef} contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.containerPostLogin}>
           <AccordionSection
             style={componentStyles.sectionAccordion}
