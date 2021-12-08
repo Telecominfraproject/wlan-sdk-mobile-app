@@ -456,6 +456,7 @@ const Network = props => {
             <ItemTextWithLabelEditable
               key="primary"
               label={strings.network.primaryDns}
+              type="ipv4"
               value={displayEditableValue(dnsConfiguration, 'primary')}
               placeholder={strings.messages.empty}
               editKey="primary"
@@ -464,6 +465,7 @@ const Network = props => {
             <ItemTextWithLabelEditable
               key="secondary"
               label={strings.network.secondaryDns}
+              type="ipv4"
               value={displayEditableValue(dnsConfiguration, 'secondary')}
               placeholder={strings.messages.empty}
               editKey="secondary"
