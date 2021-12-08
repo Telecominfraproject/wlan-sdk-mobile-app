@@ -547,8 +547,8 @@ export async function updateSubscriberIpReservation(
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
 
-export function tabScrollToTop(ref) {
-  if (ref.current) {
-    ref.current.scrollTo({ y: 0, animated: true });
+export function scrollViewToTop(scrollViewRef) {
+  if (scrollViewRef && scrollViewRef.current) {
+    scrollViewRef.current.scrollTo({ y: 0, animated: true });
   }
 }

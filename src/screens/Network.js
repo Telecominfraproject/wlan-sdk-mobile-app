@@ -30,7 +30,7 @@ import {
   modifySubscriberDnsInformation,
   setSubscriberInformationInterval,
   deleteSubscriberIpReservation,
-  tabScrollToTop,
+  scrollViewToTop,
 } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
@@ -77,7 +77,7 @@ const Network = props => {
   // infinite loops.
   useFocusEffect(
     useCallback(() => {
-      tabScrollToTop(scrollRef);
+      scrollViewToTop(scrollRef);
       var intervalId = setSubscriberInformationInterval(subscriberInformation, null);
 
       // Return function of what should be done on 'focus out'

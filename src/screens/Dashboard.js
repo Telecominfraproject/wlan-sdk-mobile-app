@@ -8,7 +8,7 @@ import { selectCurrentAccessPointId, setCurrentAccessPointId } from '../store/Cu
 import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
 import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
 import { getSubscriberAccessPointInfo } from '../api/apiHandler';
-import { displayValue, setSubscriberInformationInterval, tabScrollToTop } from '../Utils';
+import { displayValue, setSubscriberInformationInterval, scrollViewToTop } from '../Utils';
 import ImageWithBadge from '../components/ImageWithBadge';
 import ButtonSelector from '../components/ButtonSelector';
 
@@ -41,7 +41,7 @@ const Dashboard = props => {
   // infinite loops.
   useFocusEffect(
     useCallback(() => {
-      tabScrollToTop(scrollRef);
+      scrollViewToTop(scrollRef);
       var intervalId = setSubscriberInformationInterval(subscriberInformation, null);
 
       // Return function of what should be done on 'focus out'

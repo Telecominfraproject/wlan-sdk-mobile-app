@@ -12,7 +12,7 @@ import {
 } from '../AppStyle';
 import { StyleSheet, SafeAreaView, View, ScrollView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { showGeneralMessage, completeSignOut, logStringifyPretty, showGeneralError, tabScrollToTop } from '../Utils';
+import { showGeneralMessage, completeSignOut, logStringifyPretty, showGeneralError, scrollViewToTop } from '../Utils';
 import { getCredentials, handleApiError, mfaApi } from '../api/apiHandler';
 import { SubMfaConfigTypeEnum } from '../api/generated/owUserPortalApi';
 import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
@@ -20,7 +20,6 @@ import { selectSubscriberInformationLoading } from '../store/SubscriberInformati
 import { displayValue, modifySubscriberInformation, setSubscriberInformationInterval } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
-import ItemTextWithIcon from '../components/ItemTextWithIcon';
 import ItemTextWithLabel from '../components/ItemTextWithLabel';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
@@ -36,7 +35,7 @@ const Profile = props => {
   // infinite loops.
   useFocusEffect(
     useCallback(() => {
-      tabScrollToTop(scrollRef);
+      scrollViewToTop(scrollRef);
       var intervalId = setSubscriberInformationInterval(subscriberInformation, null);
       getMFA();
 
@@ -148,10 +147,6 @@ const Profile = props => {
     completeSignOut(props.navigation);
   };
 
-  // Notifications
-  const onNotificationPrefPress = () => {};
-  const onNotificationHistoryPress = () => {};
-
   // Styles
   const componentStyles = StyleSheet.create({
     section: {
@@ -247,20 +242,6 @@ const Profile = props => {
               onPress={onSignOutPress}
             />
           </View>
-
-          {/* Notifications */}
-          <AccordionSection
-            style={componentStyles.section}
-            title={strings.profile.notifications}
-            isLoading={false}
-            disableAccordion={true}>
-            <ItemTextWithIcon key="prefs" label={strings.profile.notificationPref} onPress={onNotificationPrefPress} />
-            <ItemTextWithIcon
-              key="history"
-              label={strings.profile.notificationHistory}
-              onPress={onNotificationHistoryPress}
-            />
-          </AccordionSection>
 
           {/* App */}
           <AccordionSection

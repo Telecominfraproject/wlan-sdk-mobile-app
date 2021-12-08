@@ -15,7 +15,7 @@ import {
   getClientConnectionStatusColor,
   setSubscriberInformationInterval,
   isFieldDifferent,
-  tabScrollToTop,
+  scrollViewToTop,
 } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ItemTextWithIcon from '../components/ItemTextWithIcon';
@@ -81,7 +81,7 @@ const DeviceList = props => {
   // infinite loops.
   useFocusEffect(
     useCallback(() => {
-      tabScrollToTop(scrollRef);
+      scrollViewToTop(scrollRef);
 
       async function updateClients() {
         getWifiClients(currentAccessPointId);
