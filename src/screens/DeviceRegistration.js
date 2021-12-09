@@ -4,7 +4,7 @@ import { ActivityIndicator, SafeAreaView, ScrollView, Text, TextInput, View } fr
 import { pageItemStyle, pageStyle, primaryColor } from '../AppStyle';
 import { strings } from '../localization/LocalizationStrings';
 import { handleApiError } from '../api/apiHandler';
-import { getSubscriberInformation } from '../Utils';
+import { modifySubscriberInformation } from '../Utils';
 import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
 import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
 import ButtonStyled from '../components/ButtonStyled';
@@ -17,10 +17,11 @@ export default function DeviceRegistration(props) {
   const onSubmitPress = async () => {
     try {
       // Register a new access point
-      // TODO: Need an API here
+      let accessPoint = subscriberInformation.accessPoints.list[0];
+      let newAccessPoint = { ...accessPoint, macAddress };
+      let updatedSubsciberInformation = { ...subscriberInformation, accessPoints: { list: [newAccessPoint] } };
 
-      // Process the rest of the sign in process
-      await getSubscriberInformation(subscriberInformation, true);
+      await modifySubscriberInformation(updatedSubsciberInformation);
     } catch (error) {
       handleApiError(strings.errors.titleDeviceRegistration, error);
     }

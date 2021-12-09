@@ -123,7 +123,7 @@ const Navigator = () => {
           tabBarActiveTintColor: primaryColor,
           headerShown: false,
         }}>
-        {accessPoint ? (
+        {accessPoint && accessPoint.macAddress !== '000000000000' ? (
           <>
             <Tab.Screen
               name="Dashboard"
