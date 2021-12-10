@@ -418,6 +418,12 @@ export interface HomeDeviceMode {
    * @type {boolean}
    * @memberof HomeDeviceMode
    */
+  ipV6Support?: boolean;
+  /**
+   *
+   * @type {boolean}
+   * @memberof HomeDeviceMode
+   */
   enableLEDS?: boolean;
   /**
    *
@@ -427,10 +433,10 @@ export interface HomeDeviceMode {
   subnet?: string;
   /**
    *
-   * @type {string}
+   * @type {number}
    * @memberof HomeDeviceMode
    */
-  subnetMask?: string;
+  subnetMask?: number;
   /**
    *
    * @type {string}
@@ -443,6 +449,30 @@ export interface HomeDeviceMode {
    * @memberof HomeDeviceMode
    */
   endIP?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof HomeDeviceMode
+   */
+  subnetV6?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof HomeDeviceMode
+   */
+  subnetMaskV6?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof HomeDeviceMode
+   */
+  startIPV6?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof HomeDeviceMode
+   */
+  endIPV6?: string;
   /**
    *
    * @type {number}
@@ -550,6 +580,12 @@ export interface InternetConnection {
   type?: InternetConnectionTypeEnum;
   /**
    *
+   * @type {boolean}
+   * @memberof InternetConnection
+   */
+  ipV6Support?: boolean;
+  /**
+   *
    * @type {string}
    * @memberof InternetConnection
    */
@@ -590,6 +626,36 @@ export interface InternetConnection {
    * @memberof InternetConnection
    */
   secondaryDns?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof InternetConnection
+   */
+  ipAddressV6?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof InternetConnection
+   */
+  subnetMaskV6?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof InternetConnection
+   */
+  defaultGatewayV6?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof InternetConnection
+   */
+  primaryDnsV6?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof InternetConnection
+   */
+  secondaryDnsV6?: string;
   /**
    *
    * @type {number}
