@@ -99,11 +99,12 @@ export const strings = new LocalizedStrings({
     },
     buttons: {
       add: 'Add',
+      addNetwork: 'Add Network',
       blink: 'Blink',
       cancel: 'Cancel',
       changeBrand: 'Change Brand',
       changePassword: 'Change Password',
-      delete: 'Delete',
+      deleteNetwork: 'Delete Network',
       forgotPassword: 'Forgot Password',
       factoryReset: 'Factory Reset',
       ok: 'Ok',

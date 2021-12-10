@@ -236,7 +236,7 @@ const Network = props => {
     }
   };
 
-  const onDeletePress = async => {
+  const onDeleteNetworkPress = async => {
     Alert.alert(strings.network.confirmTitle, strings.network.confirmDeleteNetwork, [
       {
         text: strings.buttons.ok,
@@ -250,7 +250,7 @@ const Network = props => {
     ]);
   };
 
-  const onAddPress = async => {
+  const onAddNetworkPress = async => {
     props.navigation.navigate('NetworkAdd');
   };
 
@@ -392,15 +392,15 @@ const Network = props => {
           <View style={pageItemStyle.containerButtons}>
             <ButtonStyled
               style={componentStyles.buttonLeft}
-              title={strings.buttons.delete}
+              title={strings.buttons.deleteNetwork}
               type="outline"
-              onPress={onDeletePress}
+              onPress={onDeleteNetworkPress}
             />
             <ButtonStyled
               style={componentStyles.buttonRight}
-              title={strings.buttons.add}
+              title={strings.buttons.addNetwork}
               type="filled"
-              onPress={onAddPress}
+              onPress={onAddNetworkPress}
             />
           </View>
         </View>
