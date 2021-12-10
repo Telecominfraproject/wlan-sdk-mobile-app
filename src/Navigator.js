@@ -13,7 +13,7 @@ import { getSubscriberAccessPointInfo } from './api/apiHandler';
 import BrandSelector from './screens/BrandSelector';
 import Dashboard from './screens/Dashboard';
 import DeviceDetails from './screens/DeviceDetails';
-import DeviceList from './screens/DeviceList';
+import Network from './screens/Network';
 import IpReservationAddEdit from './screens/IpReservationAddEdit';
 import ForgotPassword from './screens/ForgotPassword';
 import NavigationHeader from './components/NavigationHeader';
@@ -41,7 +41,7 @@ const Navigator = () => {
   const DeviceRegistrationStack = createNativeStackNavigator();
   const DashboardStack = createNativeStackNavigator();
   const ConfigurationStack = createNativeStackNavigator();
-  const DeviceStack = createNativeStackNavigator();
+  const NetworkStack = createNativeStackNavigator();
   const ProfileStack = createNativeStackNavigator();
 
   // Styles
@@ -56,7 +56,7 @@ const Navigator = () => {
     return (
       <DashboardStack.Navigator
         screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
-        <DeviceStack.Screen
+        <NetworkStack.Screen
           name="DashboardScreen"
           component={Dashboard}
           options={{ title: strings.navigator.dashboard }}
@@ -69,7 +69,7 @@ const Navigator = () => {
     return (
       <DeviceRegistrationStack.Navigator
         screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
-        <DeviceStack.Screen
+        <DeviceRegistrationStack.Screen
           name="DeviceRegistration"
           component={DeviceRegistration}
           options={{ title: strings.navigator.deviceRegistration }}
@@ -82,12 +82,12 @@ const Navigator = () => {
     return (
       <ConfigurationStack.Navigator
         screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
-        <DeviceStack.Screen
+        <ConfigurationStack.Screen
           name="ConfigurationScreen"
           component={Configuration}
           options={{ title: strings.navigator.configuration }}
         />
-        <DeviceStack.Screen
+        <ConfigurationStack.Screen
           name="IpReservationAddEdit"
           component={IpReservationAddEdit}
           options={{ title: strings.navigator.ipReservation }}
@@ -96,24 +96,24 @@ const Navigator = () => {
     );
   }
 
-  function DeviceNavigator() {
+  function NetworkNavigator() {
     return (
-      <DeviceStack.Navigator screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
-        <DeviceStack.Screen name="DeviceList" component={DeviceList} options={{ title: strings.navigator.devices }} />
-        <DeviceStack.Screen
+      <NetworkStack.Navigator screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
+        <NetworkStack.Screen name="NetworkScreen" component={Network} options={{ title: strings.navigator.network }} />
+        <NetworkStack.Screen
           name="DeviceDetails"
           component={DeviceDetails}
           options={{ title: strings.navigator.details }}
         />
-      </DeviceStack.Navigator>
+      </NetworkStack.Navigator>
     );
   }
 
   function ProfileNavigator() {
     return (
       <ProfileStack.Navigator screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
-        <DeviceStack.Screen name="ProfileScreen" component={Profile} options={{ title: strings.navigator.profile }} />
-        <DeviceStack.Screen
+        <ProfileStack.Screen name="ProfileScreen" component={Profile} options={{ title: strings.navigator.profile }} />
+        <ProfileStack.Screen
           name="ChangePassword"
           component={ChangePassword}
           options={{ title: strings.navigator.changePassword }}
@@ -159,13 +159,13 @@ const Navigator = () => {
               }}
             />
             <Tab.Screen
-              name="Devices"
-              component={DeviceNavigator}
+              name="Network"
+              component={NetworkNavigator}
               listeners={({ navigation, route }) => ({ tabPress: event => handleTabPress(event, navigation, route) })}
               options={{
                 tabBarIcon: ({ color }) => (
                   <Image
-                    source={require('./assets/laptop-solid.png')}
+                    source={require('./assets/wifi-solid.png')}
                     style={[componentStyles.tabIcon, { tintColor: color }]}
                   />
                 ),

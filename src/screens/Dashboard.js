@@ -131,7 +131,7 @@ const Dashboard = props => {
   };
 
   const onConnectedDevicePress = async () => {
-    props.navigation.navigate('Devices');
+    props.navigation.navigate('Network');
   };
 
   const onGuestNetworkPress = async () => {

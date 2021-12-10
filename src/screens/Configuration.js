@@ -142,8 +142,8 @@ const Network = props => {
   };
 
   const onWifiNetworkPress = async item => {
-    // Send the network name parameter to the DeviceList
-    props.navigation.navigate('Devices', { screen: 'DeviceList', params: { networkName: item.name } });
+    // Send the network name parameter to the Network
+    props.navigation.navigate('Network', { screen: 'NetworkScreen', params: { networkName: item.name } });
   };
 
   const onUpdateFirmwarePress = async () => {

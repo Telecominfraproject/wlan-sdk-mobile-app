@@ -25,7 +25,7 @@ import AccordionSection from '../components/AccordionSection';
 import ItemTextWithIcon from '../components/ItemTextWithIcon';
 import ButtonSelector from '../components/ButtonSelector';
 
-const DeviceList = props => {
+const Network = props => {
   // Need to use refs so that the async tasks can have proper access to these state changes
   const scrollRef = useRef();
   const isFocusedRef = useRef(false);
@@ -125,7 +125,7 @@ const DeviceList = props => {
     } catch (error) {
       if (isFocusedRef.current && !wiredClientsErrorReportedRef.current) {
         wiredClientsErrorReportedRef.current = true;
-        handleApiError(strings.errors.titleDeviceList, error);
+        handleApiError(strings.errors.titleNetwork, error);
       }
     } finally {
       if (isFocusedRef.current) {
@@ -164,7 +164,7 @@ const DeviceList = props => {
     } catch (error) {
       if (isFocusedRef.current && !wifiClientsErrorReportedRef.current) {
         wifiClientsErrorReportedRef.current = true;
-        handleApiError(strings.errors.titleDeviceList, error);
+        handleApiError(strings.errors.titleNetwork, error);
       }
     } finally {
       if (isFocusedRef.current) {
@@ -265,4 +265,4 @@ const DeviceList = props => {
   );
 };
 
-export default DeviceList;
+export default Network;
