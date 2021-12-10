@@ -123,11 +123,11 @@ const Dashboard = props => {
     }
   };
   const onNetworkPress = async () => {
-    props.navigation.navigate('Network');
+    props.navigation.navigate('Configuration');
   };
 
   const onInternetPress = async () => {
-    props.navigation.navigate('Network');
+    props.navigation.navigate('Configuration');
   };
 
   const onConnectedDevicePress = async () => {
@@ -135,7 +135,7 @@ const Dashboard = props => {
   };
 
   const onGuestNetworkPress = async () => {
-    props.navigation.navigate('Network');
+    props.navigation.navigate('Configuration');
   };
 
   const componentStyles = StyleSheet.create({
