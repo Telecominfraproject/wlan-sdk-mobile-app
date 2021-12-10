@@ -13,6 +13,7 @@ import BrandSelector from './screens/BrandSelector';
 import Dashboard from './screens/Dashboard';
 import DeviceDetails from './screens/DeviceDetails';
 import Network from './screens/Network';
+import NetworkAdd from './screens/NetworkAdd';
 import IpReservationAddEdit from './screens/IpReservationAddEdit';
 import ForgotPassword from './screens/ForgotPassword';
 import NavigationHeader from './components/NavigationHeader';
@@ -95,6 +96,11 @@ const Navigator = () => {
     return (
       <NetworkStack.Navigator screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
         <NetworkStack.Screen name="NetworkScreen" component={Network} options={{ title: strings.navigator.network }} />
+        <NetworkStack.Screen
+          name="NetworkAdd"
+          component={NetworkAdd}
+          options={{ title: strings.navigator.networkAdd }}
+        />
         <NetworkStack.Screen
           name="DeviceDetails"
           component={DeviceDetails}

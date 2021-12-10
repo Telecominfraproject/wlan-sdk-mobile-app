@@ -1,8 +1,8 @@
 import React, { useCallback, useState, useMemo, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
-import { marginTopDefault, pageStyle, whiteColor } from '../AppStyle';
-import { StyleSheet, View, ScrollView, SafeAreaView } from 'react-native';
+import { marginTopDefault, pageStyle, pageItemStyle, whiteColor, paddingHorizontalDefault } from '../AppStyle';
+import { StyleSheet, View, ScrollView, SafeAreaView, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import {
   selectCurrentAccessPointId,
@@ -22,8 +22,10 @@ import {
   getClientConnectionStatusColor,
   setSubscriberInformationInterval,
   modifyNetworkSettings,
+  deleteNetwork,
 } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
+import ButtonStyled from '../components/ButtonStyled';
 import ItemTextWithIcon from '../components/ItemTextWithIcon';
 import ButtonSelector from '../components/ButtonSelector';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
@@ -234,6 +236,24 @@ const Network = props => {
     }
   };
 
+  const onDeletePress = async => {
+    Alert.alert(strings.network.confirmTitle, strings.network.confirmDeleteNetwork, [
+      {
+        text: strings.buttons.ok,
+        onPress: async () => {
+          deleteNetwork(subscriberInformation, currentAccessPointId, selectedWifiNetworkIndex);
+        },
+      },
+      {
+        text: strings.buttons.cancel,
+      },
+    ]);
+  };
+
+  const onAddPress = async => {
+    props.navigation.navigate('NetworkAdd');
+  };
+
   // Styles
   const componentStyles = StyleSheet.create({
     sectionAccordion: {
@@ -242,6 +262,14 @@ const Network = props => {
     networkSwitcher: {
       marginTop: marginTopDefault,
       height: 30,
+    },
+    buttonLeft: {
+      marginRight: paddingHorizontalDefault / 2,
+      flex: 1,
+    },
+    buttonRight: {
+      marginLeft: paddingHorizontalDefault / 2,
+      flex: 1,
     },
   });
 
@@ -360,6 +388,21 @@ const Network = props => {
                 );
               })}
           </AccordionSection>
+
+          <View style={pageItemStyle.containerButtons}>
+            <ButtonStyled
+              style={componentStyles.buttonLeft}
+              title={strings.buttons.delete}
+              type="outline"
+              onPress={onDeletePress}
+            />
+            <ButtonStyled
+              style={componentStyles.buttonRight}
+              title={strings.buttons.add}
+              type="filled"
+              onPress={onAddPress}
+            />
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>

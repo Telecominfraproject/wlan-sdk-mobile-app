@@ -676,7 +676,7 @@ export async function deleteNetwork(subscriberInformation, accessPointId, networ
     throw new Error(strings.errors.internal);
   }
 
-  delete wifiNetworks[networkIndex];
+  wifiNetworks.wifiNetworks.splice(networkIndex, 1);
 
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
