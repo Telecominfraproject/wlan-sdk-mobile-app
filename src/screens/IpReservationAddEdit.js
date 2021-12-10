@@ -1,17 +1,23 @@
-import React, { useState } from 'react';
-import { StyleSheet, ScrollView, View, SafeAreaView, ActivityIndicator } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { StyleSheet, ScrollView, View, SafeAreaView } from 'react-native';
 import { strings } from '../localization/LocalizationStrings';
-import { pageItemStyle, pageStyle, primaryColor, paddingHorizontalDefault, marginTopDefault } from '../AppStyle';
+import { pageItemStyle, pageStyle, paddingHorizontalDefault, marginTopDefault } from '../AppStyle';
 import { useSelector } from 'react-redux';
 import { selectCurrentAccessPointId, selectSubscriberInformation } from '../store/SubscriberInformationSlice';
 import { handleApiError } from '../api/apiHandler';
 import { updateSubscriberIpReservation, addSubscriberIpReservation } from '../Utils';
-import ButtonStyled from '../components/ButtonStyled';
 import AccordionSection from '../components/AccordionSection';
+import ButtonStyled from '../components/ButtonStyled';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 
 export default function IpReservationAddEdit(props) {
   const reservation = props.route.params ? props.route.params.reservation : null;
+  // The sectionZIndex is used to help with any embedded picker/dropdown. Start with a high enough
+  // value that it'll cover each section. The sections further up the view should have higher numbers
+  var sectionZIndex = 20;
+  // Need to use refs so that the async tasks can have proper access to these state changes
+  const scrollRef = useRef();
+  // States
   const [loading, setLoading] = useState(false);
   const [ipAddress, setIpAddress] = useState(reservation ? reservation.ipAddress : null);
   const [macAddress, setMacAddress] = useState(reservation ? reservation.macAddress : null);
@@ -73,18 +79,13 @@ export default function IpReservationAddEdit(props) {
 
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
-      {loading && (
-        <View style={pageItemStyle.loadingContainer}>
-          <ActivityIndicator size="large" color={primaryColor} animating={loading} />
-        </View>
-      )}
-      <ScrollView contentContainerStyle={pageStyle.scrollView}>
+      <ScrollView ref={scrollRef} contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.containerPostLogin}>
           <AccordionSection
-            style={componentStyles.sectionAccordion}
+            style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
             title={strings.ipReservation.title}
             disableAccordion={true}
-            isLoading={false}>
+            isLoading={loading}>
             <ItemTextWithLabelEditable
               key="ipAddress"
               label={strings.placeholders.ipAddress}
