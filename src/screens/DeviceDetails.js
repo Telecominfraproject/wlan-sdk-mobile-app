@@ -3,10 +3,12 @@ import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import { marginTopDefault, paddingHorizontalDefault, borderRadiusDefault, pageStyle, whiteColor } from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, Text } from 'react-native';
-import { getSubscriberAccessPointInfo } from '../api/apiHandler';
-import { selectCurrentAccessPointId } from '../store/CurrentAccessPointIdSlice';
-import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
-import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
+import {
+  selectCurrentAccessPointId,
+  selectSubscriberInformationLoading,
+  selectSubscriberInformation,
+  selectIpReservations,
+} from '../store/SubscriberInformationSlice';
 import {
   showGeneralError,
   displayValue,
@@ -32,10 +34,7 @@ const DeviceDetails = props => {
     () => getDeviceFromClient(client, subscriberInformation, currentAccessPointId),
     [subscriberInformation, currentAccessPointId, client],
   );
-  const ipReservations = useMemo(
-    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'ipReservations'),
-    [subscriberInformation, currentAccessPointId],
-  );
+  const ipReservations = useSelector(selectIpReservations);
 
   const getDeviceIcon = () => {
     return getClientIcon(client);

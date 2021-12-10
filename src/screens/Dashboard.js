@@ -1,13 +1,19 @@
-import React, { useMemo, useCallback, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, okColor, infoColor, errorColor, primaryColor, whiteColor, grayBackgroundcolor } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { selectCurrentAccessPointId, setCurrentAccessPointId } from '../store/CurrentAccessPointIdSlice';
-import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
-import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
-import { getSubscriberAccessPointInfo } from '../api/apiHandler';
+import {
+  setSelectedAccessPointId,
+  selectSubscriberInformationLoading,
+  selectSubscriberInformation,
+  selectAccessPoints,
+  selectAccessPoint,
+  selectInternetConnection,
+  selectSubscriberDevices,
+  selectWifiNetworks,
+} from '../store/SubscriberInformationSlice';
 import { displayValue, setSubscriberInformationInterval, scrollViewToTop } from '../Utils';
 import ImageWithBadge from '../components/ImageWithBadge';
 import ButtonSelector from '../components/ButtonSelector';
@@ -15,26 +21,13 @@ import ButtonSelector from '../components/ButtonSelector';
 const Dashboard = props => {
   const scrollRef = useRef();
   const dispatch = useDispatch();
-  const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
-  const accessPoint = useMemo(
-    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, null),
-    [subscriberInformation, currentAccessPointId],
-  );
-  const internetConnection = useMemo(
-    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'internetConnection'),
-    [subscriberInformation, currentAccessPointId],
-  );
-  const subscriberDevices = useMemo(
-    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'subscriberDevices'),
-    [subscriberInformation, currentAccessPointId],
-  );
-  const wifiNetworks = useMemo(
-    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'wifiNetworks'),
-    [subscriberInformation, currentAccessPointId],
-  );
-  const accessPoints = useMemo(() => subscriberInformation.accessPoints.list, [subscriberInformation]);
+  const accessPoints = useSelector(selectAccessPoints);
+  const accessPoint = useSelector(selectAccessPoint);
+  const internetConnection = useSelector(selectInternetConnection);
+  const subscriberDevices = useSelector(selectSubscriberDevices);
+  const wifiNetworks = useSelector(selectWifiNetworks);
 
   // Refresh the information only anytime there is a navigation change and this has come into focus
   // Need to be careful here as useFocusEffect is also called during re-render so it can result in
@@ -126,7 +119,7 @@ const Dashboard = props => {
 
   const onAccessPointSelect = selected => {
     if (selected) {
-      dispatch(setCurrentAccessPointId(selected.id));
+      dispatch(setSelectedAccessPointId(selected.id));
     }
   };
   const onNetworkPress = async () => {

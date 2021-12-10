@@ -4,10 +4,14 @@ import { strings } from '../localization/LocalizationStrings';
 import { marginTopDefault, pageStyle, whiteColor } from '../AppStyle';
 import { StyleSheet, View, ScrollView, SafeAreaView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { selectCurrentAccessPointId } from '../store/CurrentAccessPointIdSlice';
-import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
-import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
-import { wifiClientsApi, wiredClientsApi, getSubscriberAccessPointInfo, handleApiError } from '../api/apiHandler';
+import {
+  selectCurrentAccessPointId,
+  selectSubscriberInformationLoading,
+  selectSubscriberInformation,
+  selectAccessPoint,
+  selectWifiNetworks,
+} from '../store/SubscriberInformationSlice';
+import { wifiClientsApi, wiredClientsApi, handleApiError } from '../api/apiHandler';
 import {
   displayValue,
   getClientIcon,
@@ -29,14 +33,8 @@ const DeviceList = props => {
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
-  const accessPoint = useMemo(
-    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, null),
-    [subscriberInformation, currentAccessPointId],
-  );
-  const wifiNetworks = useMemo(
-    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'wifiNetworks'),
-    [subscriberInformation, currentAccessPointId],
-  );
+  const accessPoint = useSelector(selectAccessPoint);
+  const wifiNetworks = useSelector(selectWifiNetworks);
   const [selectedWifi, setSelectedWifi] = useState(selectedNetworkName);
   const [loadingWiredClients, setLoadingWiredClients] = useState(true); // Only set on initial load
   const [wiredClients, setWiredClients] = useState();

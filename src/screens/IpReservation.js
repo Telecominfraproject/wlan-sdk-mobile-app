@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { StyleSheet, ScrollView, View, SafeAreaView, ActivityIndicator } from 'react-native';
-import { updateSubscriberIpReservation, addSubscriberIpReservation } from '../Utils';
 import { strings } from '../localization/LocalizationStrings';
 import { pageItemStyle, pageStyle, primaryColor, paddingHorizontalDefault, marginTopDefault } from '../AppStyle';
 import { useSelector } from 'react-redux';
-import { selectCurrentAccessPointId } from '../store/CurrentAccessPointIdSlice';
-import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
+import { selectCurrentAccessPointId, selectSubscriberInformation } from '../store/SubscriberInformationSlice';
 import { handleApiError } from '../api/apiHandler';
+import { updateSubscriberIpReservation, addSubscriberIpReservation } from '../Utils';
 import ButtonStyled from '../components/ButtonStyled';
 import AccordionSection from '../components/AccordionSection';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
@@ -14,10 +13,10 @@ import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 export default function IpReservation(props) {
   const reservation = props.route.params ? props.route.params.reservation : null;
   const [loading, setLoading] = useState(false);
-  const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const [ipAddress, setIpAddress] = useState(reservation ? reservation.ipAddress : null);
   const [macAddress, setMacAddress] = useState(reservation ? reservation.macAddress : null);
   const [nickname, setNickname] = useState(reservation ? reservation.nickname : null);
+  const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const subscriberInformation = useSelector(selectSubscriberInformation);
 
   const onCancelPress = () => {

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import {
@@ -13,10 +13,18 @@ import {
 } from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, Text, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { selectCurrentAccessPointId } from '../store/CurrentAccessPointIdSlice';
-import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
-import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
-import { getSubscriberAccessPointInfo, deviceCommandsApi, handleApiError } from '../api/apiHandler';
+import {
+  selectCurrentAccessPointId,
+  selectSubscriberInformationLoading,
+  selectSubscriberInformation,
+  selectAccessPoint,
+  selectInternetConnection,
+  selectWifiNetworks,
+  selectDeviceMode,
+  selectDnsConfiguration,
+  selectIpReservations,
+} from '../store/SubscriberInformationSlice';
+import { deviceCommandsApi, handleApiError } from '../api/apiHandler';
 import {
   displayValue,
   displayValueBoolean,
@@ -47,32 +55,12 @@ const Network = props => {
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
-  const accessPoint = useMemo(
-    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, null),
-    [subscriberInformation, currentAccessPointId],
-  );
-  const internetConnection = useMemo(
-    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'internetConnection'),
-    [subscriberInformation, currentAccessPointId],
-  );
-  const wifiNetworks = useMemo(
-    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'wifiNetworks'),
-    [subscriberInformation, currentAccessPointId],
-  );
-  const deviceMode = useMemo(
-    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'deviceMode'),
-    [subscriberInformation, currentAccessPointId],
-  );
-  const dnsConfiguration = useMemo(
-    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'dnsConfiguration'),
-    [subscriberInformation, currentAccessPointId],
-  );
-  const ipReservations = useMemo(
-    () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'ipReservations'),
-    [subscriberInformation, currentAccessPointId],
-  );
-  //  const [deviceModeType, setDeviceModeType] = useState(deviceMode ? deviceMode.type : false);
-  // const [customDnsValue, setCustomDnsValue] = useState(dnsConfiguration ? dnsConfiguration.custom : false);
+  const accessPoint = useSelector(selectAccessPoint);
+  const internetConnection = useSelector(selectInternetConnection);
+  const wifiNetworks = useSelector(selectWifiNetworks);
+  const deviceMode = useSelector(selectDeviceMode);
+  const dnsConfiguration = useSelector(selectDnsConfiguration);
+  const ipReservations = useSelector(selectIpReservations);
   const [deviceModeType, setDeviceModeType] = useState(deviceMode ? deviceMode.type : null);
   const [customDnsValue, setCustomDnsValue] = useState(dnsConfiguration ? dnsConfiguration.custom : false);
   // The sectionZIndex is used to help with any embedded picker/dropdown. Start with a high enough
@@ -97,10 +85,7 @@ const Network = props => {
   );
 
   useEffect(() => {
-    if (deviceModeType !== deviceMode.type) {
-      setDeviceModeType(deviceMode.type);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setDeviceModeType(deviceMode.type);
   }, [deviceMode.type]);
 
   useEffect(() => {

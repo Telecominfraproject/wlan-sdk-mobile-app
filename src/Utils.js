@@ -3,8 +3,11 @@ import { strings } from './localization/LocalizationStrings';
 import { errorColor, warnColor, okColor } from './AppStyle';
 import { store } from './store/Store';
 import { clearSession, setSession } from './store/SessionSlice';
-import { setSubscriberInformation, clearSubscriberInformation } from './store/SubscriberInformationSlice';
-import { setSubscriberInformationLoading } from './store/SubscriberInformationLoadingSlice';
+import {
+  setSubscriberInformationLoading,
+  setSubscriberInformation,
+  clearSubscriberInformation,
+} from './store/SubscriberInformationSlice';
 import {
   authenticationApi,
   subscriberInformationApi,

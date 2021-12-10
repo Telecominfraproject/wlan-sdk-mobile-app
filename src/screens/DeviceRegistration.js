@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { ActivityIndicator, SafeAreaView, ScrollView, Text, TextInput, View } from 'react-native';
 import { pageItemStyle, pageStyle, primaryColor } from '../AppStyle';
 import { strings } from '../localization/LocalizationStrings';
+import { useSelector } from 'react-redux';
+import { selectSubscriberInformationLoading, selectSubscriberInformation } from '../store/SubscriberInformationSlice';
 import { handleApiError } from '../api/apiHandler';
 import { modifySubscriberInformation } from '../Utils';
-import { selectSubscriberInformation } from '../store/SubscriberInformationSlice';
-import { selectSubscriberInformationLoading } from '../store/SubscriberInformationLoadingSlice';
 import ButtonStyled from '../components/ButtonStyled';
 
 export default function DeviceRegistration(props) {
