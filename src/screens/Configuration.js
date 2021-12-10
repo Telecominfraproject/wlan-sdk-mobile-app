@@ -212,6 +212,10 @@ const Network = props => {
     }
   };
 
+  const onAddNetwork = async => {
+    props.navigation.navigate('Network', { screen: 'NetworkAdd', initial: false });
+  };
+
   const onEditDeviceModeSettings = async val => {
     try {
       await modifySubscriberDeviceMode(subscriberInformation, currentAccessPointId, val);
@@ -420,7 +424,9 @@ const Network = props => {
             style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
             title={strings.configuration.networks}
             disableAccordion={true}
-            isLoading={subscriberInformationLoading}>
+            isLoading={subscriberInformationLoading}
+            showAdd={true}
+            onAddPress={onAddNetwork}>
             {wifiNetworks &&
               wifiNetworks.wifiNetworks &&
               wifiNetworks.wifiNetworks.map((item, index) => {
