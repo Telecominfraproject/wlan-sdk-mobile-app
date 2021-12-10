@@ -27,6 +27,7 @@ import {
   displayEditableValue,
   getAccessPointIcon,
   showGeneralError,
+  modifySubscriberDeviceMode,
   modifySubscriberDnsInformation,
   setSubscriberInformationInterval,
   deleteSubscriberIpReservation,
@@ -43,7 +44,6 @@ import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
 
 const Network = props => {
   const scrollRef = useRef();
-  const [customDnsValue, setCustomDnsValue] = useState(dnsConfiguration ? dnsConfiguration.custom : false);
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
@@ -71,6 +71,13 @@ const Network = props => {
     () => getSubscriberAccessPointInfo(subscriberInformation, currentAccessPointId, 'ipReservations'),
     [subscriberInformation, currentAccessPointId],
   );
+  //  const [deviceModeType, setDeviceModeType] = useState(deviceMode ? deviceMode.type : false);
+  // const [customDnsValue, setCustomDnsValue] = useState(dnsConfiguration ? dnsConfiguration.custom : false);
+  const [deviceModeType, setDeviceModeType] = useState(deviceMode ? deviceMode.type : null);
+  const [customDnsValue, setCustomDnsValue] = useState(dnsConfiguration ? dnsConfiguration.custom : false);
+  // The sectionZIndex is used to help with any embedded picker/dropdown. Start with a high enough
+  // value that it'll cover each section. The sections further up the view should have higher numbers
+  var sectionZIndex = 20;
 
   // Refresh the information only anytime there is a navigation change and this has come into focus
   // Need to be careful here as useFocusEffect is also called during re-render so it can result in
@@ -88,6 +95,15 @@ const Network = props => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.navigation]),
   );
+
+  useEffect(() => {
+    console.log(deviceModeType);
+    console.log(deviceMode.type);
+
+    if (deviceModeType !== deviceMode.type) {
+      setDeviceModeType(deviceMode.type);
+    }
+  }, [deviceMode.type]);
 
   useEffect(() => {
     setCustomDnsValue(dnsConfiguration.custom);
@@ -213,6 +229,17 @@ const Network = props => {
     }
   };
 
+  const onEditDeviceModeSettings = async val => {
+    try {
+      console.log(val);
+      await modifySubscriberDeviceMode(subscriberInformation, currentAccessPointId, val);
+    } catch (error) {
+      handleApiError(strings.errors.titleUpdate, error);
+      // Need to throw the error to ensure the caller cleans up
+      throw error;
+    }
+  };
+
   const onEditCustomDnsSettings = async val => {
     try {
       await modifySubscriberDnsInformation(subscriberInformation, currentAccessPointId, val);
@@ -249,6 +276,95 @@ const Network = props => {
         text: strings.buttons.cancel,
       },
     ]);
+  };
+
+  const renderDeviceMode = () => {
+    let items = [
+      <ItemPickerWithLabel
+        key="type"
+        label={strings.network.type}
+        value={deviceModeType}
+        setValue={setDeviceModeType}
+        items={[
+          { label: displayValueDeviceModeType({ type: 'bridge' }, 'type'), value: 'bridge' },
+          { label: displayValueDeviceModeType({ type: 'manual' }, 'type'), value: 'manual' },
+          { label: displayValueDeviceModeType({ type: 'nat' }, 'type'), value: 'nat' },
+        ]}
+        changeKey="type"
+        onChangeValue={onEditDeviceModeSettings}
+      />,
+    ];
+
+    if (deviceModeType === 'bridge') {
+      // Nothing is added
+    } else if (deviceModeType === 'manual') {
+      items.push(
+        <ItemTextWithLabel key="subnet" label={strings.network.subnet} value={displayValue(deviceMode, 'subnet')} />,
+      );
+      items.push(
+        <ItemTextWithLabel
+          key="subnetMask"
+          label={strings.network.subnetMask}
+          value={displayValue(deviceMode, 'subnetMask')}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabel key="startIP" label={strings.network.startIp} value={displayValue(deviceMode, 'startIP')} />,
+      );
+      items.push(
+        <ItemTextWithLabel key="endIP" label={strings.network.endIp} value={displayValue(deviceMode, 'endIP')} />,
+      );
+    } else if (deviceModeType === 'nat' || !deviceModeType) {
+      items.push(
+        <ItemTextWithLabelEditable
+          key="subnet"
+          label={strings.network.subnet}
+          value={displayEditableValue(deviceMode, 'subnet')}
+          editKey="subnet"
+          onEdit={onEditDeviceModeSettings}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabelEditable
+          key="subnetMask"
+          label={strings.network.subnetMask}
+          value={displayEditableValue(deviceMode, 'subnetMask')}
+          editKey="subnetMask"
+          onEdit={onEditDeviceModeSettings}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabelEditable
+          key="startIP"
+          label={strings.network.startIp}
+          value={displayEditableValue(deviceMode, 'startIP')}
+          editKey="startIP"
+          onEdit={onEditDeviceModeSettings}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabelEditable
+          key="endIP"
+          label={strings.network.endIp}
+          value={displayEditableValue(deviceMode, 'endIP')}
+          editKey="endIP"
+          onEdit={onEditDeviceModeSettings}
+        />,
+      );
+    }
+
+    items.push(
+      <ItemTextWithLabel
+        key="enableLEDS"
+        label={strings.network.enableLeds}
+        value={displayValueBoolean(deviceMode, 'enableLEDS')}
+        buttonTitle={strings.buttons.blink}
+        onButtonPress={onBlinkLightsPress}
+        buttonDisabled={!accessPoint}
+      />,
+    );
+
+    return items;
   };
 
   // Styles
@@ -311,7 +427,7 @@ const Network = props => {
           </View>
 
           <AccordionSection
-            style={componentStyles.sectionAccordion}
+            style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
             title={strings.network.networks}
             disableAccordion={true}
             isLoading={subscriberInformationLoading}>
@@ -331,7 +447,7 @@ const Network = props => {
           </AccordionSection>
 
           <AccordionSection
-            style={componentStyles.sectionAccordion}
+            style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
             title={strings.formatString(strings.network.accessPointRoleSettings, {
               role: displayValueAccessPointDeviceRole(accessPoint, 'deviceType'),
             })}
@@ -368,7 +484,7 @@ const Network = props => {
           </AccordionSection>
 
           <AccordionSection
-            style={componentStyles.sectionAccordion}
+            style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
             title={strings.network.internetSettings}
             disableAccordion={true}
             isLoading={subscriberInformationLoading}>
@@ -405,39 +521,15 @@ const Network = props => {
           </AccordionSection>
 
           <AccordionSection
-            style={componentStyles.sectionAccordion}
+            style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
             title={strings.network.deviceMode}
             disableAccordion={true}
             isLoading={subscriberInformationLoading}>
-            <ItemTextWithLabel
-              key="type"
-              label={strings.network.type}
-              value={displayValueDeviceModeType(deviceMode, 'type')}
-            />
-            <ItemTextWithLabel key="subnet" label={strings.network.subnet} value={displayValue(deviceMode, 'subnet')} />
-            <ItemTextWithLabel
-              key="subnetMask"
-              label={strings.network.subnetMask}
-              value={displayValue(deviceMode, 'subnetMask')}
-            />
-            <ItemTextWithLabel
-              key="startIP"
-              label={strings.network.startIp}
-              value={displayValue(deviceMode, 'startIP')}
-            />
-            <ItemTextWithLabel key="endIP" label={strings.network.endIp} value={displayValue(deviceMode, 'endIP')} />
-            <ItemTextWithLabel
-              key="enableLEDS"
-              label={strings.network.enableLeds}
-              value={displayValueBoolean(deviceMode, 'enableLEDS')}
-              buttonTitle={strings.buttons.blink}
-              onButtonPress={onBlinkLightsPress}
-              buttonDisabled={!accessPoint}
-            />
+            {renderDeviceMode()}
           </AccordionSection>
 
           <AccordionSection
-            style={componentStyles.sectionAccordion}
+            style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
             title={strings.network.customDnsSettings}
             disableAccordion={true}
             isLoading={subscriberInformationLoading}>
@@ -474,7 +566,7 @@ const Network = props => {
           </AccordionSection>
 
           <AccordionSection
-            style={componentStyles.sectionAccordion}
+            style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
             title={strings.network.ipReservations}
             disableAccordion={true}
             isLoading={subscriberInformationLoading}
