@@ -315,6 +315,7 @@ const Network = props => {
           <ButtonSelector
             style={componentStyles.networkSwitcher}
             options={wifiNetworks ? wifiNetworks.wifiNetworks : []}
+            selected={selectedWifiNetworkIndex}
             maxButtons={2}
             onSelect={onSelectNetwork}
           />

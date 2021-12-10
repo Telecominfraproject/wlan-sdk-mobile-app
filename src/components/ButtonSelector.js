@@ -5,7 +5,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 
 export default function ButtonSelector(props) {
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState(0);
+  const [selected, setSelected] = useState(props.selected !== null ? props.selected : 0);
   const [items, setItems] = useState([]);
   const options = props.options ?? [];
   const maxButtons = props.maxButtons ?? 2;

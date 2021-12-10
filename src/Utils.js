@@ -178,6 +178,15 @@ export function getDeviceFromClient(client, subscriberInformation, accessPointId
   return subscriberDevices.devices.find(item => item.macAddress === client.macAddress);
 }
 
+export function getGuestNetworkIndex(wifiNetworks) {
+  if (wifiNetworks && wifiNetworks.wifiNetworks) {
+    // Return the first guest network index
+    return wifiNetworks.wifiNetworks.findIndex(network => network.type === 'guest');
+  }
+
+  return null;
+}
+
 export function getClientIcon(client) {
   // TODO: Will have to get proper icons, might have to depend on device
   return require('./assets/laptop-solid.png');

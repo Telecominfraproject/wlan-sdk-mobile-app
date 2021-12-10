@@ -14,7 +14,7 @@ import {
   selectSubscriberDevices,
   selectWifiNetworks,
 } from '../store/SubscriberInformationSlice';
-import { displayValue, setSubscriberInformationInterval, scrollViewToTop } from '../Utils';
+import { displayValue, getGuestNetworkIndex, setSubscriberInformationInterval, scrollViewToTop } from '../Utils';
 import ImageWithBadge from '../components/ImageWithBadge';
 import ButtonSelector from '../components/ButtonSelector';
 
@@ -95,9 +95,11 @@ const Dashboard = props => {
   };
 
   const getGuestNetwork = () => {
-    if (wifiNetworks && wifiNetworks.wifiNetworks) {
-      // Return the first guest network
-      return wifiNetworks.wifiNetworks.find(network => network.type === 'guest');
+    let guestNetworkIndex = getGuestNetworkIndex(wifiNetworks);
+
+    console.log(guestNetworkIndex);
+    if (guestNetworkIndex !== null) {
+      return wifiNetworks.wifiNetworks[guestNetworkIndex];
     }
 
     return null;
@@ -130,12 +132,22 @@ const Dashboard = props => {
     props.navigation.navigate('Configuration');
   };
 
-  const onConnectedDevicePress = async () => {
-    props.navigation.navigate('Network');
+  const onGuestNetworkPress = async () => {
+    let guestNetworkIndex = getGuestNetworkIndex(wifiNetworks);
+
+    if (guestNetworkIndex !== null) {
+      props.navigation.navigate('Network', {
+        screen: 'NetworkScreen',
+        params: { wifiNetworkIndex: guestNetworkIndex },
+      });
+    } else {
+      // Unexpected, but just go to the Network tab
+      props.navigation.navigate('Network');
+    }
   };
 
-  const onGuestNetworkPress = async () => {
-    props.navigation.navigate('Configuration');
+  const onConnectedDevicePress = async () => {
+    props.navigation.navigate('Network');
   };
 
   const componentStyles = StyleSheet.create({
