@@ -155,7 +155,7 @@ export default function ItemTextWithLabelEditable(props) {
       setLoading(true);
 
       if (props.onEdit) {
-        let updatedValue = null;
+        let updatedValue;
         if (props.editKey) {
           updatedValue = { [props.editKey]: value };
         } else {
@@ -180,11 +180,11 @@ export default function ItemTextWithLabelEditable(props) {
   };
 
   const showEditIcon = () => {
-    return props.disabled ? false : true;
+    return !props.disabled;
   };
 
   const showPlaceholder = () => {
-    return props.value ? false : true;
+    return !props.value;
   };
 
   const onPress = () => {
@@ -272,7 +272,7 @@ export default function ItemTextWithLabelEditable(props) {
           <Text
             style={[componentStyles.textValue, showPlaceholder() ? componentStyles.textValuePlaceholder : '']}
             numberOfLines={1}>
-            {showPlaceholder() ? props.placeholder : props.value}
+            {showPlaceholder() ? props.placeholder : value}
           </Text>
         )}
       </View>
