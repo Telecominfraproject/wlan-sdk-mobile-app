@@ -63,6 +63,7 @@ export default function ItemPickerWithLabel(props) {
         placeholder={placeholder}
         open={open}
         value={props.value}
+        multiple={props.multiple}
         items={items}
         setOpen={setOpen}
         setValue={props.setValue}

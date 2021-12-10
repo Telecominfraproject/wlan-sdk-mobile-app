@@ -32,7 +32,7 @@ export default function ButtonSelector(props) {
   const onSelect = index => {
     setSelected(index);
     if (props.onSelect) {
-      props.onSelect(options[index]);
+      props.onSelect(index);
     }
   };
 

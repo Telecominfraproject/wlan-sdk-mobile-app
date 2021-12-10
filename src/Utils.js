@@ -24,6 +24,12 @@ export function showGeneralMessage(message) {
   Alert.alert(strings.messages.titleMessage, message);
 }
 
+export function scrollViewToTop(scrollViewRef) {
+  if (scrollViewRef && scrollViewRef.current) {
+    scrollViewRef.current.scrollTo({ y: 0, animated: true });
+  }
+}
+
 export function displayValue(obj, key) {
   if (obj && key) {
     if (key in obj) {
@@ -586,8 +592,91 @@ export async function updateSubscriberIpReservation(
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
 
-export function scrollViewToTop(scrollViewRef) {
-  if (scrollViewRef && scrollViewRef.current) {
-    scrollViewRef.current.scrollTo({ y: 0, animated: true });
+export async function addNetwork(subscriberInformation, accessPointId, networkJsonObject) {
+  if (!networkJsonObject) {
+    // Do nothing if the object is null or empty
+    return;
   }
+
+  // accessPointId can be null - it just means use the first access point, so no check for this
+  if (!subscriberInformation) {
+    throw new Error(strings.errors.internal);
+  }
+
+  // Clone the current subscriber information
+  let updatedSubsciberInformation = JSON.parse(JSON.stringify(subscriberInformation));
+  let wifiNetworks = getSubscriberAccessPointInfo(updatedSubsciberInformation, accessPointId, 'wifiNetworks');
+  if (!wifiNetworks) {
+    throw new Error(strings.errors.internal);
+  }
+
+  if (!wifiNetworks.wifiNetworks) {
+    wifiNetworks.wifiNetworks = [];
+  }
+
+  wifiNetworks.wifiNetworks.push(networkJsonObject);
+  await modifySubscriberInformation(updatedSubsciberInformation);
+}
+
+export async function modifyNetworkSettings(subscriberInformation, accessPointId, networkIndex, networkJsonObject) {
+  if (networkIndex === null || !networkJsonObject) {
+    // Do nothing if the object is null or empty
+    return;
+  }
+
+  // accessPointId can be null - it just means use the first access point, so no check for this
+  if (!subscriberInformation) {
+    throw new Error(strings.errors.internal);
+  }
+
+  // Clone the current subscriber information
+  let updatedSubsciberInformation = JSON.parse(JSON.stringify(subscriberInformation));
+  let wifiNetworks = getSubscriberAccessPointInfo(updatedSubsciberInformation, accessPointId, 'wifiNetworks');
+  if (!wifiNetworks || !wifiNetworks.wifiNetworks) {
+    throw new Error(strings.errors.internal);
+  }
+
+  if (wifiNetworks.wifiNetworks.length < networkIndex) {
+    console.error('Network index out of range');
+    throw new Error(strings.errors.internal);
+  }
+
+  let wifiNetworkToUpdate = wifiNetworks.wifiNetworks[networkIndex];
+  if (!wifiNetworkToUpdate) {
+    throw new Error(strings.errors.internal);
+  }
+
+  for (const [key, value] of Object.entries(networkJsonObject)) {
+    wifiNetworkToUpdate[key] = value;
+  }
+
+  await modifySubscriberInformation(updatedSubsciberInformation);
+}
+
+export async function deleteNetwork(subscriberInformation, accessPointId, networkIndex) {
+  if (networkIndex === null) {
+    // Do nothing if the network index does not make sense
+    return;
+  }
+
+  // accessPointId can be null - it just means use the first access point, so no check for this
+  if (!subscriberInformation) {
+    throw new Error(strings.errors.internal);
+  }
+
+  // Clone the current subscriber information
+  let updatedSubsciberInformation = JSON.parse(JSON.stringify(subscriberInformation));
+  let wifiNetworks = getSubscriberAccessPointInfo(updatedSubsciberInformation, accessPointId, 'wifiNetworks');
+  if (!wifiNetworks || !wifiNetworks.wifiNetworks) {
+    throw new Error(strings.errors.internal);
+  }
+
+  if (wifiNetworks.wifiNetworks.length < networkIndex) {
+    console.error('Network index out of range');
+    throw new Error(strings.errors.internal);
+  }
+
+  delete wifiNetworks[networkIndex];
+
+  await modifySubscriberInformation(updatedSubsciberInformation);
 }

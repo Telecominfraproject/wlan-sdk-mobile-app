@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo, useRef } from 'react';
+import React, { useCallback, useState, useMemo, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import { marginTopDefault, pageStyle, whiteColor } from '../AppStyle';
@@ -13,41 +13,58 @@ import {
 } from '../store/SubscriberInformationSlice';
 import { wifiClientsApi, wiredClientsApi, handleApiError } from '../api/apiHandler';
 import {
+  scrollViewToTop,
   displayValue,
+  displayEditableValue,
+  isFieldDifferent,
   getClientIcon,
   getClientConnectionIcon,
   getClientConnectionStatusColor,
   setSubscriberInformationInterval,
-  isFieldDifferent,
-  scrollViewToTop,
+  modifyNetworkSettings,
 } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ItemTextWithIcon from '../components/ItemTextWithIcon';
 import ButtonSelector from '../components/ButtonSelector';
+import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
+import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
 
 const Network = props => {
+  // The sectionZIndex is used to help with any embedded picker/dropdown. Start with a high enough
+  // value that it'll cover each section. The sections further up the view should have higher numbers
+  var sectionZIndex = 20;
   // Need to use refs so that the async tasks can have proper access to these state changes
   const scrollRef = useRef();
   const isFocusedRef = useRef(false);
-  const selectedNetworkName = props.route.params ? props.route.params.networkName : null;
+  const startingWifiNetworkIndex = props.route.params ? props.route.params.wifiNetworkIndex : 0;
+
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
   const accessPoint = useSelector(selectAccessPoint);
   const wifiNetworks = useSelector(selectWifiNetworks);
-  const [selectedWifi, setSelectedWifi] = useState(selectedNetworkName);
+  const [selectedWifiNetworkIndex, setSelectedWifiNetworkIndex] = useState(startingWifiNetworkIndex);
+  const [selectedWifiNetwork, setSelectedWifiNetwork] = useState(
+    wifiNetworks ? wifiNetworks.wifiNetworks[selectedWifiNetworkIndex] : null,
+  );
+  const [wifiNetworkType, setWifiNetworkType] = useState(selectedWifiNetwork ? selectedWifiNetwork.type : null);
+  const [wifiNetworkEncryption, setWifiNetworkEncryption] = useState(
+    selectedWifiNetwork ? selectedWifiNetwork.encryption : null,
+  );
+  const [wifiNetworkBands, setWifiNetworkBands] = useState(selectedWifiNetwork ? selectedWifiNetwork.bands : null);
   const [loadingWiredClients, setLoadingWiredClients] = useState(true); // Only set on initial load
   const [wiredClients, setWiredClients] = useState();
   const wiredClientsErrorReportedRef = useRef(false);
   const [loadingWifiClients, setLoadingWifiClients] = useState(true); // Only set on initial load
   const [wifiClients, setWifiClients] = useState();
   const wifiClientsErrorReportedRef = useRef(false);
+
   const filteredWifiClients = useMemo(() => {
     if (!wifiClients) {
       return null;
     }
 
-    let wifiNetworkToFilter = selectedWifi;
+    let wifiNetworkToFilter = selectedWifiNetwork;
     if (!wifiNetworkToFilter) {
       if (wifiNetworks && wifiNetworks.wifiNetworks) {
         wifiNetworkToFilter = wifiNetworks.wifiNetworks[0];
@@ -59,7 +76,17 @@ const Network = props => {
     }
 
     return wifiClients.filter(client => client.ssid === wifiNetworkToFilter.name);
-  }, [wifiClients, selectedWifi, wifiNetworks]);
+  }, [wifiClients, selectedWifiNetwork, wifiNetworks]);
+
+  useEffect(() => {
+    setSelectedWifiNetwork(wifiNetworks ? wifiNetworks.wifiNetworks[selectedWifiNetworkIndex] : null);
+  }, [wifiNetworks, selectedWifiNetworkIndex]);
+
+  useEffect(() => {
+    setWifiNetworkType(selectedWifiNetwork ? selectedWifiNetwork.type : null);
+    setWifiNetworkEncryption(selectedWifiNetwork ? selectedWifiNetwork.encryption : null);
+    setWifiNetworkBands(selectedWifiNetwork ? selectedWifiNetwork.bands : null);
+  }, [selectedWifiNetwork]);
 
   // Refresh the information only anytime there is a navigation change and this has come into focus
   // Need to be careful here as useFocusEffect is also called during re-render so it can result in
@@ -83,7 +110,7 @@ const Network = props => {
 
       async function updateClients() {
         getWifiClients(currentAccessPointId);
-        getWiredClients(currentAccessPointId);
+        getWiredClients(selectedWifiNetwork);
       }
       var intervalId = setSubscriberInformationInterval(subscriberInformation, updateClients);
 
@@ -193,8 +220,18 @@ const Network = props => {
     props.navigation.navigate('DeviceDetails', { accessPoint: accessPoint, client: client });
   };
 
-  const onSelectNetwork = network => {
-    setSelectedWifi(network);
+  const onSelectNetwork = index => {
+    setSelectedWifiNetworkIndex(index);
+  };
+
+  const onEditNetworkSettings = async val => {
+    try {
+      await modifyNetworkSettings(subscriberInformation, currentAccessPointId, selectedWifiNetworkIndex, val);
+    } catch (error) {
+      handleApiError(strings.errors.titleUpdate, error);
+      // Need to throw the error to ensure the caller cleans up
+      throw error;
+    }
   };
 
   // Styles
@@ -239,6 +276,70 @@ const Network = props => {
             maxButtons={2}
             onSelect={onSelectNetwork}
           />
+
+          <AccordionSection
+            style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
+            title={strings.network.settings}
+            disableAccordion={true}
+            isLoading={false}>
+            <ItemPickerWithLabel
+              key="type"
+              label={strings.network.type}
+              value={wifiNetworkType}
+              setValue={setWifiNetworkType}
+              items={[
+                { label: strings.network.selectorTypeMain, value: 'main' },
+                { label: strings.network.selectorTypeGuest, value: 'guest' },
+              ]}
+              changeKey="type"
+              onChangeValue={onEditNetworkSettings}
+            />
+            <ItemTextWithLabelEditable
+              key="name"
+              label={strings.network.name}
+              value={displayEditableValue(selectedWifiNetwork, 'name')}
+              placeholder={strings.messages.empty}
+              editKey="name"
+              onEdit={onEditNetworkSettings}
+            />
+            <ItemTextWithLabelEditable
+              key="password"
+              label={strings.network.password}
+              value={displayEditableValue(selectedWifiNetwork, 'password')}
+              placeholder={strings.messages.empty}
+              editKey="password"
+              onEdit={onEditNetworkSettings}
+            />
+            <ItemPickerWithLabel
+              key="encryption"
+              label={strings.network.encryption}
+              value={wifiNetworkEncryption}
+              setValue={setWifiNetworkEncryption}
+              items={[
+                { label: strings.network.selectorEncryptionWpa2, value: 'wpa2' },
+                { label: strings.network.selectorEncryptionWpa, value: 'wpa' },
+                { label: strings.network.selectorEncryptionWep, value: 'wep' },
+              ]}
+              changeKey="encryption"
+              onChangeValue={onEditNetworkSettings}
+            />
+            <ItemPickerWithLabel
+              key="bands"
+              label={strings.network.bands}
+              value={wifiNetworkBands}
+              setValue={setWifiNetworkBands}
+              multiple={true}
+              items={[
+                { label: strings.network.selectorBands2g, value: '2G' },
+                { label: strings.network.selectorBands5g, value: '5G' },
+                { label: strings.network.selectorBands5gl, value: '5GL' },
+                { label: strings.network.selectorBands5gu, value: '5GU' },
+                { label: strings.network.selectorBands6g, value: '6G' },
+              ]}
+              changeKey="bands"
+              onChangeValue={onEditNetworkSettings}
+            />
+          </AccordionSection>
 
           <AccordionSection
             style={componentStyles.sectionAccordion}

@@ -141,9 +141,9 @@ const Network = props => {
     return errorColor;
   };
 
-  const onWifiNetworkPress = async item => {
+  const onWifiNetworkPress = async index => {
     // Send the network name parameter to the Network
-    props.navigation.navigate('Network', { screen: 'NetworkScreen', params: { networkName: item.name } });
+    props.navigation.navigate('Network', { screen: 'NetworkScreen', params: { wifiNetworkIndex: index } });
   };
 
   const onUpdateFirmwarePress = async () => {
@@ -214,7 +214,6 @@ const Network = props => {
 
   const onEditDeviceModeSettings = async val => {
     try {
-      console.log(val);
       await modifySubscriberDeviceMode(subscriberInformation, currentAccessPointId, val);
     } catch (error) {
       handleApiError(strings.errors.titleUpdate, error);
@@ -282,7 +281,11 @@ const Network = props => {
       // Nothing is added
     } else if (deviceModeType === 'manual') {
       items.push(
-        <ItemTextWithLabel key="subnet" label={strings.configuration.subnet} value={displayValue(deviceMode, 'subnet')} />,
+        <ItemTextWithLabel
+          key="subnet"
+          label={strings.configuration.subnet}
+          value={displayValue(deviceMode, 'subnet')}
+        />,
       );
       items.push(
         <ItemTextWithLabel
@@ -292,7 +295,11 @@ const Network = props => {
         />,
       );
       items.push(
-        <ItemTextWithLabel key="startIP" label={strings.configuration.startIp} value={displayValue(deviceMode, 'startIP')} />,
+        <ItemTextWithLabel
+          key="startIP"
+          label={strings.configuration.startIp}
+          value={displayValue(deviceMode, 'startIP')}
+        />,
       );
       items.push(
         <ItemTextWithLabel key="endIP" label={strings.configuration.endIp} value={displayValue(deviceMode, 'endIP')} />,
@@ -416,14 +423,14 @@ const Network = props => {
             isLoading={subscriberInformationLoading}>
             {wifiNetworks &&
               wifiNetworks.wifiNetworks &&
-              wifiNetworks.wifiNetworks.map(item => {
+              wifiNetworks.wifiNetworks.map((item, index) => {
                 return (
                   <ItemTextWithIcon
                     label={getWifiNetworkLabel(item)}
                     key={item.name}
                     icon={getWifiNetworkIcon(item)}
                     iconTintColor={getWifiNetworkIconTint(item)}
-                    onPress={() => onWifiNetworkPress(item)}
+                    onPress={() => onWifiNetworkPress(index)}
                   />
                 );
               })}
@@ -577,7 +584,11 @@ const Network = props => {
                       key="label"
                       max="3"
                       type="label"
-                      values={[strings.configuration.ipAddress, strings.configuration.macAddress, strings.configuration.nickname]}
+                      values={[
+                        strings.configuration.ipAddress,
+                        strings.configuration.macAddress,
+                        strings.configuration.nickname,
+                      ]}
                       showDelete={true}
                       showEdit={true}
                     />,
