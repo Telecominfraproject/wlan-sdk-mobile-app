@@ -169,6 +169,9 @@ export default function ItemTextWithLabelEditable(props) {
     } catch (error) {
       // Do nothing
     } finally {
+      // The onEdit call may result in a re-render of the parent and having this component be
+      // unmounted. In this case we have no need to update the information and it will result
+      // in a warning if we do. So detect this condition
       if (isMounted.current) {
         setLoading(false);
         setEdit(false);
