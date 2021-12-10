@@ -10,7 +10,7 @@ import systemInfoReducer from './SystemInfoSlice';
 const persistConfig = {
   key: 'root',
   keyPrefix: '', // the redux-persist default is `persist:` which doesn't work with some file systems
-  blacklist: ['session', 'subscriberInformation'], // session and subscriber are not persisted, new token is retrieved via credential storage if needed
+  blacklist: [], // session and subscriber are not persisted, new token is retrieved via credential storage if needed
   storage: FSStorage(),
 };
 
