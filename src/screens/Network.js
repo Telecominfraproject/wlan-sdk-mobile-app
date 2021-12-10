@@ -228,6 +228,20 @@ const Network = props => {
 
   const onEditNetworkSettings = async val => {
     try {
+      // Because this is keyed into pickers, it may get called when we change networks, so need to make sure
+      // that things are actually different before trying to update it
+      let changed = false;
+      for (const [key, value] of Object.entries(val)) {
+        if (selectedWifiNetwork[key] !== value) {
+          changed = true;
+        }
+      }
+
+      // Nothing really changed, just return
+      if (!changed) {
+        return;
+      }
+
       await modifyNetworkSettings(subscriberInformation, currentAccessPointId, selectedWifiNetworkIndex, val);
     } catch (error) {
       handleApiError(strings.errors.titleUpdate, error);
