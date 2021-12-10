@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { strings } from './localization/LocalizationStrings';
 import { primaryColor, blackColor, grayBackgroundcolor } from './AppStyle';
 import { useSelector } from 'react-redux';
@@ -7,8 +7,7 @@ import { StyleSheet, Image, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { selectSubscriberInformation } from './store/SubscriberInformationSlice';
-import { getSubscriberAccessPointInfo } from './api/apiHandler';
+import { selectAccessPoint } from './store/SubscriberInformationSlice';
 
 import BrandSelector from './screens/BrandSelector';
 import Dashboard from './screens/Dashboard';
@@ -30,11 +29,7 @@ import DeviceRegistration from './screens/DeviceRegistration';
 
 const Navigator = () => {
   const brandInfo = useSelector(selectBrandInfo);
-  const subscriberInformation = useSelector(selectSubscriberInformation);
-  const accessPoint = useMemo(
-    () => getSubscriberAccessPointInfo(subscriberInformation, null, null),
-    [subscriberInformation],
-  );
+  const accessPoint = useSelector(selectAccessPoint);
 
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
@@ -130,7 +125,7 @@ const Navigator = () => {
           tabBarActiveTintColor: primaryColor,
           headerShown: false,
         }}>
-        {accessPoint && accessPoint.macAddress !== '000000000000' ? (
+        {accessPoint && accessPoint.macAddress && accessPoint.macAddress !== '000000000000' ? (
           <>
             <Tab.Screen
               name="Dashboard"
