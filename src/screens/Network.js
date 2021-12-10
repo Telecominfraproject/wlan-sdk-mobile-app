@@ -214,7 +214,7 @@ const Network = props => {
         <View style={pageStyle.containerPostLogin}>
           <AccordionSection
             style={componentStyles.sectionAccordion}
-            title={strings.deviceList.wiredClients}
+            title={strings.network.wiredClients}
             isLoading={subscriberInformationLoading || loadingWiredClients}>
             {wiredClients &&
               wiredClients.clients &&
@@ -242,7 +242,7 @@ const Network = props => {
 
           <AccordionSection
             style={componentStyles.sectionAccordion}
-            title={strings.deviceList.wifiClients}
+            title={strings.network.wifiClients}
             isLoading={subscriberInformationLoading || loadingWifiClients}>
             {filteredWifiClients &&
               filteredWifiClients.map(item => {

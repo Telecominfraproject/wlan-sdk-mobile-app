@@ -109,7 +109,7 @@ const Network = props => {
   };
 
   const onRefreshPress = async () => {
-    sendAccessPointCommand('refresh', strings.network.commandRefreshSuccess);
+    sendAccessPointCommand('refresh', strings.configuration.commandRefreshSuccess);
   };
 
   const getWifiNetworkLabel = item => {
@@ -119,10 +119,10 @@ const Network = props => {
 
     switch (item.type) {
       case 'main':
-        return strings.formatString(strings.network.mainNetwork, item.name);
+        return strings.formatString(strings.configuration.mainNetwork, item.name);
 
       case 'guest':
-        return strings.formatString(strings.network.guestNetwork, item.name);
+        return strings.formatString(strings.configuration.guestNetwork, item.name);
 
       default:
         return item.name;
@@ -149,34 +149,34 @@ const Network = props => {
   const onUpdateFirmwarePress = async () => {
     sendAccessPointCommandWithConfirm(
       'upgrade',
-      strings.network.commandFirmwareUpdateSuccess,
-      strings.network.confirmFirmwareUpdateSuccess,
+      strings.configuration.commandFirmwareUpdateSuccess,
+      strings.configuration.confirmFirmwareUpdateSuccess,
     );
   };
 
   const onBlinkLightsPress = async () => {
-    sendAccessPointCommand('blink', strings.network.commandLightBlinkSuccess);
+    sendAccessPointCommand('blink', strings.configuration.commandLightBlinkSuccess);
   };
 
   const onFactoryResetPress = async () => {
     sendAccessPointCommandWithConfirm(
       'factory',
-      strings.network.commandFactoryResetSuccess,
-      strings.network.confirmFactoryResetSuccess,
+      strings.configuration.commandFactoryResetSuccess,
+      strings.configuration.confirmFactoryResetSuccess,
     );
   };
 
   const onRebootPress = async () => {
     sendAccessPointCommandWithConfirm(
       'reboot',
-      strings.network.commandRebootSuccess,
-      strings.network.confirmRebootSuccess,
+      strings.configuration.commandRebootSuccess,
+      strings.configuration.confirmRebootSuccess,
     );
   };
 
   const sendAccessPointCommandWithConfirm = async (action, successMessage, confirmMessage) => {
     if (confirmMessage) {
-      Alert.alert(strings.network.confirmTitle, confirmMessage, [
+      Alert.alert(strings.configuration.confirmTitle, confirmMessage, [
         {
           text: strings.buttons.ok,
           onPress: async () => {
@@ -242,7 +242,7 @@ const Network = props => {
   };
 
   const onDeleteIpReservation = async item => {
-    Alert.alert(strings.network.confirmTitle, strings.network.confirmDeleteIpReservation, [
+    Alert.alert(strings.configuration.confirmTitle, strings.configuration.confirmDeleteIpReservation, [
       {
         text: strings.buttons.ok,
         onPress: async () => {
@@ -265,7 +265,7 @@ const Network = props => {
     let items = [
       <ItemPickerWithLabel
         key="type"
-        label={strings.network.type}
+        label={strings.configuration.type}
         value={deviceModeType}
         setValue={setDeviceModeType}
         items={[
@@ -282,26 +282,26 @@ const Network = props => {
       // Nothing is added
     } else if (deviceModeType === 'manual') {
       items.push(
-        <ItemTextWithLabel key="subnet" label={strings.network.subnet} value={displayValue(deviceMode, 'subnet')} />,
+        <ItemTextWithLabel key="subnet" label={strings.configuration.subnet} value={displayValue(deviceMode, 'subnet')} />,
       );
       items.push(
         <ItemTextWithLabel
           key="subnetMask"
-          label={strings.network.subnetMask}
+          label={strings.configuration.subnetMask}
           value={displayValue(deviceMode, 'subnetMask')}
         />,
       );
       items.push(
-        <ItemTextWithLabel key="startIP" label={strings.network.startIp} value={displayValue(deviceMode, 'startIP')} />,
+        <ItemTextWithLabel key="startIP" label={strings.configuration.startIp} value={displayValue(deviceMode, 'startIP')} />,
       );
       items.push(
-        <ItemTextWithLabel key="endIP" label={strings.network.endIp} value={displayValue(deviceMode, 'endIP')} />,
+        <ItemTextWithLabel key="endIP" label={strings.configuration.endIp} value={displayValue(deviceMode, 'endIP')} />,
       );
     } else if (deviceModeType === 'nat' || !deviceModeType) {
       items.push(
         <ItemTextWithLabelEditable
           key="subnet"
-          label={strings.network.subnet}
+          label={strings.configuration.subnet}
           value={displayEditableValue(deviceMode, 'subnet')}
           editKey="subnet"
           onEdit={onEditDeviceModeSettings}
@@ -310,7 +310,7 @@ const Network = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="subnetMask"
-          label={strings.network.subnetMask}
+          label={strings.configuration.subnetMask}
           value={displayEditableValue(deviceMode, 'subnetMask')}
           editKey="subnetMask"
           onEdit={onEditDeviceModeSettings}
@@ -319,7 +319,7 @@ const Network = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="startIP"
-          label={strings.network.startIp}
+          label={strings.configuration.startIp}
           value={displayEditableValue(deviceMode, 'startIP')}
           editKey="startIP"
           onEdit={onEditDeviceModeSettings}
@@ -328,7 +328,7 @@ const Network = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="endIP"
-          label={strings.network.endIp}
+          label={strings.configuration.endIp}
           value={displayEditableValue(deviceMode, 'endIP')}
           editKey="endIP"
           onEdit={onEditDeviceModeSettings}
@@ -339,7 +339,7 @@ const Network = props => {
     items.push(
       <ItemTextWithLabel
         key="enableLEDS"
-        label={strings.network.enableLeds}
+        label={strings.configuration.enableLeds}
         value={displayValueBoolean(deviceMode, 'enableLEDS')}
         buttonTitle={strings.buttons.blink}
         onButtonPress={onBlinkLightsPress}
@@ -411,7 +411,7 @@ const Network = props => {
 
           <AccordionSection
             style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
-            title={strings.network.networks}
+            title={strings.configuration.networks}
             disableAccordion={true}
             isLoading={subscriberInformationLoading}>
             {wifiNetworks &&
@@ -431,19 +431,19 @@ const Network = props => {
 
           <AccordionSection
             style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
-            title={strings.formatString(strings.network.accessPointRoleSettings, {
+            title={strings.formatString(strings.configuration.accessPointRoleSettings, {
               role: displayValueAccessPointDeviceRole(accessPoint, 'deviceType'),
             })}
             disableAccordion={true}
             isLoading={false}>
             <ItemTextWithLabel
               key="deviceType"
-              label={strings.network.type}
+              label={strings.configuration.type}
               value={displayValueAccessPointType(accessPoint, 'deviceType')}
             />
             <ItemTextWithLabel
               key="firmware"
-              label={strings.network.firmware}
+              label={strings.configuration.firmware}
               value={displayValue(accessPoint, 'firmware')}
               buttonTitle={strings.buttons.update}
               onButtonPress={onUpdateFirmwarePress}
@@ -451,61 +451,61 @@ const Network = props => {
             />
             <ItemTextWithLabel
               key="model"
-              label={strings.network.productModel}
+              label={strings.configuration.productModel}
               value={displayValue(accessPoint, 'model')}
             />
             <ItemTextWithLabel
               key="serial_number"
-              label={strings.network.serialNumber}
+              label={strings.configuration.serialNumber}
               value={displayValue(accessPoint, 'serial_number')}
             />
             <ItemTextWithLabel
               key="macAddress"
-              label={strings.network.macAddress}
+              label={strings.configuration.macAddress}
               value={displayValue(accessPoint, 'macAddress')}
             />
           </AccordionSection>
 
           <AccordionSection
             style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
-            title={strings.network.internetSettings}
+            title={strings.configuration.internetSettings}
             disableAccordion={true}
             isLoading={subscriberInformationLoading}>
             <ItemTextWithLabel
               key="ipAddress"
-              label={strings.network.ipAddress}
+              label={strings.configuration.ipAddress}
               value={displayValue(internetConnection, 'ipAddress')}
             />
             <ItemTextWithLabel
               key="type"
-              label={strings.network.type}
+              label={strings.configuration.type}
               value={displayValueInternetConnectionType(internetConnection, 'type')}
             />
             <ItemTextWithLabel
               key="subnetMask"
-              label={strings.network.subnetMask}
+              label={strings.configuration.subnetMask}
               value={displayValue(internetConnection, 'subnetMask')}
             />
             <ItemTextWithLabel
               key="defaultGateway"
-              label={strings.network.defaultGateway}
+              label={strings.configuration.defaultGateway}
               value={displayValue(internetConnection, 'defaultGateway')}
             />
             <ItemTextWithLabel
               key="primaryDns"
-              label={strings.network.primaryDns}
+              label={strings.configuration.primaryDns}
               value={displayValue(internetConnection, 'primaryDns')}
             />
             <ItemTextWithLabel
               key="secondaryDns"
-              label={strings.network.secondaryDns}
+              label={strings.configuration.secondaryDns}
               value={displayValue(internetConnection, 'secondaryDns')}
             />
           </AccordionSection>
 
           <AccordionSection
             style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
-            title={strings.network.deviceMode}
+            title={strings.configuration.deviceMode}
             disableAccordion={true}
             isLoading={subscriberInformationLoading}>
             {renderDeviceMode()}
@@ -513,24 +513,24 @@ const Network = props => {
 
           <AccordionSection
             style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
-            title={strings.network.customDnsSettings}
+            title={strings.configuration.customDnsSettings}
             disableAccordion={true}
             isLoading={subscriberInformationLoading}>
             <ItemPickerWithLabel
               key="custom"
-              label={strings.network.status}
+              label={strings.configuration.status}
               value={customDnsValue}
               setValue={setCustomDnsValue}
               items={[
-                { label: strings.network.selectorCustom, value: true },
-                { label: strings.network.selectorIsp, value: false },
+                { label: strings.configuration.selectorCustom, value: true },
+                { label: strings.configuration.selectorIsp, value: false },
               ]}
               changeKey="custom"
               onChangeValue={onEditCustomDnsSettings}
             />
             <ItemTextWithLabelEditable
               key="primary"
-              label={strings.network.primaryDns}
+              label={strings.configuration.primaryDns}
               type="ipv4"
               value={displayEditableValue(dnsConfiguration, 'primary')}
               placeholder={strings.messages.empty}
@@ -539,7 +539,7 @@ const Network = props => {
             />
             <ItemTextWithLabelEditable
               key="secondary"
-              label={strings.network.secondaryDns}
+              label={strings.configuration.secondaryDns}
               type="ipv4"
               value={displayEditableValue(dnsConfiguration, 'secondary')}
               placeholder={strings.messages.empty}
@@ -550,7 +550,7 @@ const Network = props => {
 
           <AccordionSection
             style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
-            title={strings.network.ipReservations}
+            title={strings.configuration.ipReservations}
             disableAccordion={true}
             isLoading={subscriberInformationLoading}
             showAdd={true}
@@ -577,7 +577,7 @@ const Network = props => {
                       key="label"
                       max="3"
                       type="label"
-                      values={[strings.network.ipAddress, strings.network.macAddress, strings.network.nickname]}
+                      values={[strings.configuration.ipAddress, strings.configuration.macAddress, strings.configuration.nickname]}
                       showDelete={true}
                       showEdit={true}
                     />,

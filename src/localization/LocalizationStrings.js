@@ -167,7 +167,7 @@ export const strings = new LocalizedStrings({
       connectedDevices: 'Connected Devices',
       guestNetwork: 'Guest Network',
     },
-    deviceList: {
+    network: {
       wifiClients: 'Wifi Clients',
       wiredClients: 'Wired Clients',
     },
@@ -188,7 +188,7 @@ export const strings = new LocalizedStrings({
       status: 'Status',
       type: 'Type',
     },
-    network: {
+    configuration: {
       accessPointRoleSettings: '{role} Settings',
       commandFactoryResetSuccess: 'Command to reset to factory defaults successfully sent.',
       commandFirmwareUpdateSuccess: 'Command to upgrade firmware successfully sent.',
