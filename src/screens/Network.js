@@ -20,6 +20,7 @@ import {
   getClientIcon,
   getClientConnectionIcon,
   getClientConnectionStatusColor,
+  getGuestNetworkIndex,
   setSubscriberInformationInterval,
   modifyNetworkSettings,
   deleteNetwork,
@@ -35,6 +36,7 @@ const Network = props => {
   // The sectionZIndex is used to help with any embedded picker/dropdown. Start with a high enough
   // value that it'll cover each section. The sections further up the view should have higher numbers
   var sectionZIndex = 20;
+  var pickerZIndex = 20;
   // Need to use refs so that the async tasks can have proper access to these state changes
   const scrollRef = useRef();
   const isFocusedRef = useRef(false);
@@ -226,6 +228,18 @@ const Network = props => {
     setSelectedWifiNetworkIndex(index);
   };
 
+  const isGuestNetworkAvailable = () => {
+    // Only one guest network is supported, so if there is already one then
+    // disabled the picker. Note if it is the current one that it should still
+    // be able to switch it off
+    let guesNetworkIndex = getGuestNetworkIndex(wifiNetworks);
+    if (guesNetworkIndex !== null && guesNetworkIndex !== selectedWifiNetworkIndex) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   const onEditNetworkSettings = async val => {
     try {
       // Because this is keyed into pickers, it may get called when we change networks, so need to make sure
@@ -330,12 +344,14 @@ const Network = props => {
               label={strings.network.type}
               value={wifiNetworkType}
               setValue={setWifiNetworkType}
+              disabled={!isGuestNetworkAvailable()}
               items={[
                 { label: strings.network.selectorTypeMain, value: 'main' },
                 { label: strings.network.selectorTypeGuest, value: 'guest' },
               ]}
               changeKey="type"
               onChangeValue={onEditNetworkSettings}
+              zIndex={pickerZIndex--}
             />
             <ItemTextWithLabelEditable
               key="name"
@@ -365,6 +381,7 @@ const Network = props => {
               ]}
               changeKey="encryption"
               onChangeValue={onEditNetworkSettings}
+              zIndex={pickerZIndex--}
             />
             <ItemPickerWithLabel
               key="bands"
@@ -381,6 +398,7 @@ const Network = props => {
               ]}
               changeKey="bands"
               onChangeValue={onEditNetworkSettings}
+              zIndex={pickerZIndex--}
             />
           </AccordionSection>
 

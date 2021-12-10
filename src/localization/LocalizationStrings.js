@@ -63,7 +63,7 @@ export const strings = new LocalizedStrings({
       forgotPassword: 'Forgot Password',
       ipReservation: 'IP Reservation',
       network: 'Network',
-      networkAdd: 'Network Add',
+      networkAdd: 'Add Network',
       multiFactorAuthentication: 'Multi-Factor Authentiation',
       passwordReset: 'Password Reset',
       phoneVerification: 'Phone Verification',
