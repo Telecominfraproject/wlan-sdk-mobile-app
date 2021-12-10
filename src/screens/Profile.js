@@ -12,7 +12,7 @@ import {
 } from '../AppStyle';
 import { StyleSheet, SafeAreaView, View, ScrollView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { showGeneralMessage, completeSignOut, logStringifyPretty, showGeneralError, scrollViewToTop } from '../Utils';
+import { completeSignOut, logStringifyPretty, showGeneralError, scrollViewToTop } from '../Utils';
 import { getCredentials, handleApiError, mfaApi } from '../api/apiHandler';
 import { SubMfaConfigTypeEnum } from '../api/generated/owUserPortalApi';
 import { selectSubscriberInformationLoading, selectSubscriberInformation } from '../store/SubscriberInformationSlice';
@@ -55,7 +55,8 @@ const Profile = props => {
       const response = await mfaApi.getMFS();
       if (response && response.data) {
         logStringifyPretty(response.data, response.request.responseURL);
-        // TODO setMfaValue response result
+        let type = response.data.type || SubMfaConfigTypeEnum.Disabled;
+        setMfaValue(type);
       } else {
         console.log(response);
         console.error('Invalid response from getMFS');
@@ -90,7 +91,7 @@ const Profile = props => {
     try {
       let mfaConfig = {
         id: subscriberInformation.id,
-        type: mfaValue,
+        type: SubMfaConfigTypeEnum.Sms,
         email: subscriberInformation.userId,
         sms: phone,
       };
@@ -98,7 +99,6 @@ const Profile = props => {
       const response = await mfaApi.modifyMFS(true, undefined, undefined, mfaConfig);
       if (response && response.data) {
         logStringifyPretty(response.data, response.request.responseURL);
-        showGeneralMessage(response.data.Details);
 
         // Navigate to the Phone Verification
         props.navigation.navigate('PhoneVerification', { mfaConfig });
@@ -113,7 +113,6 @@ const Profile = props => {
   };
 
   const onMfaChange = async type => {
-    // TODO: Need updated API
     try {
       let mfaConfig = {
         id: subscriberInformation.id,
@@ -121,17 +120,19 @@ const Profile = props => {
         email: subscriberInformation.userId,
         sms: subscriberInformation.phoneNumber,
       };
-      logStringifyPretty(mfaConfig);
+      logStringifyPretty(mfaConfig, 'onMfaChange');
 
-      const response = await mfaApi.modifyMFS(undefined, undefined, undefined, mfaConfig);
-
-      if (response && response.data) {
-        logStringifyPretty(response.data, response.request.responseURL);
+      if (type === SubMfaConfigTypeEnum.Sms) {
+        await sendSmsCode(mfaConfig.sms);
       } else {
-        console.log(response);
-        console.error('Invalid response from getMFS');
-        showGeneralError(strings.errors.titleMfa, strings.errors.invalidResponse);
-        // TODO revert mfaValue to original
+        const response = await mfaApi.modifyMFS(undefined, undefined, undefined, mfaConfig);
+        if (response && response.data) {
+          logStringifyPretty(response.data, response.request.responseURL);
+        } else {
+          console.log(response);
+          console.error('Invalid response from getMFS');
+          showGeneralError(strings.errors.titleMfa, strings.errors.invalidResponse);
+        }
       }
     } catch (error) {
       handleApiError(strings.errors.titleMfa, error);

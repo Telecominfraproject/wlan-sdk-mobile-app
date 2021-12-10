@@ -30,6 +30,7 @@ export default function PhoneVerification(props) {
     } catch (err) {
       showGeneralError(strings.errors.validationError, strings.errors.invalidCode);
     } finally {
+      setCode('');
       setLoading(false);
     }
   };
@@ -37,18 +38,11 @@ export default function PhoneVerification(props) {
   const updateSubscriber = async () => {
     try {
       setLoading(true);
-      const response = await modifySubscriberInformation({ ...subscriberInformation, phoneNumber: mfaConfig.sms });
+      let updatedSubsciberInformation = { ...subscriberInformation, phoneNumber: mfaConfig.sms };
+      await modifySubscriberInformation(updatedSubsciberInformation);
       setLoading(false);
 
-      if (response && response.data) {
-        logStringifyPretty(response.data, response.request.responseURL);
-        showGeneralMessage(response.data.Details);
-        props.navigation.navigate('Profile');
-      } else {
-        console.log(response);
-        console.error('Invalid response from modifySubscriberInformation');
-        showGeneralError(strings.errors.titleSms, strings.errors.invalidResponse);
-      }
+      props.navigation.navigate('Profile');
     } catch (err) {
       handleApiError(strings.errors.titleUpdate, err);
     }
@@ -85,6 +79,7 @@ export default function PhoneVerification(props) {
           <TextInput
             style={pageItemStyle.inputText}
             placeholder={strings.placeholders.code}
+            value={code}
             onChangeText={text => setCode(text)}
             autoCapitalize="none"
             textContentType="oneTimeCode"
