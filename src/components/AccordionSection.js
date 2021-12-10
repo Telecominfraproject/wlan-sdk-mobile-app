@@ -67,6 +67,7 @@ const AccordionSection = props => {
       marginTop: props.style ? props.style.marginTop : 0,
       marginLeft: props.style ? props.style.marginLeft : 0,
       marginRight: props.style ? props.style.marginRight : 0,
+      // zIndex is required to help with any dropdown/pickers (elevation might be needed as well)
       zIndex: props.style ? props.style.zIndex : 0,
 
       width: '100%',

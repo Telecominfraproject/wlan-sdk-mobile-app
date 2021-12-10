@@ -29,6 +29,9 @@ const Profile = props => {
   const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
   const [mfaValue, setMfaValue] = useState(SubMfaConfigTypeEnum.Disabled);
+  // The sectionZIndex is used to help with any embedded picker/dropdown. Start with a high enough 
+  // value that it'll cover each section. The sections furhter up the view should have higher number
+  var sectionZIndex = 20;
 
   // Refresh the information only anytime there is a navigation change and this has come into focus
   // Need to be careful here as useFocusEffect is also called during re-render so it can result in
@@ -152,10 +155,6 @@ const Profile = props => {
     section: {
       marginTop: marginTopDefault,
     },
-    accountSection: {
-      marginTop: marginTopDefault,
-      zIndex: 1, // for mfa dropdown
-    },
     item: {
       paddingVertical: paddingVerticalDefault,
       paddingHorizontal: paddingHorizontalDefault,
@@ -180,7 +179,7 @@ const Profile = props => {
       <ScrollView ref={scrollRef} contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.containerPostLogin}>
           <AccordionSection
-            style={componentStyles.accountSection}
+            style={StyleSheet.flatten([componentStyles.section, { zIndex: sectionZIndex-- }])}
             title={strings.profile.accountInfo}
             isLoading={subscriberInformationLoading}
             disableAccordion={true}>
@@ -245,7 +244,7 @@ const Profile = props => {
 
           {/* App */}
           <AccordionSection
-            style={componentStyles.section}
+            style={StyleSheet.flatten([componentStyles.section, { zIndex: sectionZIndex-- }])}
             title={strings.profile.app}
             isLoading={false}
             disableAccordion={true}>
