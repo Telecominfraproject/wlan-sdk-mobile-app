@@ -16,7 +16,16 @@ export default function ItemTextWithLabelEditable(props) {
   const [edit, setEdit] = useState(false);
   const [value, setValue] = useState(props.value);
   const [valid, setValid] = useState(true);
+  const isMounted = useRef(false);
   const inputRef = useRef();
+
+  useEffect(() => {
+    isMounted.current = true;
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   // If the props.value changes, make sure to update the internal value
   useEffect(() => {
@@ -160,8 +169,10 @@ export default function ItemTextWithLabelEditable(props) {
     } catch (error) {
       // Do nothing
     } finally {
-      setLoading(false);
-      setEdit(false);
+      if (isMounted.current) {
+        setLoading(false);
+        setEdit(false);
+      }
     }
   };
 
