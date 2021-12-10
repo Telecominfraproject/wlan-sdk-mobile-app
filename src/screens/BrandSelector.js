@@ -57,9 +57,9 @@ const BrandSelector = props => {
     containerBrands: {
       flexDirection: 'column',
       flexWrap: 'nowrap',
-      flex: 0,
       justifyContent: 'flex-start',
       alignItems: 'center',
+      flex: 0,
       width: '100%',
     },
     containerList: {
