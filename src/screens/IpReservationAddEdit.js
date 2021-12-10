@@ -10,7 +10,7 @@ import ButtonStyled from '../components/ButtonStyled';
 import AccordionSection from '../components/AccordionSection';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 
-export default function IpReservation(props) {
+export default function IpReservationAddEdit(props) {
   const reservation = props.route.params ? props.route.params.reservation : null;
   const [loading, setLoading] = useState(false);
   const [ipAddress, setIpAddress] = useState(reservation ? reservation.ipAddress : null);

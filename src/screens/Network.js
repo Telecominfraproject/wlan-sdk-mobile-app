@@ -234,11 +234,11 @@ const Network = props => {
   };
 
   const onAddIpReservation = async => {
-    props.navigation.navigate('IpReservation');
+    props.navigation.navigate('IpReservationAddEdit');
   };
 
   const onEditIpReservation = async item => {
-    props.navigation.navigate('IpReservation', { reservation: item });
+    props.navigation.navigate('IpReservationAddEdit', { reservation: item });
   };
 
   const onDeleteIpReservation = async item => {
