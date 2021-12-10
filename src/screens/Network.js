@@ -97,12 +97,10 @@ const Network = props => {
   );
 
   useEffect(() => {
-    console.log(deviceModeType);
-    console.log(deviceMode.type);
-
     if (deviceModeType !== deviceMode.type) {
       setDeviceModeType(deviceMode.type);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deviceMode.type]);
 
   useEffect(() => {
