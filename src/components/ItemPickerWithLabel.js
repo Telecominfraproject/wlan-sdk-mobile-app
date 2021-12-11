@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { grayColor, heightCellDefault, paddingHorizontalDefault, primaryColor, whiteColor } from '../AppStyle';
+import ButtonStyled from '../components/ButtonStyled';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 export default function ItemPickerWithLabel(props) {
@@ -24,15 +25,22 @@ export default function ItemPickerWithLabel(props) {
 
   const componentStyles = StyleSheet.create({
     container: {
-      width: '100%',
       height: heightCellDefault,
+      width: '100%',
+      // Layout
+      flexDirection: 'row',
+      flexWrap: 'nowrap',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      // Visual
+      paddingHorizontal: paddingHorizontalDefault,
+    },
+    containerText: {
+      flex: 1,
       // Layout
       flexDirection: 'column',
       flexWrap: 'nowrap',
-      flex: 1,
       justifyContent: 'space-evenly',
-      // Visual
-      paddingHorizontal: paddingHorizontalDefault,
     },
     textLabel: {
       fontSize: 11,
@@ -50,32 +58,47 @@ export default function ItemPickerWithLabel(props) {
       backgroundColor: whiteColor,
       borderColor: grayColor,
     },
+    buttonRight: {
+      marginLeft: paddingHorizontalDefault,
+    },
   });
 
   return (
     <View style={componentStyles.container}>
-      <Text style={componentStyles.textLabel} numberOfLines={1}>
-        {label}
-      </Text>
-      <DropDownPicker
-        listMode={'SCROLLVIEW'}
-        mode={props.multiple ? 'BADGE' : 'SIMPLE'}
-        style={componentStyles.picker}
-        loading={props.loading ?? false}
-        placeholder={placeholder}
-        disabled={props.disabled}
-        multiple={props.multiple ? props.multiple : false}
-        items={items}
-        setItems={setItems}
-        open={open}
-        setOpen={setOpen}
-        value={props.value}
-        setValue={props.setValue}
-        zIndex={props.zIndex}
-        dropDownDirection="BOTTOM"
-        dropDownContainerStyle={componentStyles.dropDownContainer}
-        onChangeValue={value => onChangeValue(value)}
-      />
+      <View style={componentStyles.containerText}>
+        <Text style={componentStyles.textLabel} numberOfLines={1}>
+          {label}
+        </Text>
+        <DropDownPicker
+          listMode={'SCROLLVIEW'}
+          mode={props.multiple ? 'BADGE' : 'SIMPLE'}
+          style={componentStyles.picker}
+          loading={props.loading ?? false}
+          placeholder={placeholder}
+          disabled={props.disabled}
+          multiple={props.multiple ? props.multiple : false}
+          items={items}
+          setItems={setItems}
+          open={open}
+          setOpen={setOpen}
+          value={props.value}
+          setValue={props.setValue}
+          zIndex={props.zIndex}
+          dropDownDirection="BOTTOM"
+          dropDownContainerStyle={componentStyles.dropDownContainer}
+          onChangeValue={value => onChangeValue(value)}
+        />
+      </View>
+      {props.buttonTitle && (
+        <ButtonStyled
+          style={componentStyles.buttonRight}
+          title={props.buttonTitle}
+          type={props.buttonType}
+          onPress={props.onButtonPress}
+          size="small"
+          disabled={props.buttonDisabled}
+        />
+      )}
     </View>
   );
 }

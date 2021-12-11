@@ -71,6 +71,7 @@ const Configuration = props => {
     internetConnection ? internetConnection.type : null,
   );
   const [deviceModeType, setDeviceModeType] = useState(deviceMode ? deviceMode.type : null);
+  const [enableLeds, setEnableLeds] = useState(deviceMode ? deviceMode.enableLEDS : false);
   const [customDnsValue, setCustomDnsValue] = useState(dnsConfiguration ? dnsConfiguration.custom : false);
 
   // Refresh the information only anytime there is a navigation change and this has come into focus
@@ -463,10 +464,17 @@ const Configuration = props => {
     }
 
     items.push(
-      <ItemTextWithLabel
+      <ItemPickerWithLabel
         key="enableLEDS"
         label={strings.configuration.enableLeds}
-        value={displayValueBoolean(deviceMode, 'enableLEDS')}
+        value={enableLeds}
+        setValue={setEnableLeds}
+        items={[
+          { label: strings.common.yes, value: true },
+          { label: strings.common.no, value: false },
+        ]}
+        changeKey="enableLEDS"
+        onChangeValue={onEditDeviceModeSettings}
         buttonTitle={strings.buttons.blink}
         onButtonPress={onBlinkLightsPress}
         buttonDisabled={!accessPoint}
