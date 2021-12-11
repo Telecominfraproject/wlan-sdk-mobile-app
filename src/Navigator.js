@@ -1,13 +1,13 @@
 import React from 'react';
 import { strings } from './localization/LocalizationStrings';
 import { primaryColor, blackColor, grayBackgroundcolor } from './AppStyle';
-import { useSelector } from 'react-redux';
-import { selectBrandInfo } from './store/BrandInfoSlice';
 import { StyleSheet, Image, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { selectBrandInfo } from './store/BrandInfoSlice';
+import { selectAccessPoint } from './store/SubscriberInformationSlice';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { selectAccessPoint } from './store/SubscriberInformationSlice';
 
 import BrandSelector from './screens/BrandSelector';
 import Dashboard from './screens/Dashboard';

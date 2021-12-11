@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { setBrandInfo } from '../store/BrandInfoSlice';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, View, Text, ActivityIndicator } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { setBrandInfo } from '../store/BrandInfoSlice';
 import ItemBrand from '../components/ItemBrand';
 import TextInputWithIcon from '../components/TextInputWithIcon';
 

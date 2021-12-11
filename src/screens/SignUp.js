@@ -1,10 +1,10 @@
 import React, { createRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, TextInput, ActivityIndicator, Image, Text } from 'react-native';
 import { handleApiError } from '../api/apiHandler';
 import { logStringifyPretty } from '../Utils';
+import { useSelector } from 'react-redux';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
 import ButtonStyled from '../components/ButtonStyled';
 import BulletList from '../components/BulletList';

@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, View, TextInput, ActivityIndicator, Text, Image } from 'react-native';
 import { authenticationApi, clearCredentials, handleApiError } from '../api/apiHandler';
+import { useSelector } from 'react-redux';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { logStringifyPretty, showGeneralError, showGeneralMessage } from '../Utils';
 import ButtonStyled from '../components/ButtonStyled';

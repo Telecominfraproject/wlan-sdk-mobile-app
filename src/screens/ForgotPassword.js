@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
-import { authenticationApi, handleApiError } from '../api/apiHandler';
-import { showGeneralMessage, showGeneralError } from '../Utils';
-import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, TextInput, ActivityIndicator, Image, Text } from 'react-native';
+import { useSelector } from 'react-redux';
+import { selectBrandInfo } from '../store/BrandInfoSlice';
+import { authenticationApi, handleApiError } from '../api/apiHandler';
+import { showGeneralMessage } from '../Utils';
 import ButtonStyled from '../components/ButtonStyled';
 
 const ForgotPassword = props => {
