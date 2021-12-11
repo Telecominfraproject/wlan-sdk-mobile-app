@@ -17,6 +17,7 @@ import {
   displayValue,
   displayEditableValue,
   isFieldDifferent,
+  isArrayDifferent,
   getClientIcon,
   getClientConnectionIcon,
   getClientConnectionStatusColor,
@@ -245,8 +246,12 @@ const Network = props => {
       // Because this is keyed into pickers, it may get called when we change networks, so need to make sure
       // that things are actually different before trying to update it
       let changed = false;
-      for (const [key, value] of Object.entries(val)) {
-        if (selectedWifiNetwork[key] !== value) {
+      for (let [key, value] of Object.entries(val)) {
+        let currentValue = selectedWifiNetwork[key];
+
+        if (Array.isArray(currentValue)) {
+          changed = isArrayDifferent(currentValue, value);
+        } else if (currentValue !== value) {
           changed = true;
         }
       }

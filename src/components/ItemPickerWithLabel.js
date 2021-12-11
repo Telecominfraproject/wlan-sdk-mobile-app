@@ -59,6 +59,7 @@ export default function ItemPickerWithLabel(props) {
       </Text>
       <DropDownPicker
         listMode={'SCROLLVIEW'}
+        mode={props.multiple ? 'BADGE' : 'SIMPLE'}
         loading={props.loading ?? false}
         placeholder={placeholder}
         disabled={props.disabled}

@@ -364,6 +364,19 @@ export function isFieldDifferent(currentData, newData, field) {
   }
 }
 
+export function isArrayDifferent(array1, array2) {
+  if (array1 === null || array2 === null) {
+    return array1 !== array2;
+  }
+
+  if (array1.length !== array2.length) {
+    return true;
+  }
+
+  let intersection = array1.filter(x => array2.includes(x));
+  return intersection.length !== array1.length;
+}
+
 export function setSubscriberInformationInterval(subscriberInformation, extraUpdateFn) {
   async function checkSubscriberInformation() {
     try {
