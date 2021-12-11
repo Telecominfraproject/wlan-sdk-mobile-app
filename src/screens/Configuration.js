@@ -35,6 +35,7 @@ import {
   displayEditableValue,
   getAccessPointIcon,
   showGeneralError,
+  modifySubscriberInternetConnection,
   modifySubscriberDeviceMode,
   modifySubscriberDnsInformation,
   setSubscriberInformationInterval,
@@ -50,7 +51,11 @@ import ItemTextWithLabel from '../components/ItemTextWithLabel';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
 
-const Network = props => {
+const Configuration = props => {
+  // The sectionZIndex is used to help with any embedded picker/dropdown. Start with a high enough
+  // value that it'll cover each section. The sections further up the view should have higher numbers
+  var sectionZIndex = 20;
+  var pickerZIndex = 20;
   const scrollRef = useRef();
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const subscriberInformation = useSelector(selectSubscriberInformation);
@@ -61,11 +66,12 @@ const Network = props => {
   const deviceMode = useSelector(selectDeviceMode);
   const dnsConfiguration = useSelector(selectDnsConfiguration);
   const ipReservations = useSelector(selectIpReservations);
+
+  const [internetConnectionType, setInternetConnectionType] = useState(
+    internetConnection ? internetConnection.type : null,
+  );
   const [deviceModeType, setDeviceModeType] = useState(deviceMode ? deviceMode.type : null);
   const [customDnsValue, setCustomDnsValue] = useState(dnsConfiguration ? dnsConfiguration.custom : false);
-  // The sectionZIndex is used to help with any embedded picker/dropdown. Start with a high enough
-  // value that it'll cover each section. The sections further up the view should have higher numbers
-  var sectionZIndex = 20;
 
   // Refresh the information only anytime there is a navigation change and this has come into focus
   // Need to be careful here as useFocusEffect is also called during re-render so it can result in
@@ -83,6 +89,10 @@ const Network = props => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.navigation]),
   );
+
+  useEffect(() => {
+    setInternetConnectionType(internetConnection.type);
+  }, [internetConnection.type]);
 
   useEffect(() => {
     setDeviceModeType(deviceMode.type);
@@ -194,7 +204,7 @@ const Network = props => {
 
   const sendAccessPointCommand = async (action, successMessage) => {
     try {
-      // TODO: Verify this is functioning and the function call is corrected!
+      // TODO: Verify this is functioning and the function call is correct!
       const response = await deviceCommandsApi.performAnAction(action, { mac: accessPoint.macAddress, when: 0 });
 
       if (!response || !response.data) {
@@ -214,6 +224,16 @@ const Network = props => {
 
   const onAddNetwork = async => {
     props.navigation.navigate('Network', { screen: 'NetworkAdd', initial: false });
+  };
+
+  const onEditInternetConnectionSettings = async val => {
+    try {
+      await modifySubscriberInternetConnection(subscriberInformation, currentAccessPointId, val);
+    } catch (error) {
+      handleApiError(strings.errors.titleUpdate, error);
+      // Need to throw the error to ensure the caller cleans up
+      throw error;
+    }
   };
 
   const onEditDeviceModeSettings = async val => {
@@ -241,7 +261,6 @@ const Network = props => {
   };
 
   const onEditIpReservation = index => {
-    console.log(index);
     props.navigation.push('IpReservationAddEdit', { reservationIndex: index });
   };
 
@@ -265,7 +284,101 @@ const Network = props => {
     ]);
   };
 
+  const renderInternetConnectionSettings = () => {
+    // It is very important to not use the state when doing the rendering as it'll result in race conditions.
+    let type = internetConnection ? internetConnection.type : null;
+    let items = [
+      <ItemPickerWithLabel
+        key="type"
+        label={strings.configuration.type}
+        value={internetConnectionType}
+        setValue={setInternetConnectionType}
+        items={[
+          { label: displayValueInternetConnectionType({ type: 'manual' }, 'type'), value: 'manual' },
+          { label: displayValueInternetConnectionType({ type: 'automatic' }, 'type'), value: 'automatic' },
+          { label: displayValueInternetConnectionType({ type: 'pppoe' }, 'type'), value: 'pppoe' },
+        ]}
+        changeKey="type"
+        onChangeValue={onEditInternetConnectionSettings}
+        zIndex={pickerZIndex--}
+      />,
+    ];
+
+    if (type === 'automatic') {
+      // Show nothing. This might actually want to be readonly
+    } else if (type === 'manual') {
+      items.push(
+        <ItemTextWithLabelEditable
+          key="ipAddress"
+          label={strings.configuration.ipAddress}
+          value={displayEditableValue(internetConnection, 'ipAddress')}
+          editKey="ipAddress"
+          onEdit={onEditInternetConnectionSettings}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabelEditable
+          key="subnetMask"
+          label={strings.configuration.subnetMask}
+          value={displayEditableValue(internetConnection, 'subnetMask')}
+          editKey="subnetMask"
+          onEdit={onEditInternetConnectionSettings}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabelEditable
+          key="defaultGateway"
+          label={strings.configuration.defaultGateway}
+          value={displayEditableValue(internetConnection, 'defaultGateway')}
+          editKey="defaultGateway"
+          onEdit={onEditInternetConnectionSettings}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabelEditable
+          key="primaryDns"
+          label={strings.configuration.primaryDns}
+          value={displayEditableValue(internetConnection, 'primaryDns')}
+          editKey="primaryDns"
+          onEdit={onEditInternetConnectionSettings}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabelEditable
+          key="secondaryDns"
+          label={strings.configuration.secondaryDns}
+          value={displayEditableValue(internetConnection, 'secondaryDns')}
+          editKey="secondaryDns"
+          onEdit={onEditInternetConnectionSettings}
+        />,
+      );
+    } else if (type === 'pppoe') {
+      items.push(
+        <ItemTextWithLabelEditable
+          key="username"
+          label={strings.configuration.username}
+          value={displayEditableValue(internetConnection, 'username')}
+          editKey="username"
+          onEdit={onEditInternetConnectionSettings}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabelEditable
+          key="password"
+          label={strings.configuration.password}
+          value={displayEditableValue(internetConnection, 'password')}
+          editKey="password"
+          onEdit={onEditInternetConnectionSettings}
+        />,
+      );
+    }
+
+    return items;
+  };
+
   const renderDeviceMode = () => {
+    // It is very important to not use the state when doing the rendering as it'll result in race conditions.
+    let type = deviceMode ? deviceMode.type : null;
     let items = [
       <ItemPickerWithLabel
         key="type"
@@ -279,12 +392,13 @@ const Network = props => {
         ]}
         changeKey="type"
         onChangeValue={onEditDeviceModeSettings}
+        zIndex={pickerZIndex--}
       />,
     ];
 
-    if (deviceModeType === 'bridge') {
+    if (type === 'bridge') {
       // Nothing is added
-    } else if (deviceModeType === 'manual') {
+    } else if (type === 'manual') {
       items.push(
         <ItemTextWithLabel
           key="subnet"
@@ -309,7 +423,7 @@ const Network = props => {
       items.push(
         <ItemTextWithLabel key="endIP" label={strings.configuration.endIp} value={displayValue(deviceMode, 'endIP')} />,
       );
-    } else if (deviceModeType === 'nat' || !deviceModeType) {
+    } else if (type === 'nat' || !type) {
       items.push(
         <ItemTextWithLabelEditable
           key="subnet"
@@ -358,6 +472,53 @@ const Network = props => {
         buttonDisabled={!accessPoint}
       />,
     );
+
+    return items;
+  };
+
+  const renderDnsSettings = () => {
+    // It is very important to not use the state when doing the rendering as it'll result in race conditions.
+    let custom = dnsConfiguration ? dnsConfiguration.custom : false;
+    let items = [
+      <ItemPickerWithLabel
+        key="custom"
+        label={strings.configuration.type}
+        value={customDnsValue}
+        setValue={setCustomDnsValue}
+        items={[
+          { label: strings.configuration.selectorIsp, value: false },
+          { label: strings.configuration.selectorCustom, value: true },
+        ]}
+        changeKey="custom"
+        onChangeValue={onEditCustomDnsSettings}
+        zIndex={pickerZIndex--}
+      />,
+    ];
+
+    if (custom) {
+      items.push(
+        <ItemTextWithLabelEditable
+          key="primary"
+          label={strings.configuration.primaryDns}
+          type="ipv4"
+          value={displayEditableValue(dnsConfiguration, 'primary')}
+          placeholder={strings.messages.empty}
+          editKey="primary"
+          onEdit={onEditCustomDnsSettings}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabelEditable
+          key="secondary"
+          label={strings.configuration.secondaryDns}
+          type="ipv4"
+          value={displayEditableValue(dnsConfiguration, 'secondary')}
+          placeholder={strings.messages.empty}
+          editKey="secondary"
+          onEdit={onEditCustomDnsSettings}
+        />,
+      );
+    }
 
     return items;
   };
@@ -485,36 +646,7 @@ const Network = props => {
             title={strings.configuration.internetSettings}
             disableAccordion={true}
             isLoading={subscriberInformationLoading}>
-            <ItemTextWithLabel
-              key="ipAddress"
-              label={strings.configuration.ipAddress}
-              value={displayValue(internetConnection, 'ipAddress')}
-            />
-            <ItemTextWithLabel
-              key="type"
-              label={strings.configuration.type}
-              value={displayValueInternetConnectionType(internetConnection, 'type')}
-            />
-            <ItemTextWithLabel
-              key="subnetMask"
-              label={strings.configuration.subnetMask}
-              value={displayValue(internetConnection, 'subnetMask')}
-            />
-            <ItemTextWithLabel
-              key="defaultGateway"
-              label={strings.configuration.defaultGateway}
-              value={displayValue(internetConnection, 'defaultGateway')}
-            />
-            <ItemTextWithLabel
-              key="primaryDns"
-              label={strings.configuration.primaryDns}
-              value={displayValue(internetConnection, 'primaryDns')}
-            />
-            <ItemTextWithLabel
-              key="secondaryDns"
-              label={strings.configuration.secondaryDns}
-              value={displayValue(internetConnection, 'secondaryDns')}
-            />
+            {renderInternetConnectionSettings()}
           </AccordionSection>
 
           <AccordionSection
@@ -527,39 +659,10 @@ const Network = props => {
 
           <AccordionSection
             style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
-            title={strings.configuration.customDnsSettings}
+            title={strings.configuration.dnsSettings}
             disableAccordion={true}
             isLoading={subscriberInformationLoading}>
-            <ItemPickerWithLabel
-              key="custom"
-              label={strings.configuration.status}
-              value={customDnsValue}
-              setValue={setCustomDnsValue}
-              items={[
-                { label: strings.configuration.selectorCustom, value: true },
-                { label: strings.configuration.selectorIsp, value: false },
-              ]}
-              changeKey="custom"
-              onChangeValue={onEditCustomDnsSettings}
-            />
-            <ItemTextWithLabelEditable
-              key="primary"
-              label={strings.configuration.primaryDns}
-              type="ipv4"
-              value={displayEditableValue(dnsConfiguration, 'primary')}
-              placeholder={strings.messages.empty}
-              editKey="primary"
-              onEdit={onEditCustomDnsSettings}
-            />
-            <ItemTextWithLabelEditable
-              key="secondary"
-              label={strings.configuration.secondaryDns}
-              type="ipv4"
-              value={displayEditableValue(dnsConfiguration, 'secondary')}
-              placeholder={strings.messages.empty}
-              editKey="secondary"
-              onEdit={onEditCustomDnsSettings}
-            />
+            {renderDnsSettings()}
           </AccordionSection>
 
           <AccordionSection
@@ -626,4 +729,4 @@ const Network = props => {
   );
 };
 
-export default Network;
+export default Configuration;

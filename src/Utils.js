@@ -479,6 +479,46 @@ export async function modifySubscriberDevice(subscriberInformation, accessPointI
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
 
+export async function modifySubscriberInternetConnection(subscriberInformation, accessPointId, jsonObject) {
+  if (!jsonObject) {
+    // Do nothing if the object is null or empty
+    return;
+  }
+
+  // accessPointId can be null - it just means use the first access point, so no check for this
+  if (!subscriberInformation) {
+    throw new Error(strings.errors.internal);
+  }
+
+  // Clone the current subscriber information
+  let updatedSubsciberInformation = JSON.parse(JSON.stringify(subscriberInformation));
+  let internetConnection = getSubscriberAccessPointInfo(
+    updatedSubsciberInformation,
+    accessPointId,
+    'internetConnection',
+  );
+  if (!internetConnection) {
+    throw new Error(strings.errors.internal);
+  }
+
+  // Update the values and check to make sure there has been change
+  let changed = false;
+  for (const [key, value] of Object.entries(jsonObject)) {
+    if (internetConnection[key] !== value) {
+      internetConnection[key] = value;
+      changed = true;
+    }
+  }
+
+  // If no change occured, just return. This is very important to avoid
+  // some types of setState infinite loops
+  if (!changed) {
+    return;
+  }
+
+  await modifySubscriberInformation(updatedSubsciberInformation);
+}
+
 export async function modifySubscriberDnsInformation(subscriberInformation, accessPointId, jsonObject) {
   if (!jsonObject) {
     // Do nothing if the object is null or empty
