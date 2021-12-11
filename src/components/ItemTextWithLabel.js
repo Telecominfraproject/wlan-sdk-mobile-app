@@ -15,19 +15,17 @@ const ItemTextWithLabel = props => {
       // Layout
       flexDirection: 'row',
       flexWrap: 'nowrap',
-      flex: 0,
       alignItems: 'center',
       justifyContent: 'space-between',
       // Visual
       paddingHorizontal: paddingHorizontalDefault,
     },
     containerText: {
+      flex: 1,
       // Layout
       flexDirection: 'column',
       flexWrap: 'nowrap',
-      flex: 1,
       justifyContent: 'space-evenly',
-      marginRight: paddingHorizontalDefault,
     },
     textLabel: {
       fontSize: 11,
@@ -37,6 +35,9 @@ const ItemTextWithLabel = props => {
       height: 28,
       fontSize: 14,
       textAlignVertical: 'center',
+    },
+    buttonRight: {
+      marginLeft: paddingHorizontalDefault,
     },
   });
 
@@ -50,16 +51,15 @@ const ItemTextWithLabel = props => {
           {props.value}
         </Text>
       </Pressable>
-      {props.buttonTitle ? (
+      {props.buttonTitle && (
         <ButtonStyled
+          style={componentStyles.buttonRight}
           title={props.buttonTitle}
           type={props.buttonType}
           onPress={props.onButtonPress}
           size="small"
           disabled={props.buttonDisabled}
         />
-      ) : (
-        <></>
       )}
     </View>
   );
