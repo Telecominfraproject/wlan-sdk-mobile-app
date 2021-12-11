@@ -231,6 +231,7 @@ export const strings = new LocalizedStrings({
       internetSettings: 'Internet Settings',
       ipAddress: 'IP Address',
       ipReservations: 'IP Reservations',
+      name: 'Name',
       macAddress: 'MAC Address',
       mainNetwork: '{0} (Main)',
       networks: 'Networks',

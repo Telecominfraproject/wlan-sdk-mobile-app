@@ -27,7 +27,6 @@ import {
 import { deviceCommandsApi, handleApiError } from '../api/apiHandler';
 import {
   displayValue,
-  displayValueBoolean,
   displayValueAccessPointType,
   displayValueAccessPointDeviceRole,
   displayValueInternetConnectionType,
@@ -35,6 +34,7 @@ import {
   displayEditableValue,
   getAccessPointIcon,
   showGeneralError,
+  modifyAccessPoint,
   modifySubscriberInternetConnection,
   modifySubscriberDeviceMode,
   modifySubscriberDnsInformation,
@@ -225,6 +225,16 @@ const Configuration = props => {
 
   const onAddNetwork = async => {
     props.navigation.navigate('Network', { screen: 'NetworkAdd', initial: false });
+  };
+
+  const onEditAccessPointSettings = async val => {
+    try {
+      await modifyAccessPoint(subscriberInformation, currentAccessPointId, val);
+    } catch (error) {
+      handleApiError(strings.errors.titleUpdate, error);
+      // Need to throw the error to ensure the caller cleans up
+      throw error;
+    }
   };
 
   const onEditInternetConnectionSettings = async val => {
@@ -619,6 +629,13 @@ const Configuration = props => {
             })}
             disableAccordion={true}
             isLoading={false}>
+            <ItemTextWithLabelEditable
+              key="name"
+              label={strings.configuration.name}
+              value={displayEditableValue(accessPoint, 'name')}
+              editKey="name"
+              onEdit={onEditAccessPointSettings}
+            />
             <ItemTextWithLabel
               key="deviceType"
               label={strings.configuration.type}
