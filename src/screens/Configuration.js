@@ -240,17 +240,18 @@ const Network = props => {
     props.navigation.navigate('IpReservationAddEdit');
   };
 
-  const onEditIpReservation = async item => {
-    props.navigation.navigate('IpReservationAddEdit', { reservation: item });
+  const onEditIpReservation = index => {
+    console.log(index);
+    props.navigation.push('IpReservationAddEdit', { reservationIndex: index });
   };
 
-  const onDeleteIpReservation = async item => {
+  const onDeleteIpReservation = async index => {
     Alert.alert(strings.configuration.confirmTitle, strings.configuration.confirmDeleteIpReservation, [
       {
         text: strings.buttons.ok,
         onPress: async () => {
           try {
-            await deleteSubscriberIpReservation(subscriberInformation, currentAccessPointId, item.ipAddress);
+            await deleteSubscriberIpReservation(subscriberInformation, currentAccessPointId, index);
           } catch (error) {
             handleApiError(strings.errors.titleDelete, error);
             // Need to throw the error to ensure the caller cleans up
@@ -577,9 +578,9 @@ const Network = props => {
                     type="value"
                     values={[item.ipAddress, item.macAddress, item.nickname]}
                     showDelete={true}
-                    onDeletePress={() => onDeleteIpReservation(item)}
+                    onDeletePress={() => onDeleteIpReservation(index)}
                     showEdit={true}
-                    onEditPress={() => onEditIpReservation(item)}
+                    onEditPress={() => onEditIpReservation(index)}
                   />,
                 ];
 

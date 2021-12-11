@@ -3,27 +3,36 @@ import { StyleSheet, ScrollView, View, SafeAreaView } from 'react-native';
 import { strings } from '../localization/LocalizationStrings';
 import { pageItemStyle, pageStyle, paddingHorizontalDefault, marginTopDefault } from '../AppStyle';
 import { useSelector } from 'react-redux';
-import { selectCurrentAccessPointId, selectSubscriberInformation } from '../store/SubscriberInformationSlice';
+import {
+  selectCurrentAccessPointId,
+  selectSubscriberInformation,
+  selectIpReservations,
+} from '../store/SubscriberInformationSlice';
 import { handleApiError } from '../api/apiHandler';
-import { updateSubscriberIpReservation, addSubscriberIpReservation } from '../Utils';
+import { modifySubscriberIpReservation, addSubscriberIpReservation } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 
 export default function IpReservationAddEdit(props) {
-  const reservation = props.route.params ? props.route.params.reservation : null;
   // The sectionZIndex is used to help with any embedded picker/dropdown. Start with a high enough
   // value that it'll cover each section. The sections further up the view should have higher numbers
   var sectionZIndex = 20;
-  // Need to use refs so that the async tasks can have proper access to these state changes
   const scrollRef = useRef();
+  // Params
+  const reservationIndex = props.route.params ? props.route.params.reservationIndex : null;
   // States
+  const currentAccessPointId = useSelector(selectCurrentAccessPointId);
+  const subscriberInformation = useSelector(selectSubscriberInformation);
+  const ipReservations = useSelector(selectIpReservations);
+  const reservation =
+    reservationIndex !== null && ipReservations && ipReservations.reservations
+      ? ipReservations.reservations[reservationIndex]
+      : null;
   const [loading, setLoading] = useState(false);
   const [ipAddress, setIpAddress] = useState(reservation ? reservation.ipAddress : null);
   const [macAddress, setMacAddress] = useState(reservation ? reservation.macAddress : null);
   const [nickname, setNickname] = useState(reservation ? reservation.nickname : null);
-  const currentAccessPointId = useSelector(selectCurrentAccessPointId);
-  const subscriberInformation = useSelector(selectSubscriberInformation);
 
   const onCancelPress = () => {
     props.navigation.goBack();
@@ -39,11 +48,11 @@ export default function IpReservationAddEdit(props) {
 
       setLoading(true);
 
-      if (reservation) {
-        await updateSubscriberIpReservation(
+      if (reservationIndex !== null) {
+        await modifySubscriberIpReservation(
           subscriberInformation,
           currentAccessPointId,
-          ipAddress,
+          reservationIndex,
           reservationJsonObject,
         );
       } else {
@@ -58,7 +67,6 @@ export default function IpReservationAddEdit(props) {
       handleApiError(strings.errors.titleIpReservation, error);
       // Need to throw the error to ensure the caller cleans up
       throw error;
-    } finally {
     }
   };
 

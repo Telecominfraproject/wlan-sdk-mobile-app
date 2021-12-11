@@ -510,44 +510,6 @@ export async function modifySubscriberDnsInformation(subscriberInformation, acce
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
 
-export async function deleteSubscriberIpReservation(subscriberInformation, accessPointId, ipReservationIpAddress) {
-  if (!ipReservationIpAddress) {
-    // Do nothing if the object is null or empty
-    return;
-  }
-
-  // accessPointId can be null - it just means use the first access point, so no check for this
-  if (!subscriberInformation) {
-    throw new Error(strings.errors.internal);
-  }
-
-  // Clone the current subscriber information
-  let updatedSubsciberInformation = JSON.parse(JSON.stringify(subscriberInformation));
-  let ipReservations = getSubscriberAccessPointInfo(updatedSubsciberInformation, accessPointId, 'ipReservations');
-  if (!ipReservations) {
-    throw new Error(strings.errors.internal);
-  }
-
-  let changed = false;
-  let updatedReservations = ipReservations.reservations.filter(function (item) {
-    if (item.ipAddress === ipReservationIpAddress) {
-      changed = true;
-      return false;
-    }
-
-    return true;
-  });
-
-  // If no change occured, just return. This is very important to avoid
-  // some types of setState infinite loops
-  if (!changed) {
-    return;
-  }
-
-  ipReservations.reservations = updatedReservations;
-  await modifySubscriberInformation(updatedSubsciberInformation);
-}
-
 export async function addSubscriberIpReservation(subscriberInformation, accessPointId, ipReservationJsonObject) {
   if (!ipReservationJsonObject) {
     // Do nothing if the object is null or empty
@@ -566,17 +528,21 @@ export async function addSubscriberIpReservation(subscriberInformation, accessPo
     throw new Error(strings.errors.internal);
   }
 
+  if (!ipReservations.reservations) {
+    ipReservations.reservations = [];
+  }
+
   ipReservations.reservations.push(ipReservationJsonObject);
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
 
-export async function updateSubscriberIpReservation(
+export async function modifySubscriberIpReservation(
   subscriberInformation,
   accessPointId,
-  oldIpReservationIpAddress,
+  ipReservationIndex,
   ipReservationJsonObject,
 ) {
-  if (!oldIpReservationIpAddress || !ipReservationJsonObject) {
+  if (ipReservationIndex === null || !ipReservationJsonObject) {
     // Do nothing if the object is null or empty
     return;
   }
@@ -593,11 +559,48 @@ export async function updateSubscriberIpReservation(
     throw new Error(strings.errors.internal);
   }
 
-  let reservationToUpdate = ipReservations.reservations.find(item => item.ipAddress === oldIpReservationIpAddress);
+  if (ipReservations.reservations.length < ipReservationIndex) {
+    console.error('IP Reservation index out of range');
+    throw new Error(strings.errors.internal);
+  }
+
+  let reservationToUpdate = ipReservations.reservations[ipReservationIndex];
+  if (!reservationToUpdate) {
+    throw new Error(strings.errors.internal);
+  }
+
   for (const [key, value] of Object.entries(ipReservationJsonObject)) {
     reservationToUpdate[key] = value;
   }
 
+  await modifySubscriberInformation(updatedSubsciberInformation);
+}
+
+export async function deleteSubscriberIpReservation(subscriberInformation, accessPointId, ipReservationIndex) {
+  if (ipReservationIndex === null) {
+    // Do nothing if the index is null
+    return;
+  }
+
+  // accessPointId can be null - it just means use the first access point, so no check for this
+  if (!subscriberInformation) {
+    throw new Error(strings.errors.internal);
+  }
+
+  // Clone the current subscriber information
+  let updatedSubsciberInformation = JSON.parse(JSON.stringify(subscriberInformation));
+  let ipReservations = getSubscriberAccessPointInfo(updatedSubsciberInformation, accessPointId, 'ipReservations');
+  if (!ipReservations) {
+    throw new Error(strings.errors.internal);
+  }
+
+  if (ipReservations.reservation.length < ipReservationIndex) {
+    console.error('IP Reservation index out of range');
+    throw new Error(strings.errors.internal);
+  }
+
+  // Remove the element from the array
+  ipReservations.reservation.splice(ipReservationIndex, 1);
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
 
@@ -664,11 +667,11 @@ export async function modifyNetworkSettings(subscriberInformation, accessPointId
 
 export async function deleteNetwork(subscriberInformation, accessPointId, networkIndex) {
   if (networkIndex === null) {
-    // Do nothing if the network index does not make sense
+    // Do nothing if the network index is not valid
     return;
   }
 
-  // accessPointId can be null - it just means use the first access point, so no check for this
+  // Do not check accessPointId - it can null - it just means use the first access point
   if (!subscriberInformation) {
     throw new Error(strings.errors.internal);
   }
@@ -685,7 +688,7 @@ export async function deleteNetwork(subscriberInformation, accessPointId, networ
     throw new Error(strings.errors.internal);
   }
 
+  // Remove the element from the array
   wifiNetworks.wifiNetworks.splice(networkIndex, 1);
-
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
