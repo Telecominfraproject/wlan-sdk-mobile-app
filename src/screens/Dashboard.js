@@ -97,7 +97,6 @@ const Dashboard = props => {
   const getGuestNetwork = () => {
     let guestNetworkIndex = getGuestNetworkIndex(wifiNetworks);
 
-    console.log(guestNetworkIndex);
     if (guestNetworkIndex !== null) {
       return wifiNetworks.wifiNetworks[guestNetworkIndex];
     }

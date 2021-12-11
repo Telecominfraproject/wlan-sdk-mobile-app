@@ -57,8 +57,6 @@ const NetworkAdd = props => {
         bands: wifiNetworkBands,
       };
 
-      console.log(networkJsonObject);
-
       setLoading(true);
 
       await addNetwork(subscriberInformation, currentAccessPointId, networkJsonObject);
