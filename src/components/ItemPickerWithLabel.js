@@ -60,18 +60,19 @@ export default function ItemPickerWithLabel(props) {
       <DropDownPicker
         listMode={'SCROLLVIEW'}
         mode={props.multiple ? 'BADGE' : 'SIMPLE'}
+        style={componentStyles.picker}
         loading={props.loading ?? false}
         placeholder={placeholder}
         disabled={props.disabled}
-        open={open}
-        value={props.value}
-        multiple={props.multiple}
+        multiple={props.multiple ? props.multiple : false}
         items={items}
-        setOpen={setOpen}
-        setValue={props.setValue}
         setItems={setItems}
-        style={componentStyles.picker}
+        open={open}
+        setOpen={setOpen}
+        value={props.value}
+        setValue={props.setValue}
         zIndex={props.zIndex}
+        dropDownDirection="BOTTOM"
         dropDownContainerStyle={componentStyles.dropDownContainer}
         onChangeValue={value => onChangeValue(value)}
       />
