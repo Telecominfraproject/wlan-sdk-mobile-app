@@ -14,21 +14,20 @@ const ItemBrand = props => {
   const componentStyles = StyleSheet.create({
     container: {
       marginTop: marginTopDefault,
+      width: '100%',
       // Layout
       flexDirection: 'column',
       flexWrap: 'nowrap',
-      flex: 0,
       alignItems: 'center',
-      width: '100%',
       // Visual
       padding: paddingHorizontalDefault,
       borderRadius: borderRadiusDefault,
       backgroundColor: whiteColor,
     },
     icon: {
-      marginTop: marginTopDefault,
       height: 75,
       width: '100%',
+      marginTop: marginTopDefault,
       resizeMode: 'contain',
     },
     text: {

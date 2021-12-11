@@ -27,7 +27,6 @@ const ImageWithBadge = props => {
       // Contents
       flexDirection: 'row',
       flexWrap: 'nowrap',
-      flex: 0,
       justifyContent: 'center',
       alignItems: 'center',
       // Visual properties
@@ -53,7 +52,6 @@ const ImageWithBadge = props => {
       // Contents
       flexDirection: 'row',
       flexWrap: 'nowrap',
-      flex: 0,
       justifyContent: 'center',
       alignItems: 'center',
       // Visual properties

@@ -1,13 +1,25 @@
 import React from 'react';
 import { Image, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
-import { grayDarkColor, whiteColor } from '../AppStyle';
+import { grayDarkColor, whiteColor, paddingHorizontalDefault } from '../AppStyle';
 
 export default function NavigationHeader(navigation, route, brandInfo) {
   const componentStyles = StyleSheet.create({
-    containerLeft: { flexDirection: 'row', alignItems: 'center' },
-    button: { width: 30, height: 30, resizeMode: 'contain' },
-    logo: { resizeMode: 'contain', width: 70, height: 50, marginHorizontal: 5 },
+    containerLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    button: {
+      width: 30,
+      height: 30,
+      resizeMode: 'contain',
+    },
+    logo: {
+      width: 70,
+      height: 50,
+      resizeMode: 'contain',
+      marginHorizontal: paddingHorizontalDefault / 2,
+    },
   });
 
   return {

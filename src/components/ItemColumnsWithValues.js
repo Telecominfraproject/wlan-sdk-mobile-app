@@ -36,14 +36,13 @@ const ItemColumnswithValues = props => {
 
   const componentStyles = StyleSheet.create({
     container: {
+      height: heightCellDefault,
+      width: '100%',
       // Layout
       flexDirection: 'row',
       flexWrap: 'nowrap',
       alignItems: 'center',
       justifyContent: 'flex-start',
-      height: heightCellDefault,
-      width: '100%',
-      flex: 0,
       // Visual
       paddingHorizontal: paddingHorizontalDefault,
     },
@@ -66,8 +65,8 @@ const ItemColumnswithValues = props => {
       width: 16,
       height: 16,
       resizeMode: 'contain',
-      tintColor: errorColor,
       marginRight: paddingHorizontalDefault,
+      tintColor: errorColor,
     },
     editIcon: {
       width: 16,

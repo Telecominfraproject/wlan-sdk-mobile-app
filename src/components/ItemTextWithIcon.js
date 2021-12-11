@@ -7,13 +7,12 @@ const ItemTextWithIcon = props => {
   const componentStyles = StyleSheet.create({
     container: {
       height: heightCellDefault,
+      width: '100%',
       // Layout
       flexDirection: 'row',
       flexWrap: 'nowrap',
-      flex: 0,
       alignItems: 'center',
       justifyContent: 'space-between',
-      width: '100%',
       // Visual
       paddingHorizontal: paddingHorizontalDefault,
     },

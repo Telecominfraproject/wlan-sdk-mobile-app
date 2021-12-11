@@ -202,17 +202,16 @@ export default function ItemTextWithLabelEditable(props) {
       // Layout
       flexDirection: 'row',
       flexWrap: 'nowrap',
-      flex: 0,
       alignItems: 'center',
       justifyContent: 'space-between',
       // Visual
       paddingHorizontal: paddingHorizontalDefault,
     },
     containerText: {
+      flex: 1,
       // Layout
       flexDirection: 'column',
       flexWrap: 'nowrap',
-      flex: 1,
       justifyContent: 'space-evenly',
       marginRight: paddingHorizontalDefault,
     },

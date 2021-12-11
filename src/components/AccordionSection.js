@@ -76,14 +76,14 @@ const AccordionSection = props => {
       width: '100%',
     },
     headerContainer: {
+      height: 44,
+      width: '100%',
+      // Layour
       flexDirection: 'row',
       flexWrap: 'nowrap',
       alignItems: 'center',
       justifyContent: 'space-between',
-      flex: 0,
-      width: '100%',
       paddingHorizontal: paddingHorizontalDefault,
-      height: 44,
       // Visual
       backgroundColor: primaryColor,
       borderTopLeftRadius: borderRadiusDefault,
@@ -93,7 +93,6 @@ const AccordionSection = props => {
       flexDirection: 'row',
       flexWrap: 'nowrap',
       alignItems: 'center',
-      flex: 0,
     },
     headerText: {
       fontSize: 12,
@@ -123,27 +122,28 @@ const AccordionSection = props => {
       height: '100%',
     },
     itemsContainer: {
+      width: '100%',
       flexDirection: 'column',
       flexWrap: 'nowrap',
       justifyContent: 'flex-start',
-      width: '100%',
       // Visual
       backgroundColor: whiteColor,
       borderBottomLeftRadius: borderRadiusDefault,
       borderBottomRightRadius: borderRadiusDefault,
     },
     separator: {
-      backgroundColor: grayColor,
       height: 1,
+      backgroundColor: grayColor,
       marginHorizontal: paddingHorizontalDefault,
     },
     noneContainer: {
+      width: '100%',
+      height: 30,
+      // Layout
       flexDirection: 'row',
       flexWrap: 'nowrap',
       justifyContent: 'center',
       alignItems: 'center',
-      width: '100%',
-      height: 30,
     },
   });
 
