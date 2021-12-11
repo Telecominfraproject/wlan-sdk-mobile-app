@@ -24,11 +24,13 @@ const ItemColumnswithValues = props => {
     Alert.alert(props.label, text, undefined, { cancelable: true });
   };
 
-  const getTextStyle = () => {
-    if (props.type === 'label') {
-      return componentStyles.textLabel;
+  const getTextStyle = index => {
+    let baseStyle = props.type === 'label' ? componentStyles.textLabel : componentStyles.textValue;
+
+    if (index === 0) {
+      return baseStyle;
     } else {
-      return componentStyles.textValue;
+      return StyleSheet.flatten([baseStyle, componentStyles.marginLeft]);
     }
   };
 
@@ -44,6 +46,9 @@ const ItemColumnswithValues = props => {
       flex: 0,
       // Visual
       paddingHorizontal: paddingHorizontalDefault,
+    },
+    marginLeft: {
+      marginLeft: paddingHorizontalDefault,
     },
     textColumn: {
       flex: 1,
@@ -87,7 +92,7 @@ const ItemColumnswithValues = props => {
         formattedValues.map((item, index) => {
           return (
             <Pressable key={'column_' + index} style={componentStyles.textColumn} onPress={() => onPress(item)}>
-              <Text style={getTextStyle()} numberOfLines={1}>
+              <Text style={getTextStyle(index)} numberOfLines={1}>
                 {item}
               </Text>
             </Pressable>
