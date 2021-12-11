@@ -77,7 +77,7 @@ export function displayValueAccessPointDeviceRole(obj, key) {
     }
   }
 
-  return strings.messages.empty;
+  return strings.common.router;
 }
 
 export function displayValueInternetConnectionType(obj, key) {
