@@ -488,6 +488,7 @@ const Configuration = props => {
         buttonTitle={strings.buttons.blink}
         onButtonPress={onBlinkLightsPress}
         buttonDisabled={!accessPoint}
+        zIndex={pickerZIndex--}
       />,
     );
 
