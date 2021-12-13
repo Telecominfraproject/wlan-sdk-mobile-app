@@ -114,7 +114,7 @@ const Network = props => {
 
       async function updateClients() {
         getWifiClients(currentAccessPointId);
-        getWiredClients(selectedWifiNetwork);
+        getWiredClients(currentAccessPointId);
       }
       var intervalId = setSubscriberInformationInterval(updateClients);
 

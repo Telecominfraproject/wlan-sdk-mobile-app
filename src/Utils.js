@@ -408,7 +408,7 @@ export async function modifySubscriberInformation(updatedJson) {
   logStringifyPretty(response.data, response.request.responseURL);
 
   // The response is the subscriber list again, so save the updated information. Note that the
-  // setSubscriberInformation call will only change the state if something actually changed. 
+  // setSubscriberInformation call will only change the state if something actually changed.
   store.dispatch(setSubscriberInformation(response.data));
 }
 
