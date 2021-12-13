@@ -539,38 +539,34 @@ const Configuration = props => {
 
     // IPv6
     if (ipv6Support) {
-      if (type === 'bridge') {
-        // Nothing is added
-      } else if (type === 'manual') {
-        items.push(
-          <ItemTextWithLabel
-            key="subnetV6"
-            label={strings.configuration.subnetV6}
-            value={displayValue(deviceMode, 'subnetV6')}
-          />,
-        );
-        items.push(
-          <ItemTextWithLabel
-            key="subnetMaskV6"
-            label={strings.configuration.subnetMaskV6}
-            value={displayValue(deviceMode, 'subnetMaskV6')}
-          />,
-        );
-        items.push(
-          <ItemTextWithLabel
-            key="startIPV6"
-            label={strings.configuration.startIpV6}
-            value={displayValue(deviceMode, 'startIPV6')}
-          />,
-        );
-        items.push(
-          <ItemTextWithLabel
-            key="endIPV6"
-            label={strings.configuration.endIpV6}
-            value={displayValue(deviceMode, 'endIPV6')}
-          />,
-        );
-      }
+      items.push(
+        <ItemTextWithLabel
+          key="subnetV6"
+          label={strings.configuration.subnetV6}
+          value={displayValue(deviceMode, 'subnetV6')}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabel
+          key="subnetMaskV6"
+          label={strings.configuration.subnetMaskV6}
+          value={displayValue(deviceMode, 'subnetMaskV6')}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabel
+          key="startIPV6"
+          label={strings.configuration.startIpV6}
+          value={displayValue(deviceMode, 'startIPV6')}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabel
+          key="endIPV6"
+          label={strings.configuration.endIpV6}
+          value={displayValue(deviceMode, 'endIPV6')}
+        />,
+      );
     }
 
     items.push(
