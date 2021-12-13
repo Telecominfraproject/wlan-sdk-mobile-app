@@ -49,7 +49,6 @@ export const strings = new LocalizedStrings({
       empty: '-',
       codeSent: 'Code has been sent.',
       passwordChanged: 'Password successfully changed.',
-      requestSent: 'Request successfully sent.',
       resetEmailSent:
         "You should soon receive an email containing the instructions to reset your password. Please make sure to check your spam if you can't find the email.",
       titleMessage: 'Message',
@@ -154,6 +153,14 @@ export const strings = new LocalizedStrings({
     termsConditions: {
       title: 'Terms & Conditions',
       content: 'These are the terms and conditions.',
+    },
+    mfaCode: {
+      descriptionDefault: 'A validation code was sent, please enter in this code below.',
+      descriptionEmail: 'A validation code was sent by email, please enter in this code below.',
+      descriptionSms: 'A validation code was sent by text message (SMS), please enter in this code below.',
+      validationCodeResendDefault: 'A validation code was resent.',
+      validationCodeResendEmail: 'A validation code was resent by email.',
+      validationCodeResendSms: 'A validation code was resent by text message (SMS).',
     },
     passwordChange: {
       title: 'Password Change',

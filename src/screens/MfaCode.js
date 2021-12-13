@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { pageItemStyle, pageStyle, primaryColor } from '../AppStyle';
-import { SafeAreaView, ScrollView, ActivityIndicator, TextInput, View } from 'react-native';
+import { SafeAreaView, ScrollView, ActivityIndicator, Text, TextInput, View } from 'react-native';
 import { authenticationApi, handleApiError } from '../api/apiHandler';
 import { logStringifyPretty, showGeneralMessage, completeSignIn } from '../Utils';
 import ButtonStyled from '../components/ButtonStyled';
@@ -11,6 +11,19 @@ export default function MfaCode(props) {
   const mfaInfo = props.route.params.mfaInfo;
   const [loading, setLoading] = useState(false);
   const [code, setCode] = useState();
+
+  const getDescription = () => {
+    if (mfaInfo) {
+      switch (mfaInfo.method) {
+        case 'email':
+          return strings.mfaCode.descriptionEmail;
+        case 'sms':
+          return strings.mfaCode.descriptionSms;
+      }
+    }
+
+    return strings.mfaCode.descriptionDefault;
+  };
 
   const onSubmitPress = async () => {
     try {
@@ -37,6 +50,7 @@ export default function MfaCode(props) {
 
       await completeSignIn(props.navigation, userId, null, response.data, setLoading);
     } catch (error) {
+      setLoading(false);
       handleApiError(strings.errors.titleMfa, error);
     }
   };
@@ -63,7 +77,21 @@ export default function MfaCode(props) {
       logStringifyPretty(response.data, response.request.responseURL);
 
       if (response.data.Code === 0) {
-        showGeneralMessage(strings.messages.requestSent);
+        let message = strings.mfaCode.validationCodeResendDefault;
+
+        if (mfaInfo) {
+          switch (mfaInfo.method) {
+            case 'email':
+              message = strings.mfaCode.validationCodeResendEmail;
+              break;
+
+            case 'sms':
+              message = strings.mfaCode.validationCodeResendSms;
+              break;
+          }
+        }
+
+        showGeneralMessage(message);
       } else {
         throw new Error(strings.errors.invalidResponse);
       }
@@ -83,6 +111,9 @@ export default function MfaCode(props) {
       )}
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.containerPreLogin}>
+          <View style={pageItemStyle.container}>
+            <Text style={pageItemStyle.description}>{getDescription()}</Text>
+          </View>
           <View style={pageItemStyle.container}>
             <TextInput
               style={pageItemStyle.inputText}

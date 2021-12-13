@@ -253,7 +253,8 @@ export async function completeSignIn(navigation, userId, password, sessionData, 
     }
 
     if (!sessionData) {
-      // Make sure to clear any session/subscriber information (this will ensure proper API error message as well, see 403 errors)
+      // Make sure to clear any session/subscriber information and try and get token. If we already have session data
+      // nothing to do, just handle the continuation
       store.dispatch(clearSession());
       store.dispatch(clearSubscriberInformation());
 
@@ -270,7 +271,7 @@ export async function completeSignIn(navigation, userId, password, sessionData, 
       logStringifyPretty(responseData, response.request.responseURL);
     }
 
-    if (responseData.method) {
+    if (responseData.question === 'mfa challenge') {
       // If the data returns a 'method' then we must handle Multi-Factor Authentication, in the response
       // there are three items: method, uuid, created, this will be passed to the MFA handler
       if (setLoadingFn) {
@@ -291,19 +292,19 @@ export async function completeSignIn(navigation, userId, password, sessionData, 
             throw new Error(strings.errors.invalidResponse);
           }
       }
+
+      store.dispatch(setSession(responseData));
+
+      // Get the subscriber information
+      await getSubscriberInformation(true);
+
+      // Completed sign-in
+      if (setLoadingFn) {
+        setLoadingFn(false);
+      }
+
+      navigation.replace('Main');
     }
-
-    store.dispatch(setSession(responseData));
-
-    // Get the subscriber information
-    await getSubscriberInformation(true);
-
-    // Completed sign-in
-    if (setLoadingFn) {
-      setLoadingFn(false);
-    }
-
-    navigation.replace('Main');
   } catch (error) {
     if (setLoadingFn) {
       // Clear the loading state
