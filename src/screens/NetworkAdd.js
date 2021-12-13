@@ -1,13 +1,9 @@
 import React, { useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import { marginTopDefault, pageStyle, pageItemStyle, paddingHorizontalDefault } from '../AppStyle';
 import { StyleSheet, View, ScrollView, SafeAreaView } from 'react-native';
-import {
-  selectCurrentAccessPointId,
-  selectSubscriberInformation,
-  selectWifiNetworks,
-} from '../store/SubscriberInformationSlice';
+import { useSelector } from 'react-redux';
+import { selectCurrentAccessPointId, selectWifiNetworks } from '../store/SubscriberInformationSlice';
 import { handleApiError } from '../api/apiHandler';
 import { getGuestNetworkIndex, addNetwork } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
@@ -22,6 +18,9 @@ const NetworkAdd = props => {
   var pickerZIndex = 20;
   // Need to use refs so that the async tasks can have proper access to these state changes
   const scrollRef = useRef();
+  // Selectors
+  const currentAccessPointId = useSelector(selectCurrentAccessPointId);
+  const wifiNetworks = useSelector(selectWifiNetworks);
   // States
   const [loading, setLoading] = useState(false);
   const [wifiNetworkType, setWifiNetworkType] = useState('main');
@@ -29,9 +28,6 @@ const NetworkAdd = props => {
   const [wifiNetworkPassword, setWifiNetworkPassword] = useState();
   const [wifiNetworkEncryption, setWifiNetworkEncryption] = useState('wpa2');
   const [wifiNetworkBands, setWifiNetworkBands] = useState([]);
-  const currentAccessPointId = useSelector(selectCurrentAccessPointId);
-  const subscriberInformation = useSelector(selectSubscriberInformation);
-  const wifiNetworks = useSelector(selectWifiNetworks);
 
   const isGuestNetworkAvailable = () => {
     // Only one guest network is supported, so if there is already one then
@@ -59,7 +55,9 @@ const NetworkAdd = props => {
 
       setLoading(true);
 
-      await addNetwork(subscriberInformation, currentAccessPointId, networkJsonObject);
+      await addNetwork(currentAccessPointId, networkJsonObject);
+
+      setLoading(false);
 
       // On success just go back
       props.navigation.goBack();
@@ -69,7 +67,6 @@ const NetworkAdd = props => {
       handleApiError(strings.errors.titleNetwork, error);
       // Need to throw the error to ensure the caller cleans up
       throw error;
-    } finally {
     }
   };
 

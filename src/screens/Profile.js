@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import {
   marginTopDefault,
@@ -15,6 +14,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { completeSignOut, logStringifyPretty, showGeneralError, scrollViewToTop } from '../Utils';
 import { getCredentials, handleApiError, mfaApi } from '../api/apiHandler';
 import { SubMfaConfigTypeEnum } from '../api/generated/owUserPortalApi';
+import { useSelector } from 'react-redux';
 import { selectSubscriberInformationLoading, selectSubscriberInformation } from '../store/SubscriberInformationSlice';
 import { displayValue, modifySubscriberInformation, setSubscriberInformationInterval } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
@@ -38,7 +38,7 @@ const Profile = props => {
   useFocusEffect(
     useCallback(() => {
       scrollViewToTop(scrollRef);
-      var intervalId = setSubscriberInformationInterval(subscriberInformation, null);
+      var intervalId = setSubscriberInformationInterval(null);
       getMFA();
 
       // Return function of what should be done on 'focus out'

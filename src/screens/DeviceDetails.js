@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import { marginTopDefault, paddingHorizontalDefault, borderRadiusDefault, pageStyle, whiteColor } from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, Text } from 'react-native';
+import { useSelector } from 'react-redux';
 import {
   selectCurrentAccessPointId,
   selectSubscriberInformationLoading,
@@ -75,13 +75,13 @@ const DeviceDetails = props => {
   };
 
   const updateDeviceValue = async value => {
-    modifySubscriberDevice(subscriberInformation, currentAccessPointId, device, value);
+    modifySubscriberDevice(currentAccessPointId, device, value);
   };
 
   const onPauseUnpausePress = async () => {
     if (device) {
       // Swap the current suspend state
-      modifySubscriberDevice(subscriberInformation, currentAccessPointId, device, { suspended: !device.suspended });
+      modifySubscriberDevice(currentAccessPointId, device, { suspended: !device.suspended });
     } else {
       showGeneralError(strings.errors.titleDeviceDetails, strings.errors.invalidResponse);
     }

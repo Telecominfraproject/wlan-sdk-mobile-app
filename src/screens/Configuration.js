@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import {
   marginTopDefault,
@@ -13,6 +12,7 @@ import {
 } from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, Text, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 import {
   selectCurrentAccessPointId,
   selectSubscriberInformationLoading,
@@ -26,6 +26,7 @@ import {
 } from '../store/SubscriberInformationSlice';
 import { deviceCommandsApi, handleApiError } from '../api/apiHandler';
 import {
+  scrollViewToTop,
   displayValue,
   displayValueAccessPointType,
   displayValueAccessPointDeviceRole,
@@ -40,7 +41,6 @@ import {
   modifySubscriberDnsInformation,
   setSubscriberInformationInterval,
   deleteSubscriberIpReservation,
-  scrollViewToTop,
 } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
@@ -57,8 +57,8 @@ const Configuration = props => {
   var sectionZIndex = 20;
   var pickerZIndex = 20;
   const scrollRef = useRef();
+  // Selectors
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
-  const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
   const accessPoint = useSelector(selectAccessPoint);
   const internetConnection = useSelector(selectInternetConnection);
@@ -66,7 +66,7 @@ const Configuration = props => {
   const deviceMode = useSelector(selectDeviceMode);
   const dnsConfiguration = useSelector(selectDnsConfiguration);
   const ipReservations = useSelector(selectIpReservations);
-
+  // State
   const [internetConnectionType, setInternetConnectionType] = useState(
     internetConnection ? internetConnection.type : null,
   );
@@ -80,7 +80,7 @@ const Configuration = props => {
   useFocusEffect(
     useCallback(() => {
       scrollViewToTop(scrollRef);
-      var intervalId = setSubscriberInformationInterval(subscriberInformation, null);
+      var intervalId = setSubscriberInformationInterval(null);
 
       // Return function of what should be done on 'focus out'
       return () => {
@@ -229,7 +229,7 @@ const Configuration = props => {
 
   const onEditAccessPointSettings = async val => {
     try {
-      await modifyAccessPoint(subscriberInformation, currentAccessPointId, val);
+      await modifyAccessPoint(currentAccessPointId, val);
     } catch (error) {
       handleApiError(strings.errors.titleUpdate, error);
       // Need to throw the error to ensure the caller cleans up
@@ -239,7 +239,7 @@ const Configuration = props => {
 
   const onEditInternetConnectionSettings = async val => {
     try {
-      await modifySubscriberInternetConnection(subscriberInformation, currentAccessPointId, val);
+      await modifySubscriberInternetConnection(currentAccessPointId, val);
     } catch (error) {
       handleApiError(strings.errors.titleUpdate, error);
       // Need to throw the error to ensure the caller cleans up
@@ -249,7 +249,7 @@ const Configuration = props => {
 
   const onEditDeviceModeSettings = async val => {
     try {
-      await modifySubscriberDeviceMode(subscriberInformation, currentAccessPointId, val);
+      await modifySubscriberDeviceMode(currentAccessPointId, val);
     } catch (error) {
       handleApiError(strings.errors.titleUpdate, error);
       // Need to throw the error to ensure the caller cleans up
@@ -259,7 +259,7 @@ const Configuration = props => {
 
   const onEditCustomDnsSettings = async val => {
     try {
-      await modifySubscriberDnsInformation(subscriberInformation, currentAccessPointId, val);
+      await modifySubscriberDnsInformation(currentAccessPointId, val);
     } catch (error) {
       handleApiError(strings.errors.titleUpdate, error);
       // Need to throw the error to ensure the caller cleans up
@@ -281,7 +281,7 @@ const Configuration = props => {
         text: strings.buttons.ok,
         onPress: async () => {
           try {
-            await deleteSubscriberIpReservation(subscriberInformation, currentAccessPointId, index);
+            await deleteSubscriberIpReservation(currentAccessPointId, index);
           } catch (error) {
             handleApiError(strings.errors.titleDelete, error);
             // Need to throw the error to ensure the caller cleans up

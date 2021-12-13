@@ -1,13 +1,12 @@
 import React, { useCallback, useState, useMemo, useRef, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import { marginTopDefault, pageStyle, pageItemStyle, whiteColor, paddingHorizontalDefault } from '../AppStyle';
 import { StyleSheet, View, ScrollView, SafeAreaView, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 import {
   selectCurrentAccessPointId,
   selectSubscriberInformationLoading,
-  selectSubscriberInformation,
   selectAccessPoint,
   selectWifiNetworks,
 } from '../store/SubscriberInformationSlice';
@@ -42,12 +41,12 @@ const Network = props => {
   const scrollRef = useRef();
   const isFocusedRef = useRef(false);
   const startingWifiNetworkIndex = props.route.params ? props.route.params.wifiNetworkIndex : 0;
-
+  // Selectors
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
-  const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
   const accessPoint = useSelector(selectAccessPoint);
   const wifiNetworks = useSelector(selectWifiNetworks);
+  // State
   const [selectedWifiNetworkIndex, setSelectedWifiNetworkIndex] = useState(startingWifiNetworkIndex);
   const [selectedWifiNetwork, setSelectedWifiNetwork] = useState(
     wifiNetworks ? wifiNetworks.wifiNetworks[selectedWifiNetworkIndex] : null,
@@ -117,7 +116,7 @@ const Network = props => {
         getWifiClients(currentAccessPointId);
         getWiredClients(selectedWifiNetwork);
       }
-      var intervalId = setSubscriberInformationInterval(subscriberInformation, updateClients);
+      var intervalId = setSubscriberInformationInterval(updateClients);
 
       return () => {
         clearInterval(intervalId);
@@ -134,12 +133,8 @@ const Network = props => {
 
     try {
       if (!accessPointIdToQuery) {
-        if (accessPoint) {
-          accessPointIdToQuery = accessPoint.id;
-        } else {
-          // None, just return
-          return;
-        }
+        // None, just return
+        return;
       }
 
       const response = await wiredClientsApi.getWiredClients(accessPointIdToQuery);
@@ -173,12 +168,8 @@ const Network = props => {
 
     try {
       if (!accessPointIdToQuery) {
-        if (accessPoint) {
-          accessPointIdToQuery = accessPoint.id;
-        } else {
-          // None, just return
-          return;
-        }
+        // None, just return
+        return;
       }
 
       const response = await wifiClientsApi.getWifiClients(accessPointIdToQuery);
@@ -261,7 +252,7 @@ const Network = props => {
         return;
       }
 
-      await modifyNetworkSettings(subscriberInformation, currentAccessPointId, selectedWifiNetworkIndex, val);
+      await modifyNetworkSettings(currentAccessPointId, selectedWifiNetworkIndex, val);
     } catch (error) {
       handleApiError(strings.errors.titleUpdate, error);
       // Need to throw the error to ensure the caller cleans up
@@ -274,7 +265,7 @@ const Network = props => {
       {
         text: strings.buttons.ok,
         onPress: async () => {
-          deleteNetwork(subscriberInformation, currentAccessPointId, selectedWifiNetworkIndex);
+          deleteNetwork(currentAccessPointId, selectedWifiNetworkIndex);
         },
       },
       {

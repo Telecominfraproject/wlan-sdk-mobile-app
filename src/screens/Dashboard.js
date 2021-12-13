@@ -1,33 +1,32 @@
 import React, { useCallback, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, okColor, infoColor, errorColor, primaryColor, whiteColor, grayBackgroundcolor } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   setSelectedAccessPointId,
   selectSubscriberInformationLoading,
-  selectSubscriberInformation,
   selectAccessPoints,
   selectAccessPoint,
   selectInternetConnection,
   selectSubscriberDevices,
   selectWifiNetworks,
 } from '../store/SubscriberInformationSlice';
-import { displayValue, getGuestNetworkIndex, setSubscriberInformationInterval, scrollViewToTop } from '../Utils';
+import { scrollViewToTop, displayValue, getGuestNetworkIndex, setSubscriberInformationInterval } from '../Utils';
 import ImageWithBadge from '../components/ImageWithBadge';
 import ButtonSelector from '../components/ButtonSelector';
 
 const Dashboard = props => {
   const scrollRef = useRef();
   const dispatch = useDispatch();
-  const subscriberInformation = useSelector(selectSubscriberInformation);
+  // Selectors
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
   const accessPoints = useSelector(selectAccessPoints);
   const accessPoint = useSelector(selectAccessPoint);
   const internetConnection = useSelector(selectInternetConnection);
-  const subscriberDevices = useSelector(selectSubscriberDevices);
   const wifiNetworks = useSelector(selectWifiNetworks);
+  const subscriberDevices = useSelector(selectSubscriberDevices);
 
   // Refresh the information only anytime there is a navigation change and this has come into focus
   // Need to be careful here as useFocusEffect is also called during re-render so it can result in
@@ -35,7 +34,7 @@ const Dashboard = props => {
   useFocusEffect(
     useCallback(() => {
       scrollViewToTop(scrollRef);
-      var intervalId = setSubscriberInformationInterval(subscriberInformation, null);
+      var intervalId = setSubscriberInformationInterval(null);
 
       // Return function of what should be done on 'focus out'
       return () => {
@@ -96,7 +95,6 @@ const Dashboard = props => {
 
   const getGuestNetwork = () => {
     let guestNetworkIndex = getGuestNetworkIndex(wifiNetworks);
-
     if (guestNetworkIndex !== null) {
       return wifiNetworks.wifiNetworks[guestNetworkIndex];
     }
@@ -228,7 +226,7 @@ const Dashboard = props => {
               <Text style={componentStyles.iconLabel}>{strings.dashboard.internet}</Text>
             </View>
           </TouchableOpacity>
-          {getGuestNetwork() ? (
+          {getGuestNetwork() && (
             <TouchableOpacity style={componentStyles.touchableContainer} onPress={onGuestNetworkPress}>
               <View style={componentStyles.itemContainer} onPress={onGuestNetworkPress}>
                 <ImageWithBadge
@@ -241,8 +239,6 @@ const Dashboard = props => {
                 <Text style={componentStyles.iconLabel}>{strings.dashboard.guestNetwork}</Text>
               </View>
             </TouchableOpacity>
-          ) : (
-            <></>
           )}
           <TouchableOpacity style={componentStyles.touchableContainer} onPress={onConnectedDevicePress}>
             <View style={componentStyles.itemContainer} onPress={onConnectedDevicePress}>

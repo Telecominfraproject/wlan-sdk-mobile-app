@@ -325,7 +325,7 @@ export async function completeSignIn(navigation, userId, password, sessionData, 
   }
 }
 
-export async function getSubscriberInformation(subscriberInformation, setLoadingFlag) {
+export async function getSubscriberInformation(setLoadingFlag) {
   try {
     if (setLoadingFlag) {
       store.dispatch(setSubscriberInformationLoading(true));
@@ -340,12 +340,8 @@ export async function getSubscriberInformation(subscriberInformation, setLoading
       throw new Error(strings.errors.invalidResponse);
     }
 
-    // Only update the state if the last modified is different than the current one
-    // This will ensure that there are less UI updates as this will often be linked to renders.
-    if (isFieldDifferent(subscriberInformation, response.data, 'modified')) {
-      logStringifyPretty(response.data, response.request.responseURL);
-      store.dispatch(setSubscriberInformation(response.data));
-    }
+    logStringifyPretty(response.data, response.request.responseURL);
+    store.dispatch(setSubscriberInformation(response.data));
   } finally {
     if (setLoadingFlag) {
       store.dispatch(setSubscriberInformationLoading(false));
@@ -377,10 +373,10 @@ export function isArrayDifferent(array1, array2) {
   return intersection.length !== array1.length;
 }
 
-export function setSubscriberInformationInterval(subscriberInformation, extraUpdateFn) {
+export function setSubscriberInformationInterval(extraUpdateFn) {
   async function checkSubscriberInformation() {
     try {
-      await getSubscriberInformation(subscriberInformation, false);
+      await getSubscriberInformation(false);
       if (extraUpdateFn) {
         await extraUpdateFn();
       }
@@ -411,17 +407,18 @@ export async function modifySubscriberInformation(updatedJson) {
 
   logStringifyPretty(response.data, response.request.responseURL);
 
-  // The response is the subscriber list again, so save the updated information
+  // The response is the subscriber list again, so save the updated information. Note that the
+  // setSubscriberInformation call will only change the state if something actually changed. 
   store.dispatch(setSubscriberInformation(response.data));
 }
 
-export async function modifyAccessPoint(subscriberInformation, accessPointId, jsonObject) {
+export async function modifyAccessPoint(accessPointId, jsonObject) {
   if (!jsonObject) {
     // Do nothing if the object is null or empty
     return;
   }
 
-  // accessPointId can be null - it just means use the first access point, so no check for this
+  let subscriberInformation = store.getState().subscriberInformation.subscriberInformation;
   if (!subscriberInformation) {
     throw new Error(strings.errors.internal);
   }
@@ -451,14 +448,13 @@ export async function modifyAccessPoint(subscriberInformation, accessPointId, js
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
 
-
-export async function modifySubscriberDeviceMode(subscriberInformation, accessPointId, jsonObject) {
+export async function modifySubscriberDeviceMode(accessPointId, jsonObject) {
   if (!jsonObject) {
     // Do nothing if the object is null or empty
     return;
   }
 
-  // accessPointId can be null - it just means use the first access point, so no check for this
+  let subscriberInformation = store.getState().subscriberInformation.subscriberInformation;
   if (!subscriberInformation) {
     throw new Error(strings.errors.internal);
   }
@@ -488,14 +484,18 @@ export async function modifySubscriberDeviceMode(subscriberInformation, accessPo
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
 
-export async function modifySubscriberDevice(subscriberInformation, accessPointId, device, jsonObject) {
+export async function modifySubscriberDevice(accessPointId, device, jsonObject) {
   if (!jsonObject) {
     // Do nothing
     return;
   }
 
-  // accessPointId can be null - it means the first one
-  if (!subscriberInformation || !device) {
+  if (!device) {
+    throw new Error(strings.errors.internal);
+  }
+
+  let subscriberInformation = store.getState().subscriberInformation.subscriberInformation;
+  if (!subscriberInformation) {
     throw new Error(strings.errors.internal);
   }
 
@@ -516,13 +516,13 @@ export async function modifySubscriberDevice(subscriberInformation, accessPointI
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
 
-export async function modifySubscriberInternetConnection(subscriberInformation, accessPointId, jsonObject) {
+export async function modifySubscriberInternetConnection(accessPointId, jsonObject) {
   if (!jsonObject) {
     // Do nothing if the object is null or empty
     return;
   }
 
-  // accessPointId can be null - it just means use the first access point, so no check for this
+  let subscriberInformation = store.getState().subscriberInformation.subscriberInformation;
   if (!subscriberInformation) {
     throw new Error(strings.errors.internal);
   }
@@ -556,13 +556,13 @@ export async function modifySubscriberInternetConnection(subscriberInformation, 
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
 
-export async function modifySubscriberDnsInformation(subscriberInformation, accessPointId, jsonObject) {
+export async function modifySubscriberDnsInformation(accessPointId, jsonObject) {
   if (!jsonObject) {
     // Do nothing if the object is null or empty
     return;
   }
 
-  // accessPointId can be null - it just means use the first access point, so no check for this
+  let subscriberInformation = store.getState().subscriberInformation.subscriberInformation;
   if (!subscriberInformation) {
     throw new Error(strings.errors.internal);
   }
@@ -600,13 +600,13 @@ export async function modifySubscriberDnsInformation(subscriberInformation, acce
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
 
-export async function addSubscriberIpReservation(subscriberInformation, accessPointId, ipReservationJsonObject) {
+export async function addSubscriberIpReservation(accessPointId, ipReservationJsonObject) {
   if (!ipReservationJsonObject) {
     // Do nothing if the object is null or empty
     return;
   }
 
-  // accessPointId can be null - it just means use the first access point, so no check for this
+  let subscriberInformation = store.getState().subscriberInformation.subscriberInformation;
   if (!subscriberInformation) {
     throw new Error(strings.errors.internal);
   }
@@ -626,18 +626,13 @@ export async function addSubscriberIpReservation(subscriberInformation, accessPo
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
 
-export async function modifySubscriberIpReservation(
-  subscriberInformation,
-  accessPointId,
-  ipReservationIndex,
-  ipReservationJsonObject,
-) {
+export async function modifySubscriberIpReservation(accessPointId, ipReservationIndex, ipReservationJsonObject) {
   if (ipReservationIndex === null || !ipReservationJsonObject) {
     // Do nothing if the object is null or empty
     return;
   }
 
-  // accessPointId can be null - it just means use the first access point, so no check for this
+  let subscriberInformation = store.getState().subscriberInformation.subscriberInformation;
   if (!subscriberInformation) {
     throw new Error(strings.errors.internal);
   }
@@ -666,13 +661,13 @@ export async function modifySubscriberIpReservation(
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
 
-export async function deleteSubscriberIpReservation(subscriberInformation, accessPointId, ipReservationIndex) {
+export async function deleteSubscriberIpReservation(accessPointId, ipReservationIndex) {
   if (ipReservationIndex === null) {
     // Do nothing if the index is null
     return;
   }
 
-  // accessPointId can be null - it just means use the first access point, so no check for this
+  let subscriberInformation = store.getState().subscriberInformation.subscriberInformation;
   if (!subscriberInformation) {
     throw new Error(strings.errors.internal);
   }
@@ -694,13 +689,13 @@ export async function deleteSubscriberIpReservation(subscriberInformation, acces
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
 
-export async function addNetwork(subscriberInformation, accessPointId, networkJsonObject) {
+export async function addNetwork(accessPointId, networkJsonObject) {
   if (!networkJsonObject) {
     // Do nothing if the object is null or empty
     return;
   }
 
-  // accessPointId can be null - it just means use the first access point, so no check for this
+  let subscriberInformation = store.getState().subscriberInformation.subscriberInformation;
   if (!subscriberInformation) {
     throw new Error(strings.errors.internal);
   }
@@ -720,13 +715,13 @@ export async function addNetwork(subscriberInformation, accessPointId, networkJs
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
 
-export async function modifyNetworkSettings(subscriberInformation, accessPointId, networkIndex, networkJsonObject) {
+export async function modifyNetworkSettings(accessPointId, networkIndex, networkJsonObject) {
   if (networkIndex === null || !networkJsonObject) {
     // Do nothing if the object is null or empty
     return;
   }
 
-  // accessPointId can be null - it just means use the first access point, so no check for this
+  let subscriberInformation = store.getState().subscriberInformation.subscriberInformation;
   if (!subscriberInformation) {
     throw new Error(strings.errors.internal);
   }
@@ -755,13 +750,13 @@ export async function modifyNetworkSettings(subscriberInformation, accessPointId
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
 
-export async function deleteNetwork(subscriberInformation, accessPointId, networkIndex) {
+export async function deleteNetwork(accessPointId, networkIndex) {
   if (networkIndex === null) {
     // Do nothing if the network index is not valid
     return;
   }
 
-  // Do not check accessPointId - it can null - it just means use the first access point
+  let subscriberInformation = store.getState().subscriberInformation.subscriberInformation;
   if (!subscriberInformation) {
     throw new Error(strings.errors.internal);
   }

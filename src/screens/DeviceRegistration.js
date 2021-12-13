@@ -1,26 +1,20 @@
 import React, { useState } from 'react';
+import { strings } from '../localization/LocalizationStrings';
 import { ActivityIndicator, SafeAreaView, ScrollView, Text, TextInput, View } from 'react-native';
 import { pageItemStyle, pageStyle, primaryColor } from '../AppStyle';
-import { strings } from '../localization/LocalizationStrings';
 import { useSelector } from 'react-redux';
-import { selectSubscriberInformationLoading, selectSubscriberInformation } from '../store/SubscriberInformationSlice';
+import { selectSubscriberInformationLoading } from '../store/SubscriberInformationSlice';
 import { handleApiError } from '../api/apiHandler';
-import { modifySubscriberInformation } from '../Utils';
+import { modifyAccessPoint } from '../Utils';
 import ButtonStyled from '../components/ButtonStyled';
 
 export default function DeviceRegistration(props) {
   const [macAddress, setMacAddress] = useState();
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
-  const subscriberInformation = useSelector(selectSubscriberInformation);
 
   const onSubmitPress = async () => {
     try {
-      // Register a new access point
-      let accessPoint = subscriberInformation.accessPoints.list[0];
-      let newAccessPoint = { ...accessPoint, macAddress };
-      let updatedSubsciberInformation = { ...subscriberInformation, accessPoints: { list: [newAccessPoint] } };
-
-      await modifySubscriberInformation(updatedSubsciberInformation);
+      await modifyAccessPoint(null, { macAddress: macAddress });
     } catch (error) {
       handleApiError(strings.errors.titleDeviceRegistration, error);
     }

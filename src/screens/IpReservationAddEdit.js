@@ -3,11 +3,7 @@ import { StyleSheet, ScrollView, View, SafeAreaView } from 'react-native';
 import { strings } from '../localization/LocalizationStrings';
 import { pageItemStyle, pageStyle, paddingHorizontalDefault, marginTopDefault } from '../AppStyle';
 import { useSelector } from 'react-redux';
-import {
-  selectCurrentAccessPointId,
-  selectSubscriberInformation,
-  selectIpReservations,
-} from '../store/SubscriberInformationSlice';
+import { selectCurrentAccessPointId, selectIpReservations } from '../store/SubscriberInformationSlice';
 import { handleApiError } from '../api/apiHandler';
 import { modifySubscriberIpReservation, addSubscriberIpReservation } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
@@ -23,7 +19,6 @@ export default function IpReservationAddEdit(props) {
   const reservationIndex = props.route.params ? props.route.params.reservationIndex : null;
   // States
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
-  const subscriberInformation = useSelector(selectSubscriberInformation);
   const ipReservations = useSelector(selectIpReservations);
   const reservation =
     reservationIndex !== null && ipReservations && ipReservations.reservations
@@ -49,14 +44,9 @@ export default function IpReservationAddEdit(props) {
       setLoading(true);
 
       if (reservationIndex !== null) {
-        await modifySubscriberIpReservation(
-          subscriberInformation,
-          currentAccessPointId,
-          reservationIndex,
-          reservationJsonObject,
-        );
+        await modifySubscriberIpReservation(currentAccessPointId, reservationIndex, reservationJsonObject);
       } else {
-        await addSubscriberIpReservation(subscriberInformation, currentAccessPointId, reservationJsonObject);
+        await addSubscriberIpReservation(currentAccessPointId, reservationJsonObject);
       }
 
       // On success just go back

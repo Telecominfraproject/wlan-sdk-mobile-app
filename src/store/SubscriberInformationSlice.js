@@ -1,5 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
+import isEqual from 'lodash.isequal';
 import { getSubscriberAccessPointInfo } from '../api/apiHandler';
+import { isFieldDifferent } from '../Utils';
 
 export const subscriberInformationSlice = createSlice({
   name: 'subscriberInformation',
@@ -26,14 +28,19 @@ export const subscriberInformationSlice = createSlice({
       state.loading = action.payload;
     },
     setSelectedAccessPointId: (state, action) => {
-      state.selectedAccessPointId = action.payload;
-
-      setStateFromSubsciberInfo(state, state.subscriberInformation, state.selectedAccessPointId);
+      if (action.payload !== state.selectedAccessPointId) {
+        // Only update on change to the access point ID
+        state.selectedAccessPointId = action.payload;
+        setStateFromSubsciberInfo(state, state.subscriberInformation, state.selectedAccessPointId);
+      }
     },
     setSubscriberInformation: (state, action) => {
-      state.subscriberInformation = action.payload;
-
-      setStateFromSubsciberInfo(state, state.subscriberInformation, state.selectedAccessPointId);
+      if (isFieldDifferent(state.subscriberInformation, action.payload, 'modified')) {
+        state.subscriberInformation = action.payload;
+        setStateFromSubsciberInfo(state, state.subscriberInformation, state.selectedAccessPointId);
+      } else {
+        console.log('No change - not updating subscriber information');
+      }
     },
     clearSubscriberInformation: state => {
       state.subscriberInformation = null;
@@ -50,14 +57,37 @@ export const subscriberInformationSlice = createSlice({
 });
 
 function setStateFromSubsciberInfo(state, subscriberInfo, selectAccessPointId) {
+  // Access points do not currently have 'modified' timestamp, but may need one
   state.accessPoints = subscriberInfo && subscriberInfo.accessPoints ? subscriberInfo.accessPoints.list : null;
   state.accessPoint = getSubscriberAccessPointInfo(subscriberInfo, selectAccessPointId, null);
-  state.internetConnection = getSubscriberAccessPointInfo(subscriberInfo, selectAccessPointId, 'internetConnection');
-  state.wifiNetworks = getSubscriberAccessPointInfo(subscriberInfo, selectAccessPointId, 'wifiNetworks');
-  state.deviceMode = getSubscriberAccessPointInfo(subscriberInfo, selectAccessPointId, 'deviceMode');
-  state.dnsConfiguration = getSubscriberAccessPointInfo(subscriberInfo, selectAccessPointId, 'dnsConfiguration');
-  state.ipReservations = getSubscriberAccessPointInfo(subscriberInfo, selectAccessPointId, 'ipReservations');
-  state.subscriberDevices = getSubscriberAccessPointInfo(subscriberInfo, selectAccessPointId, 'subscriberDevices');
+
+  // Only update the particular state if the modified date is different. Creating a new
+  // object here will mean unnecessary re-renders
+  [
+    'internetConnection',
+    'deviceMode',
+    'dnsConfiguration',
+    'ipReservations',
+    'wifiNetworks',
+    'subscriberDevices',
+  ].forEach(key => {
+    let newObject = getSubscriberAccessPointInfo(subscriberInfo, selectAccessPointId, key);
+
+    if (newObject === null || state[key] === null) {
+      state[key] = newObject;
+    } else {
+      let filtered1 = JSON.parse(JSON.stringify(newObject));
+      let filtered2 = JSON.parse(JSON.stringify(state[key]));
+
+      delete filtered1.modified;
+      delete filtered2.modified;
+
+      if (!isEqual(filtered1, filtered2)) {
+        console.log(key + ' updated');
+        state[key] = newObject;
+      }
+    }
+  });
 }
 
 export const selectSubscriberInformationLoading = state => state.subscriberInformation.loading;
@@ -72,5 +102,10 @@ export const selectDnsConfiguration = state => state.subscriberInformation.dnsCo
 export const selectIpReservations = state => state.subscriberInformation.ipReservations;
 export const selectSubscriberDevices = state => state.subscriberInformation.subscriberDevices;
 
-export const { setSubscriberInformation, clearSubscriberInformation } = subscriberInformationSlice.actions;
+export const {
+  setSubscriberInformationLoading,
+  setSelectedAccessPointId,
+  setSubscriberInformation,
+  clearSubscriberInformation,
+} = subscriberInformationSlice.actions;
 export default subscriberInformationSlice.reducer;
