@@ -680,13 +680,13 @@ export async function deleteSubscriberIpReservation(accessPointId, ipReservation
     throw new Error(strings.errors.internal);
   }
 
-  if (ipReservations.reservation.length < ipReservationIndex) {
+  if (ipReservations.reservations.length < ipReservationIndex) {
     console.error('IP Reservation index out of range');
     throw new Error(strings.errors.internal);
   }
 
   // Remove the element from the array
-  ipReservations.reservation.splice(ipReservationIndex, 1);
+  ipReservations.reservations.splice(ipReservationIndex, 1);
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
 
