@@ -57,22 +57,39 @@ export const subscriberInformationSlice = createSlice({
 });
 
 function setStateFromSubsciberInfo(state, subscriberInfo, selectAccessPointId) {
-  // Access points do not currently have 'modified' timestamp, but may need one
+  // Always update the accessPoints, as this would be too involved to check all of them. This is only used
+  // in a few locations, so having this updated frequently shouldn't be too big of a deal. Revaluated if necessary.
   state.accessPoints = subscriberInfo && subscriberInfo.accessPoints ? subscriberInfo.accessPoints.list : null;
-  state.accessPoint = getSubscriberAccessPointInfo(subscriberInfo, selectAccessPointId, null);
 
-  // Only update the particular state if the modified date is different. Creating a new
-  // object here will mean unnecessary re-renders
-  [
+  // Next pull out the subgroups from the currently selected access point, and update the appropriate state if
+  // they have changed. NOTE: the accessPoint state will NOT include these groups, as anything that is looking
+  // at access point should only look at the first level fields.
+  let subGroupFields = [
     'internetConnection',
     'deviceMode',
     'dnsConfiguration',
     'ipReservations',
     'wifiNetworks',
     'subscriberDevices',
-  ].forEach(key => {
-    let newObject = getSubscriberAccessPointInfo(subscriberInfo, selectAccessPointId, key);
+  ];
 
+  let newAccessPoint = getSubscriberAccessPointInfo(subscriberInfo, selectAccessPointId, null);
+  if (newAccessPoint !== null) {
+    newAccessPoint = JSON.parse(JSON.stringify(newAccessPoint));
+
+    // Delete the access point modified field, if it exists (it does not currently)
+    delete newAccessPoint.modified;
+  }
+
+  // Only update the particular state if the modified date is different. Creating a new
+  // object here will mean unnecessary re-renders
+  subGroupFields.forEach(key => {
+    // Remove the subgroup from the newAccessPoint
+    if (newAccessPoint !== null) {
+      delete newAccessPoint[key];
+    }
+
+    let newObject = getSubscriberAccessPointInfo(subscriberInfo, selectAccessPointId, key);
     if (newObject === null || state[key] === null) {
       state[key] = newObject;
     } else {
@@ -88,6 +105,13 @@ function setStateFromSubsciberInfo(state, subscriberInfo, selectAccessPointId) {
       }
     }
   });
+
+  // For the accessPoint, only include the specific access point fields and only if they changed
+  // Note if both access points are null, the simple state comparison will work
+  if (newAccessPoint === null || state.accessPoint === null || !isEqual(newAccessPoint, state.accessPoint)) {
+    console.log('accessPoint updated');
+    state.accessPoint = newAccessPoint;
+  }
 }
 
 export const selectSubscriberInformationLoading = state => state.subscriberInformation.loading;
