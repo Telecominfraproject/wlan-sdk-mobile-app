@@ -69,6 +69,7 @@ const Configuration = props => {
   const [internetConnectionType, setInternetConnectionType] = useState(
     internetConnection ? internetConnection.type : null,
   );
+  const [ipv6Support, setIpv6Support] = useState(internetConnection ? internetConnection.ipV6Support : null);
   const [deviceModeType, setDeviceModeType] = useState(deviceMode ? deviceMode.type : null);
   const [enableLeds, setEnableLeds] = useState(deviceMode ? deviceMode.enableLEDS : false);
   const [customDnsValue, setCustomDnsValue] = useState(dnsConfiguration ? dnsConfiguration.custom : false);
@@ -139,7 +140,7 @@ const Configuration = props => {
     }
   };
 
-  const getWifiNetworkIcon = item => {
+  const getWifiNetworkIcon = () => {
     return require('../assets/wifi-solid.png');
   };
 
@@ -222,7 +223,7 @@ const Configuration = props => {
     }
   };
 
-  const onAddNetwork = async => {
+  const onAddNetwork = () => {
     props.navigation.navigate('Network', { screen: 'NetworkAdd', initial: false });
   };
 
@@ -266,7 +267,7 @@ const Configuration = props => {
     }
   };
 
-  const onAddIpReservation = async => {
+  const onAddIpReservation = () => {
     props.navigation.navigate('IpReservationAddEdit');
   };
 
@@ -312,8 +313,22 @@ const Configuration = props => {
         onChangeValue={onEditInternetConnectionSettings}
         zIndex={pickerZIndex--}
       />,
+      <ItemPickerWithLabel
+        key="ipV6Support"
+        label={strings.configuration.ipV6Support}
+        value={ipv6Support}
+        setValue={setIpv6Support}
+        items={[
+          { label: strings.common.no, value: false },
+          { label: strings.common.yes, value: true },
+        ]}
+        changeKey="ipV6Support"
+        onChangeValue={onEditInternetConnectionSettings}
+        zIndex={pickerZIndex--}
+      />,
     ];
 
+    // IPv4
     if (type === 'automatic') {
       // Show nothing. This might actually want to be readonly
     } else if (type === 'manual') {
@@ -383,6 +398,55 @@ const Configuration = props => {
       );
     }
 
+    // IPv6
+    if (ipv6Support && type === 'manual') {
+      items.push(
+        <ItemTextWithLabelEditable
+          key="ipAddressV6"
+          label={strings.configuration.ipAddressV6}
+          value={displayEditableValue(internetConnection, 'ipAddressV6')}
+          editKey="ipAddressV6"
+          onEdit={onEditInternetConnectionSettings}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabelEditable
+          key="subnetMaskV6"
+          label={strings.configuration.subnetMaskV6}
+          value={displayEditableValue(internetConnection, 'subnetMaskV6')}
+          editKey="subnetMaskV6"
+          onEdit={onEditInternetConnectionSettings}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabelEditable
+          key="defaultGatewayV6"
+          label={strings.configuration.defaultGatewayV6}
+          value={displayEditableValue(internetConnection, 'defaultGatewayV6')}
+          editKey="defaultGatewayV6"
+          onEdit={onEditInternetConnectionSettings}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabelEditable
+          key="primaryDnsV6"
+          label={strings.configuration.primaryDnsV6}
+          value={displayEditableValue(internetConnection, 'primaryDnsV6')}
+          editKey="primaryDnsV6"
+          onEdit={onEditInternetConnectionSettings}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabelEditable
+          key="secondaryDnsV6"
+          label={strings.configuration.secondaryDnsV6}
+          value={displayEditableValue(internetConnection, 'secondaryDnsV6')}
+          editKey="secondaryDnsV6"
+          onEdit={onEditInternetConnectionSettings}
+        />,
+      );
+    }
+
     return items;
   };
 
@@ -406,6 +470,7 @@ const Configuration = props => {
       />,
     ];
 
+    // IPv4
     if (type === 'bridge') {
       // Nothing is added
     } else if (type === 'manual') {
@@ -470,6 +535,42 @@ const Configuration = props => {
           onEdit={onEditDeviceModeSettings}
         />,
       );
+    }
+
+    // IPv6
+    if (ipv6Support) {
+      if (type === 'bridge') {
+        // Nothing is added
+      } else if (type === 'manual') {
+        items.push(
+          <ItemTextWithLabel
+            key="subnetV6"
+            label={strings.configuration.subnetV6}
+            value={displayValue(deviceMode, 'subnetV6')}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabel
+            key="subnetMaskV6"
+            label={strings.configuration.subnetMaskV6}
+            value={displayValue(deviceMode, 'subnetMaskV6')}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabel
+            key="startIPV6"
+            label={strings.configuration.startIpV6}
+            value={displayValue(deviceMode, 'startIPV6')}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabel
+            key="endIPV6"
+            label={strings.configuration.endIpV6}
+            value={displayValue(deviceMode, 'endIPV6')}
+          />,
+        );
+      }
     }
 
     items.push(
