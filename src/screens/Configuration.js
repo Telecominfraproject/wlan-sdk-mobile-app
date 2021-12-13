@@ -16,7 +16,6 @@ import { useSelector } from 'react-redux';
 import {
   selectCurrentAccessPointId,
   selectSubscriberInformationLoading,
-  selectSubscriberInformation,
   selectAccessPoint,
   selectInternetConnection,
   selectWifiNetworks,
