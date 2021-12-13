@@ -2,8 +2,9 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { borderRadiusDefault, heightCellDefault, primaryColor, whiteColor } from '../AppStyle';
 import DropDownPicker from 'react-native-dropdown-picker';
+import isEqual from 'lodash.isequal';
 
-export default function ButtonSelector(props) {
+const ButtonSelector = props => {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(props.selected !== null ? props.selected : 0);
   const [items, setItems] = useState([]);
@@ -14,7 +15,11 @@ export default function ButtonSelector(props) {
   const dropdownStyle = props.dropdownStyle ?? {};
   const height = props.height ?? props.style.height ?? heightCellDefault;
   const numberOfLines = props.numberOfLines ?? 2;
-  const formattedItems = useMemo(() => formatOptions(options), [options]);
+  const formattedItems = useMemo(
+    () => formatOptions(options),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [options],
+  );
 
   // Update items when the options list change
   useEffect(() => {
@@ -157,4 +162,8 @@ export default function ButtonSelector(props) {
       )}
     </View>
   );
-}
+};
+
+export default React.memo(ButtonSelector, (prevProps, nextProps) => {
+  return isEqual(prevProps, nextProps);
+});

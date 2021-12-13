@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Image, Text } from 'react-native';
+import isEqual from 'lodash.isequal';
 
 const ImageWithBadge = props => {
   const isBadgeSizeSmall = () => {
@@ -89,4 +90,6 @@ const ImageWithBadge = props => {
   );
 };
 
-export default ImageWithBadge;
+export default React.memo(ImageWithBadge, (prevProps, nextProps) => {
+  return isEqual(prevProps, nextProps);
+});

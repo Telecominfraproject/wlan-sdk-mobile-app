@@ -9,8 +9,9 @@ import {
   errorColor,
 } from '../AppStyle';
 import { strings } from '../localization/LocalizationStrings';
+import isEqual from 'lodash.isequal';
 
-export default function ItemTextWithLabelEditable(props) {
+const ItemTextWithLabelEditable = props => {
   const { type = '' } = props;
   const [loading, setLoading] = useState(false);
   const [edit, setEdit] = useState(false);
@@ -282,4 +283,8 @@ export default function ItemTextWithLabelEditable(props) {
       )}
     </Pressable>
   );
-}
+};
+
+export default React.memo(ItemTextWithLabelEditable, (prevProps, nextProps) => {
+  return isEqual(prevProps, nextProps);
+});

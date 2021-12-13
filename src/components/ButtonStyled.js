@@ -9,6 +9,7 @@ import {
   grayLightColor,
 } from '../AppStyle';
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import isEqual from 'lodash.isequal';
 
 const ButtonStyled = props => {
   // Supports the following props:
@@ -157,4 +158,6 @@ const ButtonStyled = props => {
   );
 };
 
-export default ButtonStyled;
+export default React.memo(ButtonStyled, (prevProps, nextProps) => {
+  return isEqual(prevProps, nextProps);
+});

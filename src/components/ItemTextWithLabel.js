@@ -2,6 +2,7 @@ import React from 'react';
 import { paddingHorizontalDefault, heightCellDefault, primaryColor } from '../AppStyle';
 import { StyleSheet, View, Text, Pressable, Alert } from 'react-native';
 import ButtonStyled from '../components/ButtonStyled';
+import isEqual from 'lodash.isequal';
 
 const ItemTextWithLabel = props => {
   const onPress = () => {
@@ -65,4 +66,6 @@ const ItemTextWithLabel = props => {
   );
 };
 
-export default ItemTextWithLabel;
+export default React.memo(ItemTextWithLabel, (prevProps, nextProps) => {
+  return isEqual(prevProps, nextProps);
+});

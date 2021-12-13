@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { placeholderColor } from '../AppStyle';
 import { StyleSheet, View, Image, TextInput } from 'react-native';
+import isEqual from 'lodash.isequal';
 
 const TextInputWithIcon = props => {
   const [textShown, setTextShown] = useState(false);
@@ -46,4 +47,6 @@ const TextInputWithIcon = props => {
   );
 };
 
-export default TextInputWithIcon;
+export default React.memo(TextInputWithIcon, (prevProps, nextProps) => {
+  return isEqual(prevProps, nextProps);
+});

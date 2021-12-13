@@ -2,6 +2,7 @@ import React from 'react';
 import { blackColor, paddingHorizontalDefault, heightCellDefault } from '../AppStyle';
 import { StyleSheet, TouchableOpacity, View, Text, Image } from 'react-native';
 import ImageWithBadge from '../components/ImageWithBadge';
+import isEqual from 'lodash.isequal';
 
 const ItemTextWithIcon = props => {
   const componentStyles = StyleSheet.create({
@@ -55,4 +56,6 @@ const ItemTextWithIcon = props => {
   );
 };
 
-export default ItemTextWithIcon;
+export default React.memo(ItemTextWithIcon, (prevProps, nextProps) => {
+  return isEqual(prevProps, nextProps);
+});

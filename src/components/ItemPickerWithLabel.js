@@ -3,8 +3,9 @@ import { StyleSheet, Text, View } from 'react-native';
 import { grayColor, heightCellDefault, paddingHorizontalDefault, primaryColor, whiteColor } from '../AppStyle';
 import ButtonStyled from '../components/ButtonStyled';
 import DropDownPicker from 'react-native-dropdown-picker';
+import isEqual from 'lodash.isequal';
 
-export default function ItemPickerWithLabel(props) {
+const ItemPickerWithLabel = props => {
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState(props.items ?? []);
   const placeholder = props.placeholder ?? 'Select an item';
@@ -101,4 +102,8 @@ export default function ItemPickerWithLabel(props) {
       )}
     </View>
   );
-}
+};
+
+export default React.memo(ItemPickerWithLabel, (prevProps, nextProps) => {
+  return isEqual(prevProps, nextProps);
+});

@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { paddingHorizontalDefault, heightCellDefault, primaryColor, errorColor } from '../AppStyle';
 import { StyleSheet, View, Pressable, Text, Alert, TouchableOpacity, Image } from 'react-native';
+import isEqual from 'lodash.isequal';
 
 const ItemColumnswithValues = props => {
   const formattedValues = useMemo(() => {
@@ -110,4 +111,6 @@ const ItemColumnswithValues = props => {
   );
 };
 
-export default ItemColumnswithValues;
+export default React.memo(ItemColumnswithValues, (prevProps, nextProps) => {
+  return isEqual(prevProps, nextProps);
+});

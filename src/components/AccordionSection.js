@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { paddingHorizontalDefault, borderRadiusDefault, primaryColor, whiteColor, grayColor } from '../AppStyle';
 import { StyleSheet, TouchableOpacity, View, Text, Image, ActivityIndicator } from 'react-native';
+import isEqual from 'lodash.isequal';
 
 const AccordionSection = props => {
   const [showChildren, setShowChildren] = useState(true);
@@ -193,4 +194,6 @@ const AccordionSection = props => {
   );
 };
 
-export default AccordionSection;
+export default React.memo(AccordionSection, (prevProps, nextProps) => {
+  return isEqual(prevProps, nextProps);
+});
