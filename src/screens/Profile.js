@@ -32,15 +32,22 @@ const Profile = props => {
   // State
   const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
-  const [mfaValue, setMfaValue] = useState(SubMfaConfigTypeEnum.Disabled);
+  const [mfa, setMfa] = useState();
+  const [mfaLoading, setMfaLoading] = useState(false);
+  const [mfaType, setMfaType] = useState();
 
   // Refresh the information only anytime there is a navigation change and this has come into focus
   // Need to be careful here as useFocusEffect is also called during re-render so it can result in
   // infinite loops.
   useFocusEffect(
     useCallback(() => {
+      // Make sure to scroll to top
       scrollViewToTop(scrollRef);
+
+      // Get the latest MFA information
       getMFA();
+
+      // Setup the refresh interval
       var intervalId = setSubscriberInformationInterval(null);
 
       // Return function of what should be done on 'focus out'
@@ -54,6 +61,8 @@ const Profile = props => {
 
   const getMFA = async () => {
     try {
+      setMfaLoading(true);
+
       const response = await mfaApi.getMFS();
       if (!response || !response.data) {
         throw new Error(strings.errors.invalidResponse);
@@ -61,16 +70,19 @@ const Profile = props => {
 
       logStringifyPretty(response.data, response.request.responseURL);
       let type = response.data.type || SubMfaConfigTypeEnum.Disabled;
-      setMfaValue(type);
+      setMfa(response.data);
+      setMfaType(type);
     } catch (error) {
       handleApiError(strings.errors.titleMfa, error);
+    } finally {
+      setMfaLoading(false);
     }
   };
 
   const onEditUserInformation = async val => {
     try {
       if ('phoneNumber' in val) {
-        if (mfaValue === SubMfaConfigTypeEnum.Sms && 'phoneNumber' in val) {
+        if (mfaType === SubMfaConfigTypeEnum.Sms && 'phoneNumber' in val) {
           // Cannot change the phone number without updating MFA. Technically it would possible to handle
           // This just simplifies the flow for now.
           throw new Error(strings.errors.cannotChangePhoneMfa);
@@ -99,6 +111,10 @@ const Profile = props => {
 
   const onMfaChange = async type => {
     try {
+      if (mfa === null || mfa.type === type) {
+        return;
+      }
+
       if (type === SubMfaConfigTypeEnum.Sms) {
         // SMS type first validate the phone number
         await startSmsValidation(subscriberInformation.phoneNumber);
@@ -226,8 +242,9 @@ const Profile = props => {
             <ItemPickerWithLabel
               key="mfa"
               label={strings.profile.mfa}
-              value={mfaValue}
-              setValue={setMfaValue}
+              value={mfaType}
+              setValue={setMfaType}
+              loading={mfaLoading}
               items={[
                 { label: strings.profile.off, value: SubMfaConfigTypeEnum.Disabled },
                 { label: strings.profile.email, value: SubMfaConfigTypeEnum.Email },
