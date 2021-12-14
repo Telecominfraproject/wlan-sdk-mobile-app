@@ -346,7 +346,7 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="ipAddress"
-          type="ipv4"
+          type="ipV4"
           label={strings.configuration.ipAddress}
           value={displayEditableValue(internetConnection, 'ipAddress')}
           editKey="ipAddress"
@@ -366,7 +366,7 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="defaultGateway"
-          type="ipv4"
+          type="ipV4"
           label={strings.configuration.defaultGateway}
           value={displayEditableValue(internetConnection, 'defaultGateway')}
           editKey="defaultGateway"
@@ -376,7 +376,7 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="primaryDns"
-          type="ipv4"
+          type="ipV4"
           label={strings.configuration.primaryDns}
           value={displayEditableValue(internetConnection, 'primaryDns')}
           editKey="primaryDns"
@@ -386,7 +386,7 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="secondaryDns"
-          type="ipv4"
+          type="ipV4"
           label={strings.configuration.secondaryDns}
           value={displayEditableValue(internetConnection, 'secondaryDns')}
           editKey="secondaryDns"
@@ -419,7 +419,7 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="ipAddressV6"
-          type="ipv6"
+          type="ipV6"
           label={strings.configuration.ipAddressV6}
           value={displayEditableValue(internetConnection, 'ipAddressV6')}
           editKey="ipAddressV6"
@@ -439,7 +439,7 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="defaultGatewayV6"
-          type="ipv6"
+          type="ipV6"
           label={strings.configuration.defaultGatewayV6}
           value={displayEditableValue(internetConnection, 'defaultGatewayV6')}
           editKey="defaultGatewayV6"
@@ -449,7 +449,7 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="primaryDnsV6"
-          type="ipv6"
+          type="ipV6"
           label={strings.configuration.primaryDnsV6}
           value={displayEditableValue(internetConnection, 'primaryDnsV6')}
           editKey="primaryDnsV6"
@@ -459,7 +459,7 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="secondaryDnsV6"
-          type="ipv6"
+          type="ipV6"
           label={strings.configuration.secondaryDnsV6}
           value={displayEditableValue(internetConnection, 'secondaryDnsV6')}
           editKey="secondaryDnsV6"
@@ -543,7 +543,7 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="startIP"
-          type="ipv4"
+          type="ipV4"
           label={strings.configuration.startIp}
           value={displayEditableValue(deviceMode, 'startIP')}
           editKey="startIP"
@@ -553,7 +553,7 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="endIP"
-          type="ipv4"
+          type="ipV4"
           label={strings.configuration.endIp}
           value={displayEditableValue(deviceMode, 'endIP')}
           editKey="endIP"
@@ -583,7 +583,7 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabel
           key="startIPV6"
-          type="ipv6"
+          type="ipV6"
           label={strings.configuration.startIpV6}
           value={displayValue(deviceMode, 'startIPV6')}
         />,
@@ -591,7 +591,7 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabel
           key="endIPV6"
-          type="ipv6"
+          type="ipV6"
           label={strings.configuration.endIpV6}
           value={displayValue(deviceMode, 'endIPV6')}
         />,
@@ -644,7 +644,7 @@ const Configuration = props => {
         <ItemTextWithLabelEditable
           key="primary"
           label={strings.configuration.primaryDns}
-          type="ipv4"
+          type="ipV4"
           value={displayEditableValue(dnsConfiguration, 'primary')}
           placeholder={strings.messages.empty}
           editKey="primary"
@@ -655,7 +655,7 @@ const Configuration = props => {
         <ItemTextWithLabelEditable
           key="secondary"
           label={strings.configuration.secondaryDns}
-          type="ipv4"
+          type="ipV4"
           value={displayEditableValue(dnsConfiguration, 'secondary')}
           placeholder={strings.messages.empty}
           editKey="secondary"

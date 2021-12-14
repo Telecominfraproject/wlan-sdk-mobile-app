@@ -87,7 +87,7 @@ export default function IpReservationAddEdit(props) {
             <ItemTextWithLabelEditable
               key="ipAddress"
               label={strings.placeholders.ipAddress}
-              type="ipv4"
+              type="ipV4"
               value={ipAddress}
               placeholder={strings.messages.empty}
               onEdit={setIpAddress}
