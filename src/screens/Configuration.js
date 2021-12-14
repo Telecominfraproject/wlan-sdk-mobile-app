@@ -382,35 +382,35 @@ const Configuration = props => {
           <ItemTextWithLabel
             key="ipAddressV6"
             label={strings.configuration.ipAddressV6}
-            value={displayEditableValue(internetConnection, 'ipAddressV6')}
+            value={displayValue(internetConnection, 'ipAddressV6')}
           />,
         );
         items.push(
           <ItemTextWithLabel
             key="subnetMaskV6"
             label={strings.configuration.subnetMaskV6}
-            value={displayEditableValue(internetConnection, 'subnetMaskV6')}
+            value={displayValue(internetConnection, 'subnetMaskV6')}
           />,
         );
         items.push(
           <ItemTextWithLabel
             key="defaultGatewayV6"
             label={strings.configuration.defaultGatewayV6}
-            value={displayEditableValue(internetConnection, 'defaultGatewayV6')}
+            value={displayValue(internetConnection, 'defaultGatewayV6')}
           />,
         );
         items.push(
           <ItemTextWithLabel
             key="primaryDnsV6"
             label={strings.configuration.primaryDnsV6}
-            value={displayEditableValue(internetConnection, 'primaryDnsV6')}
+            value={displayValue(internetConnection, 'primaryDnsV6')}
           />,
         );
         items.push(
           <ItemTextWithLabel
             key="secondaryDnsV6"
             label={strings.configuration.secondaryDnsV6}
-            value={displayEditableValue(internetConnection, 'secondaryDnsV6')}
+            value={displayValue(internetConnection, 'secondaryDnsV6')}
           />,
         );
       }
