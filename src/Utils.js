@@ -181,7 +181,12 @@ export function getDeviceFromClient(client, subscriberInformation, accessPointId
 export function getGuestNetworkIndex(wifiNetworks) {
   if (wifiNetworks && wifiNetworks.wifiNetworks) {
     // Return the first guest network index
-    return wifiNetworks.wifiNetworks.findIndex(network => network.type === 'guest');
+    let index = wifiNetworks.wifiNetworks.findIndex(network => network.type === 'guest');
+    if (index < 0) {
+      return null;
+    } else {
+      return -1;
+    }
   }
 
   return null;
