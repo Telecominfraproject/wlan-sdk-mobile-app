@@ -185,7 +185,7 @@ export function getGuestNetworkIndex(wifiNetworks) {
     if (index < 0) {
       return null;
     } else {
-      return -1;
+      return index;
     }
   }
 

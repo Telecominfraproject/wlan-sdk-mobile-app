@@ -71,7 +71,7 @@ const Dashboard = props => {
     } else {
       const guestNetwork = getGuestNetwork();
 
-      if (guestNetwork) {
+      if (guestNetwork !== null) {
         return require('../assets/check-solid.png');
       } else {
         return require('../assets/times-solid.png');
@@ -85,7 +85,7 @@ const Dashboard = props => {
     } else {
       const guestNetwork = getGuestNetwork();
 
-      if (guestNetwork) {
+      if (guestNetwork !== null) {
         return okColor;
       } else {
         return errorColor;
@@ -226,7 +226,7 @@ const Dashboard = props => {
               <Text style={componentStyles.iconLabel}>{strings.dashboard.internet}</Text>
             </View>
           </TouchableOpacity>
-          {getGuestNetwork() && (
+          {getGuestNetwork() !== null && (
             <TouchableOpacity style={componentStyles.touchableContainer} onPress={onGuestNetworkPress}>
               <View style={componentStyles.itemContainer} onPress={onGuestNetworkPress}>
                 <ImageWithBadge
