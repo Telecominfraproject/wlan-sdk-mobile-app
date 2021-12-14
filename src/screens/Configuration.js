@@ -722,6 +722,7 @@ const Configuration = props => {
     sectionNetworkIcon: {
       height: 75,
       width: 75,
+      resizeMode: 'contain',
     },
     sectionNetworkText: {
       flex: 2,
