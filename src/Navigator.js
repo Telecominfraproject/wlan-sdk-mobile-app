@@ -130,6 +130,7 @@ const Navigator = () => {
           tabBarInactiveTintColor: blackColor,
           tabBarActiveTintColor: primaryColor,
           headerShown: false,
+          tabBarHideOnKeyboard: true,
         }}>
         {accessPoint && accessPoint.macAddress && accessPoint.macAddress !== '000000000000' ? (
           <>
