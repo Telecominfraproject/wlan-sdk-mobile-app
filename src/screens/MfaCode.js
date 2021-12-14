@@ -17,6 +17,7 @@ export default function MfaCode(props) {
       switch (mfaInfo.method) {
         case 'email':
           return strings.mfaCode.descriptionEmail;
+
         case 'sms':
           return strings.mfaCode.descriptionSms;
       }
@@ -118,6 +119,7 @@ export default function MfaCode(props) {
             <TextInput
               style={pageItemStyle.inputText}
               placeholder={strings.placeholders.code}
+              keyboardType="number-pad"
               onChangeText={text => setCode(text)}
               autoCapitalize="none"
               textContentType="oneTimeCode"
