@@ -205,8 +205,19 @@ const Configuration = props => {
 
   const sendAccessPointCommand = async (action, successMessage) => {
     try {
+      let payload = {
+        mac: accessPoint.macAddress,
+        when: 0,
+      };
+
+      // for the blink command there are some additional parameters, so add those in.
+      if (action === 'blink') {
+        payload.duration = 10;
+        payload.pattern = 'blink';
+      }
+
       // TODO: Verify this is functioning and the function call is correct!
-      const response = await deviceCommandsApi.performAnAction(action, { mac: accessPoint.macAddress, when: 0 });
+      const response = await deviceCommandsApi.performAnAction(action, payload);
 
       if (!response || !response.data) {
         throw new Error(strings.errors.invalidResponse);
