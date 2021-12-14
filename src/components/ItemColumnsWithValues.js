@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { paddingHorizontalDefault, heightCellDefault, primaryColor, errorColor } from '../AppStyle';
+import { paddingHorizontalDefault, heightCellDefault, primaryColor, errorColor, blackColor } from '../AppStyle';
 import { StyleSheet, View, Pressable, Text, Alert, TouchableOpacity, Image } from 'react-native';
 import isEqual from 'lodash.isequal';
 
@@ -61,6 +61,7 @@ const ItemColumnswithValues = props => {
       height: 28,
       fontSize: 14,
       textAlignVertical: 'center',
+      color: blackColor,
     },
     deleteIcon: {
       width: 16,

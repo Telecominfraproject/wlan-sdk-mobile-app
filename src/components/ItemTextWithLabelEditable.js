@@ -237,6 +237,7 @@ const ItemTextWithLabelEditable = props => {
       height: 28,
       fontSize: 14,
       textAlignVertical: 'center',
+      color: blackColor,
     },
     textValuePlaceholder: {
       color: placeholderColor,
