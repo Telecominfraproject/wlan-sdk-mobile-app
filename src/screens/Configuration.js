@@ -341,7 +341,79 @@ const Configuration = props => {
 
     // IPv4
     if (type === 'automatic') {
-      // Show nothing. This might actually want to be readonly
+      items.push(
+        <ItemTextWithLabel
+          key="ipAddress"
+          label={strings.configuration.ipAddress}
+          value={displayValue(internetConnection, 'ipAddress')}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabel
+          key="subNetMask"
+          label={strings.configuration.subnetMask}
+          value={displayValue(internetConnection, 'subNetMask')}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabel
+          key="defaultGateway"
+          label={strings.configuration.defaultGateway}
+          value={displayValue(internetConnection, 'defaultGateway')}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabel
+          key="primaryDns"
+          label={strings.configuration.primaryDns}
+          value={displayValue(internetConnection, 'primaryDns')}
+        />,
+      );
+      items.push(
+        <ItemTextWithLabel
+          key="secondaryDns"
+          label={strings.configuration.secondaryDns}
+          value={displayValue(internetConnection, 'secondaryDns')}
+        />,
+      );
+
+      if (ipv6Support) {
+        items.push(
+          <ItemTextWithLabel
+            key="ipAddressV6"
+            label={strings.configuration.ipAddressV6}
+            value={displayEditableValue(internetConnection, 'ipAddressV6')}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabel
+            key="subnetMaskV6"
+            label={strings.configuration.subnetMaskV6}
+            value={displayEditableValue(internetConnection, 'subnetMaskV6')}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabel
+            key="defaultGatewayV6"
+            label={strings.configuration.defaultGatewayV6}
+            value={displayEditableValue(internetConnection, 'defaultGatewayV6')}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabel
+            key="primaryDnsV6"
+            label={strings.configuration.primaryDnsV6}
+            value={displayEditableValue(internetConnection, 'primaryDnsV6')}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabel
+            key="secondaryDnsV6"
+            label={strings.configuration.secondaryDnsV6}
+            value={displayEditableValue(internetConnection, 'secondaryDnsV6')}
+          />,
+        );
+      }
     } else if (type === 'manual') {
       items.push(
         <ItemTextWithLabelEditable
@@ -393,6 +465,60 @@ const Configuration = props => {
           onEdit={onEditInternetConnectionSettings}
         />,
       );
+
+      // IPv6
+      if (ipv6Support) {
+        items.push(
+          <ItemTextWithLabelEditable
+            key="ipAddressV6"
+            type="ipV6"
+            label={strings.configuration.ipAddressV6}
+            value={displayEditableValue(internetConnection, 'ipAddressV6')}
+            editKey="ipAddressV6"
+            onEdit={onEditInternetConnectionSettings}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabelEditable
+            key="subnetMaskV6"
+            type="subnetMaskV6"
+            label={strings.configuration.subnetMaskV6}
+            value={displayEditableValue(internetConnection, 'subnetMaskV6')}
+            editKey="subnetMaskV6"
+            onEdit={onEditInternetConnectionSettings}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabelEditable
+            key="defaultGatewayV6"
+            type="ipV6"
+            label={strings.configuration.defaultGatewayV6}
+            value={displayEditableValue(internetConnection, 'defaultGatewayV6')}
+            editKey="defaultGatewayV6"
+            onEdit={onEditInternetConnectionSettings}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabelEditable
+            key="primaryDnsV6"
+            type="ipV6"
+            label={strings.configuration.primaryDnsV6}
+            value={displayEditableValue(internetConnection, 'primaryDnsV6')}
+            editKey="primaryDnsV6"
+            onEdit={onEditInternetConnectionSettings}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabelEditable
+            key="secondaryDnsV6"
+            type="ipV6"
+            label={strings.configuration.secondaryDnsV6}
+            value={displayEditableValue(internetConnection, 'secondaryDnsV6')}
+            editKey="secondaryDnsV6"
+            onEdit={onEditInternetConnectionSettings}
+          />,
+        );
+      }
     } else if (type === 'pppoe') {
       items.push(
         <ItemTextWithLabelEditable
@@ -409,60 +535,6 @@ const Configuration = props => {
           label={strings.configuration.password}
           value={displayEditableValue(internetConnection, 'password')}
           editKey="password"
-          onEdit={onEditInternetConnectionSettings}
-        />,
-      );
-    }
-
-    // IPv6
-    if (ipv6Support && type === 'manual') {
-      items.push(
-        <ItemTextWithLabelEditable
-          key="ipAddressV6"
-          type="ipV6"
-          label={strings.configuration.ipAddressV6}
-          value={displayEditableValue(internetConnection, 'ipAddressV6')}
-          editKey="ipAddressV6"
-          onEdit={onEditInternetConnectionSettings}
-        />,
-      );
-      items.push(
-        <ItemTextWithLabelEditable
-          key="subnetMaskV6"
-          type="subnetMaskV6"
-          label={strings.configuration.subnetMaskV6}
-          value={displayEditableValue(internetConnection, 'subnetMaskV6')}
-          editKey="subnetMaskV6"
-          onEdit={onEditInternetConnectionSettings}
-        />,
-      );
-      items.push(
-        <ItemTextWithLabelEditable
-          key="defaultGatewayV6"
-          type="ipV6"
-          label={strings.configuration.defaultGatewayV6}
-          value={displayEditableValue(internetConnection, 'defaultGatewayV6')}
-          editKey="defaultGatewayV6"
-          onEdit={onEditInternetConnectionSettings}
-        />,
-      );
-      items.push(
-        <ItemTextWithLabelEditable
-          key="primaryDnsV6"
-          type="ipV6"
-          label={strings.configuration.primaryDnsV6}
-          value={displayEditableValue(internetConnection, 'primaryDnsV6')}
-          editKey="primaryDnsV6"
-          onEdit={onEditInternetConnectionSettings}
-        />,
-      );
-      items.push(
-        <ItemTextWithLabelEditable
-          key="secondaryDnsV6"
-          type="ipV6"
-          label={strings.configuration.secondaryDnsV6}
-          value={displayEditableValue(internetConnection, 'secondaryDnsV6')}
-          editKey="secondaryDnsV6"
           onEdit={onEditInternetConnectionSettings}
         />,
       );
