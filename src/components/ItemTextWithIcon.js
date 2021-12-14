@@ -22,6 +22,7 @@ const ItemTextWithIcon = props => {
       marginRight: paddingHorizontalDefault,
       // Visual
       fontSize: 14,
+      color: blackColor,
     },
     icon: {
       width: 20,

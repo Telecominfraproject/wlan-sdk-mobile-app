@@ -1,5 +1,5 @@
 import React from 'react';
-import { paddingHorizontalDefault, heightCellDefault, primaryColor } from '../AppStyle';
+import { paddingHorizontalDefault, heightCellDefault, primaryColor, blackColor } from '../AppStyle';
 import { StyleSheet, View, Text, Pressable, Alert } from 'react-native';
 import ButtonStyled from '../components/ButtonStyled';
 import isEqual from 'lodash.isequal';
@@ -36,6 +36,7 @@ const ItemTextWithLabel = props => {
       height: 28,
       fontSize: 14,
       textAlignVertical: 'center',
+      color: blackColor,
     },
     buttonRight: {
       marginLeft: paddingHorizontalDefault,
