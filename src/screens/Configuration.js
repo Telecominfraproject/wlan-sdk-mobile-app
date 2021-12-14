@@ -418,9 +418,9 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="ipAddress"
-          type="ipV4"
           label={strings.configuration.ipAddress}
           value={displayEditableValue(internetConnection, 'ipAddress')}
+          type="ipV4"
           editKey="ipAddress"
           onEdit={onEditInternetConnectionSettings}
         />,
@@ -428,9 +428,9 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="subNetMask"
-          type="subnetMaskV4"
           label={strings.configuration.subnetMask}
           value={displayEditableValue(internetConnection, 'subNetMask')}
+          type="subnetMaskV4"
           editKey="subNetMask"
           onEdit={onEditInternetConnectionSettings}
         />,
@@ -438,9 +438,9 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="defaultGateway"
-          type="ipV4"
           label={strings.configuration.defaultGateway}
           value={displayEditableValue(internetConnection, 'defaultGateway')}
+          type="ipV4"
           editKey="defaultGateway"
           onEdit={onEditInternetConnectionSettings}
         />,
@@ -448,9 +448,9 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="primaryDns"
-          type="ipV4"
           label={strings.configuration.primaryDns}
           value={displayEditableValue(internetConnection, 'primaryDns')}
+          type="ipV4"
           editKey="primaryDns"
           onEdit={onEditInternetConnectionSettings}
         />,
@@ -458,9 +458,9 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="secondaryDns"
-          type="ipV4"
           label={strings.configuration.secondaryDns}
           value={displayEditableValue(internetConnection, 'secondaryDns')}
+          type="ipV4"
           editKey="secondaryDns"
           onEdit={onEditInternetConnectionSettings}
         />,
@@ -471,9 +471,9 @@ const Configuration = props => {
         items.push(
           <ItemTextWithLabelEditable
             key="ipAddressV6"
-            type="ipV6"
             label={strings.configuration.ipAddressV6}
             value={displayEditableValue(internetConnection, 'ipAddressV6')}
+            type="ipV6"
             editKey="ipAddressV6"
             onEdit={onEditInternetConnectionSettings}
           />,
@@ -481,9 +481,9 @@ const Configuration = props => {
         items.push(
           <ItemTextWithLabelEditable
             key="subnetMaskV6"
-            type="subnetMaskV6"
             label={strings.configuration.subnetMaskV6}
             value={displayEditableValue(internetConnection, 'subnetMaskV6')}
+            type="subnetMaskV6"
             editKey="subnetMaskV6"
             onEdit={onEditInternetConnectionSettings}
           />,
@@ -491,9 +491,9 @@ const Configuration = props => {
         items.push(
           <ItemTextWithLabelEditable
             key="defaultGatewayV6"
-            type="ipV6"
             label={strings.configuration.defaultGatewayV6}
             value={displayEditableValue(internetConnection, 'defaultGatewayV6')}
+            type="ipV6"
             editKey="defaultGatewayV6"
             onEdit={onEditInternetConnectionSettings}
           />,
@@ -501,9 +501,9 @@ const Configuration = props => {
         items.push(
           <ItemTextWithLabelEditable
             key="primaryDnsV6"
-            type="ipV6"
             label={strings.configuration.primaryDnsV6}
             value={displayEditableValue(internetConnection, 'primaryDnsV6')}
+            type="ipV6"
             editKey="primaryDnsV6"
             onEdit={onEditInternetConnectionSettings}
           />,
@@ -511,8 +511,8 @@ const Configuration = props => {
         items.push(
           <ItemTextWithLabelEditable
             key="secondaryDnsV6"
-            type="ipV6"
             label={strings.configuration.secondaryDnsV6}
+            type="ipV6"
             value={displayEditableValue(internetConnection, 'secondaryDnsV6')}
             editKey="secondaryDnsV6"
             onEdit={onEditInternetConnectionSettings}
@@ -570,9 +570,9 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="subnet"
-          type="subnetV4"
           label={strings.configuration.subnet}
           value={displayEditableValue(deviceMode, 'subnet')}
+          type="subnetV4"
           editKey="subnet"
           onEdit={onEditDeviceModeSettings}
         />,
@@ -580,9 +580,9 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="subnetMask"
-          type="subnetMaskV4"
           label={strings.configuration.subnetMask}
           value={displayEditableValue(deviceMode, 'subnetMask')}
+          type="subnetMaskV4"
           editKey="subnetMask"
           onEdit={onEditDeviceModeSettings}
         />,
@@ -590,9 +590,9 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="startIP"
-          type="ipV4"
           label={strings.configuration.startIp}
           value={displayEditableValue(deviceMode, 'startIP')}
+          type="ipV4"
           editKey="startIP"
           onEdit={onEditDeviceModeSettings}
         />,
@@ -600,9 +600,9 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="endIP"
-          type="ipV4"
           label={strings.configuration.endIp}
           value={displayEditableValue(deviceMode, 'endIP')}
+          type="ipV4"
           editKey="endIP"
           onEdit={onEditDeviceModeSettings}
         />,
@@ -612,9 +612,9 @@ const Configuration = props => {
         items.push(
           <ItemTextWithLabelEditable
             key="subnetV6"
-            type="subnetV6"
             label={strings.configuration.subnetV6}
             value={displayEditableValue(deviceMode, 'subnetV6')}
+            type="subnetV6"
             editKey="subnetV6"
             onEdit={onEditDeviceModeSettings}
           />,
@@ -622,9 +622,9 @@ const Configuration = props => {
         items.push(
           <ItemTextWithLabelEditable
             key="subnetMaskV6"
-            type="subnetMaskV6"
             label={strings.configuration.subnetMaskV6}
             value={displayEditableValue(deviceMode, 'subnetMaskV6')}
+            type="subnetMaskV6"
             editKey="subnetMaskV6"
             onEdit={onEditDeviceModeSettings}
           />,
@@ -632,9 +632,9 @@ const Configuration = props => {
         items.push(
           <ItemTextWithLabelEditable
             key="startIPV6"
-            type="ipV6"
             label={strings.configuration.startIpV6}
             value={displayEditableValue(deviceMode, 'startIPV6')}
+            type="ipV6"
             editKey="startIPV6"
             onEdit={onEditDeviceModeSettings}
           />,
@@ -642,9 +642,9 @@ const Configuration = props => {
         items.push(
           <ItemTextWithLabelEditable
             key="endIPV6"
-            type="ipV6"
             label={strings.configuration.endIpV6}
             value={displayEditableValue(deviceMode, 'endIPV6')}
+            type="ipV6"
             editKey="endIPV6"
             onEdit={onEditDeviceModeSettings}
           />,
@@ -754,9 +754,9 @@ const Configuration = props => {
         <ItemTextWithLabelEditable
           key="primary"
           label={strings.configuration.primaryDns}
-          type="ipV4"
           value={displayEditableValue(dnsConfiguration, 'primary')}
           placeholder={strings.messages.empty}
+          type="ipV4"
           editKey="primary"
           onEdit={onEditCustomDnsSettings}
         />,
@@ -765,9 +765,9 @@ const Configuration = props => {
         <ItemTextWithLabelEditable
           key="secondary"
           label={strings.configuration.secondaryDns}
-          type="ipV4"
           value={displayEditableValue(dnsConfiguration, 'secondary')}
           placeholder={strings.messages.empty}
+          type="ipV4"
           editKey="secondary"
           onEdit={onEditCustomDnsSettings}
         />,

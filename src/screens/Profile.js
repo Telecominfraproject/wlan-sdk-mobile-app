@@ -213,17 +213,17 @@ const Profile = props => {
             disableAccordion={true}>
             <ItemTextWithLabelEditable
               key="firstName"
-              type="firstName"
               label={strings.profile.firstName}
               value={displayValue(subscriberInformation, 'firstName')}
+              type="firstName"
               editKey="firstName"
               onEdit={onEditUserInformation}
             />
             <ItemTextWithLabelEditable
               key="lastName"
-              type="lastName"
               label={strings.profile.lastName}
               value={displayValue(subscriberInformation, 'lastName')}
+              type="lastName"
               editKey="lastName"
               onEdit={onEditUserInformation}
             />
@@ -234,9 +234,9 @@ const Profile = props => {
             />
             <ItemTextWithLabelEditable
               key="phoneNumber"
-              type="phone"
               label={strings.profile.phone}
               value={displayValue(subscriberInformation, 'phoneNumber')}
+              type="phone"
               editKey="phoneNumber"
               onEdit={onEditUserInformation}
             />
