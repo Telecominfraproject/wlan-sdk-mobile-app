@@ -58,7 +58,7 @@ const ItemColumnswithValues = props => {
       color: primaryColor,
     },
     textValue: {
-      height: 28,
+      height: 18,
       fontSize: 14,
       textAlignVertical: 'center',
       color: blackColor,
