@@ -44,11 +44,12 @@ const Profile = props => {
       // Make sure to scroll to top
       scrollViewToTop(scrollRef);
 
-      // Get the latest MFA information
-      getMFA();
+      // Setup the refresh interval and update the MFA at the same time
+      async function updateMfa() {
+        getMFA();
+      }
 
-      // Setup the refresh interval
-      var intervalId = setSubscriberInformationInterval(null);
+      var intervalId = setSubscriberInformationInterval(updateMfa);
 
       // Return function of what should be done on 'focus out'
       return () => {
