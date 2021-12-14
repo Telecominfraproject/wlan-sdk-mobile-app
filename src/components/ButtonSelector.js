@@ -24,7 +24,14 @@ const ButtonSelector = props => {
   // Update items when the options list change
   useEffect(() => {
     setItems(formattedItems);
-  }, [formattedItems]);
+
+    // Check to see if the select item is out of bounds if the items change
+    if (formattedItems) {
+      if (selected > formattedItems.length - 1) {
+        setSelected(formattedItems.length - 1);
+      }
+    }
+  }, [formattedItems, selected]);
 
   function formatOptions(optionsInput) {
     if (optionsInput.length > 0) {
@@ -36,6 +43,7 @@ const ButtonSelector = props => {
 
   const onSelect = index => {
     setSelected(index);
+
     if (props.onSelect) {
       props.onSelect(index);
     }
@@ -57,6 +65,7 @@ const ButtonSelector = props => {
   const getButtonColor = index => {
     return selected === index ? componentStyles.filled : componentStyles.outline;
   };
+
   const getTextColor = index => {
     return selected === index ? componentStyles.textFilled : componentStyles.textOutline;
   };

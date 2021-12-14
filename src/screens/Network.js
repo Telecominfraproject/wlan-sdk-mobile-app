@@ -47,7 +47,9 @@ const Network = props => {
   const accessPoint = useSelector(selectAccessPoint);
   const wifiNetworks = useSelector(selectWifiNetworks);
   // State
-  const [selectedWifiNetworkIndex, setSelectedWifiNetworkIndex] = useState(startingWifiNetworkIndex);
+  const [selectedWifiNetworkIndex, setSelectedWifiNetworkIndex] = useState(
+    wifiNetworks && wifiNetworks.wifiNetworks.length > startingWifiNetworkIndex ? startingWifiNetworkIndex : 0,
+  );
   const [selectedWifiNetwork, setSelectedWifiNetwork] = useState(
     wifiNetworks ? wifiNetworks.wifiNetworks[selectedWifiNetworkIndex] : null,
   );
@@ -83,7 +85,15 @@ const Network = props => {
   }, [wifiClients, selectedWifiNetwork, wifiNetworks]);
 
   useEffect(() => {
-    setSelectedWifiNetwork(wifiNetworks ? wifiNetworks.wifiNetworks[selectedWifiNetworkIndex] : null);
+    let networks = wifiNetworks && wifiNetworks.wifiNetworks ? wifiNetworks.wifiNetworks : [];
+
+    if (selectedWifiNetworkIndex === null) {
+      setSelectedWifiNetwork(null);
+    } else if (selectedWifiNetworkIndex >= networks.length) {
+      setSelectedWifiNetworkIndex(networks.length - 1 >= 0 ? networks.length - 1 : null);
+    } else {
+      setSelectedWifiNetwork(networks[selectedWifiNetworkIndex]);
+    }
   }, [wifiNetworks, selectedWifiNetworkIndex]);
 
   useEffect(() => {
@@ -234,6 +244,10 @@ const Network = props => {
 
   const onEditNetworkSettings = async val => {
     try {
+      if (!selectedWifiNetwork) {
+        return;
+      }
+
       // Because this is keyed into pickers, it may get called when we change networks, so need to make sure
       // that things are actually different before trying to update it
       let changed = false;
