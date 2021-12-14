@@ -53,6 +53,9 @@ const ItemPickerWithLabel = props => {
       borderWidth: props.style && props.style.borderWidth ? props.style.borderWidth : undefined,
       borderRadius: props.style && props.style.borderRadius ? props.style.borderRadius : undefined,
     },
+    pickerDisabled: {
+      opacity: 0.4,
+    },
     dropDownContainer: {
       borderWidth: 1,
       borderRadius: 0,
@@ -74,6 +77,7 @@ const ItemPickerWithLabel = props => {
           listMode={'SCROLLVIEW'}
           mode={props.multiple ? 'BADGE' : 'SIMPLE'}
           style={componentStyles.picker}
+          disabledStyle={componentStyles.pickerDisabled}
           loading={props.loading ?? false}
           placeholder={placeholder}
           disabled={props.disabled}
