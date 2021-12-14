@@ -29,10 +29,9 @@ const NetworkAdd = props => {
   const [wifiNetworkEncryption, setWifiNetworkEncryption] = useState('wpa2');
   const [wifiNetworkBands, setWifiNetworkBands] = useState([]);
 
-  const isGuestNetworkAvailable = () => {
-    // Only one guest network is supported, so if there is already one then
-    // disabled the picker
-    if (getGuestNetworkIndex(wifiNetworks) !== null) {
+  const hasGuestNetwork = () => {
+    // Check to see if it has a guest network
+    if (getGuestNetworkIndex(wifiNetworks) === null) {
       return false;
     } else {
       return true;
@@ -99,7 +98,7 @@ const NetworkAdd = props => {
               label={strings.network.type}
               value={wifiNetworkType}
               setValue={setWifiNetworkType}
-              disabled={!isGuestNetworkAvailable()}
+              disabled={hasGuestNetwork()}
               items={[
                 { label: strings.network.selectorTypeMain, value: 'main' },
                 { label: strings.network.selectorTypeGuest, value: 'guest' },
