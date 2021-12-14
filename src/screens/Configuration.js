@@ -33,7 +33,7 @@ import {
   displayValueDeviceModeType,
   displayEditableValue,
   getAccessPointIcon,
-  showGeneralError,
+  showGeneralMessage,
   modifyAccessPoint,
   modifySubscriberInternetConnection,
   modifySubscriberDeviceMode,
@@ -224,7 +224,7 @@ const Configuration = props => {
       }
 
       if (response.data.Code === 0) {
-        showGeneralError(strings.errors.titleAccessPointCommand, successMessage);
+        showGeneralMessage(successMessage);
       } else {
         throw new Error(strings.errors.invalidResponse);
       }
