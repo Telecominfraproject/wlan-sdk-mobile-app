@@ -79,7 +79,7 @@ const AccordionSection = props => {
     headerContainer: {
       height: 44,
       width: '100%',
-      // Layour
+      // Layout
       flexDirection: 'row',
       flexWrap: 'nowrap',
       alignItems: 'center',
