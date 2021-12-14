@@ -123,7 +123,7 @@ const ItemTextWithLabelEditable = props => {
         break;
 
       case 'mac':
-        re = /^([0-9a-f]{1,2}){5}([0-9a-f]{1,2})$/;
+        re = /^([0-9a-f]{2}){6}$/;
         break;
 
       case 'phone':
