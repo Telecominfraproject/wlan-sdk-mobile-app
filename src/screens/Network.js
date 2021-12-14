@@ -265,7 +265,11 @@ const Network = props => {
       {
         text: strings.buttons.ok,
         onPress: async () => {
-          deleteNetwork(currentAccessPointId, selectedWifiNetworkIndex);
+          try {
+            await deleteNetwork(currentAccessPointId, selectedWifiNetworkIndex);
+          } catch (error) {
+            handleApiError(strings.errors.titleNetwork, error);
+          }
         },
       },
       {
