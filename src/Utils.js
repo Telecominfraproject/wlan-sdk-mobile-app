@@ -591,7 +591,7 @@ export async function modifySubscriberDnsInformation(accessPointId, jsonObject) 
   }
 
   // There are some dependant values here, make sure they make sense
-  if (dnsConfiguration.custom && (dnsConfiguration.primary || dnsConfiguration.secondary)) {
+  if (dnsConfiguration.custom) {
     dnsConfiguration.ISP = false;
   } else {
     dnsConfiguration.ISP = true;
