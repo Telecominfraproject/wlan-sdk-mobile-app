@@ -81,7 +81,7 @@ const Network = props => {
       return null;
     }
 
-    return wifiClients.filter(client => client.ssid === wifiNetworkToFilter.name);
+    return wifiClients.associations.filter(client => client.ssid === wifiNetworkToFilter.name);
   }, [wifiClients, selectedWifiNetwork, wifiNetworks]);
 
   useEffect(() => {
@@ -123,8 +123,10 @@ const Network = props => {
       scrollViewToTop(scrollRef);
 
       async function updateClients() {
-        getWifiClients(currentAccessPointId);
-        getWiredClients(currentAccessPointId);
+        if (accessPoint) {
+          getWifiClients(accessPoint.macAddress);
+          getWiredClients(accessPoint.macAddress);
+        }
       }
       var intervalId = setSubscriberInformationInterval(updateClients);
 
@@ -133,30 +135,30 @@ const Network = props => {
       };
       // Disable the eslint warning, as we want to change only on navigation changes
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.navigation, currentAccessPointId]),
+    }, [props.navigation, accessPoint]),
   );
 
-  const getWiredClients = async accessPointIdToQuery => {
+  const getWiredClients = async macAddressToQuery => {
     if (!wiredClientsApi) {
       return;
     }
 
     try {
-      if (!accessPointIdToQuery) {
+      if (!macAddressToQuery) {
         // None, just return
         return;
       }
 
-      const response = await wiredClientsApi.getWiredClients(accessPointIdToQuery);
+      const response = await wiredClientsApi.getWiredClients(macAddressToQuery);
       if (!response || !response.data) {
         throw new Error(strings.errors.invalidResponse);
       }
 
       // Clear this flag on success
       wiredClientsErrorReportedRef.current = false;
+      console.log(response.data);
 
       if (isFieldDifferent(wiredClients, response.data, 'modified')) {
-        console.log(response.data);
         setWiredClients(response.data);
       }
     } catch (error) {
@@ -171,27 +173,27 @@ const Network = props => {
     }
   };
 
-  const getWifiClients = async accessPointIdToQuery => {
+  const getWifiClients = async macAddressToQuery => {
     if (!wifiClientsApi) {
       return;
     }
 
     try {
-      if (!accessPointIdToQuery) {
+      if (!macAddressToQuery) {
         // None, just return
         return;
       }
 
-      const response = await wifiClientsApi.getWifiClients(accessPointIdToQuery);
+      const response = await wifiClientsApi.getWifiClients(macAddressToQuery);
       if (!response || !response.data) {
         throw new Error(strings.errors.invalidResponse);
       }
 
       // Clear this flag on success
       wifiClientsErrorReportedRef.current = false;
+      console.log(response.data);
 
       if (isFieldDifferent(wifiClients, response.data, 'modified')) {
-        console.log(response.data);
         setWifiClients(response.data);
       }
     } catch (error) {
@@ -207,7 +209,7 @@ const Network = props => {
   };
 
   const getClientName = client => {
-    return displayValue(client, 'name');
+    return displayValue(client, 'macAddress');
   };
 
   const getClientMainIcon = client => {

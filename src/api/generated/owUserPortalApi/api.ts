@@ -565,7 +565,30 @@ export interface InlineObject {
    * @memberof InlineObject
    */
   when?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof InlineObject
+   */
+  duration?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof InlineObject
+   */
+  pattern?: InlineObjectPatternEnum;
 }
+
+/**
+ * @export
+ * @enum {string}
+ */
+export enum InlineObjectPatternEnum {
+  True = 'true',
+  False = 'false',
+  Blink = 'blink',
+}
+
 /**
  *
  * @export
@@ -1547,14 +1570,14 @@ export const ClientsApiAxiosParamCreator = function (configuration?: Configurati
     /**
      *
      * @summary Get the list of wired clients
-     * @param {string} deviceId
+     * @param {string} serialNumber
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getWiredClients: async (deviceId: string, options: any = {}): Promise<RequestArgs> => {
-      // verify required parameter 'deviceId' is not null or undefined
-      assertParamExists('getWiredClients', 'deviceId', deviceId);
-      const localVarPath = `/wiredClients`;
+    getWiredClients: async (serialNumber: string, options: any = {}): Promise<RequestArgs> => {
+      // verify required parameter 'serialNumber' is not null or undefined
+      assertParamExists('getWiredClients', 'serialNumber', serialNumber);
+      const localVarPath = `/wiredclients`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
       let baseOptions;
@@ -1573,8 +1596,8 @@ export const ClientsApiAxiosParamCreator = function (configuration?: Configurati
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
-      if (deviceId !== undefined) {
-        localVarQueryParameter['deviceId'] = deviceId;
+      if (serialNumber !== undefined) {
+        localVarQueryParameter['serialNumber'] = serialNumber;
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
@@ -1599,15 +1622,15 @@ export const ClientsApiFp = function (configuration?: Configuration) {
     /**
      *
      * @summary Get the list of wired clients
-     * @param {string} deviceId
+     * @param {string} serialNumber
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async getWiredClients(
-      deviceId: string,
+      serialNumber: string,
       options?: any,
     ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ClientList>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getWiredClients(deviceId, options);
+      const localVarAxiosArgs = await localVarAxiosParamCreator.getWiredClients(serialNumber, options);
       return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
     },
   };
@@ -1623,12 +1646,12 @@ export const ClientsApiFactory = function (configuration?: Configuration, basePa
     /**
      *
      * @summary Get the list of wired clients
-     * @param {string} deviceId
+     * @param {string} serialNumber
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getWiredClients(deviceId: string, options?: any): AxiosPromise<ClientList> {
-      return localVarFp.getWiredClients(deviceId, options).then(request => request(axios, basePath));
+    getWiredClients(serialNumber: string, options?: any): AxiosPromise<ClientList> {
+      return localVarFp.getWiredClients(serialNumber, options).then(request => request(axios, basePath));
     },
   };
 };
@@ -1643,14 +1666,14 @@ export class ClientsApi extends BaseAPI {
   /**
    *
    * @summary Get the list of wired clients
-   * @param {string} deviceId
+   * @param {string} serialNumber
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof ClientsApi
    */
-  public getWiredClients(deviceId: string, options?: any) {
+  public getWiredClients(serialNumber: string, options?: any) {
     return ClientsApiFp(this.configuration)
-      .getWiredClients(deviceId, options)
+      .getWiredClients(serialNumber, options)
       .then(request => request(this.axios, this.basePath));
   }
 }
@@ -2222,14 +2245,14 @@ export const WiFiClientsApiAxiosParamCreator = function (configuration?: Configu
     /**
      *
      * @summary Get the list of wired clients
-     * @param {string} deviceId
+     * @param {string} serialNumber
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getWifiClients: async (deviceId: string, options: any = {}): Promise<RequestArgs> => {
-      // verify required parameter 'deviceId' is not null or undefined
-      assertParamExists('getWifiClients', 'deviceId', deviceId);
-      const localVarPath = `/wifiClients`;
+    getWifiClients: async (serialNumber: string, options: any = {}): Promise<RequestArgs> => {
+      // verify required parameter 'serialNumber' is not null or undefined
+      assertParamExists('getWifiClients', 'serialNumber', serialNumber);
+      const localVarPath = `/wificlients`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
       let baseOptions;
@@ -2248,8 +2271,8 @@ export const WiFiClientsApiAxiosParamCreator = function (configuration?: Configu
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
-      if (deviceId !== undefined) {
-        localVarQueryParameter['deviceId'] = deviceId;
+      if (serialNumber !== undefined) {
+        localVarQueryParameter['serialNumber'] = serialNumber;
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
@@ -2274,15 +2297,15 @@ export const WiFiClientsApiFp = function (configuration?: Configuration) {
     /**
      *
      * @summary Get the list of wired clients
-     * @param {string} deviceId
+     * @param {string} serialNumber
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async getWifiClients(
-      deviceId: string,
+      serialNumber: string,
       options?: any,
     ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AssociationList>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getWifiClients(deviceId, options);
+      const localVarAxiosArgs = await localVarAxiosParamCreator.getWifiClients(serialNumber, options);
       return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
     },
   };
@@ -2302,12 +2325,12 @@ export const WiFiClientsApiFactory = function (
     /**
      *
      * @summary Get the list of wired clients
-     * @param {string} deviceId
+     * @param {string} serialNumber
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getWifiClients(deviceId: string, options?: any): AxiosPromise<AssociationList> {
-      return localVarFp.getWifiClients(deviceId, options).then(request => request(axios, basePath));
+    getWifiClients(serialNumber: string, options?: any): AxiosPromise<AssociationList> {
+      return localVarFp.getWifiClients(serialNumber, options).then(request => request(axios, basePath));
     },
   };
 };
@@ -2322,14 +2345,14 @@ export class WiFiClientsApi extends BaseAPI {
   /**
    *
    * @summary Get the list of wired clients
-   * @param {string} deviceId
+   * @param {string} serialNumber
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof WiFiClientsApi
    */
-  public getWifiClients(deviceId: string, options?: any) {
+  public getWifiClients(serialNumber: string, options?: any) {
     return WiFiClientsApiFp(this.configuration)
-      .getWifiClients(deviceId, options)
+      .getWifiClients(serialNumber, options)
       .then(request => request(this.axios, this.basePath));
   }
 }

@@ -762,7 +762,7 @@ paths:
         400:
           $ref: '#/components/responses/Error'
 
-  /wiredClients:
+  /wiredclients:
     get:
       tags:
         - Clients
@@ -770,10 +770,9 @@ paths:
       operationId: getWiredClients
       parameters:
         - in: query
-          name: deviceId
+          name: serialNumber
           schema:
             type: string
-            format: uuid
           required: true
       responses:
         200:
@@ -783,7 +782,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ClientList'
 
-  /wifiClients:
+  /wificlients:
     get:
       tags:
         - WiFi Clients
@@ -791,10 +790,9 @@ paths:
       operationId: getWifiClients
       parameters:
         - in: query
-          name: deviceId
+          name: serialNumber
           schema:
             type: string
-            format: uuid
           required: true
       responses:
         200:
@@ -874,6 +872,15 @@ paths:
                 when:
                   type: integer
                   format: int64
+                duration:
+                  type: integer
+                  format: int64
+                pattern:
+                  type: string
+                  enum:
+                    - on
+                    - off
+                    - blink
 
       responses:
         200:
