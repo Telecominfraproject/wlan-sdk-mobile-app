@@ -12,6 +12,8 @@ export const strings = new LocalizedStrings({
       apiUsernamePendingVerification: 'Email requires validation',
       badEmail: 'Please enter a valid email.',
       badPasswordFormat: 'Please match the requested password format.',
+      cannotChangePhoneMfa:
+        'Cannot change your phone number while MFA (Multi-Factor Authentication) is configured to SMS. Please change MFA before updating your phone number.',
       emptyField: '{0} field must not be empty.',
       emptyFields: 'Please fill in all fields',
       failedToConnect: 'Failed to connect to server, check connections.',
@@ -26,6 +28,7 @@ export const strings = new LocalizedStrings({
       mismatchPassword: 'Password mismatch.',
       missingEndpoints: 'System is not set up correct - missing configuration information.',
       titleAccessPointCommand: 'Access Point Command Error',
+      titleChangePassword: 'Change Password Error',
       titleDashboard: 'Dashboard',
       titleDeviceDetails: 'Device Error',
       titleDelete: 'Delete Error',
@@ -35,7 +38,7 @@ export const strings = new LocalizedStrings({
       titleMfa: 'Multi-Factor Authentication Error',
       titleNetwork: 'Network Error',
       titleProfile: 'Profile Error',
-      titleChangePassword: 'Change Password Error',
+      titleResendCode: 'Resend Code Error',
       titleSignIn: 'Sign In Error',
       titleSignUp: 'Sign Up Error',
       titleSms: 'SMS Error',
@@ -268,6 +271,9 @@ export const strings = new LocalizedStrings({
     },
     ipReservation: {
       title: 'IP Reservation',
+    },
+    phoneVerification: {
+      description: 'A validation code was sent by text message (SMS), please enter in this code below.',
     },
     profile: {
       accountInfo: 'Account Information',

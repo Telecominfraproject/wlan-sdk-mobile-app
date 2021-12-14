@@ -11,7 +11,7 @@ import {
 } from '../AppStyle';
 import { StyleSheet, SafeAreaView, View, ScrollView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { completeSignOut, logStringifyPretty, showGeneralError, scrollViewToTop } from '../Utils';
+import { completeSignOut, logStringifyPretty, scrollViewToTop } from '../Utils';
 import { getCredentials, handleApiError, mfaApi } from '../api/apiHandler';
 import { SubMfaConfigTypeEnum } from '../api/generated/owUserPortalApi';
 import { useSelector } from 'react-redux';
@@ -24,13 +24,15 @@ import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
 
 const Profile = props => {
-  const scrollRef = useRef();
-  const subscriberInformation = useSelector(selectSubscriberInformation);
-  const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
-  const [mfaValue, setMfaValue] = useState(SubMfaConfigTypeEnum.Disabled);
   // The sectionZIndex is used to help with any embedded picker/dropdown. Start with a high enough
   // value that it'll cover each section. The sections further up the view should have higher numbers
   var sectionZIndex = 20;
+  // Refs
+  const scrollRef = useRef();
+  // State
+  const subscriberInformation = useSelector(selectSubscriberInformation);
+  const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
+  const [mfaValue, setMfaValue] = useState(SubMfaConfigTypeEnum.Disabled);
 
   // Refresh the information only anytime there is a navigation change and this has come into focus
   // Need to be careful here as useFocusEffect is also called during re-render so it can result in
@@ -38,8 +40,8 @@ const Profile = props => {
   useFocusEffect(
     useCallback(() => {
       scrollViewToTop(scrollRef);
-      var intervalId = setSubscriberInformationInterval(null);
       getMFA();
+      var intervalId = setSubscriberInformationInterval(null);
 
       // Return function of what should be done on 'focus out'
       return () => {
@@ -53,15 +55,13 @@ const Profile = props => {
   const getMFA = async () => {
     try {
       const response = await mfaApi.getMFS();
-      if (response && response.data) {
-        logStringifyPretty(response.data, response.request.responseURL);
-        let type = response.data.type || SubMfaConfigTypeEnum.Disabled;
-        setMfaValue(type);
-      } else {
-        console.log(response);
-        console.error('Invalid response from getMFS');
-        showGeneralError(strings.errors.titleMfa, strings.errors.invalidResponse);
+      if (!response || !response.data) {
+        throw new Error(strings.errors.invalidResponse);
       }
+
+      logStringifyPretty(response.data, response.request.responseURL);
+      let type = response.data.type || SubMfaConfigTypeEnum.Disabled;
+      setMfaValue(type);
     } catch (error) {
       handleApiError(strings.errors.titleMfa, error);
     }
@@ -69,6 +69,26 @@ const Profile = props => {
 
   const onEditUserInformation = async val => {
     try {
+      if ('phoneNumber' in val) {
+        if (mfaValue === SubMfaConfigTypeEnum.Sms && 'phoneNumber' in val) {
+          // Cannot change the phone number without updating MFA. Technically it would possible to handle
+          // This just simplifies the flow for now.
+          throw new Error(strings.errors.cannotChangePhoneMfa);
+        }
+
+        // Make sure the phone number has a prefix
+        let phoneNumberValidate = val.phoneNumber;
+        if (phoneNumberValidate) {
+          if (phoneNumberValidate.startsWith('1-')) {
+            phoneNumberValidate = '+' + phoneNumberValidate;
+          } else if (/^\d{3}-/.test(phoneNumberValidate)) {
+            phoneNumberValidate = '+1-' + phoneNumberValidate;
+          }
+        }
+
+        val.phoneNumber = phoneNumberValidate;
+      }
+
       await modifySubscriberInformation(val);
     } catch (error) {
       handleApiError(strings.errors.titleUpdate, error);
@@ -77,73 +97,64 @@ const Profile = props => {
     }
   };
 
-  const onEditUserInformationMobile = async phoneInfo => {
-    if (phoneInfo) {
-      // Phone info will be of the format {'phone_<n>' : "<phone number>"}, need to parse out the values
-      // Only expect one, but this will handle multiple
-      for (const value of Object.values(phoneInfo)) {
-        sendSmsCode(value);
-      }
-    }
-  };
-
-  const sendSmsCode = async phone => {
-    try {
-      let mfaConfig = {
-        id: subscriberInformation.id,
-        type: SubMfaConfigTypeEnum.Sms,
-        email: subscriberInformation.userId,
-        sms: phone,
-      };
-      // start validation
-      const response = await mfaApi.modifyMFS(true, undefined, undefined, mfaConfig);
-      if (response && response.data) {
-        logStringifyPretty(response.data, response.request.responseURL);
-
-        // Navigate to the Phone Verification
-        props.navigation.navigate('PhoneVerification', { mfaConfig });
-      } else {
-        console.log(response);
-        console.error('Invalid response from modifyMFS');
-        showGeneralError(strings.errors.titleMfa, strings.errors.invalidResponse);
-      }
-    } catch (err) {
-      handleApiError(strings.errors.titleSms, err);
-    }
-  };
-
   const onMfaChange = async type => {
     try {
-      let mfaConfig = {
-        id: subscriberInformation.id,
-        type,
-        email: subscriberInformation.userId,
-        sms: subscriberInformation.phoneNumber,
-      };
-      logStringifyPretty(mfaConfig, 'onMfaChange');
-
       if (type === SubMfaConfigTypeEnum.Sms) {
-        await sendSmsCode(mfaConfig.sms);
+        // SMS type first validate the phone number
+        await startSmsValidation(subscriberInformation.phoneNumber);
       } else {
-        const response = await mfaApi.modifyMFS(undefined, undefined, undefined, mfaConfig);
-        if (response && response.data) {
-          logStringifyPretty(response.data, response.request.responseURL);
-        } else {
-          console.log(response);
-          console.error('Invalid response from getMFS');
-          showGeneralError(strings.errors.titleMfa, strings.errors.invalidResponse);
+        // Other types set the MFA type
+        let mfaConfig = {
+          id: subscriberInformation.id,
+          type,
+        };
+
+        if (type === SubMfaConfigTypeEnum.Email) {
+          // Include email with email MFA
+          mfaConfig.email = subscriberInformation.userId;
         }
+
+        const response = await mfaApi.modifyMFS(undefined, undefined, undefined, mfaConfig);
+        if (!response || !response.data) {
+          throw new Error(strings.errors.invalidResponse);
+        }
+        console.log('MFA change complete');
       }
     } catch (error) {
       handleApiError(strings.errors.titleMfa, error);
     }
   };
 
+  const startSmsValidation = async phone => {
+    try {
+      let mfaConfig = {
+        id: subscriberInformation.id,
+        type: SubMfaConfigTypeEnum.Sms,
+        sms: phone,
+      };
+
+      // start validation
+      const response = await mfaApi.modifyMFS(true, undefined, undefined, mfaConfig);
+      if (!response || !response.data) {
+        throw new Error(strings.errors.invalidResponse);
+      }
+
+      logStringifyPretty(response.data, response.request.responseURL);
+
+      // Navigate to the Phone Verification screen
+      if (response.data.Code === 0) {
+        props.navigation.navigate('PhoneVerification', { mfaConfig });
+      } else {
+        throw new Error(strings.errors.invalidResponse);
+      }
+    } catch (err) {
+      handleApiError(strings.errors.titleSms, err);
+    }
+  };
+
   const onChangePasswordPress = async () => {
     const credentials = await getCredentials();
-    props.navigation.navigate('ChangePassword', {
-      userId: credentials.username,
-    });
+    props.navigation.navigate('ChangePassword', { userId: credentials.username });
   };
 
   const onSignOutPress = async () => {
@@ -210,7 +221,7 @@ const Profile = props => {
               label={strings.profile.phone}
               value={displayValue(subscriberInformation, 'phoneNumber')}
               editKey="phoneNumber"
-              onEdit={onEditUserInformationMobile}
+              onEdit={onEditUserInformation}
             />
             <ItemPickerWithLabel
               key="mfa"
