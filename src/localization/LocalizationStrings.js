@@ -189,7 +189,7 @@ export const strings = new LocalizedStrings({
       password: 'Password',
       selectorBands2g: '2.4 Ghz',
       selectorBands5g: '5 Ghz',
-      selectorBands5gl: '5 Ghz (Low)',
+      selectorBands5gl: '5 Ghz (Lower)',
       selectorBands5gu: '5 Ghz (Upper)',
       selectorBands6g: '6 Ghz',
       selectorEncryptionWpa2: 'WPA2',
