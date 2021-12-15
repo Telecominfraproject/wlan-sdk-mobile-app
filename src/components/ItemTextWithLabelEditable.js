@@ -43,24 +43,28 @@ const ItemTextWithLabelEditable = props => {
   }, [edit]);
 
   const onChangeText = text => {
+    let converted = convertText(text);
     // First validate the input to ensure they only using proper characters for the type
-    if (validateInputAcceptedCharacters(text)) {
+    if (validateInputAcceptedCharacters(converted)) {
       // Value has accepted characters, see if it the text is fully valid
-      isLowercaseType() ? setValue(text.toLowerCase()) : setValue(text);
-      setValid(validateInputFullText(text));
+      setValue(converted);
+      setValid(validateInputFullText(converted));
     } else {
       // Value has unacceptable characters, so just use the previous value and validate against that
       setValid(validateInputFullText(value));
     }
   };
 
-  const isLowercaseType = () => {
+  const convertText = text => {
+    let converted = text;
     switch (type) {
       case 'mac':
-        return true;
+        converted = text.toLowerCase();
+        break;
       default:
-        return false;
+        return text;
     }
+    return converted;
   };
 
   // acceptable inputs
