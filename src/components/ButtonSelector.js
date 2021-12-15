@@ -83,19 +83,21 @@ const ButtonSelector = props => {
     // dropdown
     dropdown: {
       height,
-      borderWidth: 1,
+      borderWidth: 0,
       borderRadius: borderRadiusDefault,
-      borderColor: primaryColor,
+      color: whiteColor,
+      backgroundColor: primaryColor,
     },
     dropdownContainer: {
       borderWidth: 1,
-      backgroundColor: whiteColor,
-      borderColor: primaryColor,
     },
     dropdownLabel: {
       fontSize: 16,
       textAlign: 'center',
-      color: primaryColor,
+      color: whiteColor,
+    },
+    dropdownArrow: {
+      tintColor: whiteColor,
     },
     // buttons
     buttons: {
@@ -147,6 +149,7 @@ const ButtonSelector = props => {
           setOpen={setOpen}
           setValue={setSelected}
           setItems={setItems}
+          arrowIconStyle={componentStyles.dropdownArrow}
           style={[componentStyles.dropdown, dropdownStyle]}
           dropDownContainerStyle={componentStyles.dropdownContainer}
           labelStyle={[componentStyles.dropdownLabel, labelStyle]}
