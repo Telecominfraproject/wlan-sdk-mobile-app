@@ -66,7 +66,7 @@ const Network = props => {
   const wifiClientsErrorReportedRef = useRef(false);
 
   const filteredWifiClients = useMemo(() => {
-    if (!wifiClients) {
+    if (!wifiClients || !wifiClients.associations) {
       return null;
     }
 
