@@ -35,6 +35,7 @@ const ItemPickerWithLabel = props => {
       justifyContent: 'space-between',
       // Visual
       paddingHorizontal: paddingHorizontalDefault,
+      zIndex: props.zIndex,
     },
     containerText: {
       flex: 1,
