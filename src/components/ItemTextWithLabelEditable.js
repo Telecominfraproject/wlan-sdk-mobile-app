@@ -19,6 +19,7 @@ const ItemTextWithLabelEditable = props => {
   const [valid, setValid] = useState(true);
   const isMounted = useRef(false);
   const inputRef = useRef();
+  const passwordObscure = '\u25CF\u25CF\u25CF\u25CF\u25CF\u25CF\u25CF\u25CF\u25CF\u25CF';
 
   useEffect(() => {
     isMounted.current = true;
@@ -276,7 +277,7 @@ const ItemTextWithLabelEditable = props => {
           <Text
             style={[componentStyles.textValue, showPlaceholder() ? componentStyles.textValuePlaceholder : '']}
             numberOfLines={1}>
-            {showPlaceholder() ? props.placeholder : value}
+            {showPlaceholder() ? props.placeholder : type === 'password' ? passwordObscure : value}
           </Text>
         )}
       </View>

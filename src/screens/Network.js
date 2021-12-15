@@ -382,6 +382,7 @@ const Network = props => {
               label={strings.network.password}
               value={displayEditableValue(selectedWifiNetwork, 'password')}
               placeholder={strings.messages.empty}
+              type="password"
               editKey="password"
               onEdit={onEditNetworkSettings}
             />

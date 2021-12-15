@@ -117,6 +117,7 @@ const NetworkAdd = props => {
               label={strings.network.password}
               value={wifiNetworkPassword}
               placeholder={strings.messages.empty}
+              type="password"
               onEdit={setWifiNetworkPassword}
             />
             <ItemPickerWithLabel
