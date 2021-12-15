@@ -350,9 +350,9 @@ const Configuration = props => {
       );
       items.push(
         <ItemTextWithLabel
-          key="subNetMask"
+          key="subnetMask"
           label={strings.configuration.subnetMask}
-          value={displayValue(internetConnection, 'subNetMask')}
+          value={displayValue(internetConnection, 'subnetMask')}
         />,
       );
       items.push(
@@ -427,11 +427,11 @@ const Configuration = props => {
       );
       items.push(
         <ItemTextWithLabelEditable
-          key="subNetMask"
+          key="subnetMask"
           label={strings.configuration.subnetMask}
-          value={displayEditableValue(internetConnection, 'subNetMask')}
+          value={displayEditableValue(internetConnection, 'subnetMask')}
           type="subnetMaskV4"
-          editKey="subNetMask"
+          editKey="subnetMask"
           onEdit={onEditInternetConnectionSettings}
         />,
       );
