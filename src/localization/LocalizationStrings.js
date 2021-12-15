@@ -185,7 +185,7 @@ export const strings = new LocalizedStrings({
       confirmTitle: 'Confirm',
       confirmDeleteNetwork: 'Delete this network?',
       encryption: 'Encryption',
-      name: 'Name',
+      name: 'Name (SSID)',
       password: 'Password',
       selectorBands2g: '2.4 Ghz',
       selectorBands5g: '5 Ghz',
