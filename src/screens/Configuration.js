@@ -773,6 +773,31 @@ const Configuration = props => {
           onEdit={onEditCustomDnsSettings}
         />,
       );
+
+      if (ipv6Support) {
+        items.push(
+          <ItemTextWithLabelEditable
+            key="primaryV6"
+            label={strings.configuration.primaryDnsV6}
+            value={displayEditableValue(dnsConfiguration, 'primaryV6')}
+            placeholder={strings.messages.empty}
+            type="ipV6"
+            editKey="primaryV6"
+            onEdit={onEditCustomDnsSettings}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabelEditable
+            key="secondaryV6"
+            label={strings.configuration.secondaryDnsV6}
+            value={displayEditableValue(dnsConfiguration, 'secondaryV6')}
+            placeholder={strings.messages.empty}
+            type="ipV6"
+            editKey="secondaryV6"
+            onEdit={onEditCustomDnsSettings}
+          />,
+        );
+      }
     }
 
     return items;
