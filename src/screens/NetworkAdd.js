@@ -128,7 +128,9 @@ const NetworkAdd = props => {
               items={[
                 { label: strings.network.selectorEncryptionWpa2, value: 'wpa2' },
                 { label: strings.network.selectorEncryptionWpa, value: 'wpa' },
-                { label: strings.network.selectorEncryptionWep, value: 'wep' },
+                { label: strings.network.selectorEncryptionWpaMixed, value: 'wpa-mixed' },
+                { label: strings.network.selectorEncryptionPsk, value: 'psk' },
+                { label: strings.network.selectorEncryptionPsk2, value: 'psk2' },
               ]}
               zIndex={pickerZIndex--}
             />
