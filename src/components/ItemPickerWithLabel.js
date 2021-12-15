@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { grayColor, heightCellDefault, paddingHorizontalDefault, primaryColor, whiteColor } from '../AppStyle';
 import ButtonStyled from '../components/ButtonStyled';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -43,6 +43,9 @@ const ItemPickerWithLabel = props => {
       flexWrap: 'nowrap',
       justifyContent: 'space-evenly',
     },
+    activityIndicator: {
+      height: 28,
+    },
     textLabel: {
       fontSize: 11,
       color: primaryColor,
@@ -73,26 +76,34 @@ const ItemPickerWithLabel = props => {
         <Text style={componentStyles.textLabel} numberOfLines={1}>
           {label}
         </Text>
-        <DropDownPicker
-          listMode={'SCROLLVIEW'}
-          mode={props.multiple ? 'BADGE' : 'SIMPLE'}
-          style={componentStyles.picker}
-          disabledStyle={componentStyles.pickerDisabled}
-          loading={props.loading ?? false}
-          placeholder={placeholder}
-          disabled={props.disabled}
-          multiple={props.multiple ? props.multiple : false}
-          items={items}
-          setItems={setItems}
-          open={open}
-          setOpen={setOpen}
-          value={props.value}
-          setValue={props.setValue}
-          zIndex={props.zIndex}
-          dropDownDirection="BOTTOM"
-          dropDownContainerStyle={componentStyles.dropDownContainer}
-          onChangeValue={value => onChangeValue(value)}
-        />
+        {props.loading ? (
+          <ActivityIndicator
+            style={componentStyles.activityIndicator}
+            size="large"
+            color={primaryColor}
+            animating={props.loading}
+          />
+        ) : (
+          <DropDownPicker
+            listMode={'SCROLLVIEW'}
+            mode={props.multiple ? 'BADGE' : 'SIMPLE'}
+            style={componentStyles.picker}
+            disabledStyle={componentStyles.pickerDisabled}
+            placeholder={placeholder}
+            disabled={props.disabled}
+            multiple={props.multiple ? props.multiple : false}
+            items={items}
+            setItems={setItems}
+            open={open}
+            setOpen={setOpen}
+            value={props.value}
+            setValue={props.setValue}
+            zIndex={props.zIndex}
+            dropDownDirection="BOTTOM"
+            dropDownContainerStyle={componentStyles.dropDownContainer}
+            onChangeValue={value => onChangeValue(value)}
+          />
+        )}
       </View>
       {props.buttonTitle && (
         <ButtonStyled

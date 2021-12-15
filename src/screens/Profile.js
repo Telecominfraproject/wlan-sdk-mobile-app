@@ -49,6 +49,9 @@ const Profile = props => {
         getMFA();
       }
 
+      // Set the loading early, as it eliminates some unnecessary flashing
+      setMfaLoading(true);
+
       var intervalId = setSubscriberInformationInterval(updateMfa);
 
       // Return function of what should be done on 'focus out'
@@ -62,7 +65,9 @@ const Profile = props => {
 
   const getMFA = async () => {
     try {
-      setMfaLoading(true);
+      if (mfa === null) {
+        setMfaLoading(true);
+      }
 
       const response = await mfaApi.getMFS();
       if (!response || !response.data) {
