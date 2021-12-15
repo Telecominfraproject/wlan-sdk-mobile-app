@@ -187,6 +187,7 @@ export const strings = new LocalizedStrings({
       encryption: 'Encryption',
       name: 'Name (SSID)',
       password: 'Password',
+      selectorBandsAll: 'All',
       selectorBands2g: '2.4 Ghz',
       selectorBands5g: '5 Ghz',
       selectorBands5gl: '5 Ghz (Lower)',

@@ -5,7 +5,7 @@ import { StyleSheet, View, ScrollView, SafeAreaView } from 'react-native';
 import { useSelector } from 'react-redux';
 import { selectCurrentAccessPointId, selectWifiNetworks } from '../store/SubscriberInformationSlice';
 import { handleApiError } from '../api/apiHandler';
-import { getGuestNetworkIndex, addNetwork } from '../Utils';
+import { getGuestNetworkIndex, getNetworkBandsSelectorItems, addNetwork } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
@@ -138,13 +138,7 @@ const NetworkAdd = props => {
               value={wifiNetworkBands}
               setValue={setWifiNetworkBands}
               multiple={true}
-              items={[
-                { label: strings.network.selectorBands2g, value: '2G' },
-                { label: strings.network.selectorBands5g, value: '5G' },
-                { label: strings.network.selectorBands5gl, value: '5GL' },
-                { label: strings.network.selectorBands5gu, value: '5GU' },
-                { label: strings.network.selectorBands6g, value: '6G' },
-              ]}
+              items={getNetworkBandsSelectorItems(null)}
               zIndex={pickerZIndex--}
             />
           </AccordionSection>

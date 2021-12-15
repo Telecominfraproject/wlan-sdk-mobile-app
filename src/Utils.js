@@ -230,6 +230,32 @@ export function getClientConnectionStatusColor(client) {
   }
 }
 
+export function getNetworkBandsSelectorItems(accessPointBandsConfig) {
+  let items = [
+    { label: strings.network.selectorBandsAll, value: 'all' },
+    { label: strings.network.selectorBands2g, value: '2G' },
+    { label: strings.network.selectorBands5g, value: '5G' },
+  ];
+
+  if (accessPointBandsConfig) {
+    // TODO: The accessPointBandsConfig does not currently exist, below is just an example of how it
+    // might work. This will need to be reviewed once the API has been provided
+    if (accessPointBandsConfig.includes('5GL')) {
+      items.push({ label: strings.network.selectorBands5gl, value: '5GL' });
+    }
+
+    if (accessPointBandsConfig.includes('5GU')) {
+      items.push({ label: strings.network.selectorBands5gu, value: '5GU' });
+    }
+
+    if (accessPointBandsConfig.includes('6G')) {
+      items.push({ label: strings.network.selectorBands6g, value: '6G' });
+    }
+  }
+
+  return items;
+}
+
 export function logStringifyPretty(obj, title) {
   if (title) {
     console.log(title, JSON.stringify(obj, null, '\t'));

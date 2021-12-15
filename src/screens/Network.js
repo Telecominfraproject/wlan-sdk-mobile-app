@@ -22,6 +22,7 @@ import {
   getClientConnectionStatusColor,
   getGuestNetworkIndex,
   setSubscriberInformationInterval,
+  getNetworkBandsSelectorItems,
   modifyNetworkSettings,
   deleteNetwork,
 } from '../Utils';
@@ -406,13 +407,7 @@ const Network = props => {
               value={wifiNetworkBands}
               setValue={setWifiNetworkBands}
               multiple={true}
-              items={[
-                { label: strings.network.selectorBands2g, value: '2G' },
-                { label: strings.network.selectorBands5g, value: '5G' },
-                { label: strings.network.selectorBands5gl, value: '5GL' },
-                { label: strings.network.selectorBands5gu, value: '5GU' },
-                { label: strings.network.selectorBands6g, value: '6G' },
-              ]}
+              items={getNetworkBandsSelectorItems(null)}
               changeKey="bands"
               onChangeValue={onEditNetworkSettings}
               zIndex={pickerZIndex--}
