@@ -12,7 +12,7 @@ import { strings } from '../localization/LocalizationStrings';
 import isEqual from 'lodash.isequal';
 
 const ItemTextWithLabelEditable = props => {
-  const { type = '', lowercase = false } = props;
+  const { type = '' } = props;
   const [loading, setLoading] = useState(false);
   const [edit, setEdit] = useState(false);
   const [value, setValue] = useState(props.value);
@@ -46,11 +46,20 @@ const ItemTextWithLabelEditable = props => {
     // First validate the input to ensure they only using proper characters for the type
     if (validateInputAcceptedCharacters(text)) {
       // Value has accepted characters, see if it the text is fully valid
-      setValue(lowercase ? text.toLowerCase() : text);
+      isLowercaseType() ? setValue(text.toLowerCase()) : setValue(text);
       setValid(validateInputFullText(text));
     } else {
       // Value has unacceptable characters, so just use the previous value and validate against that
       setValid(validateInputFullText(value));
+    }
+  };
+
+  const isLowercaseType = () => {
+    switch (type) {
+      case 'mac':
+        return true;
+      default:
+        return false;
     }
   };
 
@@ -79,7 +88,7 @@ const ItemTextWithLabelEditable = props => {
         break;
 
       case 'mac':
-        re = /^[0-9a-f]*$/;
+        re = /^[0-9a-fA-F]*$/;
         break;
 
       case 'phone':
