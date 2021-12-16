@@ -7,7 +7,6 @@ import { logStringifyPretty } from '../Utils';
 import { useSelector } from 'react-redux';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
 import ButtonStyled from '../components/ButtonStyled';
-import BulletList from '../components/BulletList';
 
 export default function SignUp(props) {
   const brandInfo = useSelector(selectBrandInfo);
@@ -40,9 +39,6 @@ export default function SignUp(props) {
   const componentStyles = StyleSheet.create({
     fillView: {
       flex: 3,
-    },
-    requirementsContainer: {
-      marginTop: 20,
     },
   });
 
@@ -99,7 +95,6 @@ export default function SignUp(props) {
               <View style={pageItemStyle.containerButton}>
                 <ButtonStyled title={strings.buttons.signUp} type="filled" onPress={onSubmit} />
               </View>
-              <BulletList containerStyle={componentStyles.requirementsContainer} />
             </>
           )}
           <View style={componentStyles.fillView} />
