@@ -111,8 +111,9 @@ const ItemPickerWithLabel = props => {
           style={componentStyles.buttonRight}
           title={props.buttonTitle}
           type={props.buttonType}
-          onPress={props.onButtonPress}
           size="small"
+          onPress={props.onButtonPress}
+          loading={props.buttonLoading}
           disabled={props.buttonDisabled}
         />
       )}
