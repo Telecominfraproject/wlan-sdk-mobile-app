@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import {
   marginTopDefault,
@@ -29,12 +29,22 @@ const Profile = props => {
   var sectionZIndex = 20;
   // Refs
   const scrollRef = useRef();
+  const isMounted = useRef(false);
   // State
   const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
   const [mfa, setMfa] = useState();
   const [mfaLoading, setMfaLoading] = useState(false);
   const [mfaType, setMfaType] = useState();
+
+  // Keep track of whether the screen is mounted or not so async tasks know to access state or not.
+  useEffect(() => {
+    isMounted.current = true;
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   // Refresh the information only anytime there is a navigation change and this has come into focus
   // Need to be careful here as useFocusEffect is also called during re-render so it can result in
@@ -76,12 +86,21 @@ const Profile = props => {
 
       logStringifyPretty(response.data, response.request.responseURL);
       let type = response.data.type || SubMfaConfigTypeEnum.Disabled;
-      setMfa(response.data);
-      setMfaType(type);
+
+      // Only update the state if still mounted
+      if (isMounted.current) {
+        setMfa(response.data);
+        setMfaType(type);
+      }
     } catch (error) {
-      handleApiError(strings.errors.titleMfa, error);
+      // Do not report the error in this case, as it is no longer there and it is just getting state
+      if (isMounted.current) {
+        handleApiError(strings.errors.titleMfa, error);
+      }
     } finally {
-      setMfaLoading(false);
+      if (isMounted.current) {
+        setMfaLoading(false);
+      }
     }
   };
 
@@ -169,8 +188,8 @@ const Profile = props => {
       } else {
         throw new Error(strings.errors.invalidResponse);
       }
-    } catch (err) {
-      handleApiError(strings.errors.titleSms, err);
+    } catch (error) {
+      handleApiError(strings.errors.titleSms, error);
     }
   };
 
