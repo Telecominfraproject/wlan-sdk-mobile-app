@@ -138,6 +138,7 @@ const SignIn = props => {
                   value={email}
                   onChangeText={text => setEmail(text)}
                   onSubmitEditing={() => passwordRef.current.focus()}
+                  maxLength={255}
                 />
               </View>
               <View style={pageItemStyle.container}>
@@ -151,6 +152,7 @@ const SignIn = props => {
                   returnKeyType="go"
                   onChangeText={text => setPassword(text)}
                   onSubmitEditing={() => onSignInPress()}
+                  maxLength={255}
                 />
               </View>
               <View style={pageItemStyle.containerButton}>

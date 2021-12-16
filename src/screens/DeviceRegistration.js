@@ -48,6 +48,7 @@ export default function DeviceRegistration(props) {
               autoCapitalize="none"
               returnKeyType="send"
               onSubmitEditing={onSubmitPress}
+              maxLength={255}
             />
           </View>
           <View style={pageItemStyle.containerButton}>

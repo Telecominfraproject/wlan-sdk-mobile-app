@@ -158,6 +158,7 @@ export default function ResetPassword(props) {
                   textContentType="password"
                   returnKeyType="next"
                   onSubmitEditing={() => newPasswordRef.current.focus()}
+                  maxLength={255}
                 />
               </View>
               <View style={pageItemStyle.container}>
@@ -171,6 +172,7 @@ export default function ResetPassword(props) {
                   textContentType="newPassword"
                   returnKeyType="next"
                   onSubmitEditing={() => confirmPasswordRef.current.focus()}
+                  maxLength={255}
                 />
               </View>
               <View style={pageItemStyle.container}>
@@ -184,6 +186,7 @@ export default function ResetPassword(props) {
                   textContentType="none"
                   returnKeyType="go"
                   onSubmitEditing={onSubmit}
+                  maxLength={255}
                 />
               </View>
               <View style={pageItemStyle.containerButton}>

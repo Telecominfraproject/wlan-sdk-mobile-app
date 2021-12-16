@@ -93,6 +93,7 @@ export default function PhoneVerification(props) {
               textContentType="oneTimeCode"
               returnKeyType="send"
               onSubmitEditing={validatePhone}
+              maxLength={6}
             />
           </View>
 
