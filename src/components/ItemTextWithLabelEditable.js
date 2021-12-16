@@ -218,7 +218,22 @@ const ItemTextWithLabelEditable = props => {
 
   const onEditComplete = async () => {
     if (value && !valid) {
-      Alert.alert(strings.errors.validationError, strings.errors.invalidField, undefined, { cancelable: true });
+      // Show a confirmation prompt first
+      Alert.alert(strings.errors.validationError, strings.errors.invalidField, [
+        {
+          text: strings.buttons.revert,
+          onPress: () => {
+            setValue(props.value);
+          },
+        },
+        {
+          text: strings.buttons.fix,
+          onPress: () => {
+            inputRef.current.focus();
+          },
+        },
+      ]);
+
       return;
     }
 
@@ -233,6 +248,7 @@ const ItemTextWithLabelEditable = props => {
 
       if (props.onEdit) {
         let updatedValue;
+
         if (props.editKey) {
           updatedValue = { [props.editKey]: value };
         } else {
