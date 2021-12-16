@@ -223,13 +223,17 @@ const ItemTextWithLabelEditable = props => {
         {
           text: strings.buttons.revert,
           onPress: () => {
-            setValue(props.value);
+            if (isMounted.current) {
+              setValue(props.value);
+            }
           },
         },
         {
           text: strings.buttons.fix,
           onPress: () => {
-            inputRef.current.focus();
+            if (isMounted.current) {
+              inputRef.current.focus();
+            }
           },
         },
       ]);
