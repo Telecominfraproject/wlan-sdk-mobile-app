@@ -82,6 +82,7 @@ export const strings = new LocalizedStrings({
       deviceName: 'Device Name',
       email: 'Email',
       ipAddress: 'IP Address',
+      ipAddressV4V6: 'IP Address (IPv4 or IPv6)',
       macAddress: 'MAC Address',
       newPassword: 'New Password',
       nickname: 'Nickname',

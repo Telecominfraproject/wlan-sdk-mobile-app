@@ -99,10 +99,10 @@ export default function IpReservationAddEdit(props) {
             isLoading={loading}>
             <ItemTextWithLabelEditable
               key="ipAddress"
-              label={strings.placeholders.ipAddress}
+              label={strings.placeholders.ipAddressV4V6}
               value={ipAddress}
               placeholder={strings.messages.empty}
-              type="ipV4"
+              type="ipV4|ipV6"
               onEdit={setIpAddress}
             />
             <ItemTextWithLabelEditable
@@ -110,7 +110,7 @@ export default function IpReservationAddEdit(props) {
               label={strings.placeholders.macAddress}
               value={macAddress}
               placeholder={strings.messages.empty}
-              type="mac"
+              type="macAllowSeparators"
               onEdit={setMacAddress}
             />
             <ItemTextWithLabelEditable
