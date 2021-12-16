@@ -38,11 +38,11 @@ const Network = props => {
   // value that it'll cover each section. The sections further up the view should have higher numbers
   var sectionZIndex = 20;
   var pickerZIndex = 20;
+  // Route params
+  const startingWifiNetworkIndex = props.route.params ? props.route.params.wifiNetworkIndex : 0;
   // Need to use refs so that the async tasks can have proper access to these state changes
   const scrollRef = useRef();
   const isMounted = useRef(false);
-  const isFocusedRef = useRef(false);
-  const startingWifiNetworkIndex = props.route.params ? props.route.params.wifiNetworkIndex : 0;
   // Selectors
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
@@ -120,29 +120,30 @@ const Network = props => {
     useCallback(() => {
       scrollViewToTop(scrollRef);
 
-      async function updateClients() {
+      var intervalId = setSubscriberInformationInterval(async function () {
+        // Extra handler, runs at the same time to upate the clients if there is an access point
         if (accessPoint) {
-          getWifiClients(accessPoint.macAddress);
-          getWiredClients(accessPoint.macAddress);
+          // Handle both client updates simulatenously
+          Promise.all([getWiredClients(accessPoint.macAddress), getWifiClients(accessPoint.macAddress)]);
         }
-      }
-      var intervalId = setSubscriberInformationInterval(updateClients);
+      });
 
       return () => {
         clearInterval(intervalId);
       };
+
       // Disable the eslint warning, as we want to change only on navigation changes
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.navigation, accessPoint]),
   );
 
   const getWiredClients = async macAddressToQuery => {
-    if (!wiredClientsApi) {
-      return;
-    }
-
     try {
-      if (!macAddressToQuery) {
+      if (!wiredClientsApi || !macAddressToQuery) {
+        if (isMounted.current) {
+          setLoadingWiredClients(false);
+        }
+
         // None, just return
         return;
       }
@@ -175,12 +176,12 @@ const Network = props => {
   };
 
   const getWifiClients = async macAddressToQuery => {
-    if (!wifiClientsApi) {
-      return;
-    }
-
     try {
-      if (!macAddressToQuery) {
+      if (!wifiClientsApi || !macAddressToQuery) {
+        if (isMounted.current) {
+          setLoadingWiredClients(false);
+        }
+
         // None, just return
         return;
       }
@@ -189,6 +190,7 @@ const Network = props => {
       if (!response || !response.data) {
         throw new Error(strings.errors.invalidResponse);
       }
+
       console.log(response.data);
 
       // Clear this flag on success
