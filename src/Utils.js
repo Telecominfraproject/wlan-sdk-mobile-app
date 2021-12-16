@@ -165,17 +165,17 @@ export function getAccessPointIcon(accessPoint) {
   return require('./assets/devices/hdd-solid.png');
 }
 
-export function getDeviceFromClient(client, subscriberInformation, accessPointId) {
-  if (!client || !subscriberInformation) {
+export function getSubscriberDeviceIndexForMac(subscriberDevices, macAddress) {
+  if (!subscriberDevices || !macAddress) {
     return null;
   }
 
-  let subscriberDevices = getSubscriberAccessPointInfo(subscriberInformation, accessPointId, 'subscriberDevices');
-  if (!subscriberDevices || !subscriberDevices.devices) {
+  let index = subscriberDevices.devices.findIndex(item => item.macAddress === macAddress);
+  if (index < 0) {
     return null;
+  } else {
+    return index;
   }
-
-  return subscriberDevices.devices.find(item => item.macAddress === client.macAddress);
 }
 
 export function getGuestNetworkIndex(wifiNetworks) {
@@ -190,6 +190,29 @@ export function getGuestNetworkIndex(wifiNetworks) {
   }
 
   return null;
+}
+
+export function getClientName(client, subscriberDevices) {
+  let name = null;
+  let clientMacAddress = client ? client.macAddress : null;
+
+  // Priority goes to the the subscriber device name if it exists
+  let subscriberDeviceIndex = getSubscriberDeviceIndexForMac(subscriberDevices, clientMacAddress);
+  if (subscriberDeviceIndex !== null) {
+    name = subscriberDevices.devices[subscriberDeviceIndex].name;
+  }
+
+  if (!name) {
+    if ('name' in client) {
+      name = client.name;
+    }
+  }
+
+  if (!name) {
+    return displayValue(client, 'macAddress');
+  }
+
+  return name;
 }
 
 export function getClientIcon(client) {
@@ -519,14 +542,10 @@ export async function modifySubscriberDeviceMode(accessPointId, jsonObject) {
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
 
-export async function modifySubscriberDevice(accessPointId, device, jsonObject) {
+export async function modifySubscriberDevice(accessPointId, deviceIndex, jsonObject) {
   if (!jsonObject) {
     // Do nothing
     return;
-  }
-
-  if (!device) {
-    throw new Error(strings.errors.internal);
   }
 
   let subscriberInformation = store.getState().subscriberInformation.subscriberInformation;
@@ -542,10 +561,15 @@ export async function modifySubscriberDevice(accessPointId, device, jsonObject) 
     throw new Error(strings.errors.internal);
   }
 
-  // TODO: This needs to be verified!
-  let deviceToUpdate = subscriberDevices.find(item => item.macAddress === device.macAddress);
-  for (const [key, value] of Object.entries(jsonObject)) {
-    deviceToUpdate[key] = value;
+  console.log(subscriberDevices);
+
+  if (deviceIndex === null) {
+    subscriberDevices.devices.push(jsonObject);
+  } else {
+    let deviceToUpdate = subscriberDevices.devices[deviceIndex];
+    for (const [key, value] of Object.entries(jsonObject)) {
+      deviceToUpdate[key] = value;
+    }
   }
 
   await modifySubscriberInformation(updatedSubsciberInformation);

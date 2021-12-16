@@ -9,14 +9,15 @@ import {
   selectSubscriberInformationLoading,
   selectAccessPoint,
   selectWifiNetworks,
+  selectSubscriberDevices,
 } from '../store/SubscriberInformationSlice';
 import { wifiClientsApi, wiredClientsApi, handleApiError } from '../api/apiHandler';
 import {
   scrollViewToTop,
-  displayValue,
   displayEditableValue,
   isFieldDifferent,
   isArrayDifferent,
+  getClientName,
   getClientIcon,
   getClientConnectionIcon,
   getClientConnectionStatusColor,
@@ -48,6 +49,7 @@ const Network = props => {
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
   const accessPoint = useSelector(selectAccessPoint);
   const wifiNetworks = useSelector(selectWifiNetworks);
+  const subscriberDevices = useSelector(selectSubscriberDevices);
   // State
   const [selectedWifiNetworkIndex, setSelectedWifiNetworkIndex] = useState(
     wifiNetworks && wifiNetworks.wifiNetworks.length > startingWifiNetworkIndex ? startingWifiNetworkIndex : 0,
@@ -213,10 +215,6 @@ const Network = props => {
     }
   };
 
-  const getClientName = client => {
-    return displayValue(client, 'macAddress');
-  };
-
   const getClientMainIcon = client => {
     return getClientIcon(client);
   };
@@ -335,7 +333,7 @@ const Network = props => {
               wiredClients.clients.map(item => {
                 return (
                   <ItemTextWithIcon
-                    label={getClientName(item)}
+                    label={getClientName(item, subscriberDevices)}
                     key={item.macAddress}
                     icon={getClientMainIcon(item)}
                     badgeSource={getClientBadgeIcon(item)}
@@ -428,7 +426,7 @@ const Network = props => {
               filteredWifiClients.map(item => {
                 return (
                   <ItemTextWithIcon
-                    label={getClientName(item)}
+                    label={getClientName(item, subscriberDevices)}
                     key={item.macAddress}
                     icon={getClientMainIcon(item)}
                     badgeSource={getClientBadgeIcon(item)}

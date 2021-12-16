@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { marginTopDefault, paddingHorizontalDefault, borderRadiusDefault, pageStyle, whiteColor } from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, Text } from 'react-native';
@@ -6,17 +6,20 @@ import { useSelector } from 'react-redux';
 import {
   selectCurrentAccessPointId,
   selectSubscriberInformationLoading,
-  selectSubscriberInformation,
   selectIpReservations,
+  selectSubscriberDevices,
 } from '../store/SubscriberInformationSlice';
+import { handleApiError } from '../api/apiHandler';
 import {
-  showGeneralError,
   displayValue,
   displayEditableValue,
-  getDeviceFromClient,
+  getSubscriberDeviceIndexForMac,
+  getClientName,
   getClientIcon,
   getClientConnectionIcon,
   getClientConnectionStatusColor,
+  addSubscriberIpReservation,
+  deleteSubscriberIpReservation,
   modifySubscriberDevice,
 } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
@@ -26,15 +29,36 @@ import ItemTextWithLabel from '../components/ItemTextWithLabel';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 
 const DeviceDetails = props => {
-  const currentAccessPointId = useSelector(selectCurrentAccessPointId);
+  // Route Params
   const client = props.route.params.client;
-  const subscriberInformation = useSelector(selectSubscriberInformation);
+  // Need to use refs so that the async tasks can have proper access to these state changes
+  const isMounted = useRef(false);
+  // Selectors
+  const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
-  const device = useMemo(
-    () => getDeviceFromClient(client, subscriberInformation, currentAccessPointId),
-    [subscriberInformation, currentAccessPointId, client],
-  );
   const ipReservations = useSelector(selectIpReservations);
+  const subscriberDevices = useSelector(selectSubscriberDevices);
+  // State
+  const [loading, setLoading] = useState(false);
+  // Memo
+  const subscriberDeviceIndex = useMemo(
+    () => getSubscriberDeviceIndexForMac(subscriberDevices, client ? client.macAddress : null),
+    [subscriberDevices, client],
+  );
+  const subscriberDevice = useMemo(() => {
+    if (subscriberDevices !== null && subscriberDeviceIndex !== null) {
+      return subscriberDevices.devices[subscriberDeviceIndex];
+    }
+  }, [subscriberDevices, subscriberDeviceIndex]);
+
+  // Keep track of whether the screen is mounted or not so async tasks know to access state or not.
+  useEffect(() => {
+    isMounted.current = true;
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const getDeviceIcon = () => {
     return getClientIcon(client);
@@ -48,51 +72,121 @@ const DeviceDetails = props => {
     return getClientConnectionStatusColor(client);
   };
 
-  const getDeviceName = () => {
-    return displayValue(client, 'name');
-  };
-
   const isReserved = () => {
-    let clientMacAddress = client ? client.macAddress : null;
-
-    if (
-      clientMacAddress &&
-      ipReservations.ipReservations &&
-      ipReservations.reservations.find(reservation => reservation.macAddress === clientMacAddress)
-    ) {
+    if (findIpReservationIndex(client ? client.macAddress : null) !== null) {
       return true;
     }
 
     return false;
   };
 
+  const findIpReservationIndex = macAddress => {
+    if (!macAddress) {
+      return null;
+    }
+
+    let clientMacAddress = macAddress.replace(/[:-]/g, '');
+
+    if (clientMacAddress && ipReservations.reservations) {
+      let ipReservationIndex = ipReservations.reservations.findIndex(reservation => {
+        let reservationMacAddress = reservation.macAddress ? reservation.macAddress.replace(/[:-]/g, '') : null;
+        return reservationMacAddress === clientMacAddress;
+      });
+
+      if (ipReservationIndex >= 0 ) {
+        return ipReservationIndex;
+      } 
+    }
+
+    return null;
+  };
+
   const onPauseUnpauseButtonLabel = () => {
-    if (device && !device.suspended) {
+    if (subscriberDevice && subscriberDevice.suspended) {
       return strings.buttons.unpause;
     }
 
     return strings.buttons.pause;
   };
 
-  const updateDeviceValue = async value => {
-    modifySubscriberDevice(currentAccessPointId, device, value);
-  };
+  const updateSubscriberDeviceValue = async value => {
+    try {
+      if (!subscriberDevice) {
+        // Make sure to include the mac address if there is no current subscriber deivce
+        // as we are going to add a new one
+        value.macAddress = client.macAddress;
+      }
 
-  const onPauseUnpausePress = async () => {
-    if (device) {
-      // Swap the current suspend state
-      modifySubscriberDevice(currentAccessPointId, device, { suspended: !device.suspended });
-    } else {
-      showGeneralError(strings.errors.titleSettingUpdate, strings.errors.invalidResponse);
+      await modifySubscriberDevice(currentAccessPointId, subscriberDeviceIndex, value);
+    } catch (error) {
+      handleApiError(strings.errors.titleSettingUpdate, error);
+
+      // Need to throw the error to ensure the caller cleans up
+      throw error;
     }
   };
 
+  const onPauseUnpausePress = async () => {
+    // Swap the current suspend state, or just mark it paused if there isn't one currently
+    updateSubscriberDeviceValue({ suspended: subscriberDevice ? !subscriberDevice.suspended : true });
+  };
+
   const getConnectionType = () => {
-    // TODO: get proper connection type
     if ('ssid' in client) {
       return strings.formatString(strings.deviceDetails.connectionTypeWifi, displayValue(client, 'ssid'));
     } else {
       return strings.formatString(strings.deviceDetails.connectionTypeWired, displayValue(client, 'speed'));
+    }
+  };
+
+  const onReserveIpv4Press = async () => {
+    onReserve(client.ipv4);
+  };
+
+  const onReserveIpv6Press = async () => {
+    onReserve(client.ipv6);
+  };
+
+  const onReserve = async ipAddress => {
+    try {
+      if (!client) {
+        return;
+      }
+
+      let reservationJsonObject = {
+        ipAddress: ipAddress,
+        macAddress: client.macAddress,
+        nickname: getClientName(client, subscriberDevices),
+      };
+
+      setLoading(true);
+
+      await addSubscriberIpReservation(currentAccessPointId, reservationJsonObject);
+    } catch (error) {
+      handleApiError(strings.errors.titleSettingUpdate, error);
+    } finally {
+      if (isMounted.current) {
+        setLoading(false);
+      }
+    }
+  };
+
+  const onUnreservePress = async () => {
+    try {
+      setLoading(true);
+
+      let ipReservationIndex = findIpReservationIndex(client ? client.macAddress : null);
+      if (!ipReservationIndex) {
+        throw new Error(strings.errors.internal);
+      }
+
+      await deleteSubscriberIpReservation(currentAccessPointId, ipReservationIndex);
+    } catch (error) {
+      handleApiError(strings.errors.titleSettingUpdate, error);
+    } finally {
+      if (isMounted.current) {
+        setLoading(false);
+      }
     }
   };
 
@@ -137,13 +231,13 @@ const DeviceDetails = props => {
               badgeBackgroundColor={getDeviceBadgeStatusColor()}
               badgeSize="large"
             />
-            <Text style={componentStyles.sectionDeviceText}>{getDeviceName()}</Text>
+            <Text style={componentStyles.sectionDeviceText}>{getClientName(client, subscriberDevices)}</Text>
             <ButtonStyled
               title={onPauseUnpauseButtonLabel()}
               type="outline"
               onPress={onPauseUnpausePress}
               size="small"
-              disabled={!device}
+              disabled={!client}
             />
           </View>
 
@@ -165,44 +259,76 @@ const DeviceDetails = props => {
             title={strings.deviceDetails.deviceDetails}
             disableAccordion={true}
             isLoading={subscriberInformationLoading}>
-            <ItemTextWithLabel key="name" label={strings.common.name} value={displayValue(device, 'name')} />
+            <ItemTextWithLabelEditable
+              key="name"
+              label={strings.common.name}
+              value={displayEditableValue(subscriberDevice, 'name')}
+              editKey="name"
+              onEdit={updateSubscriberDeviceValue}
+            />
             <ItemTextWithLabelEditable
               key="group"
               label={strings.deviceDetails.group}
-              value={displayEditableValue(device, 'group')}
+              value={displayEditableValue(subscriberDevice, 'group')}
               editKey="group"
-              onEdit={updateDeviceValue}
+              onEdit={updateSubscriberDeviceValue}
             />
             <ItemTextWithLabelEditable
               key="description"
               label={strings.deviceDetails.description}
-              value={displayEditableValue(device, 'description')}
+              value={displayEditableValue(subscriberDevice, 'description')}
               editKey="description"
-              onEdit={updateDeviceValue}
+              onEdit={updateSubscriberDeviceValue}
             />
-            <ItemTextWithLabel key="type" label={strings.common.type} value={displayValue(device, 'type')} />
             <ItemTextWithLabel
               key="manufacturer"
               label={strings.deviceDetails.manufacturer}
-              value={displayValue(device, 'manufacturer')}
+              value={displayValue(subscriberDevice, 'manufacturer')}
             />
             {isReserved() ? (
               <ItemTextWithLabel
-                key="ipAddressReserved"
-                label={strings.deviceDetails.ipAddressReserved}
-                value={displayValue(device, 'ip')}
+                key="ipAddressReservedV4"
+                label={strings.deviceDetails.ipAddressV4Reserved}
+                value={displayValue(client, 'ipv4')}
+                buttonTitle={strings.buttons.unreserve}
+                onButtonPress={onUnreservePress}
+                buttonLoading={loading}
               />
             ) : (
               <ItemTextWithLabel
-                key="ipAddress"
-                label={strings.deviceDetails.ipAddress}
-                value={displayValue(device, 'ip')}
+                key="ipAddressV4"
+                label={strings.deviceDetails.ipAddressV4}
+                value={displayValue(client, 'ipv4')}
+                buttonTitle={strings.buttons.reserve}
+                onButtonPress={onReserveIpv4Press}
+                buttonLoading={loading}
+                buttonDisabled={!displayEditableValue(client, 'ipv4')}
+              />
+            )}
+            {isReserved() ? (
+              <ItemTextWithLabel
+                key="ipAddressReservedV6"
+                label={strings.deviceDetails.ipAddressV6Reserved}
+                value={displayValue(client, 'ipv6')}
+                buttonTitle={strings.buttons.unreserve}
+                onButtonPress={onUnreservePress}
+                buttonLoading={loading}
+              />
+            ) : (
+              <ItemTextWithLabel
+                key="ipAddressV6"
+                label={strings.deviceDetails.ipAddressV6}
+                value={displayValue(client, 'ipv6')}
+                buttonTitle={strings.buttons.reserve}
+                onButtonPress={onReserveIpv6Press}
+                buttonLoading={loading}
+                buttonDisabled={!displayEditableValue(client, 'ipv6')}
               />
             )}
             <ItemTextWithLabel
               key="macAddress"
               label={strings.deviceDetails.macAddress}
-              value={displayValue(device, 'macAddress')}
+              value={displayValue(client, 'macAddress')}
             />
           </AccordionSection>
         </View>
