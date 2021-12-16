@@ -70,8 +70,6 @@ export default function IpReservationAddEdit(props) {
       }
 
       handleApiError(strings.errors.titleIpReservation, error);
-      // Need to throw the error to ensure the caller cleans up
-      throw error;
     }
   };
 

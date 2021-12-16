@@ -316,8 +316,6 @@ const Configuration = props => {
             await deleteSubscriberIpReservation(currentAccessPointId, index);
           } catch (error) {
             handleApiError(strings.errors.titleDelete, error);
-            // Need to throw the error to ensure the caller cleans up
-            throw error;
           }
         },
       },

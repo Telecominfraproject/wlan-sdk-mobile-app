@@ -78,8 +78,6 @@ const NetworkAdd = props => {
       }
 
       handleApiError(strings.errors.titleNetwork, error);
-      // Need to throw the error to ensure the caller cleans up
-      throw error;
     }
   };
 
