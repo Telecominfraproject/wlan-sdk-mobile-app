@@ -262,7 +262,7 @@ const Configuration = props => {
     try {
       await modifyAccessPoint(currentAccessPointId, val);
     } catch (error) {
-      handleApiError(strings.errors.titleUpdate, error);
+      handleApiError(strings.errors.titleSettingUpdate, error);
       // Need to throw the error to ensure the caller cleans up
       throw error;
     }
@@ -272,7 +272,7 @@ const Configuration = props => {
     try {
       await modifySubscriberInternetConnection(currentAccessPointId, val);
     } catch (error) {
-      handleApiError(strings.errors.titleUpdate, error);
+      handleApiError(strings.errors.titleSettingUpdate, error);
       // Need to throw the error to ensure the caller cleans up
       throw error;
     }
@@ -282,7 +282,7 @@ const Configuration = props => {
     try {
       await modifySubscriberDeviceMode(currentAccessPointId, val);
     } catch (error) {
-      handleApiError(strings.errors.titleUpdate, error);
+      handleApiError(strings.errors.titleSettingUpdate, error);
       // Need to throw the error to ensure the caller cleans up
       throw error;
     }
@@ -292,7 +292,7 @@ const Configuration = props => {
     try {
       await modifySubscriberDnsInformation(currentAccessPointId, val);
     } catch (error) {
-      handleApiError(strings.errors.titleUpdate, error);
+      handleApiError(strings.errors.titleSettingUpdate, error);
       // Need to throw the error to ensure the caller cleans up
       throw error;
     }
@@ -368,7 +368,7 @@ const Configuration = props => {
     let items = [
       <ItemPickerWithLabel
         key="type"
-        label={strings.configuration.type}
+        label={strings.common.type}
         value={internetConnectionType}
         setValue={setInternetConnectionType}
         items={[
@@ -588,7 +588,7 @@ const Configuration = props => {
       items.push(
         <ItemTextWithLabelEditable
           key="password"
-          label={strings.configuration.password}
+          label={strings.common.password}
           value={displayEditableValue(internetConnection, 'password')}
           type="password"
           editKey="password"
@@ -606,7 +606,7 @@ const Configuration = props => {
     let items = [
       <ItemPickerWithLabel
         key="type"
-        label={strings.configuration.type}
+        label={strings.common.type}
         value={deviceModeType}
         setValue={setDeviceModeType}
         items={[
@@ -794,7 +794,7 @@ const Configuration = props => {
     let items = [
       <ItemPickerWithLabel
         key="custom"
-        label={strings.configuration.type}
+        label={strings.common.type}
         value={customDnsValue}
         setValue={setCustomDnsValue}
         items={[
@@ -915,14 +915,14 @@ const Configuration = props => {
             isLoading={false}>
             <ItemTextWithLabelEditable
               key="name"
-              label={strings.configuration.name}
+              label={strings.common.name}
               value={displayEditableValue(accessPoint, 'name')}
               editKey="name"
               onEdit={onEditAccessPointSettings}
             />
             <ItemTextWithLabel
               key="deviceType"
-              label={strings.configuration.type}
+              label={strings.common.type}
               value={displayValueAccessPointType(accessPoint, 'deviceType')}
             />
             <ItemTextWithLabel

@@ -126,7 +126,7 @@ const Profile = props => {
 
       await modifySubscriberInformation(val);
     } catch (error) {
-      handleApiError(strings.errors.titleUpdate, error);
+      handleApiError(strings.errors.titleSettingUpdate, error);
       // Need to throw the error to ensure the caller cleans up
       throw error;
     }
@@ -187,7 +187,7 @@ const Profile = props => {
         throw new Error(strings.errors.invalidResponse);
       }
     } catch (error) {
-      handleApiError(strings.errors.titleSms, error);
+      handleApiError(strings.errors.titleSmsValidation, error);
     }
   };
 

@@ -69,7 +69,7 @@ export default function IpReservationAddEdit(props) {
         setLoading(false);
       }
 
-      handleApiError(strings.errors.titleIpReservation, error);
+      handleApiError(strings.errors.titleIpReservationModify, error);
     }
   };
 

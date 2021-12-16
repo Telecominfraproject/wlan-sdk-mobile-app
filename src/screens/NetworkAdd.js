@@ -77,7 +77,7 @@ const NetworkAdd = props => {
         setLoading(false);
       }
 
-      handleApiError(strings.errors.titleNetwork, error);
+      handleApiError(strings.errors.titleNetworkModify, error);
     }
   };
 
@@ -119,14 +119,14 @@ const NetworkAdd = props => {
             />
             <ItemTextWithLabelEditable
               key="name"
-              label={strings.network.name}
+              label={strings.network.nameSsid}
               value={wifiNetworkName}
               placeholder={strings.messages.empty}
               onEdit={setWifiNetworkName}
             />
             <ItemTextWithLabelEditable
               key="password"
-              label={strings.network.password}
+              label={strings.common.password}
               value={wifiNetworkPassword}
               placeholder={strings.messages.empty}
               type="password"

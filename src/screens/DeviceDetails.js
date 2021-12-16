@@ -83,7 +83,7 @@ const DeviceDetails = props => {
       // Swap the current suspend state
       modifySubscriberDevice(currentAccessPointId, device, { suspended: !device.suspended });
     } else {
-      showGeneralError(strings.errors.titleDeviceDetails, strings.errors.invalidResponse);
+      showGeneralError(strings.errors.titleSettingUpdate, strings.errors.invalidResponse);
     }
   };
 
@@ -165,7 +165,7 @@ const DeviceDetails = props => {
             title={strings.deviceDetails.deviceDetails}
             disableAccordion={true}
             isLoading={subscriberInformationLoading}>
-            <ItemTextWithLabel key="name" label={strings.deviceDetails.name} value={displayValue(device, 'name')} />
+            <ItemTextWithLabel key="name" label={strings.common.name} value={displayValue(device, 'name')} />
             <ItemTextWithLabelEditable
               key="group"
               label={strings.deviceDetails.group}
@@ -180,7 +180,7 @@ const DeviceDetails = props => {
               editKey="description"
               onEdit={updateDeviceValue}
             />
-            <ItemTextWithLabel key="type" label={strings.deviceDetails.type} value={displayValue(device, 'type')} />
+            <ItemTextWithLabel key="type" label={strings.common.type} value={displayValue(device, 'type')} />
             <ItemTextWithLabel
               key="manufacturer"
               label={strings.deviceDetails.manufacturer}

@@ -16,7 +16,7 @@ export default function DeviceRegistration(props) {
     try {
       await modifyAccessPoint(null, { macAddress: macAddress });
     } catch (error) {
-      handleApiError(strings.errors.titleDeviceRegistration, error);
+      handleApiError(strings.errors.titleAccessPointRegistration, error);
     }
   };
 

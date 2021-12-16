@@ -166,7 +166,7 @@ const Network = props => {
     } catch (error) {
       if (isMounted.current && !wiredClientsErrorReportedRef.current) {
         wiredClientsErrorReportedRef.current = true;
-        handleApiError(strings.errors.titleNetwork, error);
+        handleApiError(strings.errors.titleClientRetrieval, error);
       }
     } finally {
       if (isMounted.current) {
@@ -204,7 +204,7 @@ const Network = props => {
     } catch (error) {
       if (isMounted.current && !wifiClientsErrorReportedRef.current) {
         wifiClientsErrorReportedRef.current = true;
-        handleApiError(strings.errors.titleNetwork, error);
+        handleApiError(strings.errors.titleClientRetrieval, error);
       }
     } finally {
       if (isMounted.current) {
@@ -275,7 +275,7 @@ const Network = props => {
 
       await modifyNetworkSettings(currentAccessPointId, selectedWifiNetworkIndex, val);
     } catch (error) {
-      handleApiError(strings.errors.titleUpdate, error);
+      handleApiError(strings.errors.titleSettingUpdate, error);
       // Need to throw the error to ensure the caller cleans up
       throw error;
     }
@@ -289,7 +289,7 @@ const Network = props => {
           try {
             await deleteNetwork(currentAccessPointId, selectedWifiNetworkIndex);
           } catch (error) {
-            handleApiError(strings.errors.titleNetwork, error);
+            handleApiError(strings.errors.titleDelete, error);
           }
         },
       },
@@ -376,7 +376,7 @@ const Network = props => {
             />
             <ItemTextWithLabelEditable
               key="name"
-              label={strings.network.name}
+              label={strings.network.nameSsid}
               value={displayEditableValue(selectedWifiNetwork, 'name')}
               placeholder={strings.messages.empty}
               editKey="name"
@@ -384,7 +384,7 @@ const Network = props => {
             />
             <ItemTextWithLabelEditable
               key="password"
-              label={strings.network.password}
+              label={strings.common.password}
               value={displayEditableValue(selectedWifiNetwork, 'password')}
               placeholder={strings.messages.empty}
               type="password"
