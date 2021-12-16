@@ -121,15 +121,15 @@ const Dashboard = props => {
       dispatch(setSelectedAccessPointId(selected.id));
     }
   };
-  const onNetworkPress = async () => {
+  const onNetworkPress = () => {
     props.navigation.navigate('Configuration');
   };
 
-  const onInternetPress = async () => {
+  const onInternetPress = () => {
     props.navigation.navigate('Configuration');
   };
 
-  const onGuestNetworkPress = async () => {
+  const onGuestNetworkPress = () => {
     let guestNetworkIndex = getGuestNetworkIndex(wifiNetworks);
 
     if (guestNetworkIndex !== null) {
@@ -143,7 +143,7 @@ const Dashboard = props => {
     }
   };
 
-  const onConnectedDevicePress = async () => {
+  const onConnectedDevicePress = () => {
     props.navigation.navigate('Network');
   };
 
