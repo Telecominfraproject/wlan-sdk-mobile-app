@@ -10,8 +10,6 @@ export const strings = new LocalizedStrings({
       apiInvalidToken: 'Token is no longer valid, please sign in again.',
       apiPasswordInvalid: 'Password is invalid',
       apiUsernamePendingVerification: 'Email requires validation',
-      badEmail: 'Please enter a valid email.',
-      badPasswordFormat: 'Please match the requested password format.',
       cannotChangePhoneMfa:
         'Cannot change your phone number while MFA (Multi-Factor Authentication) is configured to SMS. Please change MFA before updating your phone number.',
       emptyField: '{0} field must not be empty.',
@@ -21,6 +19,7 @@ export const strings = new LocalizedStrings({
       invalidCode: 'Invalid code.',
       invalidEmail: 'Invalid email provided.',
       invalidField: 'This value is not in a valid format, please fix before continuing.',
+      invalidPassword: 'Please match the requested password format.',
       invalidResponse: 'Invalid response recieved from the server.',
       noAccessPoint: 'No access point found.',
       noCredentials: 'No credentials provided.',
@@ -50,7 +49,6 @@ export const strings = new LocalizedStrings({
     },
     messages: {
       empty: '-',
-      codeSent: 'Code has been sent.',
       passwordChanged: 'Password successfully changed.',
       resetEmailSent:
         "You should soon receive an email containing the instructions to reset your password. Please make sure to check your spam if you can't find the email.",
@@ -66,9 +64,9 @@ export const strings = new LocalizedStrings({
       ipReservation: 'IP Reservation',
       network: 'Network',
       networkAdd: 'Add Network',
-      multiFactorAuthentication: 'Multi-Factor Authentiation',
+      multiFactorAuthentication: 'Multi-Factor Authentication',
       passwordReset: 'Password Reset',
-      phoneVerification: 'Phone Verification',
+      phoneVerification: 'Phone Number Verification',
       privacyPolicy: 'Privacy Policy',
       profile: 'Profile',
       signUp: 'Sign Up',
@@ -136,8 +134,8 @@ export const strings = new LocalizedStrings({
       none: '- None -',
     },
     brandSelector: {
-      description: 'Please select your provider to continue.',
       title: 'Welcome',
+      description: 'Please select your provider to continue.',
     },
     signIn: {
       title: 'Sign In',
