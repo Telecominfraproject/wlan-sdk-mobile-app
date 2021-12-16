@@ -59,15 +59,13 @@ const Profile = props => {
         getMFA();
       }
 
-      // Set the loading early, as it eliminates some unnecessary flashing
-      setMfaLoading(true);
-
       var intervalId = setSubscriberInformationInterval(updateMfa);
 
       // Return function of what should be done on 'focus out'
       return () => {
         clearInterval(intervalId);
       };
+
       // Disable the eslint warning, as we want to change only on navigation changes
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.navigation]),
@@ -75,7 +73,7 @@ const Profile = props => {
 
   const getMFA = async () => {
     try {
-      if (mfa === null) {
+      if (!mfa) {
         setMfaLoading(true);
       }
 
