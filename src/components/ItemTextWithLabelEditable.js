@@ -44,6 +44,7 @@ const ItemTextWithLabelEditable = props => {
 
   const onChangeText = text => {
     let converted = convertText(text);
+
     // First validate the input to ensure they only using proper characters for the type
     if (validateInputAcceptedCharacters(converted)) {
       // Value has accepted characters, see if it the text is fully valid
@@ -61,6 +62,7 @@ const ItemTextWithLabelEditable = props => {
       case 'mac':
         converted = text.toLowerCase();
         break;
+
       default:
         return text;
     }

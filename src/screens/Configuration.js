@@ -56,6 +56,7 @@ const Configuration = props => {
   var sectionZIndex = 20;
   var pickerZIndex = 20;
   const scrollRef = useRef();
+  const isMounted = useRef(false);
   // Selectors
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
@@ -66,6 +67,7 @@ const Configuration = props => {
   const dnsConfiguration = useSelector(selectDnsConfiguration);
   const ipReservations = useSelector(selectIpReservations);
   // State
+  const [buttonAction, setButtonAction] = useState();
   const [internetConnectionType, setInternetConnectionType] = useState(
     internetConnection ? internetConnection.type : null,
   );
@@ -73,6 +75,15 @@ const Configuration = props => {
   const [deviceModeType, setDeviceModeType] = useState(deviceMode ? deviceMode.type : null);
   const [enableLeds, setEnableLeds] = useState(deviceMode ? deviceMode.enableLEDS : false);
   const [customDnsValue, setCustomDnsValue] = useState(dnsConfiguration ? dnsConfiguration.custom : false);
+
+  // Keep track of whether the screen is mounted or not so async tasks know to access state or not.
+  useEffect(() => {
+    isMounted.current = true;
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   // Refresh the information only anytime there is a navigation change and this has come into focus
   // Need to be careful here as useFocusEffect is also called during re-render so it can result in
@@ -187,6 +198,7 @@ const Configuration = props => {
 
   const sendAccessPointCommandWithConfirm = async (action, successMessage, confirmMessage) => {
     if (confirmMessage) {
+      // Show a confirmation prompt first
       Alert.alert(strings.configuration.confirmTitle, confirmMessage, [
         {
           text: strings.buttons.ok,
@@ -216,7 +228,9 @@ const Configuration = props => {
         payload.pattern = 'blink';
       }
 
-      // TODO: Verify this is functioning and the function call is correct!
+      // Indicate that an action is currently in progress
+      setButtonAction(action);
+
       const response = await deviceCommandsApi.performAnAction(action, payload);
 
       if (!response || !response.data) {
@@ -231,6 +245,11 @@ const Configuration = props => {
     } catch (error) {
       // Handle the error.
       handleApiError(strings.errors.titleAccessPointCommand, error);
+    } finally {
+      if (isMounted.current) {
+        // Clear the action is progress
+        setButtonAction(null);
+      }
     }
   };
 
@@ -287,6 +306,7 @@ const Configuration = props => {
   };
 
   const onDeleteIpReservation = async index => {
+    // Show a confirmation prompt
     Alert.alert(strings.configuration.confirmTitle, strings.configuration.confirmDeleteIpReservation, [
       {
         text: strings.buttons.ok,
@@ -305,6 +325,43 @@ const Configuration = props => {
       },
     ]);
   };
+
+  // Styles
+  const componentStyles = StyleSheet.create({
+    sectionNetwork: {
+      marginTop: marginTopDefault,
+      height: 96,
+      paddingHorizontal: paddingHorizontalDefault,
+      borderRadius: borderRadiusDefault,
+
+      flexDirection: 'row',
+      flexWrap: 'nowrap',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: whiteColor,
+    },
+    sectionNetworkIcon: {
+      height: 75,
+      width: 75,
+      resizeMode: 'contain',
+    },
+    sectionNetworkText: {
+      flex: 2,
+      fontSize: 18,
+      marginHorizontal: paddingHorizontalDefault,
+    },
+    sectionAccordion: {
+      marginTop: marginTopDefault,
+    },
+    buttonLeft: {
+      marginRight: paddingHorizontalDefault / 2,
+      flex: 1,
+    },
+    buttonRight: {
+      marginLeft: paddingHorizontalDefault / 2,
+      flex: 1,
+    },
+  });
 
   const renderInternetConnectionSettings = () => {
     // It is very important to not use the state when doing the rendering as it'll result in race conditions.
@@ -721,10 +778,11 @@ const Configuration = props => {
         ]}
         changeKey="enableLEDS"
         onChangeValue={onEditDeviceModeSettings}
+        zIndex={pickerZIndex--}
         buttonTitle={strings.buttons.blink}
         onButtonPress={onBlinkLightsPress}
-        buttonDisabled={!accessPoint}
-        zIndex={pickerZIndex--}
+        buttonLoading={buttonAction === 'blink'}
+        buttonDisabled={!accessPoint || buttonAction}
       />,
     );
 
@@ -803,43 +861,6 @@ const Configuration = props => {
     return items;
   };
 
-  // Styles
-  const componentStyles = StyleSheet.create({
-    sectionNetwork: {
-      marginTop: marginTopDefault,
-      height: 96,
-      paddingHorizontal: paddingHorizontalDefault,
-      borderRadius: borderRadiusDefault,
-
-      flexDirection: 'row',
-      flexWrap: 'nowrap',
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: whiteColor,
-    },
-    sectionNetworkIcon: {
-      height: 75,
-      width: 75,
-      resizeMode: 'contain',
-    },
-    sectionNetworkText: {
-      flex: 2,
-      fontSize: 18,
-      marginHorizontal: paddingHorizontalDefault,
-    },
-    sectionAccordion: {
-      marginTop: marginTopDefault,
-    },
-    buttonLeft: {
-      marginRight: paddingHorizontalDefault / 2,
-      flex: 1,
-    },
-    buttonRight: {
-      marginLeft: paddingHorizontalDefault / 2,
-      flex: 1,
-    },
-  });
-
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
       <ScrollView ref={scrollRef} contentContainerStyle={pageStyle.scrollView}>
@@ -856,10 +877,11 @@ const Configuration = props => {
             <Text style={componentStyles.sectionNetworkText}>{displayValue(accessPoint, 'name')}</Text>
             <ButtonStyled
               title={strings.buttons.refresh}
+              size="small"
               type="outline"
               onPress={onRefreshPress}
-              size="small"
-              disabled={!accessPoint}
+              loading={buttonAction === 'refresh'}
+              disabled={!accessPoint || buttonAction}
             />
           </View>
 
@@ -910,7 +932,8 @@ const Configuration = props => {
               value={displayValue(accessPoint, 'firmware')}
               buttonTitle={strings.buttons.update}
               onButtonPress={onUpdateFirmwarePress}
-              buttonDisabled={!accessPoint}
+              buttonLoading={buttonAction === 'firmware'}
+              buttonDisabled={!accessPoint || buttonAction}
             />
             <ItemTextWithLabel
               key="model"
@@ -1003,12 +1026,16 @@ const Configuration = props => {
               title={strings.buttons.reboot}
               type="outline"
               onPress={onRebootPress}
+              loading={buttonAction === 'reboot'}
+              disabled={!accessPoint || buttonAction}
             />
             <ButtonStyled
               style={componentStyles.buttonRight}
               title={strings.buttons.factoryReset}
               type="outline"
               onPress={onFactoryResetPress}
+              loading={buttonAction === 'factory'}
+              disabled={!accessPoint || buttonAction}
             />
           </View>
         </View>
