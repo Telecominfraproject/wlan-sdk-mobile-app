@@ -8,7 +8,7 @@ import {
   grayDarkColor,
   grayLightColor,
 } from '../AppStyle';
-import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, ActivityIndicator } from 'react-native';
 import isEqual from 'lodash.isequal';
 
 const ButtonStyled = props => {
@@ -114,6 +114,15 @@ const ButtonStyled = props => {
       borderRadius: borderRadiusDefault,
       minWidth: 77,
     },
+    activityIndicatorLarge: {
+      position: 'absolute',
+      opacity: 0.8,
+    },
+    activityIndicatorSmall: {
+      position: 'absolute',
+      opacity: 0.8,
+      transform: [{ scale: 0.8 }],
+    },
     text: {
       fontSize: 14,
     },
@@ -153,6 +162,16 @@ const ButtonStyled = props => {
     <TouchableOpacity style={getTouchableStyle()} onPress={props.onPress} disabled={props.disabled}>
       <View style={getContainerStyle()}>
         <Text style={getTextStyle()}>{props.title}</Text>
+        {props.loading && (
+          <ActivityIndicator
+            style={
+              props.size === 'small' ? componentStyles.activityIndicatorSmall : componentStyles.activityIndicatorLarge
+            }
+            size="large"
+            color={primaryColor}
+            animating={props.isLoading}
+          />
+        )}
       </View>
     </TouchableOpacity>
   );
