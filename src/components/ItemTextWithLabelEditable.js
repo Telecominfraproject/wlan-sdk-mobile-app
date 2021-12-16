@@ -58,14 +58,20 @@ const ItemTextWithLabelEditable = props => {
 
   const convertText = text => {
     let converted = text;
-    switch (type) {
-      case 'mac':
-        converted = text.toLowerCase();
-        break;
 
-      default:
-        return text;
+    if (type && converted) {
+      let types = type.split('|');
+
+      types.forEach(typeItem => {
+        switch (typeItem) {
+          case 'mac':
+          case 'macAllowSeparators':
+            converted = converted.toLowerCase();
+            break;
+        }
+      });
     }
+
     return converted;
   };
 
@@ -75,42 +81,68 @@ const ItemTextWithLabelEditable = props => {
       return true;
     }
 
-    let re = null;
-    switch (type) {
-      case 'email':
-        re = /^[\S]*$/;
-        break;
+    let result = true;
 
-      case 'ipV4':
-      case 'subnetV4':
-      case 'subnetMaskV4':
-        re = /^[.0-9]*$/;
-        break;
+    if (type) {
+      let types = type.split('|');
+      let regexResult = false;
+      let regexSeen = true;
 
-      case 'ipV6':
-      case 'subnetV6':
-      case 'subnetMaskV6':
-        re = /^[.:0-9a-fA-F]*$/;
-        break;
+      types.forEach(typeItem => {
+        if (!regexResult) {
+          let re = null;
 
-      case 'mac':
-        re = /^[0-9a-fA-F]*$/;
-        break;
+          switch (typeItem) {
+            case 'email':
+              re = /^[\S]*$/;
+              break;
 
-      case 'phone':
-        re = /^[0-9 ()+-]*$/;
-        break;
+            case 'ipV4':
+            case 'subnetV4':
+            case 'subnetMaskV4':
+              re = /^[.0-9]*$/;
+              break;
 
-      case 'firstName':
-        re = /^[a-zA-Z-]+$/;
-        break;
+            case 'ipV6':
+            case 'subnetV6':
+            case 'subnetMaskV6':
+              re = /^[.:0-9a-fA-F]*$/;
+              break;
 
-      case 'lastName':
-        re = /^[a-zA-Z- ]+$/;
-        break;
+            case 'mac':
+              re = /^[0-9a-fA-F]*$/;
+              break;
+
+            case 'macAllowSeparators':
+              re = /^[0-9a-fA-F:-]*$/;
+              break;
+
+            case 'phone':
+              re = /^[0-9 ()+-]*$/;
+              break;
+
+            case 'firstName':
+              re = /^[a-zA-Z-]+$/;
+              break;
+
+            case 'lastName':
+              re = /^[a-zA-Z- ]+$/;
+              break;
+          }
+
+          if (re) {
+            regexSeen = true;
+            regexResult = re.test(text);
+          }
+        }
+      });
+
+      if (regexSeen) {
+        result = regexResult;
+      }
     }
 
-    return re ? re.test(text) : true;
+    return result;
   };
 
   // validates whole text
@@ -119,43 +151,69 @@ const ItemTextWithLabelEditable = props => {
       return true;
     }
 
-    let re = null;
-    switch (type) {
-      case 'email':
-        re = /\S+@\S+\.\S+/;
-        break;
+    let result = true;
 
-      case 'ipV4':
-      case 'subnetV4':
-      case 'subnetMaskV4':
-        re = /^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}$/;
-        break;
+    if (type) {
+      let types = type.split('|');
+      let regexResult = false;
+      let regexSeen = true;
 
-      case 'ipV6':
-      case 'subnetV6':
-      case 'subnetMaskV6':
-        re =
-          /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/;
-        break;
+      types.forEach(typeItem => {
+        if (!regexResult) {
+          let re = null;
 
-      case 'mac':
-        re = /^([0-9a-f]{2}){6}$/;
-        break;
+          switch (typeItem) {
+            case 'email':
+              re = /\S+@\S+\.\S+/;
+              break;
 
-      case 'phone':
-        re = /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/;
-        break;
+            case 'ipV4':
+            case 'subnetV4':
+            case 'subnetMaskV4':
+              re = /^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}$/;
+              break;
 
-      case 'firstName':
-        re = /^[a-zA-Z-]{2,}$/;
-        break;
+            case 'ipV6':
+            case 'subnetV6':
+            case 'subnetMaskV6':
+              re =
+                /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/;
+              break;
 
-      case 'lastName':
-        re = /^[a-zA-Z- ]{2,}$/;
-        break;
+            case 'mac':
+              re = /^([0-9a-f]{2}){6}$/;
+              break;
+
+            case 'macAllowSeparators':
+              re = /^(?:[0-9a-f]{2}([-:]?))(?:[0-9a-f]{2}\1){4}[0-9a-f]{2}$/;
+              break;
+
+            case 'phone':
+              re = /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/;
+              break;
+
+            case 'firstName':
+              re = /^[a-zA-Z-]{2,}$/;
+              break;
+
+            case 'lastName':
+              re = /^[a-zA-Z- ]{2,}$/;
+              break;
+          }
+
+          if (re) {
+            regexSeen = true;
+            regexResult = re.test(text);
+          }
+        }
+      });
+
+      if (regexSeen) {
+        result = regexResult;
+      }
     }
 
-    return re ? re.test(text) : true;
+    return result;
   };
 
   const onEditComplete = async () => {
