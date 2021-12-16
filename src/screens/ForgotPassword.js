@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, TextInput, ActivityIndicator, Image, Text } from 'react-native';
@@ -9,9 +9,21 @@ import { showGeneralMessage } from '../Utils';
 import ButtonStyled from '../components/ButtonStyled';
 
 const ForgotPassword = props => {
+  // Refs
+  const isMounted = useRef(false);
+  // State
   const brandInfo = useSelector(selectBrandInfo);
   const [email, setEmail] = useState();
   const [loading, setLoading] = useState(false);
+
+  // Keep track of whether the screen is mounted or not so async tasks know to access state or not.
+  useEffect(() => {
+    isMounted.current = true;
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const validateEmail = emailToCheck => {
     const re = /\S+@\S+\.\S+/;
@@ -37,20 +49,23 @@ const ForgotPassword = props => {
         undefined,
         true,
       );
+
       showGeneralMessage(strings.messages.resetEmailSent);
     } catch (error) {
       handleApiError(strings.errors.titleForgotPassword, error);
     } finally {
-      // Make sure to always clear the loading flag
-      setLoading(false);
+      if (isMounted.current) {
+        // Make sure to always clear the loading flag
+        setLoading(false);
+      }
     }
   };
 
-  const onPrivacyPolicyPress = async () => {
+  const onPrivacyPolicyPress = () => {
     props.navigation.navigate('PrivacyPolicy');
   };
 
-  const onTermsConditionsPress = async () => {
+  const onTermsConditionsPress = () => {
     props.navigation.navigate('TermsConditions');
   };
 

@@ -32,6 +32,7 @@ const SignIn = props => {
       }
     }
     checkCredentials();
+
     // No dependencies as this is only to run once on mount. There are plenty of
     // hacks around this eslint warning, but disabling it makes the most sense.
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

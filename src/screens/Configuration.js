@@ -55,6 +55,7 @@ const Configuration = props => {
   // value that it'll cover each section. The sections further up the view should have higher numbers
   var sectionZIndex = 20;
   var pickerZIndex = 20;
+  // Refs
   const scrollRef = useRef();
   const isMounted = useRef(false);
   // Selectors

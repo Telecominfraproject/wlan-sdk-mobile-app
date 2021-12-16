@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { marginTopDefault, pageStyle, pageItemStyle, paddingHorizontalDefault } from '../AppStyle';
 import { StyleSheet, View, ScrollView, SafeAreaView } from 'react-native';
@@ -18,6 +18,7 @@ const NetworkAdd = props => {
   var pickerZIndex = 20;
   // Need to use refs so that the async tasks can have proper access to these state changes
   const scrollRef = useRef();
+  const isMounted = useRef(false);
   // Selectors
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const wifiNetworks = useSelector(selectWifiNetworks);
@@ -28,6 +29,15 @@ const NetworkAdd = props => {
   const [wifiNetworkPassword, setWifiNetworkPassword] = useState();
   const [wifiNetworkEncryption, setWifiNetworkEncryption] = useState('wpa2');
   const [wifiNetworkBands, setWifiNetworkBands] = useState([]);
+
+  // Keep track of whether the screen is mounted or not so async tasks know to access state or not.
+  useEffect(() => {
+    isMounted.current = true;
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const hasGuestNetwork = () => {
     // Check to see if it has a guest network
@@ -56,12 +66,16 @@ const NetworkAdd = props => {
 
       await addNetwork(currentAccessPointId, networkJsonObject);
 
-      setLoading(false);
+      if (isMounted.current) {
+        setLoading(false);
 
-      // On success just go back
-      props.navigation.goBack();
+        // On success just go back
+        props.navigation.goBack();
+      }
     } catch (error) {
-      setLoading(false);
+      if (isMounted.current) {
+        setLoading(false);
+      }
 
       handleApiError(strings.errors.titleNetwork, error);
       // Need to throw the error to ensure the caller cleans up

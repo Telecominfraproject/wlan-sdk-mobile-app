@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { pageItemStyle, pageStyle, primaryColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, ActivityIndicator, Text, TextInput, View } from 'react-native';
@@ -7,10 +7,23 @@ import { logStringifyPretty, showGeneralMessage, completeSignIn } from '../Utils
 import ButtonStyled from '../components/ButtonStyled';
 
 export default function MfaCode(props) {
+  // Refs
+  const isMounted = useRef(false);
+  // Route params
   const userId = props.route.params.userId;
   const mfaInfo = props.route.params.mfaInfo;
+  // State
   const [loading, setLoading] = useState(false);
   const [code, setCode] = useState();
+
+  // Keep track of whether the screen is mounted or not so async tasks know to access state or not.
+  useEffect(() => {
+    isMounted.current = true;
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const getDescription = () => {
     if (mfaInfo) {
@@ -51,7 +64,10 @@ export default function MfaCode(props) {
 
       await completeSignIn(props.navigation, userId, null, response.data, setLoading);
     } catch (error) {
-      setLoading(false);
+      if (isMounted.current) {
+        setLoading(false);
+      }
+
       handleApiError(strings.errors.titleMfa, error);
     }
   };
@@ -99,7 +115,9 @@ export default function MfaCode(props) {
     } catch (error) {
       handleApiError(strings.errors.titleMfa, error);
     } finally {
-      setLoading(false);
+      if (isMounted.current) {
+        setLoading(false);
+      }
     }
   };
 

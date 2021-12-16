@@ -9,8 +9,12 @@ import { logStringifyPretty, showGeneralError, showGeneralMessage } from '../Uti
 import ButtonStyled from '../components/ButtonStyled';
 
 export default function ResetPassword(props) {
+  // Route Params
   const userId = props.route.params.userId;
   const forced = props.route.params.forced ?? false;
+  // Regs
+  const isMounted = useRef(false);
+  // State
   const brandInfo = useSelector(selectBrandInfo);
   const [currentPassword, setCurrentPassword] = useState();
   const [newPassword, setNewPassword] = useState();
@@ -19,6 +23,15 @@ export default function ResetPassword(props) {
   const [loading, setLoading] = useState(false);
   const newPasswordRef = useRef();
   const confirmPasswordRef = useRef();
+
+  // Keep track of whether the screen is mounted or not so async tasks know to access state or not.
+  useEffect(() => {
+    isMounted.current = true;
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     getPasswordPattern();
@@ -33,9 +46,15 @@ export default function ResetPassword(props) {
       }
 
       logStringifyPretty(response.data);
-      setPattern(response.data.passwordPattern);
+      if (isMounted.current) {
+        setPattern(response.data.passwordPattern);
+      }
     } catch (error) {
-      handleApiError(strings.errors.titleChangePassword, error);
+      if (isMounted.current) {
+        // Since this is just retrieving information, do not care about error if it
+        // does not happen when not mounted
+        handleApiError(strings.errors.titleChangePassword, error);
+      }
     }
   };
 
@@ -62,15 +81,19 @@ export default function ResetPassword(props) {
         // Clear any current credentials - as the password has now changed
         clearCredentials();
 
-        // Clear any loading flag
-        setLoading(false);
-
         // Show the succcess message
         showGeneralMessage(strings.messages.passwordChanged);
 
-        props.navigation.goBack();
+        if (isMounted.current) {
+          // Clear any loading flag
+          setLoading(false);
+
+          props.navigation.goBack();
+        }
       } catch (error) {
-        setLoading(false);
+        if (isMounted.current) {
+          setLoading(false);
+        }
         handleApiError(strings.errors.titleChangePassword, error);
       }
     }

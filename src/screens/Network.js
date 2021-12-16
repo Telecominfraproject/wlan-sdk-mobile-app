@@ -40,6 +40,7 @@ const Network = props => {
   var pickerZIndex = 20;
   // Need to use refs so that the async tasks can have proper access to these state changes
   const scrollRef = useRef();
+  const isMounted = useRef(false);
   const isFocusedRef = useRef(false);
   const startingWifiNetworkIndex = props.route.params ? props.route.params.wifiNetworkIndex : 0;
   // Selectors
@@ -85,6 +86,15 @@ const Network = props => {
     return wifiClients.associations.filter(client => client.ssid === wifiNetworkToFilter.name);
   }, [wifiClients, selectedWifiNetwork, wifiNetworks]);
 
+  // Keep track of whether the screen is mounted or not so async tasks know to access state or not.
+  useEffect(() => {
+    isMounted.current = true;
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
   useEffect(() => {
     let networks = wifiNetworks && wifiNetworks.wifiNetworks ? wifiNetworks.wifiNetworks : [];
 
@@ -102,19 +112,6 @@ const Network = props => {
     setWifiNetworkEncryption(selectedWifiNetwork ? selectedWifiNetwork.encryption : null);
     setWifiNetworkBands(selectedWifiNetwork ? selectedWifiNetwork.bands : null);
   }, [selectedWifiNetwork]);
-
-  // Refresh the information only anytime there is a navigation change and this has come into focus
-  // Need to be careful here as useFocusEffect is also called during re-render so it can result in
-  // infinite loops.
-  useFocusEffect(
-    useCallback(() => {
-      isFocusedRef.current = true;
-
-      return () => {
-        isFocusedRef.current = false;
-      };
-    }, []),
-  );
 
   // Refresh the information only anytime there is a navigation change and this has come into focus
   // Need to be careful here as useFocusEffect is also called during re-render so it can result in
@@ -155,20 +152,23 @@ const Network = props => {
         throw new Error(strings.errors.invalidResponse);
       }
 
-      // Clear this flag on success
-      wiredClientsErrorReportedRef.current = false;
       console.log(response.data);
 
-      if (isFieldDifferent(wiredClients, response.data, 'modified')) {
-        setWiredClients(response.data);
+      if (isMounted.current) {
+        // Clear this flag on success
+        wiredClientsErrorReportedRef.current = false;
+
+        if (isFieldDifferent(wiredClients, response.data, 'modified')) {
+          setWiredClients(response.data);
+        }
       }
     } catch (error) {
-      if (isFocusedRef.current && !wiredClientsErrorReportedRef.current) {
+      if (isMounted.current && !wiredClientsErrorReportedRef.current) {
         wiredClientsErrorReportedRef.current = true;
         handleApiError(strings.errors.titleNetwork, error);
       }
     } finally {
-      if (isFocusedRef.current) {
+      if (isMounted.current) {
         setLoadingWiredClients(false);
       }
     }
@@ -189,21 +189,23 @@ const Network = props => {
       if (!response || !response.data) {
         throw new Error(strings.errors.invalidResponse);
       }
-
-      // Clear this flag on success
-      wifiClientsErrorReportedRef.current = false;
       console.log(response.data);
 
-      if (isFieldDifferent(wifiClients, response.data, 'modified')) {
-        setWifiClients(response.data);
+      // Clear this flag on success
+      if (isMounted.current) {
+        wifiClientsErrorReportedRef.current = false;
+
+        if (isFieldDifferent(wifiClients, response.data, 'modified')) {
+          setWifiClients(response.data);
+        }
       }
     } catch (error) {
-      if (isFocusedRef.current && !wifiClientsErrorReportedRef.current) {
+      if (isMounted.current && !wifiClientsErrorReportedRef.current) {
         wifiClientsErrorReportedRef.current = true;
         handleApiError(strings.errors.titleNetwork, error);
       }
     } finally {
-      if (isFocusedRef.current) {
+      if (isMounted.current) {
         setLoadingWifiClients(false);
       }
     }
@@ -225,7 +227,7 @@ const Network = props => {
     return getClientConnectionStatusColor(client);
   };
 
-  const onClientPress = async client => {
+  const onClientPress = client => {
     props.navigation.navigate('DeviceDetails', { accessPoint: accessPoint, client: client });
   };
 
@@ -277,7 +279,7 @@ const Network = props => {
     }
   };
 
-  const onDeleteNetworkPress = async => {
+  const onDeleteNetworkPress = () => {
     Alert.alert(strings.network.confirmTitle, strings.network.confirmDeleteNetwork, [
       {
         text: strings.buttons.ok,
@@ -295,7 +297,7 @@ const Network = props => {
     ]);
   };
 
-  const onAddNetworkPress = async => {
+  const onAddNetworkPress = () => {
     props.navigation.navigate('NetworkAdd');
   };
 

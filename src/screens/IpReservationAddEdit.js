@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, ScrollView, View, SafeAreaView } from 'react-native';
 import { strings } from '../localization/LocalizationStrings';
 import { pageItemStyle, pageStyle, paddingHorizontalDefault, marginTopDefault } from '../AppStyle';
@@ -14,7 +14,9 @@ export default function IpReservationAddEdit(props) {
   // The sectionZIndex is used to help with any embedded picker/dropdown. Start with a high enough
   // value that it'll cover each section. The sections further up the view should have higher numbers
   var sectionZIndex = 20;
+  // Refs
   const scrollRef = useRef();
+  const isMounted = useRef(false);
   // Params
   const reservationIndex = props.route.params ? props.route.params.reservationIndex : null;
   // States
@@ -28,6 +30,15 @@ export default function IpReservationAddEdit(props) {
   const [ipAddress, setIpAddress] = useState(reservation ? reservation.ipAddress : null);
   const [macAddress, setMacAddress] = useState(reservation ? reservation.macAddress : null);
   const [nickname, setNickname] = useState(reservation ? reservation.nickname : null);
+
+  // Keep track of whether the screen is mounted or not so async tasks know to access state or not.
+  useEffect(() => {
+    isMounted.current = true;
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const onCancelPress = () => {
     props.navigation.goBack();
@@ -49,10 +60,14 @@ export default function IpReservationAddEdit(props) {
         await addSubscriberIpReservation(currentAccessPointId, reservationJsonObject);
       }
 
-      // On success just go back
-      props.navigation.goBack();
+      if (isMounted.current) {
+        // On success just go back
+        props.navigation.goBack();
+      }
     } catch (error) {
-      setLoading(false);
+      if (isMounted.current) {
+        setLoading(false);
+      }
 
       handleApiError(strings.errors.titleIpReservation, error);
       // Need to throw the error to ensure the caller cleans up
