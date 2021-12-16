@@ -143,6 +143,7 @@ export default function MfaCode(props) {
               textContentType="oneTimeCode"
               returnKeyType="send"
               onSubmitEditing={onSubmitPress}
+              maxLength={6}
             />
           </View>
           <View style={pageItemStyle.containerButton}>

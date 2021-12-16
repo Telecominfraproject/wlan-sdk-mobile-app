@@ -105,6 +105,7 @@ const ForgotPassword = props => {
                   returnKeyType="go"
                   onChangeText={text => setEmail(text)}
                   onSubmitEditing={() => onSubmit()}
+                  maxLength={255}
                 />
               </View>
               <View style={pageItemStyle.containerButton}>

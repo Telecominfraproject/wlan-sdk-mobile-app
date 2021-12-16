@@ -3,7 +3,6 @@ import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, TextInput, ActivityIndicator, Image, Text } from 'react-native';
 import { handleApiError } from '../api/apiHandler';
-import { logStringifyPretty } from '../Utils';
 import { useSelector } from 'react-redux';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
 import ButtonStyled from '../components/ButtonStyled';
@@ -77,6 +76,7 @@ export default function SignUp(props) {
                   returnKeyType="go"
                   onChangeText={text => setEmail(text)}
                   onSubmitEditing={() => passwordRef.current.focus()}
+                  maxLength={255}
                 />
               </View>
               <View style={pageItemStyle.container}>
@@ -90,6 +90,7 @@ export default function SignUp(props) {
                   returnKeyType="go"
                   onChangeText={text => setPassword(text)}
                   onSubmitEditing={() => onSubmit()}
+                  maxLength={255}
                 />
               </View>
               <View style={pageItemStyle.containerButton}>

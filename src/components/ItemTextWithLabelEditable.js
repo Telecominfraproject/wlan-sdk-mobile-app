@@ -12,7 +12,7 @@ import { strings } from '../localization/LocalizationStrings';
 import isEqual from 'lodash.isequal';
 
 const ItemTextWithLabelEditable = props => {
-  const { type = '' } = props;
+  const { type = '', maxLength = 255 } = props;
   const [loading, setLoading] = useState(false);
   const [edit, setEdit] = useState(false);
   const [value, setValue] = useState(props.value);
@@ -364,7 +364,7 @@ const ItemTextWithLabelEditable = props => {
             onChangeText={onChangeText}
             onEndEditing={onEditComplete}
             onSubmitEditing={onEditComplete}
-            maxLength={type === 'firstName' || type === 'lastName' ? 26 : null}
+            maxLength={type === 'firstName' || type === 'lastName' ? 26 : maxLength}
           />
         ) : (
           <Text
