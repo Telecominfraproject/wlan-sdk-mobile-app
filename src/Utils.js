@@ -408,10 +408,13 @@ export function isArrayDifferent(array1, array2) {
 export function setSubscriberInformationInterval(extraUpdateFn) {
   async function checkSubscriberInformation() {
     try {
-      await getSubscriberInformation(false);
+      let promisesToHandle = [getSubscriberInformation(false)];
+
       if (extraUpdateFn) {
-        await extraUpdateFn();
+        promisesToHandle.push(extraUpdateFn());
       }
+
+      await Promise.all(promisesToHandle);
     } catch (error) {
       // do nothing
     }
