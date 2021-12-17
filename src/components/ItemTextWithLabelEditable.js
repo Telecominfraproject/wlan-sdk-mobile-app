@@ -219,7 +219,7 @@ const ItemTextWithLabelEditable = props => {
   const onEditComplete = async () => {
     if (value && !valid) {
       // Show a confirmation prompt first
-      Alert.alert(strings.errors.validationError, strings.errors.invalidField, [
+      Alert.alert(strings.errors.validationError, invalidTypeMessage(), [
         {
           text: strings.buttons.revert,
           onPress: () => {
@@ -274,6 +274,56 @@ const ItemTextWithLabelEditable = props => {
         setEdit(false);
       }
     }
+  };
+
+  const invalidTypeMessage = () => {
+    let messages = [];
+    if (type) {
+      let types = type.split('|');
+      types.forEach(typeItem => {
+        switch (typeItem) {
+          case 'firstName':
+            messages.push(strings.errors.invalidFirstName);
+            break;
+
+          case 'lastName':
+            messages.push(strings.errors.invalidLastName);
+            break;
+
+          case 'ipV4':
+            messages.push(strings.errors.invalidIPv4);
+            break;
+
+          case 'ipV6':
+            messages.push(strings.errors.invalidIPv6);
+            break;
+
+          case 'mac':
+          case 'macAllowSeparators':
+            messages.push(strings.errors.invalidMac);
+            break;
+
+          case 'phone':
+            messages.push(strings.errors.invalidPhone);
+            break;
+
+          case 'email':
+            messages.push(strings.errors.invalidEmail);
+            break;
+
+          case 'subnetV4':
+          case 'subnetMaskV4':
+          case 'subnetV6':
+          case 'subnetMaskV6':
+            messages.push(strings.errors.invalidSubnet);
+            break;
+
+          default:
+            messages.push(strings.errors.invalidField);
+        }
+      });
+      return messages.join(' \n\n ');
+    } else return strings.errors.invalidField;
   };
 
   const showEditIcon = () => {
