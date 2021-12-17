@@ -49,6 +49,7 @@ export const pageStyle = StyleSheet.create({
     // The following needs to be flexGrow rather than flex in order to ensure
     // scrolling will still happen on views that are larger than the screen height
     flexGrow: 1,
+    alignItems: 'center',
   },
   containerPreLogin: {
     // Layout
@@ -57,6 +58,9 @@ export const pageStyle = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
+    maxWidth: 600,
+    width: '100%',
+    margin: 'auto',
     // Content
     paddingTop: 15,
     paddingBottom: 35,
@@ -74,6 +78,9 @@ export const pageStyle = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
+    maxWidth: 600,
+    width: '100%',
+    margin: 'auto',
     // Content
     paddingTop: 15,
     paddingBottom: 30,
