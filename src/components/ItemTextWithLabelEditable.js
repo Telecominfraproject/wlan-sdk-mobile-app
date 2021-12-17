@@ -284,6 +284,44 @@ const ItemTextWithLabelEditable = props => {
     return !props.value;
   };
 
+  const getMaxLength = () => {
+    let max = 0;
+    if (type) {
+      let types = type.split('|');
+      types.forEach(typeItem => {
+        switch (typeItem) {
+          case 'firstName':
+          case 'lastName':
+            max = Math.max(26, max);
+            break;
+
+          case 'ipV4':
+            max = Math.max(15, max);
+            break;
+
+          case 'ipV6':
+            max = Math.max(45, max);
+            break;
+
+          case 'mac':
+          case 'macAllowSeparators':
+            max = Math.max(17, max);
+            break;
+
+          case 'phone':
+          case 'email':
+          case 'subnetV4':
+          case 'subnetMaskV4':
+          case 'subnetV6':
+          case 'subnetMaskV6':
+          default:
+            max = Math.max(255, max);
+        }
+      });
+    }
+    return max || maxLength;
+  };
+
   const onPress = () => {
     if (props.disabled) {
       Alert.alert(props.label, props.value, undefined, { cancelable: true });
@@ -364,7 +402,7 @@ const ItemTextWithLabelEditable = props => {
             onChangeText={onChangeText}
             onEndEditing={onEditComplete}
             onSubmitEditing={onEditComplete}
-            maxLength={type === 'firstName' || type === 'lastName' ? 26 : maxLength}
+            maxLength={getMaxLength()}
           />
         ) : (
           <Text
