@@ -42,7 +42,12 @@ const TextInputWithIcon = props => {
   return (
     <View style={componentStyles.container}>
       {textShown ? <></> : <Image style={componentStyles.icon} source={props.source} />}
-      <TextInput style={componentStyles.text} placeholder="Search" onChangeText={onChangeTextInternal} />
+      <TextInput
+        style={componentStyles.text}
+        placeholder="Search"
+        onChangeText={onChangeTextInternal}
+        maxLength={255}
+      />
     </View>
   );
 };
