@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { grayColor, heightCellDefault, paddingHorizontalDefault, primaryColor, whiteColor } from '../AppStyle';
 import ButtonStyled from '../components/ButtonStyled';
 import DropDownPicker from 'react-native-dropdown-picker';
 import isEqual from 'lodash.isequal';
 
 const ItemPickerWithLabel = props => {
+  const { label = '', disabled = false, disabledReason } = props;
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState(props.items ?? []);
   const placeholder = props.placeholder ?? 'Select an item';
-  const label = props.label ?? '';
 
   const onChangeValue = async value => {
     try {
@@ -21,6 +21,12 @@ const ItemPickerWithLabel = props => {
       }
     } catch (error) {
       // Do nothing
+    }
+  };
+
+  const disabledAlert = () => {
+    if (disabled && disabledReason) {
+      Alert.alert(label, disabledReason, undefined, { cancelable: true });
     }
   };
 
@@ -73,7 +79,7 @@ const ItemPickerWithLabel = props => {
 
   return (
     <View style={componentStyles.container}>
-      <View style={componentStyles.containerText}>
+      <Pressable style={componentStyles.containerText} onPress={disabledAlert}>
         <Text style={componentStyles.textLabel} numberOfLines={1}>
           {label}
         </Text>
@@ -91,7 +97,7 @@ const ItemPickerWithLabel = props => {
             style={componentStyles.picker}
             disabledStyle={componentStyles.pickerDisabled}
             placeholder={placeholder}
-            disabled={props.disabled}
+            disabled={disabled}
             multiple={props.multiple ? props.multiple : false}
             items={items}
             setItems={setItems}
@@ -105,7 +111,7 @@ const ItemPickerWithLabel = props => {
             onChangeValue={value => onChangeValue(value)}
           />
         )}
-      </View>
+      </Pressable>
       {props.buttonTitle && (
         <ButtonStyled
           style={componentStyles.buttonRight}

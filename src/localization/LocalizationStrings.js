@@ -56,6 +56,7 @@ export const strings = new LocalizedStrings({
     },
     messages: {
       empty: '-',
+      guestNetworkExists: 'Only one guest type network is allowed and one already exists.',
       passwordChanged: 'Password successfully changed.',
       resetEmailSent:
         "You should soon receive an email containing the instructions to reset your password. Please make sure to check your spam if you can't find the email.",

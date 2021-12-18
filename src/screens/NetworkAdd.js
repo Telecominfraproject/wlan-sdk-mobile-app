@@ -41,11 +41,7 @@ const NetworkAdd = props => {
 
   const hasGuestNetwork = () => {
     // Check to see if it has a guest network
-    if (getGuestNetworkIndex(wifiNetworks) === null) {
-      return false;
-    } else {
-      return true;
-    }
+    return getGuestNetworkIndex(wifiNetworks) !== null;
   };
 
   const onCancelPress = () => {
@@ -111,6 +107,7 @@ const NetworkAdd = props => {
               value={wifiNetworkType}
               setValue={setWifiNetworkType}
               disabled={hasGuestNetwork()}
+              disabledReason={strings.messages.guestNetworkExists}
               items={[
                 { label: strings.network.selectorTypeMain, value: 'main' },
                 { label: strings.network.selectorTypeGuest, value: 'guest' },

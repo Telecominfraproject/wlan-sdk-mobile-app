@@ -26,6 +26,7 @@ import {
   getNetworkBandsSelectorItems,
   modifyNetworkSettings,
   deleteNetwork,
+  logStringifyPretty,
 } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
@@ -193,7 +194,7 @@ const Network = props => {
         throw new Error(strings.errors.invalidResponse);
       }
 
-      console.log(response.data);
+      logStringifyPretty(response.data, response.request.responseURL);
 
       // Clear this flag on success
       if (isMounted.current) {
@@ -364,6 +365,7 @@ const Network = props => {
               value={wifiNetworkType}
               setValue={setWifiNetworkType}
               disabled={!isGuestNetworkAvailable()}
+              disabledReason={strings.messages.guestNetworkExists}
               items={[
                 { label: strings.network.selectorTypeMain, value: 'main' },
                 { label: strings.network.selectorTypeGuest, value: 'guest' },
