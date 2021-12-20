@@ -27,10 +27,11 @@ import ButtonStyled from '../components/ButtonStyled';
 import ImageWithBadge from '../components/ImageWithBadge';
 import ItemTextWithLabel from '../components/ItemTextWithLabel';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
+import ItemColumnsWithValues from '../components/ItemColumnsWithValues';
 
 const DeviceDetails = props => {
   // Route Params
-  const client = props.route.params.client;
+  const { accessPoint, client, network } = props.route.params;
   // Need to use refs so that the async tasks can have proper access to these state changes
   const isMounted = useRef(false);
   // Selectors
@@ -48,6 +49,38 @@ const DeviceDetails = props => {
   const subscriberDevice = useMemo(() => {
     if (subscriberDevices !== null && subscriberDeviceIndex !== null) {
       return subscriberDevices.devices[subscriberDeviceIndex];
+    } else {
+      return {
+        name: 'ABC Phone',
+        description: 'string',
+        macAddress: '8035c1567c97',
+        manufacturer: 'string',
+        firstContact: 0,
+        lastContact: 0,
+        group: 'string',
+        icon: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        suspended: true,
+        ip: 'string',
+        created: 0,
+        modified: 0,
+        schedule: {
+          description: 'Parental Controls',
+          created: 0,
+          modified: 0,
+          schedule: [
+            {
+              description: 'Friday Schedule',
+              day: 'Friday',
+              rangeList: ['800-1200', '1300-2400'],
+            },
+            {
+              description: 'Saturday Schedule',
+              day: 'Saturday',
+              rangeList: ['1000-2400'],
+            },
+          ],
+        },
+      };
     }
   }, [subscriberDevices, subscriberDeviceIndex]);
 
@@ -93,9 +126,9 @@ const DeviceDetails = props => {
         return reservationMacAddress === clientMacAddress;
       });
 
-      if (ipReservationIndex >= 0 ) {
+      if (ipReservationIndex >= 0) {
         return ipReservationIndex;
-      } 
+      }
     }
 
     return null;
@@ -133,10 +166,14 @@ const DeviceDetails = props => {
 
   const getConnectionType = () => {
     if ('ssid' in client) {
-      return strings.formatString(strings.deviceDetails.connectionTypeWifi, displayValue(client, 'ssid'));
+      return strings.deviceDetails.connectionTypeWifi;
     } else {
-      return strings.formatString(strings.deviceDetails.connectionTypeWired, displayValue(client, 'speed'));
+      return strings.deviceDetails.connectionTypeWired;
     }
+  };
+
+  const getNetwork = () => {
+    return `${network.name} (${client.rssi ?? client.speed})`;
   };
 
   const onReserveIpv4Press = async () => {
@@ -252,6 +289,7 @@ const DeviceDetails = props => {
               value={strings.deviceDetails.connected}
             />
             <ItemTextWithLabel key="type" label={strings.deviceDetails.connectionType} value={getConnectionType()} />
+            <ItemTextWithLabel key="type" label={strings.deviceDetails.network} value={getNetwork()} />
           </AccordionSection>
 
           <AccordionSection
@@ -330,6 +368,44 @@ const DeviceDetails = props => {
               label={strings.deviceDetails.macAddress}
               value={displayValue(client, 'macAddress')}
             />
+          </AccordionSection>
+
+          <AccordionSection
+            style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: 1 }])}
+            title={strings.accessSchedule.accessSchedule}
+            disableAccordion={true}
+            isLoading={subscriberInformationLoading}
+            showAdd={true}
+            onAddPress={() => props.navigation.navigate('AccessSchedule')}>
+            {subscriberDevice.schedule.schedule.length &&
+              subscriberDevice.schedule.schedule.map((item, index) => {
+                let result = [
+                  <ItemColumnsWithValues
+                    key={'schedule_' + index}
+                    type="value"
+                    values={[item.description]}
+                    showDelete={true}
+                    onDeletePress={() => {}}
+                    showEdit={true}
+                    onEditPress={() => props.navigation.navigate('AccessSchedule', { device: subscriberDevice, index })}
+                  />,
+                ];
+
+                if (index === 0) {
+                  // Add in a header to the start of the array if this is the first index
+                  result.unshift(
+                    <ItemColumnsWithValues
+                      key="label"
+                      type="label"
+                      values={[strings.deviceDetails.description]}
+                      showDelete={true}
+                      showEdit={true}
+                    />,
+                  );
+                }
+
+                return result;
+              })}
           </AccordionSection>
         </View>
       </ScrollView>

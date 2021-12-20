@@ -56,6 +56,10 @@ const Configuration = props => {
   // value that it'll cover each section. The sections further up the view should have higher numbers
   var sectionZIndex = 20;
   var pickerZIndex = 20;
+  const connectionTypeTabs = [
+    { label: strings.configuration.ipv4, value: strings.configuration.ipv4 },
+    { label: strings.configuration.ipv6, value: strings.configuration.ipv6 },
+  ];
   // Refs
   const scrollRef = useRef();
   const isMounted = useRef(false);
@@ -77,8 +81,9 @@ const Configuration = props => {
   const [deviceModeType, setDeviceModeType] = useState(deviceMode ? deviceMode.type : null);
   const [enableLeds, setEnableLeds] = useState(deviceMode ? deviceMode.enableLEDS : false);
   const [customDnsValue, setCustomDnsValue] = useState(dnsConfiguration ? dnsConfiguration.custom : false);
-  const [internetTab, setInternetTab] = useState('IPv4');
-  const [deviceTab, setDeviceTab] = useState('IPv4');
+  const [internetConnectionTab, setInternetConnectionTab] = useState(connectionTypeTabs[0]);
+  const [deviceConnectionTab, setDeviceConnectionTab] = useState(connectionTypeTabs[0]);
+  const [dnsConnectionTab, setDnsConnectionTab] = useState(connectionTypeTabs[0]);
 
   // Keep track of whether the screen is mounted or not so async tasks know to access state or not.
   useEffect(() => {
@@ -399,16 +404,21 @@ const Configuration = props => {
       />,
     ];
 
-    const tabs = ['IPv4', 'IPv6'];
     if (ipv6Support) {
       items.push(
-        <ItemTab tabs={tabs} selected={tabs.indexOf(internetTab)} onChange={val => setInternetTab(val)} height={30} />,
+        <ItemTab
+          tabs={connectionTypeTabs}
+          titleKey={'label'}
+          selected={connectionTypeTabs.findIndex(tab => tab.value === internetConnectionTab.value)}
+          onChange={val => setInternetConnectionTab(val)}
+          height={30}
+        />,
       );
     }
 
     if (type === 'automatic') {
       // IPv4
-      if (internetTab === tabs[0]) {
+      if (internetConnectionTab.value === strings.configuration.ipv4) {
         items.push(
           <ItemTextWithLabel
             key="ipAddress"
@@ -485,7 +495,7 @@ const Configuration = props => {
       }
     } else if (type === 'manual') {
       // IPv4
-      if (internetTab === tabs[0]) {
+      if (internetConnectionTab.value === strings.configuration.ipv4) {
         items.push(
           <ItemTextWithLabelEditable
             key="ipAddress"
@@ -636,10 +646,15 @@ const Configuration = props => {
       />,
     ];
 
-    const tabs = ['IPv4', 'IPv6'];
     if (ipv6Support) {
       items.push(
-        <ItemTab tabs={tabs} selected={tabs.indexOf(deviceTab)} onChange={val => setDeviceTab(val)} height={30} />,
+        <ItemTab
+          tabs={connectionTypeTabs}
+          titleKey={'label'}
+          selected={connectionTypeTabs.findIndex(tab => tab.value === deviceConnectionTab.value)}
+          onChange={val => setDeviceConnectionTab(val)}
+          height={30}
+        />,
       );
     }
 
@@ -647,7 +662,7 @@ const Configuration = props => {
       // Nothing is added
     } else if (type === 'manual') {
       // IPv4
-      if (deviceTab === tabs[0]) {
+      if (deviceConnectionTab.value === strings.configuration.ipv4) {
         items.push(
           <ItemTextWithLabelEditable
             key="subnet"
@@ -735,7 +750,7 @@ const Configuration = props => {
       }
     } else if (type === 'nat' || !type) {
       // IPv4
-      if (deviceTab === tabs[0]) {
+      if (deviceConnectionTab.value === strings.configuration.ipv4) {
         items.push(
           <ItemTextWithLabel
             key="subnet"
@@ -758,7 +773,11 @@ const Configuration = props => {
           />,
         );
         items.push(
-          <ItemTextWithLabel key="endIP" label={strings.configuration.endIp} value={displayValue(deviceMode, 'endIP')} />,
+          <ItemTextWithLabel
+            key="endIP"
+            label={strings.configuration.endIp}
+            value={displayValue(deviceMode, 'endIP')}
+          />,
         );
       }
 
@@ -837,31 +856,46 @@ const Configuration = props => {
       />,
     ];
 
-    if (custom) {
+    if (ipv6Support) {
       items.push(
-        <ItemTextWithLabelEditable
-          key="primary"
-          label={strings.configuration.primaryDns}
-          value={displayEditableValue(dnsConfiguration, 'primary')}
-          placeholder={strings.messages.empty}
-          type="ipV4"
-          editKey="primary"
-          onEdit={onEditCustomDnsSettings}
+        <ItemTab
+          tabs={connectionTypeTabs}
+          titleKey={'label'}
+          selected={connectionTypeTabs.findIndex(tab => tab.value === dnsConnectionTab.value)}
+          onChange={val => setDnsConnectionTab(val)}
+          height={30}
         />,
       );
-      items.push(
-        <ItemTextWithLabelEditable
-          key="secondary"
-          label={strings.configuration.secondaryDns}
-          value={displayEditableValue(dnsConfiguration, 'secondary')}
-          placeholder={strings.messages.empty}
-          type="ipV4"
-          editKey="secondary"
-          onEdit={onEditCustomDnsSettings}
-        />,
-      );
+    }
 
-      if (ipv6Support) {
+    if (custom) {
+      // ipv4
+      if (dnsConnectionTab.value === strings.configuration.ipv4) {
+        items.push(
+          <ItemTextWithLabelEditable
+            key="primary"
+            label={strings.configuration.primaryDns}
+            value={displayEditableValue(dnsConfiguration, 'primary')}
+            placeholder={strings.messages.empty}
+            type="ipV4"
+            editKey="primary"
+            onEdit={onEditCustomDnsSettings}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabelEditable
+            key="secondary"
+            label={strings.configuration.secondaryDns}
+            value={displayEditableValue(dnsConfiguration, 'secondary')}
+            placeholder={strings.messages.empty}
+            type="ipV4"
+            editKey="secondary"
+            onEdit={onEditCustomDnsSettings}
+          />,
+        );
+      }
+      // ipv6
+      else if (ipv6Support) {
         items.push(
           <ItemTextWithLabelEditable
             key="primaryV6"
