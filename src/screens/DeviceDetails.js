@@ -49,7 +49,9 @@ const DeviceDetails = props => {
   const subscriberDevice = useMemo(() => {
     if (subscriberDevices !== null && subscriberDeviceIndex !== null) {
       return subscriberDevices.devices[subscriberDeviceIndex];
-    } else {
+    }
+    // TODO test data
+    else {
       return {
         name: 'ABC Phone',
         description: 'string',
@@ -173,7 +175,9 @@ const DeviceDetails = props => {
   };
 
   const getNetwork = () => {
-    return `${network.name} (${client.rssi ?? client.speed})`;
+    let name = network.name ?? '';
+    let speed = client ? `(${client.rssi ?? client.speed})` : '';
+    return `${name} ${speed}`;
   };
 
   const onReserveIpv4Press = async () => {
