@@ -107,12 +107,15 @@ const DeviceDetails = props => {
     return getClientConnectionStatusColor(client);
   };
 
-  const isReserved = () => {
-    if (findIpReservationIndex(client ? client.macAddress : null) !== null) {
-      return true;
-    }
+  const isReservedIPv4 = () => {
+    let ipReservationIndex = findIpReservationIndex(client ? client.macAddress : null);
+    let ipAddress = ipReservations.reservations[ipReservationIndex].ipAddress;
+    let re = /^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}$/;
+    return re.test(ipAddress);
+  };
 
-    return false;
+  const isReserved = () => {
+    return findIpReservationIndex(client ? client.macAddress : null) !== null;
   };
 
   const findIpReservationIndex = macAddress => {
@@ -217,7 +220,7 @@ const DeviceDetails = props => {
       setLoading(true);
 
       let ipReservationIndex = findIpReservationIndex(client ? client.macAddress : null);
-      if (!ipReservationIndex) {
+      if (ipReservationIndex === null) {
         throw new Error(strings.errors.internal);
       }
 
@@ -327,7 +330,7 @@ const DeviceDetails = props => {
               label={strings.deviceDetails.manufacturer}
               value={displayValue(subscriberDevice, 'manufacturer')}
             />
-            {isReserved() ? (
+            {isReserved() && isReservedIPv4() ? (
               <ItemTextWithLabel
                 key="ipAddressReservedV4"
                 label={strings.deviceDetails.ipAddressV4Reserved}
@@ -347,7 +350,7 @@ const DeviceDetails = props => {
                 buttonDisabled={!displayEditableValue(client, 'ipv4')}
               />
             )}
-            {isReserved() ? (
+            {isReserved() && !isReservedIPv4() ? (
               <ItemTextWithLabel
                 key="ipAddressReservedV6"
                 label={strings.deviceDetails.ipAddressV6Reserved}
