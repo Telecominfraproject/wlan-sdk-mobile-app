@@ -27,6 +27,8 @@ import SignIn from './screens/SignIn';
 import SignUp from './screens/SignUp';
 import TermsConditions from './screens/TermsConditions';
 import DeviceRegistration from './screens/DeviceRegistration';
+import AccessSchedule from './screens/AccessSchedule';
+import TimeRangeAddEdit from './screens/TimeRangeAddEdit';
 
 const Navigator = () => {
   const brandInfo = useSelector(selectBrandInfo);
@@ -52,10 +54,15 @@ const Navigator = () => {
     return (
       <DashboardStack.Navigator
         screenOptions={({ navigation, route }) => NavigationHeader(navigation, route, brandInfo)}>
-        <NetworkStack.Screen
+        <DashboardStack.Screen
           name="DashboardScreen"
           component={Dashboard}
           options={{ title: strings.navigator.dashboard }}
+        />
+        <DashboardStack.Screen
+          name="DeviceRegistration"
+          component={DeviceRegistration}
+          options={{ title: strings.navigator.deviceRegistration }}
         />
       </DashboardStack.Navigator>
     );
@@ -105,6 +112,16 @@ const Navigator = () => {
           name="DeviceDetails"
           component={DeviceDetails}
           options={{ title: strings.navigator.details }}
+        />
+        <NetworkStack.Screen
+          name="AccessSchedule"
+          component={AccessSchedule}
+          options={{ title: strings.navigator.accessSchedule }}
+        />
+        <NetworkStack.Screen
+          name="TimeRangeAddEdit"
+          component={TimeRangeAddEdit}
+          options={{ title: strings.navigator.timeRangeEdit }}
         />
       </NetworkStack.Navigator>
     );

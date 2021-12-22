@@ -1,7 +1,7 @@
 import React, { useCallback, useRef } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, okColor, infoColor, errorColor, primaryColor, whiteColor, grayBackgroundcolor } from '../AppStyle';
-import { SafeAreaView, ScrollView, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -12,8 +12,16 @@ import {
   selectInternetConnection,
   selectSubscriberDevices,
   selectWifiNetworks,
+  selectSubscriberInformation,
 } from '../store/SubscriberInformationSlice';
-import { scrollViewToTop, displayValue, getGuestNetworkIndex, setSubscriberInformationInterval } from '../Utils';
+import {
+  scrollViewToTop,
+  displayValue,
+  getGuestNetworkIndex,
+  setSubscriberInformationInterval,
+  logStringifyPretty,
+  modifySubscriberInformation,
+} from '../Utils';
 import ImageWithBadge from '../components/ImageWithBadge';
 import ButtonSelector from '../components/ButtonSelector';
 
@@ -21,6 +29,7 @@ const Dashboard = props => {
   const scrollRef = useRef();
   const dispatch = useDispatch();
   // Selectors
+  const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
   const accessPoints = useSelector(selectAccessPoints);
   const accessPoint = useSelector(selectAccessPoint);
@@ -147,6 +156,35 @@ const Dashboard = props => {
     props.navigation.navigate('Network');
   };
 
+  const renderAccessPointButtons = () => {
+    return (
+      <View style={componentStyles.accessPointButtonsContainer}>
+        <TouchableOpacity onPress={addAccessPoint}>
+          <Image style={componentStyles.accessPointButtons} source={require('../assets/plus-solid.png')} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={deleteAccessPoint}>
+          <Image
+            style={[componentStyles.accessPointButtons, componentStyles.deleteIcon]}
+            source={require('../assets/times-solid.png')}
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+  const addAccessPoint = () => {
+    props.navigation.navigate('DeviceRegistration');
+  };
+  const deleteAccessPoint = async () => {
+    let points = [...accessPoints];
+    let index = points.findIndex(ap => ap.macAddress === accessPoint.macAddress);
+    points.splice(index, 1);
+
+    // TODO delete access point
+    let updatedSubscriberInformation = JSON.parse(JSON.stringify(subscriberInformation));
+    updatedSubscriberInformation.accessPoints.list = points;
+    await modifySubscriberInformation(updatedSubscriberInformation);
+  };
+
   const componentStyles = StyleSheet.create({
     container: {
       flex: 1,
@@ -186,6 +224,20 @@ const Dashboard = props => {
       backgroundColor: grayBackgroundcolor,
       borderColor: primaryColor,
     },
+    accessPointButtonsContainer: {
+      width: '100%',
+      flexDirection: 'row',
+      justifyContent: 'center',
+    },
+    accessPointButtons: {
+      width: 20,
+      height: 20,
+      margin: 10,
+      resizeMode: 'contain',
+    },
+    deleteIcon: {
+      tintColor: errorColor,
+    },
   });
 
   return (
@@ -204,16 +256,19 @@ const Dashboard = props => {
                 height={200}
                 numberOfLines={3}
               />
+              {renderAccessPointButtons()}
               <Text style={componentStyles.iconLabel}>{strings.dashboard.network}</Text>
             </View>
           ) : (
             <TouchableOpacity style={componentStyles.touchableContainer} onPress={onNetworkPress}>
               <View style={componentStyles.itemContainer}>
                 <Text style={componentStyles.networkNameLabel}>{displayValue(accessPoint, 'name')}</Text>
+                {renderAccessPointButtons()}
                 <Text style={componentStyles.iconLabel}>{strings.dashboard.network}</Text>
               </View>
             </TouchableOpacity>
           )}
+
           <TouchableOpacity style={componentStyles.touchableContainer} onPress={onInternetPress}>
             <View style={componentStyles.itemContainer} onPress={onInternetPress}>
               <ImageWithBadge

@@ -3,27 +3,56 @@ import { strings } from '../localization/LocalizationStrings';
 import { ActivityIndicator, SafeAreaView, ScrollView, Text, TextInput, View } from 'react-native';
 import { pageItemStyle, pageStyle, primaryColor } from '../AppStyle';
 import { useSelector } from 'react-redux';
-import { selectSubscriberInformationLoading } from '../store/SubscriberInformationSlice';
+import {
+  selectAccessPoint,
+  selectAccessPoints,
+  selectSubscriberInformation,
+  selectSubscriberInformationLoading,
+} from '../store/SubscriberInformationSlice';
 import { handleApiError } from '../api/apiHandler';
-import { modifyAccessPoint } from '../Utils';
+import { logStringifyPretty, modifyAccessPoint, modifySubscriberInformation } from '../Utils';
 import ButtonStyled from '../components/ButtonStyled';
 
-export default function DeviceRegistration(props) {
+export default function DeviceRegistration({ navigation, route }) {
   const [macAddress, setMacAddress] = useState();
+  const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
-
-  const onSubmitPress = async () => {
-    try {
-      await modifyAccessPoint(null, { macAddress: macAddress });
-    } catch (error) {
-      handleApiError(strings.errors.titleAccessPointRegistration, error);
-    }
-  };
+  const accessPoint = useSelector(selectAccessPoint);
+  const accessPoints = useSelector(selectAccessPoints);
 
   const onChangeText = text => {
     // alphanumeric only
     let formatted = text.toLowerCase().replace(/[^a-z0-9]/gi, '');
     setMacAddress(formatted);
+  };
+
+  const onSubmitPress = async () => {
+    try {
+      if (hasAccessPoint()) {
+        await addAccessPoint();
+        navigation.goBack();
+      } else {
+        await modifyAccessPoint(null, { macAddress: macAddress });
+      }
+    } catch (error) {
+      handleApiError(strings.errors.titleAccessPointRegistration, error);
+    }
+  };
+
+  const hasAccessPoint = () => {
+    return accessPoint && accessPoint.macAddress !== '000000000000';
+  };
+
+  const addAccessPoint = async () => {
+    if (!macAddress) {
+      return;
+    }
+    // TODO add new access point
+    let newAccessPoint = { ...accessPoint, macAddress };
+    let updatedSubscriberInformation = JSON.parse(JSON.stringify(subscriberInformation));
+    updatedSubscriberInformation.accessPoints.list.push(newAccessPoint);
+    logStringifyPretty(updatedSubscriberInformation);
+    await modifySubscriberInformation(updatedSubscriberInformation);
   };
 
   return (
