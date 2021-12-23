@@ -129,16 +129,6 @@ const Dashboard = props => {
     return null;
   };
 
-  const getConnectedDeviceBadgeText = () => {
-    if (subscriberInformationLoading) {
-      return '-';
-    } else if (subscriberDevices && subscriberDevices.devices) {
-      return subscriberDevices.devices.length;
-    } else {
-      return '?';
-    }
-  };
-
   const getConnectedDeviceBadgeBackgroundColor = () => {
     return infoColor;
   };
