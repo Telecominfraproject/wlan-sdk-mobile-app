@@ -836,3 +836,21 @@ export async function deleteNetwork(accessPointId, networkIndex) {
   wifiNetworks.wifiNetworks.splice(networkIndex, 1);
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
+
+// allSettled polyfill
+Promise.allSettled =
+  Promise.allSettled ||
+  (promises =>
+    Promise.all(
+      promises.map(promise =>
+        promise
+          .then(value => ({
+            status: 'fulfilled',
+            value,
+          }))
+          .catch(reason => ({
+            status: 'rejected',
+            reason,
+          })),
+      ),
+    ));

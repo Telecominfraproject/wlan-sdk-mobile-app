@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, okColor, infoColor, errorColor, primaryColor, whiteColor, grayBackgroundcolor } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
@@ -24,6 +24,7 @@ import {
 } from '../Utils';
 import ImageWithBadge from '../components/ImageWithBadge';
 import ButtonSelector from '../components/ButtonSelector';
+import { wifiClientsApi, wiredClientsApi } from '../api/apiHandler';
 
 const Dashboard = props => {
   const scrollRef = useRef();
@@ -36,6 +37,8 @@ const Dashboard = props => {
   const internetConnection = useSelector(selectInternetConnection);
   const wifiNetworks = useSelector(selectWifiNetworks);
   const subscriberDevices = useSelector(selectSubscriberDevices);
+  // States
+  const [connectedDevices, setConnectedDevices] = useState(0);
 
   // Refresh the information only anytime there is a navigation change and this has come into focus
   // Need to be careful here as useFocusEffect is also called during re-render so it can result in
@@ -44,6 +47,7 @@ const Dashboard = props => {
     useCallback(() => {
       scrollViewToTop(scrollRef);
       var intervalId = setSubscriberInformationInterval(null);
+      getConnectedDevices();
 
       // Return function of what should be done on 'focus out'
       return () => {
@@ -53,6 +57,20 @@ const Dashboard = props => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.navigation]),
   );
+
+  const getConnectedDevices = async () => {
+    if (!accessPoint) {
+      return;
+    }
+
+    const [wired, wifi] = await Promise.allSettled([
+      wiredClientsApi.getWiredClients(accessPoint.macAddress),
+      wifiClientsApi.getWifiClients(accessPoint.macAddress),
+    ]);
+    let wiredClients = wired.value && wired.value.data.clients ? wired.value.data.clients.length : 0;
+    let wifiClients = wifi.value && wifi.value.data.associations ? wifi.value.data.associations.length : 0;
+    setConnectedDevices(wiredClients + wifiClients);
+  };
 
   const getInternetBadge = () => {
     if (subscriberInformationLoading) {
@@ -300,7 +318,7 @@ const Dashboard = props => {
               <ImageWithBadge
                 style={componentStyles.icon}
                 source={require('../assets/laptop-solid.png')}
-                badgeText={getConnectedDeviceBadgeText()}
+                badgeText={connectedDevices}
                 badgeBackgroundColor={getConnectedDeviceBadgeBackgroundColor()}
                 badgeTintColor={whiteColor}
               />
