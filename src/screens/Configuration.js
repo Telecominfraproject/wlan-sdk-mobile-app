@@ -616,7 +616,7 @@ const Configuration = props => {
           key="password"
           label={strings.common.password}
           value={displayEditableValue(internetConnection, 'password')}
-          type="password"
+          secureTextEntry={true}
           editKey="password"
           onEdit={onEditInternetConnectionSettings}
         />,
