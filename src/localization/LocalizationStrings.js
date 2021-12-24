@@ -236,6 +236,7 @@ export const strings = new LocalizedStrings({
     deviceRegistration: {
       description:
         'No access point is currently registed on this account. Please register an access point to continue.',
+      descriptionAdd: 'Please enter the mac address of your access point.',
     },
     accessSchedule: {
       accessSchedule: 'Access Schedule',

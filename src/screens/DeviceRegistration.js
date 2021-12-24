@@ -65,7 +65,9 @@ export default function DeviceRegistration({ navigation, route }) {
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.containerPostLogin}>
           <View style={pageItemStyle.container}>
-            <Text style={pageItemStyle.description}>{strings.deviceRegistration.description}</Text>
+            <Text style={pageItemStyle.description}>
+              {hasAccessPoint() ? strings.deviceRegistration.description : strings.deviceRegistration.descriptionAdd}
+            </Text>
           </View>
 
           <View style={pageItemStyle.container}>
