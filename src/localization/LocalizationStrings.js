@@ -64,6 +64,7 @@ export const strings = new LocalizedStrings({
     },
     navigator: {
       accessSchedule: 'Access Schedule',
+      accessTimes: 'Access Times',
       changePassword: 'Change Password',
       configuration: 'Configuration',
       dashboard: 'Dashboard',
@@ -80,7 +81,6 @@ export const strings = new LocalizedStrings({
       profile: 'Profile',
       signUp: 'Sign Up',
       termsConditions: 'Terms & Conditions',
-      timeRangeEdit: 'Edit Time Range',
     },
     buttons: {
       add: 'Add',
@@ -240,13 +240,13 @@ export const strings = new LocalizedStrings({
     },
     accessSchedule: {
       accessSchedule: 'Access Schedule',
+      accessTimes: 'Access Times',
       editRange: 'Edit Range',
       endTime: 'End Time',
       day: 'Day',
       description: 'Description',
       ranges: 'Ranges',
       startTime: 'Start Time',
-      times: 'Times',
       monday: 'Monday',
       tuesday: 'Tuesday',
       wednesday: 'Wednesday',

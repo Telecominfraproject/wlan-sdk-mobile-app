@@ -21,6 +21,7 @@ import {
   addSubscriberIpReservation,
   deleteSubscriberIpReservation,
   modifySubscriberDevice,
+  logStringifyPretty,
 } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
@@ -55,7 +56,7 @@ const DeviceDetails = props => {
       return {
         name: 'ABC Phone',
         description: 'string',
-        macAddress: '8035c1567c97',
+        macAddress: '80:35:c1:56:7c:97',
         manufacturer: 'string',
         firstContact: 0,
         lastContact: 0,
@@ -178,7 +179,7 @@ const DeviceDetails = props => {
   };
 
   const getNetwork = () => {
-    let name = network.name ?? '';
+    let name = network ? network.name : '';
     let speed = client ? `(${client.rssi ?? client.speed})` : '';
     return `${name} ${speed}`;
   };
@@ -383,8 +384,16 @@ const DeviceDetails = props => {
             disableAccordion={true}
             isLoading={subscriberInformationLoading}
             showAdd={true}
-            onAddPress={() => props.navigation.navigate('AccessSchedule')}>
-            {subscriberDevice.schedule.schedule.length &&
+            onAddPress={() =>
+              props.navigation.navigate('AccessSchedule', {
+                device: subscriberDevice,
+                deviceIndex: subscriberDeviceIndex,
+              })
+            }>
+            {subscriberDevice &&
+              subscriberDevice.schedule &&
+              subscriberDevice.schedule.schedule &&
+              subscriberDevice.schedule.schedule.length &&
               subscriberDevice.schedule.schedule.map((item, index) => {
                 let result = [
                   <ItemColumnsWithValues
@@ -394,7 +403,13 @@ const DeviceDetails = props => {
                     showDelete={true}
                     onDeletePress={() => {}}
                     showEdit={true}
-                    onEditPress={() => props.navigation.navigate('AccessSchedule', { device: subscriberDevice, index })}
+                    onEditPress={() =>
+                      props.navigation.navigate('AccessSchedule', {
+                        device: subscriberDevice,
+                        deviceIndex: subscriberDeviceIndex,
+                        scheduleIndex: index,
+                      })
+                    }
                   />,
                 ];
 

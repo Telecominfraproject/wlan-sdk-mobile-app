@@ -28,7 +28,7 @@ import SignUp from './screens/SignUp';
 import TermsConditions from './screens/TermsConditions';
 import DeviceRegistration from './screens/DeviceRegistration';
 import AccessSchedule from './screens/AccessSchedule';
-import TimeRangeAddEdit from './screens/TimeRangeAddEdit';
+import AccessTimeRange from './screens/AccessTimeRange';
 
 const Navigator = () => {
   const brandInfo = useSelector(selectBrandInfo);
@@ -119,9 +119,9 @@ const Navigator = () => {
           options={{ title: strings.navigator.accessSchedule }}
         />
         <NetworkStack.Screen
-          name="TimeRangeAddEdit"
-          component={TimeRangeAddEdit}
-          options={{ title: strings.navigator.timeRangeEdit }}
+          name="AccessTimeRange"
+          component={AccessTimeRange}
+          options={{ title: strings.navigator.accessTimes }}
         />
       </NetworkStack.Navigator>
     );
