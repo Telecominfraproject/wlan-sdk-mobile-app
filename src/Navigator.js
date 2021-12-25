@@ -121,7 +121,7 @@ const Navigator = () => {
         <NetworkStack.Screen
           name="AccessTimeRange"
           component={AccessTimeRange}
-          options={{ title: strings.navigator.accessTimes }}
+          options={{ title: strings.navigator.accessTime }}
         />
       </NetworkStack.Navigator>
     );

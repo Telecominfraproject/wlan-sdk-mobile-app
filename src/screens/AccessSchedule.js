@@ -45,7 +45,9 @@ export default function AccessSchedule({ navigation, route }) {
     }
   }, [device, scheduleIndex]);
 
-  const onCancelPress = () => {};
+  const onCancelPress = () => {
+    navigation.goBack();
+  };
 
   const onSubmitPress = async () => {
     try {
@@ -153,7 +155,7 @@ export default function AccessSchedule({ navigation, route }) {
             isLoading={subscriberInformationLoading}
             showAdd={true}
             onAddPress={() => {
-              navigation.navigate('AccessTimeRange', { day, description });
+              navigation.navigate('AccessTimeRange', { day, description, macAddress: device.macAddress });
             }}>
             {times.map((item, index) => {
               let result = [

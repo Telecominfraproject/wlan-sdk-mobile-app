@@ -64,7 +64,7 @@ export const strings = new LocalizedStrings({
     },
     navigator: {
       accessSchedule: 'Access Schedule',
-      accessTimes: 'Access Times',
+      accessTime: 'Access Time',
       changePassword: 'Change Password',
       configuration: 'Configuration',
       dashboard: 'Dashboard',
