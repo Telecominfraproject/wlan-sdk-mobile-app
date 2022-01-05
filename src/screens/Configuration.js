@@ -407,6 +407,7 @@ const Configuration = props => {
     if (ipv6Support) {
       items.push(
         <ItemTab
+          key="iptabs"
           tabs={connectionTypeTabs}
           titleKey={'label'}
           selected={connectionTypeTabs.findIndex(tab => tab.value === internetConnectionTab.value)}
@@ -649,6 +650,7 @@ const Configuration = props => {
     if (ipv6Support) {
       items.push(
         <ItemTab
+          key="iptabs"
           tabs={connectionTypeTabs}
           titleKey={'label'}
           selected={connectionTypeTabs.findIndex(tab => tab.value === deviceConnectionTab.value)}
@@ -859,6 +861,7 @@ const Configuration = props => {
     if (ipv6Support) {
       items.push(
         <ItemTab
+          key="iptabs"
           tabs={connectionTypeTabs}
           titleKey={'label'}
           selected={connectionTypeTabs.findIndex(tab => tab.value === dnsConnectionTab.value)}
