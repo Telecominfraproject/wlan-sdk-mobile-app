@@ -21,7 +21,6 @@ import {
   addSubscriberIpReservation,
   deleteSubscriberIpReservation,
   modifySubscriberDevice,
-  logStringifyPretty,
 } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
@@ -51,40 +50,8 @@ const DeviceDetails = props => {
     if (subscriberDevices !== null && subscriberDeviceIndex !== null) {
       return subscriberDevices.devices[subscriberDeviceIndex];
     }
-    // TODO test data
-    else {
-      return {
-        name: 'ABC Phone',
-        description: 'string',
-        macAddress: '80:35:c1:56:7c:97',
-        manufacturer: 'string',
-        firstContact: 0,
-        lastContact: 0,
-        group: 'string',
-        icon: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-        suspended: true,
-        ip: 'string',
-        created: 0,
-        modified: 0,
-        schedule: {
-          description: 'Parental Controls',
-          created: 0,
-          modified: 0,
-          schedule: [
-            {
-              description: 'Friday Schedule',
-              day: 'Friday',
-              rangeList: ['800-1200', '1300-2400'],
-            },
-            {
-              description: 'Saturday Schedule',
-              day: 'Saturday',
-              rangeList: ['1000-2400'],
-            },
-          ],
-        },
-      };
-    }
+
+    return null;
   }, [subscriberDevices, subscriberDeviceIndex]);
 
   // Keep track of whether the screen is mounted or not so async tasks know to access state or not.
