@@ -232,6 +232,7 @@ export const strings = new LocalizedStrings({
       group: 'Group',
       macAddress: 'MAC Address',
       manufacturer: 'Manufacturer',
+      mode: 'Mode',
       network: 'Network',
       status: 'Status',
     },

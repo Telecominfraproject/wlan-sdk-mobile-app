@@ -230,9 +230,7 @@ const Network = props => {
 
   const onClientPress = client => {
     props.navigation.navigate('DeviceDetails', {
-      accessPoint: accessPoint,
       client: client,
-      network: selectedWifiNetwork,
     });
   };
 

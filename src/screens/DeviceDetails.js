@@ -12,6 +12,7 @@ import {
 import { handleApiError } from '../api/apiHandler';
 import {
   displayValue,
+  displayValueWiredMode,
   displayEditableValue,
   getSubscriberDeviceIndexForMac,
   getClientName,
@@ -31,7 +32,7 @@ import ItemColumnsWithValues from '../components/ItemColumnsWithValues';
 
 const DeviceDetails = props => {
   // Route Params
-  const { accessPoint, client, network } = props.route.params;
+  const { client } = props.route.params;
   // Need to use refs so that the async tasks can have proper access to these state changes
   const isMounted = useRef(false);
   // Selectors
@@ -115,6 +116,11 @@ const DeviceDetails = props => {
     return strings.buttons.pause;
   };
 
+  const onPauseUnpausePress = async () => {
+    // Swap the current suspend state, or just mark it paused if there isn't one currently
+    updateSubscriberDeviceValue({ suspended: subscriberDevice ? !subscriberDevice.suspended : true });
+  };
+
   const updateSubscriberDeviceValue = async value => {
     try {
       if (!subscriberDevice) {
@@ -132,23 +138,24 @@ const DeviceDetails = props => {
     }
   };
 
-  const onPauseUnpausePress = async () => {
-    // Swap the current suspend state, or just mark it paused if there isn't one currently
-    updateSubscriberDeviceValue({ suspended: subscriberDevice ? !subscriberDevice.suspended : true });
-  };
-
   const getConnectionType = () => {
-    if ('ssid' in client) {
+    if (isWifiClient()) {
       return strings.deviceDetails.connectionTypeWifi;
     } else {
       return strings.deviceDetails.connectionTypeWired;
     }
   };
 
-  const getNetwork = () => {
-    let name = network ? network.name : '';
-    let speed = client ? `(${client.rssi ?? client.speed})` : '';
-    return `${name} ${speed}`;
+  const isWifiClient = () => {
+    return 'ssid' in client;
+  };
+
+  const getWifiNetwork = () => {
+    return displayValue(client, 'ssid') + ' (' + displayValue(client, 'rssi') + ')';
+  };
+
+  const getWiredMode = () => {
+    return displayValueWiredMode(client, 'mode');
   };
 
   const onReserveIpv4Press = async () => {
@@ -264,7 +271,11 @@ const DeviceDetails = props => {
               value={strings.deviceDetails.connected}
             />
             <ItemTextWithLabel key="type" label={strings.deviceDetails.connectionType} value={getConnectionType()} />
-            <ItemTextWithLabel key="type" label={strings.deviceDetails.network} value={getNetwork()} />
+            {isWifiClient() ? (
+              <ItemTextWithLabel key="network" label={strings.deviceDetails.network} value={getWifiNetwork()} />
+            ) : (
+              <ItemTextWithLabel key="mode" label={strings.deviceDetails.mode} value={getWiredMode()} />
+            )}
           </AccordionSection>
 
           <AccordionSection
