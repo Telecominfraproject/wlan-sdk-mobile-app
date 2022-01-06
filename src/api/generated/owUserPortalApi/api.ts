@@ -103,6 +103,12 @@ export interface AccessPoint {
    * @memberof AccessPoint
    */
   dnsConfiguration?: DnsConfiguration;
+  /**
+   *
+   * @type {Array<RadioInformation>}
+   * @memberof AccessPoint
+   */
+  radios?: Array<RadioInformation>;
 }
 /**
  *
@@ -399,7 +405,19 @@ export interface DnsConfiguration {
    * @type {string}
    * @memberof DnsConfiguration
    */
-  seconfary?: string;
+  secondary?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof DnsConfiguration
+   */
+  primaryV6?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof DnsConfiguration
+   */
+  secondaryV6?: string;
 }
 /**
  *
@@ -843,6 +861,232 @@ export interface PasswordCreation {
 /**
  *
  * @export
+ * @interface RadioHE
+ */
+export interface RadioHE {
+  /**
+   *
+   * @type {boolean}
+   * @memberof RadioHE
+   */
+  multipleBSSID?: boolean;
+  /**
+   *
+   * @type {boolean}
+   * @memberof RadioHE
+   */
+  ema?: boolean;
+  /**
+   *
+   * @type {number}
+   * @memberof RadioHE
+   */
+  bssColor?: number;
+}
+/**
+ *
+ * @export
+ * @interface RadioInformation
+ */
+export interface RadioInformation {
+  /**
+   *
+   * @type {string}
+   * @memberof RadioInformation
+   */
+  band?: RadioInformationBandEnum;
+  /**
+   *
+   * @type {number}
+   * @memberof RadioInformation
+   */
+  bandwidth?: RadioInformationBandwidthEnum;
+  /**
+   *
+   * @type {number | string}
+   * @memberof RadioInformation
+   */
+  channel?: number | string;
+  /**
+   *
+   * @type {string}
+   * @memberof RadioInformation
+   */
+  country?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof RadioInformation
+   */
+  channelMode?: RadioInformationChannelModeEnum;
+  /**
+   *
+   * @type {number}
+   * @memberof RadioInformation
+   */
+  channelWidth?: RadioInformationChannelWidthEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof RadioInformation
+   */
+  requireMode?: RadioInformationRequireModeEnum;
+  /**
+   *
+   * @type {number}
+   * @memberof RadioInformation
+   */
+  txPower?: number;
+  /**
+   *
+   * @type {boolean}
+   * @memberof RadioInformation
+   */
+  legacyRates?: boolean;
+  /**
+   *
+   * @type {number}
+   * @memberof RadioInformation
+   */
+  beaconInterval?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof RadioInformation
+   */
+  dtimPeriod?: number;
+  /**
+   *
+   * @type {RadioRates}
+   * @memberof RadioInformation
+   */
+  rates?: RadioRates;
+  /**
+   *
+   * @type {RadioHE}
+   * @memberof RadioInformation
+   */
+  he?: RadioHE;
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof RadioInformation
+   */
+  rawInfo?: Array<string>;
+}
+
+/**
+ * @export
+ * @enum {string}
+ */
+export enum RadioInformationBandEnum {
+  _2G = '2G',
+  _5G = '5G',
+  _5Gl = '5GL',
+  _5Gu = '5GU',
+  _6G = '6G',
+}
+/**
+ * @export
+ * @enum {string}
+ */
+export enum RadioInformationBandwidthEnum {
+  NUMBER_5 = 5,
+  NUMBER_10 = 10,
+  NUMBER_20 = 20,
+}
+/**
+ * @export
+ * @enum {string}
+ */
+export enum RadioInformationChannelModeEnum {
+  Ht = 'HT',
+  Vht = 'VHT',
+  He = 'HE',
+}
+/**
+ * @export
+ * @enum {string}
+ */
+export enum RadioInformationChannelWidthEnum {
+  NUMBER_20 = 20,
+  NUMBER_40 = 40,
+  NUMBER_80 = 80,
+  NUMBER_160 = 160,
+  NUMBER_8080 = 8080,
+}
+/**
+ * @export
+ * @enum {string}
+ */
+export enum RadioInformationRequireModeEnum {
+  Ht = 'HT',
+  Vht = 'VHT',
+  He = 'HE',
+}
+
+/**
+ *
+ * @export
+ * @interface RadioRates
+ */
+export interface RadioRates {
+  /**
+   *
+   * @type {number}
+   * @memberof RadioRates
+   */
+  beacon?: RadioRatesBeaconEnum;
+  /**
+   *
+   * @type {number}
+   * @memberof RadioRates
+   */
+  multicast?: RadioRatesMulticastEnum;
+}
+
+/**
+ * @export
+ * @enum {string}
+ */
+export enum RadioRatesBeaconEnum {
+  NUMBER_0 = 0,
+  NUMBER_1000 = 1000,
+  NUMBER_2000 = 2000,
+  NUMBER_5500 = 5500,
+  NUMBER_6000 = 6000,
+  NUMBER_9000 = 9000,
+  NUMBER_11000 = 11000,
+  NUMBER_12000 = 12000,
+  NUMBER_18000 = 18000,
+  NUMBER_24000 = 24000,
+  NUMBER_36000 = 36000,
+  NUMBER_48000 = 48000,
+  NUMBER_54000 = 54000,
+}
+/**
+ * @export
+ * @enum {string}
+ */
+export enum RadioRatesMulticastEnum {
+  NUMBER_0 = 0,
+  NUMBER_1000 = 1000,
+  NUMBER_2000 = 2000,
+  NUMBER_5500 = 5500,
+  NUMBER_6000 = 6000,
+  NUMBER_9000 = 9000,
+  NUMBER_11000 = 11000,
+  NUMBER_12000 = 12000,
+  NUMBER_18000 = 18000,
+  NUMBER_24000 = 24000,
+  NUMBER_36000 = 36000,
+  NUMBER_48000 = 48000,
+  NUMBER_54000 = 54000,
+}
+
+/**
+ *
+ * @export
  * @interface SubMfaConfig
  */
 export interface SubMfaConfig {
@@ -1211,7 +1455,7 @@ export interface WifiNetwork {
    * @type {string}
    * @memberof WifiNetwork
    */
-  encryption?: string;
+  encryption?: WifiNetworkEncryptionEnum;
   /**
    *
    * @type {Array<string>}
@@ -1232,7 +1476,26 @@ export enum WifiNetworkTypeEnum {
  * @export
  * @enum {string}
  */
+export enum WifiNetworkEncryptionEnum {
+  None = 'none',
+  Psk = 'psk',
+  Psk2 = 'psk2',
+  PskMixed = 'psk-mixed',
+  Wpa = 'wpa',
+  Wpa2 = 'wpa2',
+  WpaMixed = 'wpa-mixed',
+  Sae = 'sae',
+  SaeMixed = 'sae-mixed',
+  Wpa3 = 'wpa3',
+  Wpa3192 = 'wpa3-192',
+  Wpa3Mixed = 'wpa3-mixed',
+}
+/**
+ * @export
+ * @enum {string}
+ */
 export enum WifiNetworkBandsEnum {
+  All = 'all',
   _2G = '2G',
   _5G = '5G',
   _5Gl = '5GL',
