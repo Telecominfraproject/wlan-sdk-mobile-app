@@ -449,6 +449,82 @@ export function setSubscriberInformationInterval(extraUpdateFn) {
   return intervalId;
 }
 
+export async function addAccessPoint(jsonObject) {
+  if (!jsonObject) {
+    // Do nothing if the object is null or empty
+    return;
+  }
+
+  let subscriberInformation = store.getState().subscriberInformation.subscriberInformation;
+  if (!subscriberInformation) {
+    throw new Error(strings.errors.internal);
+  }
+
+  // Clone the current subscriber information
+  let updatedSubsciberInformation = JSON.parse(JSON.stringify(subscriberInformation));
+
+  // Get or create the access points list
+  let accessPoints = null;
+
+  if (!updatedSubsciberInformation.accessPoints || !updatedSubsciberInformation.accessPoints.list) {
+    // No access points list, so create one
+    updatedSubsciberInformation.accessPoints = {
+      list: [],
+    };
+  }
+  accessPoints = updatedSubsciberInformation.accessPoints.list;
+
+  // Special case - if there is an entry with an all-zero MAC address it should be overritten, as it is
+  // just a placeholder
+  let blankAccessPointIndex = accessPoints.findIndex(ap => ap.macAddress === '000000000000');
+  if (blankAccessPointIndex >= 0) {
+    let accessPoint = accessPoints[blankAccessPointIndex];
+
+    for (const [key, value] of Object.entries(jsonObject)) {
+      if (accessPoint[key] !== value) {
+        accessPoint[key] = value;
+      }
+    }
+  } else {
+    accessPoints.push(jsonObject);
+  }
+
+  await modifySubscriberInformation(updatedSubsciberInformation);
+}
+
+export async function deleteAccessPoint(accessPointIndex) {
+  if (accessPointIndex === null) {
+    // Do nothing if the selected access point index is null
+    return;
+  }
+
+  let subscriberInformation = store.getState().subscriberInformation.subscriberInformation;
+  if (!subscriberInformation) {
+    throw new Error(strings.errors.internal);
+  }
+
+  // Clone the current subscriber information
+  let updatedSubsciberInformation = JSON.parse(JSON.stringify(subscriberInformation));
+  let accessPoints = null;
+
+  if (
+    updatedSubsciberInformation &&
+    updatedSubsciberInformation.accessPoints &&
+    updatedSubsciberInformation.accessPoints.list
+  ) {
+    accessPoints = updatedSubsciberInformation.accessPoints.list;
+  }
+
+  if (!accessPoints || accessPoints.length < accessPointIndex) {
+    console.error('Access Point index out of range');
+    throw new Error(strings.errors.internal);
+  }
+
+  // Remove the element from the array
+  accessPoints.splice(accessPointIndex, 1);
+  await modifySubscriberInformation(updatedSubsciberInformation);
+}
+
 export async function modifySubscriberInformation(updatedJson) {
   if (!subscriberInformationApi) {
     throw new Error(strings.errors.internal);

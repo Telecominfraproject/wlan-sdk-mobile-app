@@ -3,22 +3,14 @@ import { strings } from '../localization/LocalizationStrings';
 import { ActivityIndicator, SafeAreaView, ScrollView, Text, TextInput, View } from 'react-native';
 import { pageItemStyle, pageStyle, primaryColor } from '../AppStyle';
 import { useSelector } from 'react-redux';
-import {
-  selectAccessPoint,
-  selectAccessPoints,
-  selectSubscriberInformation,
-  selectSubscriberInformationLoading,
-} from '../store/SubscriberInformationSlice';
+import { selectSubscriberInformationLoading } from '../store/SubscriberInformationSlice';
 import { handleApiError } from '../api/apiHandler';
-import { logStringifyPretty, modifyAccessPoint, modifySubscriberInformation } from '../Utils';
+import { addAccessPoint } from '../Utils';
 import ButtonStyled from '../components/ButtonStyled';
 
 export default function DeviceRegistration({ navigation, route }) {
   const [macAddress, setMacAddress] = useState();
-  const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
-  const accessPoint = useSelector(selectAccessPoint);
-  const accessPoints = useSelector(selectAccessPoints);
 
   const onChangeText = text => {
     // alphanumeric only
@@ -28,31 +20,12 @@ export default function DeviceRegistration({ navigation, route }) {
 
   const onSubmitPress = async () => {
     try {
-      if (hasAccessPoint()) {
-        await addAccessPoint();
-        navigation.goBack();
-      } else {
-        await modifyAccessPoint(null, { macAddress: macAddress });
-      }
+      await addAccessPoint({ macAddress: macAddress });
+
+      navigation.goBack();
     } catch (error) {
       handleApiError(strings.errors.titleAccessPointRegistration, error);
     }
-  };
-
-  const hasAccessPoint = () => {
-    return accessPoint && accessPoint.macAddress !== '000000000000';
-  };
-
-  const addAccessPoint = async () => {
-    if (!macAddress) {
-      return;
-    }
-    // TODO add new access point
-    let newAccessPoint = { ...accessPoint, macAddress };
-    let updatedSubscriberInformation = JSON.parse(JSON.stringify(subscriberInformation));
-    updatedSubscriberInformation.accessPoints.list.push(newAccessPoint);
-    logStringifyPretty(updatedSubscriberInformation);
-    await modifySubscriberInformation(updatedSubscriberInformation);
   };
 
   return (
@@ -65,9 +38,7 @@ export default function DeviceRegistration({ navigation, route }) {
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.containerPostLogin}>
           <View style={pageItemStyle.container}>
-            <Text style={pageItemStyle.description}>
-              {hasAccessPoint() ? strings.deviceRegistration.description : strings.deviceRegistration.descriptionAdd}
-            </Text>
+            <Text style={pageItemStyle.description}>{strings.deviceRegistration.descriptionAdd}</Text>
           </View>
 
           <View style={pageItemStyle.container}>
