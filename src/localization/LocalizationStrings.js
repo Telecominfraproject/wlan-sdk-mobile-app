@@ -284,6 +284,7 @@ export const strings = new LocalizedStrings({
       selectorTypeMain: 'Main',
       selectorTypeGuest: 'Guest',
       settings: 'Settings',
+      type: 'Type',
       wifiClients: 'Wifi Clients',
       wiredClients: 'Wired Clients',
     },
