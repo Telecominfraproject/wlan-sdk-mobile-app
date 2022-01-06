@@ -212,6 +212,8 @@ export const strings = new LocalizedStrings({
     dashboard: {
       network: 'Network',
       internet: 'Internet',
+      confirmDeleteAccessPoint: 'Are you sure you want to delete access point?',
+      confirmTitle: 'Confirm',
       connectedDevices: 'Connected Devices',
       guestNetwork: 'Guest Network',
     },

@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, okColor, infoColor, errorColor, primaryColor, whiteColor, grayBackgroundcolor } from '../AppStyle';
-import { SafeAreaView, ScrollView, StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, View, Text, TouchableOpacity, Image, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -12,10 +12,16 @@ import {
   selectInternetConnection,
   selectWifiNetworks,
 } from '../store/SubscriberInformationSlice';
-import { scrollViewToTop, displayValue, getGuestNetworkIndex, setSubscriberInformationInterval } from '../Utils';
+import {
+  scrollViewToTop,
+  displayValue,
+  getGuestNetworkIndex,
+  setSubscriberInformationInterval,
+  deleteAccessPoint,
+} from '../Utils';
 import ImageWithBadge from '../components/ImageWithBadge';
 import ButtonSelector from '../components/ButtonSelector';
-import { wifiClientsApi, wiredClientsApi } from '../api/apiHandler';
+import { wifiClientsApi, wiredClientsApi, handleApiError } from '../api/apiHandler';
 
 const Dashboard = props => {
   const scrollRef = useRef();
@@ -156,11 +162,11 @@ const Dashboard = props => {
   const renderAccessPointButtons = () => {
     return (
       <View style={componentStyles.accessPointButtonsContainer}>
-        <TouchableOpacity onPress={addAccessPoint}>
+        <TouchableOpacity onPress={onAddAccessPointPress}>
           <Image style={componentStyles.accessPointButtons} source={require('../assets/plus-solid.png')} />
         </TouchableOpacity>
         <Text style={componentStyles.iconLabel}>{strings.dashboard.network}</Text>
-        <TouchableOpacity onPress={deleteAccessPoint}>
+        <TouchableOpacity onPress={onDeleteAccessPointPress}>
           <Image
             style={[componentStyles.accessPointButtons, componentStyles.deleteIcon]}
             source={require('../assets/times-solid.png')}
@@ -170,13 +176,28 @@ const Dashboard = props => {
     );
   };
 
-  const addAccessPoint = () => {
+  const onAddAccessPointPress = () => {
     props.navigation.navigate('DeviceRegistration');
   };
 
-  const deleteAccessPoint = async () => {
-    let accessPointIndex = accessPoints.findIndex(ap => ap.macAddress === accessPoint.macAddress);
-    await deleteAccessPoint(accessPointIndex);
+  const onDeleteAccessPointPress = async () => {
+    // Show a confirmation prompt
+    Alert.alert(strings.dashboard.confirmTitle, strings.dashboard.confirmDeleteAccessPoint, [
+      {
+        text: strings.buttons.ok,
+        onPress: async () => {
+          try {
+            let accessPointIndex = accessPoints.findIndex(ap => ap.macAddress === accessPoint.macAddress);
+            await deleteAccessPoint(accessPointIndex);
+          } catch (error) {
+            handleApiError(strings.errors.titleDelete, error);
+          }
+        },
+      },
+      {
+        text: strings.buttons.cancel,
+      },
+    ]);
   };
 
   const componentStyles = StyleSheet.create({
