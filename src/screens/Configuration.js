@@ -52,13 +52,15 @@ import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
 import ItemTab from '../components/ItemTab';
 
 const Configuration = props => {
+  const TAB_IPV4 = 'ipv4';
+  const TAB_IPV6 = 'ipv6';
   // The sectionZIndex is used to help with any embedded picker/dropdown. Start with a high enough
   // value that it'll cover each section. The sections further up the view should have higher numbers
   var sectionZIndex = 20;
   var pickerZIndex = 20;
   const connectionTypeTabs = [
-    { label: strings.configuration.ipv4, value: strings.configuration.ipv4 },
-    { label: strings.configuration.ipv6, value: strings.configuration.ipv6 },
+    { label: strings.configuration.ipv4, value: TAB_IPV4 },
+    { label: strings.configuration.ipv6, value: TAB_IPV6 },
   ];
   // Refs
   const scrollRef = useRef();
@@ -404,7 +406,8 @@ const Configuration = props => {
       />,
     ];
 
-    if (ipv6Support) {
+    if (ipv6Support && type && type !== 'pppoe') {
+      // Do not include IPv4/IPv6 tabs in pppoe
       items.push(
         <ItemTab
           key="iptabs"
@@ -418,8 +421,7 @@ const Configuration = props => {
     }
 
     if (type === 'automatic') {
-      // IPv4
-      if (internetConnectionTab.value === strings.configuration.ipv4) {
+      if (internetConnectionTab.value === TAB_IPV4) {
         items.push(
           <ItemTextWithLabel
             key="ipAddress"
@@ -455,9 +457,7 @@ const Configuration = props => {
             value={displayValue(internetConnection, 'secondaryDns')}
           />,
         );
-      }
-      // IPv6
-      else if (ipv6Support) {
+      } else if (internetConnectionTab.value === TAB_IPV6 && ipv6Support) {
         items.push(
           <ItemTextWithLabel
             key="ipAddressV6"
@@ -495,8 +495,7 @@ const Configuration = props => {
         );
       }
     } else if (type === 'manual') {
-      // IPv4
-      if (internetConnectionTab.value === strings.configuration.ipv4) {
+      if (internetConnectionTab.value === TAB_IPV4) {
         items.push(
           <ItemTextWithLabelEditable
             key="ipAddress"
@@ -547,10 +546,7 @@ const Configuration = props => {
             onEdit={onEditInternetConnectionSettings}
           />,
         );
-      }
-
-      // IPv6
-      else if (ipv6Support) {
+      } else if (internetConnectionTab.value === TAB_IPV6 && ipv6Support) {
         items.push(
           <ItemTextWithLabelEditable
             key="ipAddressV6"
@@ -647,7 +643,8 @@ const Configuration = props => {
       />,
     ];
 
-    if (ipv6Support) {
+    if (ipv6Support && type && type !== 'bridge') {
+      // Only include the IPV4/IPV6 tabs if not bridge.
       items.push(
         <ItemTab
           key="iptabs"
@@ -663,8 +660,7 @@ const Configuration = props => {
     if (type === 'bridge') {
       // Nothing is added
     } else if (type === 'manual') {
-      // IPv4
-      if (deviceConnectionTab.value === strings.configuration.ipv4) {
+      if (deviceConnectionTab.value === TAB_IPV4) {
         items.push(
           <ItemTextWithLabelEditable
             key="subnet"
@@ -705,10 +701,7 @@ const Configuration = props => {
             onEdit={onEditDeviceModeSettings}
           />,
         );
-      }
-
-      // IPv6
-      else if (ipv6Support) {
+      } else if (deviceConnectionTab.value === TAB_IPV6 && ipv6Support) {
         items.push(
           <ItemTextWithLabelEditable
             key="subnetV6"
@@ -750,9 +743,8 @@ const Configuration = props => {
           />,
         );
       }
-    } else if (type === 'nat' || !type) {
-      // IPv4
-      if (deviceConnectionTab.value === strings.configuration.ipv4) {
+    } else if (type === 'nat') {
+      if (deviceConnectionTab.value === TAB_IPV4) {
         items.push(
           <ItemTextWithLabel
             key="subnet"
@@ -781,10 +773,7 @@ const Configuration = props => {
             value={displayValue(deviceMode, 'endIP')}
           />,
         );
-      }
-
-      // IPv6
-      else if (ipv6Support) {
+      } else if (deviceConnectionTab.value === TAB_IPV6 && ipv6Support) {
         items.push(
           <ItemTextWithLabel
             key="subnetV6"
@@ -858,22 +847,21 @@ const Configuration = props => {
       />,
     ];
 
-    if (ipv6Support) {
-      items.push(
-        <ItemTab
-          key="iptabs"
-          tabs={connectionTypeTabs}
-          titleKey={'label'}
-          selected={connectionTypeTabs.findIndex(tab => tab.value === dnsConnectionTab.value)}
-          onChange={val => setDnsConnectionTab(val)}
-          height={30}
-        />,
-      );
-    }
-
     if (custom) {
-      // ipv4
-      if (dnsConnectionTab.value === strings.configuration.ipv4) {
+      if (ipv6Support) {
+        items.push(
+          <ItemTab
+            key="iptabs"
+            tabs={connectionTypeTabs}
+            titleKey={'label'}
+            selected={connectionTypeTabs.findIndex(tab => tab.value === dnsConnectionTab.value)}
+            onChange={val => setDnsConnectionTab(val)}
+            height={30}
+          />,
+        );
+      }
+
+      if (dnsConnectionTab.value === TAB_IPV4) {
         items.push(
           <ItemTextWithLabelEditable
             key="primary"
@@ -896,9 +884,7 @@ const Configuration = props => {
             onEdit={onEditCustomDnsSettings}
           />,
         );
-      }
-      // ipv6
-      else if (ipv6Support) {
+      } else if (dnsConnectionTab.value === TAB_IPV6 && ipv6Support) {
         items.push(
           <ItemTextWithLabelEditable
             key="primaryV6"
