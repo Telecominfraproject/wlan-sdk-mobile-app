@@ -12,7 +12,7 @@ import { strings } from '../localization/LocalizationStrings';
 import isEqual from 'lodash.isequal';
 
 const ItemTextWithLabelEditable = props => {
-  const { type = '', maxLength = 255, secureTextEntry = false } = props;
+  const { type = '', maxLength = 255 } = props;
   const [loading, setLoading] = useState(false);
   const [edit, setEdit] = useState(false);
   const [value, setValue] = useState(props.value);
@@ -86,7 +86,7 @@ const ItemTextWithLabelEditable = props => {
     if (type) {
       let types = type.split('|');
       let regexResult = false;
-      let regexSeen = true;
+      let regexSeen = false;
 
       types.forEach(typeItem => {
         if (!regexResult) {
@@ -156,7 +156,7 @@ const ItemTextWithLabelEditable = props => {
     if (type) {
       let types = type.split('|');
       let regexResult = false;
-      let regexSeen = true;
+      let regexSeen = false;
 
       types.forEach(typeItem => {
         if (!regexResult) {
@@ -458,7 +458,7 @@ const ItemTextWithLabelEditable = props => {
           <Text
             style={[componentStyles.textValue, showPlaceholder() ? componentStyles.textValuePlaceholder : '']}
             numberOfLines={1}>
-            {showPlaceholder() ? props.placeholder : secureTextEntry ? passwordObscure : value}
+            {showPlaceholder() ? props.placeholder : type === 'password' ? passwordObscure : value}
           </Text>
         )}
       </View>
