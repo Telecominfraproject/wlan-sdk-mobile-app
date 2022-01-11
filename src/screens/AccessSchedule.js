@@ -19,8 +19,9 @@ import ItemTimeRange from '../components/ItemTimeRange';
 export default function AccessSchedule({ navigation, route }) {
   let sectionZIndex = 20;
   let rangeZIndex = 100;
+  // TODO: mock data
   // const { device, deviceIndex, scheduleIndex } = route.params;
-  const { deviceIndex, scheduleIndex } = route.params;
+  const { deviceIndex, scheduleIndex = 1 } = route.params;
   const device = {
     description: 'string',
     firstContact: 0,
@@ -69,8 +70,7 @@ export default function AccessSchedule({ navigation, route }) {
   }, []);
 
   useEffect(() => {
-    // let schedule = device.schedule && device.schedule.schedule && device.schedule.schedule[scheduleIndex];
-    let schedule = device.schedule && device.schedule.schedule && device.schedule.schedule[0];
+    let schedule = device.schedule && device.schedule.schedule && device.schedule.schedule[scheduleIndex];
     if (schedule) {
       setDescription(schedule.description);
       setDay(schedule.day);
@@ -86,7 +86,6 @@ export default function AccessSchedule({ navigation, route }) {
   };
 
   const onEditTime = (index, time) => {
-    // console.log(index, time);
     let updatedTimes = [...times];
     updatedTimes[index] = time;
     setTimes(updatedTimes);
@@ -103,10 +102,7 @@ export default function AccessSchedule({ navigation, route }) {
   };
 
   const onSubmitPress = async () => {
-    if (!description || !day) {
-      showGeneralError(strings.errors.titleAccessScheduler, strings.errors.emptyFields);
-      return;
-    }
+    if (!validSchedule()) return;
 
     try {
       setLoading(true);
@@ -154,6 +150,23 @@ export default function AccessSchedule({ navigation, route }) {
     }
   };
 
+  const validSchedule = () => {
+    if (!description || !day) {
+      showGeneralError(strings.errors.titleAccessScheduler, strings.errors.emptyFields);
+      return false;
+    } else if (!validateAccessTimes()) {
+      showGeneralError(strings.errors.titleAccessScheduler, strings.errors.invalidAccessTime);
+      return false;
+    } else return true;
+  };
+
+  const validateAccessTimes = () => {
+    return times.every(time => {
+      let temp = time.split('-');
+      return Number(temp[0]) < Number(temp[1]);
+    });
+  };
+
   // Styles
   const componentStyles = StyleSheet.create({
     sectionAccordion: {
@@ -191,13 +204,13 @@ export default function AccessSchedule({ navigation, route }) {
               value={day}
               setValue={setDay}
               items={[
+                { label: strings.accessSchedule.sunday, value: strings.accessSchedule.sunday },
                 { label: strings.accessSchedule.monday, value: strings.accessSchedule.monday },
                 { label: strings.accessSchedule.tuesday, value: strings.accessSchedule.tuesday },
                 { label: strings.accessSchedule.wednesday, value: strings.accessSchedule.wednesday },
                 { label: strings.accessSchedule.thursday, value: strings.accessSchedule.thursday },
                 { label: strings.accessSchedule.friday, value: strings.accessSchedule.friday },
                 { label: strings.accessSchedule.saturday, value: strings.accessSchedule.saturday },
-                { label: strings.accessSchedule.sunday, value: strings.accessSchedule.sunday },
               ]}
               onChangeValue={() => {
                 console.log(day);
@@ -235,7 +248,7 @@ export default function AccessSchedule({ navigation, route }) {
             />
             <ButtonStyled
               style={componentStyles.buttonRight}
-              title={scheduleIndex && Number.isInteger(scheduleIndex) ? strings.buttons.update : strings.buttons.add}
+              title={Number.isInteger(scheduleIndex) ? strings.buttons.update : strings.buttons.add}
               type="filled"
               onPress={onSubmitPress}
             />

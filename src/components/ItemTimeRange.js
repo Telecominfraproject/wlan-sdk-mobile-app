@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { blackColor, errorColor, grayColor, paddingHorizontalDefault, primaryColor, whiteColor } from '../AppStyle';
+import { blackColor, errorColor, paddingHorizontalDefault, primaryColor } from '../AppStyle';
 import { strings } from '../localization/LocalizationStrings';
 import ItemPickerWithLabel from './ItemPickerWithLabel';
 import { showGeneralError } from '../Utils';
@@ -29,20 +29,21 @@ export default function ItemTimeRange(props) {
   };
 
   const onEditRange = () => {
-    // check if valid range
-    start >= end
-      ? showGeneralError(strings.errors.titleAccessScheduler, strings.errors.invalidAccessTime)
-      : updateRange();
+    if (Number.isInteger(start) && Number.isInteger(end)) {
+      // check if valid range
+      if (start >= end) {
+        showGeneralError(strings.errors.titleAccessScheduler, strings.errors.invalidAccessTime);
+      }
+      updateRange();
+    }
   };
 
   const updateRange = () => {
-    if (Number.isInteger(start) && Number.isInteger(end)) {
-      let test = `${start}:00 - ${end}:00`;
-      console.log(test);
+    let test = `${start}:00 - ${end}:00`;
+    console.log(test);
 
-      let updated = `${start * 100}-${end * 100}`;
-      onEditTime(updated);
-    }
+    let updated = `${start * 100}-${end * 100}`;
+    onEditTime(updated);
   };
 
   const componentStyles = StyleSheet.create({
@@ -87,21 +88,6 @@ export default function ItemTimeRange(props) {
       height: 16,
       resizeMode: 'contain',
       marginLeft: paddingHorizontalDefault,
-    },
-    picker: {
-      height: 28,
-      paddingHorizontal: 0,
-      borderWidth: props.style && props.style.borderWidth ? props.style.borderWidth : undefined,
-      borderRadius: props.style && props.style.borderRadius ? props.style.borderRadius : undefined,
-    },
-    pickerDisabled: {
-      opacity: 0.4,
-    },
-    dropDownContainer: {
-      borderWidth: 1,
-      borderRadius: 0,
-      backgroundColor: whiteColor,
-      borderColor: grayColor,
     },
   });
 
