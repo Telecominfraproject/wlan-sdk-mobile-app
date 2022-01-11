@@ -10,14 +10,46 @@ import {
   selectSubscriberInformationLoading,
 } from '../store/SubscriberInformationSlice';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
-import ItemColumnsWithValues from '../components/ItemColumnsWithValues';
 import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
 import ButtonStyled from '../components/ButtonStyled';
-import { logStringifyPretty, modifySubscriberInformation } from '../Utils';
+import { logStringifyPretty, modifySubscriberInformation, showGeneralError } from '../Utils';
 import { handleApiError } from '../api/apiHandler';
+import ItemTimeRange from '../components/ItemTimeRange';
 
 export default function AccessSchedule({ navigation, route }) {
-  const { device, deviceIndex, scheduleIndex } = route.params;
+  let sectionZIndex = 20;
+  let rangeZIndex = 100;
+  // const { device, deviceIndex, scheduleIndex } = route.params;
+  const { deviceIndex, scheduleIndex } = route.params;
+  const device = {
+    description: 'string',
+    firstContact: 0,
+    group: 'string',
+    icon: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+    ip: 'string',
+    lastContact: 0,
+    macAddress: '80:35:c1:56:7c:97',
+    manufacturer: 'string',
+    name: 'ABC Phone',
+    schedule: {
+      description: 'Parental Controls',
+      created: 0,
+      modified: 0,
+      schedule: [
+        {
+          description: 'Friday Schedule',
+          day: 'Friday',
+          rangeList: ['800-1200', '1300-2400'],
+        },
+        {
+          description: 'Saturday Schedule',
+          day: 'Saturday',
+          rangeList: ['1000-2400'],
+        },
+      ],
+    },
+    suspended: true,
+  };
   const isMounted = useRef(false);
   const accessPoint = useSelector(selectAccessPoint);
   const subscriberInformation = useSelector(selectSubscriberInformation);
@@ -37,19 +69,45 @@ export default function AccessSchedule({ navigation, route }) {
   }, []);
 
   useEffect(() => {
-    let schedule = device.schedule && device.schedule.schedule && device.schedule.schedule[scheduleIndex];
+    // let schedule = device.schedule && device.schedule.schedule && device.schedule.schedule[scheduleIndex];
+    let schedule = device.schedule && device.schedule.schedule && device.schedule.schedule[0];
     if (schedule) {
       setDescription(schedule.description);
       setDay(schedule.day);
       setTimes(schedule.rangeList);
     }
-  }, [device, scheduleIndex]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const onAddTime = () => {
+    let updatedTimes = [...times];
+    updatedTimes.push('0-100');
+    setTimes(updatedTimes);
+    console.log(updatedTimes);
+  };
+
+  const onEditTime = (index, time) => {
+    // console.log(index, time);
+    let updatedTimes = [...times];
+    updatedTimes[index] = time;
+    setTimes(updatedTimes);
+  };
+
+  const onDeleteTime = index => {
+    let updatedTimes = [...times];
+    updatedTimes.splice(index, 1);
+    setTimes(updatedTimes);
+  };
 
   const onCancelPress = () => {
     navigation.goBack();
   };
 
   const onSubmitPress = async () => {
+    if (!description || !day) {
+      showGeneralError(strings.errors.titleAccessScheduler, strings.errors.emptyFields);
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -116,7 +174,7 @@ export default function AccessSchedule({ navigation, route }) {
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.containerPostLogin}>
           <AccordionSection
-            style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: 1 }])}
+            style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
             title={strings.accessSchedule.accessSchedule}
             disableAccordion={true}
             isLoading={loading}>
@@ -149,42 +207,23 @@ export default function AccessSchedule({ navigation, route }) {
           </AccordionSection>
 
           <AccordionSection
-            style={componentStyles.sectionAccordion}
+            style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
             title={strings.accessSchedule.accessTimes}
             disableAccordion={true}
             isLoading={subscriberInformationLoading}
             showAdd={true}
-            onAddPress={() => {
-              navigation.navigate('AccessTimeRange', { day, description, macAddress: device.macAddress });
-            }}>
-            {times.map((item, index) => {
-              let result = [
-                <ItemColumnsWithValues
-                  key={'range_' + index}
-                  type="value"
-                  values={[item]}
-                  showDelete={true}
-                  onDeletePress={() => {}}
-                  showEdit={true}
-                  onEditPress={() => {}}
-                />,
-              ];
-
-              if (index === 0) {
-                // Add in a header to the start of the array if this is the first index
-                result.unshift(
-                  <ItemColumnsWithValues
-                    key="label"
-                    type="label"
-                    values={[strings.accessSchedule.ranges]}
-                    showDelete={true}
-                    showEdit={true}
-                  />,
-                );
-              }
-
-              return result;
-            })}
+            onAddPress={onAddTime}>
+            {times.map((time, index) => (
+              <ItemTimeRange
+                key={'range_' + index}
+                range={time}
+                showEdit={true}
+                onEditTime={value => onEditTime(index, value)}
+                showDelete={true}
+                onDeletePress={() => onDeleteTime(index)}
+                zIndex={rangeZIndex--}
+              />
+            ))}
           </AccordionSection>
 
           <View style={pageItemStyle.containerButtons}>
