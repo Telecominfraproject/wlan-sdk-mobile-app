@@ -4,24 +4,20 @@ import AccordionSection from '../components/AccordionSection';
 import { strings } from '../localization/LocalizationStrings';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { useSelector } from 'react-redux';
-import {
-  selectAccessPoint,
-  selectSubscriberInformation,
-  selectSubscriberInformationLoading,
-} from '../store/SubscriberInformationSlice';
+import { selectCurrentAccessPointId, selectSubscriberInformationLoading } from '../store/SubscriberInformationSlice';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
 import ButtonStyled from '../components/ButtonStyled';
-import { logStringifyPretty, modifySubscriberInformation, showGeneralError } from '../Utils';
+import { logStringifyPretty, modifySubscriberDevice, showGeneralError } from '../Utils';
 import { handleApiError } from '../api/apiHandler';
 import ItemTimeRange from '../components/ItemTimeRange';
 
 export default function AccessSchedule({ navigation, route }) {
   let sectionZIndex = 20;
   let rangeZIndex = 100;
-  const { device, deviceIndex, scheduleIndex } = route.params;
+  // const { device, deviceIndex, scheduleIndex } = route.params;
   // TODO: test data
-  /*const { deviceIndex, scheduleIndex = 1 } = route.params;
+  const { deviceIndex, scheduleIndex = 0 } = route.params;
   const device = {
     description: 'string',
     firstContact: 0,
@@ -50,10 +46,9 @@ export default function AccessSchedule({ navigation, route }) {
       ],
     },
     suspended: true,
-  };*/
+  };
   const isMounted = useRef(false);
-  const accessPoint = useSelector(selectAccessPoint);
-  const subscriberInformation = useSelector(selectSubscriberInformation);
+  const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
   const [loading, setLoading] = useState(false);
   const [description, setDescription] = useState();
@@ -106,35 +101,25 @@ export default function AccessSchedule({ navigation, route }) {
     try {
       setLoading(true);
 
-      // subscriber info json
-      let updatedSubscriber = JSON.parse(JSON.stringify(subscriberInformation));
-
-      // subscriber device json
-      let subscriberDevice = JSON.parse(JSON.stringify(device));
-      let accessTimes = subscriberDevice.schedule;
+      // device AccessTimes schedule
+      let accessTimes = JSON.parse(JSON.stringify(device.schedule));
       let schedule = accessTimes.schedule;
 
       if (!schedule) {
-        console.error('No SubscriberDevice.schedule.schedule found');
+        console.error('SubscriberDevice.schedule.schedule not found');
         return;
       }
 
-      // update device schedule
+      // update AccessTimes schedule
       let accessTime = { description, day, rangeList: times };
       if (Number.isInteger(scheduleIndex)) {
         schedule[scheduleIndex] = accessTime;
       } else {
         schedule.push(accessTime);
       }
+      logStringifyPretty(accessTimes);
 
-      // update subscriber info with updated device json
-      const accessPointIndex = subscriberInformation.accessPoints.list.findIndex(ap => ap.id === accessPoint.id) || 0;
-      if (deviceIndex) {
-        updatedSubscriber.accessPoints.list[accessPointIndex].subscriberDevices.devices[deviceIndex] = subscriberDevice;
-      } else updatedSubscriber.accessPoints.list[accessPointIndex].subscriberDevices.devices[0] = subscriberDevice;
-
-      logStringifyPretty(updatedSubscriber);
-      await modifySubscriberInformation(updatedSubscriber);
+      await modifySubscriberDevice(currentAccessPointId, deviceIndex, { schedule: accessTimes });
 
       if (isMounted.current) {
         // On success just go back
