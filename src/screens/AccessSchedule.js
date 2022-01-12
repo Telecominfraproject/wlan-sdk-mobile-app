@@ -19,9 +19,9 @@ import ItemTimeRange from '../components/ItemTimeRange';
 export default function AccessSchedule({ navigation, route }) {
   let sectionZIndex = 20;
   let rangeZIndex = 100;
-  // TODO: mock data
-  // const { device, deviceIndex, scheduleIndex } = route.params;
-  const { deviceIndex, scheduleIndex = 1 } = route.params;
+  const { device, deviceIndex, scheduleIndex } = route.params;
+  // TODO: test data
+  /*const { deviceIndex, scheduleIndex = 1 } = route.params;
   const device = {
     description: 'string',
     firstContact: 0,
@@ -50,7 +50,7 @@ export default function AccessSchedule({ navigation, route }) {
       ],
     },
     suspended: true,
-  };
+  };*/
   const isMounted = useRef(false);
   const accessPoint = useSelector(selectAccessPoint);
   const subscriberInformation = useSelector(selectSubscriberInformation);
@@ -82,7 +82,6 @@ export default function AccessSchedule({ navigation, route }) {
     let updatedTimes = [...times];
     updatedTimes.push('0-100');
     setTimes(updatedTimes);
-    console.log(updatedTimes);
   };
 
   const onEditTime = (index, time) => {

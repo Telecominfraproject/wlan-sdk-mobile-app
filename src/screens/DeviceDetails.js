@@ -50,6 +50,36 @@ const DeviceDetails = props => {
   const subscriberDevice = useMemo(() => {
     if (subscriberDevices !== null && subscriberDeviceIndex !== null) {
       return subscriberDevices.devices[subscriberDeviceIndex];
+      // TODO test data
+      /*return {
+        description: 'string',
+        firstContact: 0,
+        group: 'string',
+        icon: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        ip: 'string',
+        lastContact: 0,
+        macAddress: '80:35:c1:56:7c:97',
+        manufacturer: 'string',
+        name: 'ABC Phone',
+        schedule: {
+          description: 'Parental Controls',
+          created: 0,
+          modified: 0,
+          schedule: [
+            {
+              description: 'Friday Schedule',
+              day: 'Friday',
+              rangeList: ['800-1200', '1300-2400'],
+            },
+            {
+              description: 'Saturday Schedule',
+              day: 'Saturday',
+              rangeList: ['1000-2400'],
+            },
+          ],
+        },
+        suspended: true,
+      };*/
     }
 
     return null;
@@ -207,6 +237,12 @@ const DeviceDetails = props => {
         setLoading(false);
       }
     }
+  };
+
+  const onDeleteSchedule = index => {
+    let accessTimes = JSON.parse(JSON.stringify(subscriberDevice.schedule));
+    accessTimes.schedule.splice(index, 1);
+    updateSubscriberDeviceValue({ schedule: accessTimes });
   };
 
   // Styles
@@ -379,7 +415,7 @@ const DeviceDetails = props => {
                     type="value"
                     values={[item.description]}
                     showDelete={true}
-                    onDeletePress={() => {}}
+                    onDeletePress={() => onDeleteSchedule(index)}
                     showEdit={true}
                     onEditPress={() =>
                       props.navigation.navigate('AccessSchedule', {

@@ -39,9 +39,8 @@ export default function ItemTimeRange(props) {
   };
 
   const updateRange = () => {
-    let test = `${start}:00 - ${end}:00`;
-    console.log(test);
-
+    // let test = `${start}:00 - ${end}:00`;
+    // console.log(test);
     let updated = `${start * 100}-${end * 100}`;
     onEditTime(updated);
   };
