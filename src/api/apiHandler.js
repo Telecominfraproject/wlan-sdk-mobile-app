@@ -230,10 +230,28 @@ function get403ErrorFromData(error) {
         return strings.errors.apiPasswordInvalid;
 
       case 6:
-        return strings.errors.apiAccessDenied;
+        return strings.errors.apiInternalError;
 
       case 7:
+        return strings.errors.apiAccessDenied;
+
+      case 8:
         return strings.errors.apiInvalidToken;
+
+      case 9:
+        return strings.errors.apiExpiredToken;
+
+      case 10:
+        return strings.errors.apiRateLimitExceeded;
+
+      case 11:
+        return strings.errors.apiBadMfaTransaction;
+
+      case 12:
+        return strings.errors.apiMfaFailure;
+
+      case 13:
+        return strings.errors.apiSecurityServiceUnreachable;
 
       default:
         if (error.ErrorDescription) {

@@ -4,12 +4,18 @@ export const strings = new LocalizedStrings({
   en: {
     errors: {
       apiAccessDenied: 'Access denied. Trying signing in again.',
-      apiPasswordAlreadyUsed: 'Password already in use, please select a different password.',
-      apiPasswordChangeRequired: 'Password must be changed to continue.',
+      apiBadMfaTransaction: 'Multi-factor authentication was not accepted, please try again.',
+      apiExpiredToken: 'Token has expired, please sign in again.',
+      apiInternalError: 'Server had an internal error, please try again',
       apiInvalidCredentials: 'Invalid credentials, check username and/or password.',
       apiInvalidToken: 'Token is no longer valid, please sign in again.',
-      apiPasswordInvalid: 'Password is invalid',
-      apiUsernamePendingVerification: 'Email requires validation',
+      apiMfaFailure: 'Multi-factor authentication failed, please try again.',
+      apiSecurityServiceUnreachable: 'Security service is not reachable, please wait and try again.',
+      apiPasswordAlreadyUsed: 'Password already in use, please select a different password.',
+      apiPasswordChangeRequired: 'Password must be changed to continue.',
+      apiPasswordInvalid: 'Password is invalid.',
+      apiRateLimitExceeded: 'Server has received too many calls, please wait and try again.',
+      apiUsernamePendingVerification: 'Email requires validation.',
       cannotChangePhoneMfa:
         'Cannot change your phone number while MFA (Multi-Factor Authentication) is configured to SMS. Please change MFA before updating your phone number.',
       emptyField: '{0} field must not be empty.',
