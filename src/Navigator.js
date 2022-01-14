@@ -9,26 +9,26 @@ import { selectAccessPoint } from './store/SubscriberInformationSlice';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+import AccessSchedule from './screens/AccessSchedule';
+import AccessTimeRange from './screens/AccessTimeRange';
 import BrandSelector from './screens/BrandSelector';
+import ChangePassword from './screens/ChangePassword';
+import Configuration from './screens/Configuration';
 import Dashboard from './screens/Dashboard';
 import DeviceDetails from './screens/DeviceDetails';
+import DeviceRegistration from './screens/DeviceRegistration';
+import ForgotPassword from './screens/ForgotPassword';
+import IpReservationAddEdit from './screens/IpReservationAddEdit';
+import NavigationHeader from './components/NavigationHeader';
 import Network from './screens/Network';
 import NetworkAdd from './screens/NetworkAdd';
-import IpReservationAddEdit from './screens/IpReservationAddEdit';
-import ForgotPassword from './screens/ForgotPassword';
-import NavigationHeader from './components/NavigationHeader';
-import Configuration from './screens/Configuration';
 import MfaCode from './screens/MfaCode';
 import PhoneVerification from './screens/PhoneVerification';
 import PrivacyPolicy from './screens/PrivacyPolicy';
 import Profile from './screens/Profile';
-import ChangePassword from './screens/ChangePassword';
 import SignIn from './screens/SignIn';
 import SignUp from './screens/SignUp';
 import TermsConditions from './screens/TermsConditions';
-import DeviceRegistration from './screens/DeviceRegistration';
-import AccessSchedule from './screens/AccessSchedule';
-import AccessTimeRange from './screens/AccessTimeRange';
 
 const Navigator = () => {
   const brandInfo = useSelector(selectBrandInfo);
