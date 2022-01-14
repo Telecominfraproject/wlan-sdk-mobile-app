@@ -12,7 +12,8 @@
     "generate:security-apis": "export TS_POST_PROCESS_FILE='yarn prettier --write'; npx openapi-generator-cli generate -i https://raw.githubusercontent.com/Telecominfraproject/wlan-cloud-ucentralsec/main/openpapi/ucentralsec/owsec.yaml -g typescript-axios -o ./src/api/generated/owSecurityApi --ignore-file-override=.openapi-generator-ignore --enable-post-process-file",
     "generate:userportal-apis": "export TS_POST_PROCESS_FILE='yarn prettier --write'; npx openapi-generator-cli generate -i ./src/api/open-api/userportal.yaml -g typescript-axios -o ./src/api/generated/owUserPortalApi --ignore-file-override=.openapi-generator-ignore --enable-post-process-file",
     "generate:gateway-apis": "export TS_POST_PROCESS_FILE='yarn prettier --write'; npx openapi-generator-cli generate -i https://raw.githubusercontent.com/Telecominfraproject/wlan-cloud-ucentralgw/master/openapi/ucentral/owgw.yaml -g typescript-axios -o ./src/api/generated/owGatewayApi --ignore-file-override=.openapi-generator-ignore --enable-post-process-file",
-    "generate:provisioning-apis": "export TS_POST_PROCESS_FILE='yarn prettier --write'; npx openapi-generator-cli generate -i https://raw.githubusercontent.com/Telecominfraproject/wlan-cloud-owprov/main/openapi/owprov.yaml -g typescript-axios -o ./src/api/generated/owProvisioningApi --ignore-file-override=.openapi-generator-ignore --enable-post-process-file"
+    "generate:provisioning-apis": "export TS_POST_PROCESS_FILE='yarn prettier --write'; npx openapi-generator-cli generate -i https://raw.githubusercontent.com/Telecominfraproject/wlan-cloud-owprov/main/openapi/owprov.yaml -g typescript-axios -o ./src/api/generated/owProvisioningApi --ignore-file-override=.openapi-generator-ignore --enable-post-process-file",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^6.0.9",
@@ -21,6 +22,8 @@
     "@reduxjs/toolkit": "^1.6.2",
     "axios": "^0.23.0",
     "lodash.isequal": "^4.5.0",
+    "patch-package": "^6.4.7",
+    "postinstall-postinstall": "^2.1.0",
     "react": "17.0.2",
     "react-native": "0.66.4",
     "react-native-dropdown-picker": "^5.2.3",
