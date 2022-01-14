@@ -98,6 +98,7 @@ export const pageItemStyle = StyleSheet.create({
     marginTop: 20,
     height: 75,
     width: '100%',
+    maxWidth: 250,
     resizeMode: 'contain',
   },
   title: {

@@ -27,6 +27,7 @@ const ItemBrand = props => {
     icon: {
       height: 75,
       width: '100%',
+      maxWidth: 250,
       marginTop: marginTopDefault,
       resizeMode: 'contain',
     },

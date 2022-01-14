@@ -10,13 +10,14 @@ export default function NavigationHeader(navigation, route, brandInfo) {
       alignItems: 'center',
     },
     button: {
-      width: 30,
       height: 30,
+      width: 30,
       resizeMode: 'contain',
     },
     logo: {
-      width: 70,
-      height: 50,
+      height: 30,
+      width: '100%',
+      maxWidth: 100,
       resizeMode: 'contain',
       marginHorizontal: paddingHorizontalDefault / 2,
     },
