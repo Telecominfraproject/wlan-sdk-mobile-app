@@ -10,7 +10,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import AccessSchedule from './screens/AccessSchedule';
-import AccessTimeRange from './screens/AccessTimeRange';
 import BrandSelector from './screens/BrandSelector';
 import ChangePassword from './screens/ChangePassword';
 import Configuration from './screens/Configuration';
@@ -117,11 +116,6 @@ const Navigator = () => {
           name="AccessSchedule"
           component={AccessSchedule}
           options={{ title: strings.navigator.accessSchedule }}
-        />
-        <NetworkStack.Screen
-          name="AccessTimeRange"
-          component={AccessTimeRange}
-          options={{ title: strings.navigator.accessTime }}
         />
       </NetworkStack.Navigator>
     );
