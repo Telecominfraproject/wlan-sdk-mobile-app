@@ -22,6 +22,7 @@ import ButtonStyled from '../components/ButtonStyled';
 import ItemTextWithLabel from '../components/ItemTextWithLabel';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
+import VersionInfo from 'react-native-version-info';
 
 const Profile = props => {
   // The sectionZIndex is used to help with any embedded picker/dropdown. Start with a high enough
@@ -224,6 +225,10 @@ const Profile = props => {
     },
   });
 
+  const getVersionString = () => {
+    return VersionInfo.appVersion + ' (' + VersionInfo.buildVersion + ')';
+  };
+
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
       <ScrollView ref={scrollRef} contentContainerStyle={pageStyle.scrollView}>
@@ -299,7 +304,7 @@ const Profile = props => {
             title={strings.profile.app}
             isLoading={false}
             disableAccordion={true}>
-            <ItemTextWithLabel key="version" label={strings.profile.version} value="V1.0.0" />
+            <ItemTextWithLabel key="version" label={strings.profile.version} value={getVersionString()} />
           </AccordionSection>
         </View>
       </ScrollView>
