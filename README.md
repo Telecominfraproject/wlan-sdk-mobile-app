@@ -59,3 +59,17 @@ To generate resized device images from raw files run the following:
 - yarn generate:assets
 
 Note that this requires ImageMagic to be installed. See https://github.com/kevva/resize-img-cli. The files in this directory should match exactly the names of the deviceTypes for the Access Points. As well, this will require a code change to associate the correct file with the correct image. 
+
+# Release Builds
+
+To generate an Android release build, you will need to ensure the following
+- The file release.keystore exists in android/app
+- The local file ~/.gradle/gradle.properties is configured properly, see android/gradle.properties for what is needed
+
+To create:
+- Update the package version number in package.json
+- yarn react-native-version
+- cd android
+- ./gradlew bundleRelease
+
+Resulting file will be in android/app/build/outputs/bundle/release/. It should be renamed to MyOpenWifi.aab
