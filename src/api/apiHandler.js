@@ -9,11 +9,12 @@ import { showGeneralError } from '../Utils';
 import {
   AuthenticationApiFactory,
   ClientsApiFactory,
+  Configuration as UserPortalConfiguration,
   DeviceCommandsApiFactory,
+  MFAApiFactory,
+  SubscriberDeviceApiFactory,
   SubscriberInformationApiFactory,
   WiFiClientsApiFactory,
-  Configuration as UserPortalConfiguration,
-  MFAApiFactory,
 } from './generated/owUserPortalApi';
 import {
   hasInternetCredentials,
@@ -40,6 +41,7 @@ var baseUserPortalUrl = null;
 var authenticationApi = null;
 var deviceCommandsApi = null;
 var mfaApi = null;
+var subscriberDeviceApi = null;
 var subscriberInformationApi = null;
 var wiredClientsApi = null;
 var wifiClientsApi = null;
@@ -57,6 +59,9 @@ function generateApis() {
     ? new DeviceCommandsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
     : null;
   mfaApi = baseUserPortalUrl ? new MFAApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance) : null;
+  subscriberDeviceApi = baseUserPortalUrl
+    ? new SubscriberDeviceApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
+    : null;
   subscriberInformationApi = baseUserPortalUrl
     ? new SubscriberInformationApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
     : null;
@@ -268,6 +273,7 @@ export {
   authenticationApi,
   deviceCommandsApi,
   mfaApi,
+  subscriberDeviceApi,
   subscriberInformationApi,
   wifiClientsApi,
   wiredClientsApi,

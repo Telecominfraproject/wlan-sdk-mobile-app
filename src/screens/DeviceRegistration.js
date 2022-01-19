@@ -4,7 +4,7 @@ import { ActivityIndicator, SafeAreaView, ScrollView, Text, TextInput, View } fr
 import { pageItemStyle, pageStyle, primaryColor } from '../AppStyle';
 import { useSelector } from 'react-redux';
 import { selectSubscriberInformationLoading } from '../store/SubscriberInformationSlice';
-import { handleApiError } from '../api/apiHandler';
+import { handleApiError, subscriberDeviceApi } from '../api/apiHandler';
 import { addAccessPoint } from '../Utils';
 import ButtonStyled from '../components/ButtonStyled';
 
@@ -20,6 +20,12 @@ export default function DeviceRegistration({ navigation, route }) {
 
   const onSubmitPress = async () => {
     try {
+      let response = await subscriberDeviceApi.deviceClaim(macAddress, 'Mobile App');
+
+      if (response.data.errorCode !== 0) {
+        throw new Error(response.data.errorText);
+      }
+
       await addAccessPoint({ macAddress: macAddress });
 
       navigation.goBack();
