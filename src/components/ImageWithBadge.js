@@ -23,8 +23,8 @@ const ImageWithBadge = props => {
       width: 30,
       height: 30,
       position: 'absolute',
-      top: -10,
-      right: -10,
+      top: -8,
+      right: -8,
       // Contents
       flexDirection: 'row',
       flexWrap: 'nowrap',
