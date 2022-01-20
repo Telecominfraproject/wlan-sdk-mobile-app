@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import axios from 'axios';
+import Config from 'react-native-config';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, View, Text, ActivityIndicator } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { handleApiError } from '../api/apiHandler';
+import { scrollViewToTop } from '../Utils';
 import { useDispatch } from 'react-redux';
 import { setBrandInfo } from '../store/BrandInfoSlice';
 import ItemBrand from '../components/ItemBrand';
@@ -9,33 +14,83 @@ import TextInputWithIcon from '../components/TextInputWithIcon';
 
 const BrandSelector = props => {
   const dispatch = useDispatch();
-  // Currently the following state does not change, but the expectation is that this information
-  // will come from an API so it is being left as is for this development
+  // Refs
+  const scrollRef = useRef();
+  const isMounted = useRef(false);
+  // State
   const [loading, setLoading] = useState(false);
-  const [brands, setBrands] = useState([
-    {
-      id: 'lindsay',
-      name: 'Lindsay Broadband',
-      iconUri: 'https://lindsaybb.arilia.com/assets/LindsayBB_Logo.png',
-      primaryColor: '#f16b1f',
-      baseUrlApi: 'https://lindsay.arilia.com:16006',
-    },
-    {
-      id: '14oranges',
-      name: '14 Oranges',
-      iconUri: 'https://14oranges-ui.arilia.com/assets/14Oranges_Logo.png',
-      primaryColor: '#0f5eaa',
-      baseUrlApi: 'https://14oranges.arilia.com:16006',
-    },
-  ]);
+  const [brands, setBrands] = useState([]);
   const [filtered, setFiltered] = useState(false);
   const [filteredBrands, setFilteredBrands] = useState();
 
+  // Keep track of whether the screen is mounted or not so async tasks know if they should access state
+  useEffect(() => {
+    isMounted.current = true;
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  // Refresh the information only anytime there is a navigation change and this has come into focus
+  // Need to be careful here as useFocusEffect is also called during re-render so it can result in
+  // infinite loops.
+  useFocusEffect(
+    useCallback(() => {
+      // Make sure to scroll to top
+      scrollViewToTop(scrollRef);
+
+      // Get the latest brand information
+      getBrands();
+
+      // Disable the eslint warning, as we want to change only on navigation changes
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.navigation]),
+  );
+
+  const getBrands = async () => {
+    try {
+      if (!brands) {
+        setLoading(true);
+      }
+
+      let response = await axios({
+        method: 'get',
+        headers: {
+          'Cache-Control': 'no-cache',
+          Pragma: 'no-cache',
+          Expires: '0',
+        },
+        url: Config.TIP_REGISTRY_URL,
+      });
+
+      // Only update the state if still mounted
+      if (isMounted.current) {
+        let registry = response.data.registry;
+
+        if (registry) {
+          setBrands(registry);
+        } else {
+          setBrands([]);
+        }
+      }
+    } catch (error) {
+      // Do not report the error in this case, as it is no longer there and it is just getting state
+      if (isMounted.current) {
+        handleApiError(strings.errors.titleBrandSelection, error);
+      }
+    } finally {
+      if (isMounted.current) {
+        setLoading(false);
+      }
+    }
+  };
+
   const onSearch = searchText => {
-    if (searchText) {
+    if (searchText && brands) {
       let searchTextLowerCase = searchText.toLowerCase();
       setFiltered(true);
-      setFilteredBrands(brands.filter(b => b.name.toLowerCase().startsWith(searchTextLowerCase)));
+      setFilteredBrands(brands.filter(b => b.org_name.toLowerCase().startsWith(searchTextLowerCase)));
     } else {
       setFiltered(false);
       setFilteredBrands([]);
@@ -94,7 +149,7 @@ const BrandSelector = props => {
               <View style={[pageItemStyle.container]}>
                 <View style={componentStyles.containerList}>
                   {(filtered ? filteredBrands : brands).map(item => {
-                    return <ItemBrand brand={item} key={item.id} onPress={() => onCompanySelect(item)} />;
+                    return <ItemBrand brand={item} key={item.org_name} onPress={() => onCompanySelect(item)} />;
                   })}
                 </View>
               </View>

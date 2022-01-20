@@ -35,7 +35,7 @@ export default function NavigationHeader(navigation, route, brandInfo) {
             <Image style={componentStyles.button} source={require('../assets/chevron-left-white.png')} />
           </Pressable>
         )}
-        {brandInfo && <Image style={componentStyles.logo} source={{ uri: brandInfo.iconUri }} />}
+        {brandInfo && <Image style={componentStyles.logo} source={{ uri: brandInfo.small_org_logo }} />}
       </View>
     ),
   };

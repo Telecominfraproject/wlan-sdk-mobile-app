@@ -80,7 +80,7 @@ const ForgotPassword = props => {
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.containerPreLogin}>
           <View style={pageItemStyle.container}>
-            <Image style={pageItemStyle.headerImage} source={{ uri: brandInfo.iconUri }} />
+            <Image style={pageItemStyle.headerImage} source={{ uri: brandInfo.large_org_logo }} />
           </View>
           <View style={pageItemStyle.container}>
             <Text style={pageItemStyle.title}>{strings.forgotPassword.title}</Text>

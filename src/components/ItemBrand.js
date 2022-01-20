@@ -4,11 +4,11 @@ import { StyleSheet, TouchableOpacity, View, Text, Image } from 'react-native';
 
 const ItemBrand = props => {
   const getCompanyIconUri = () => {
-    return props.brand.iconUri;
+    return props.brand.large_org_logo;
   };
 
   const getCompanyName = () => {
-    return props.brand.name;
+    return props.brand.org_name;
   };
 
   const componentStyles = StyleSheet.create({

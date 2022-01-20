@@ -82,8 +82,8 @@ function getBaseUrlForApi(type) {
     // The owsec currently comes from the branding information, while all
     // other information is from the endpoints API
     const brandInfo = state.brandInfo.value;
-    if (brandInfo && brandInfo.baseUrlApi) {
-      return brandInfo.baseUrlApi + '/api/v1';
+    if (brandInfo && brandInfo.subscriber_portal) {
+      return brandInfo.subscriber_portal + '/api/v1';
     }
   } else {
     const systemInfo = state.systemInfo.value;

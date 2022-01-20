@@ -112,7 +112,7 @@ const SignIn = props => {
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.containerPreLogin}>
           <View style={pageItemStyle.container}>
-            <Image style={componentStyles.headerImage} source={{ uri: brandInfo.iconUri }} />
+            <Image style={componentStyles.headerImage} source={{ uri: brandInfo.large_org_logo }} />
           </View>
           <View style={pageItemStyle.container}>
             <Text style={pageItemStyle.title}>{strings.signIn.title}</Text>

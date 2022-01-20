@@ -31,10 +31,10 @@ function updatePrimaryColorInfo() {
   const state = store.getState();
   let brandInfo = state.brandInfo.value;
 
-  if (brandInfo && brandInfo.primaryColor) {
-    primaryColor = brandInfo.primaryColor;
+  if (brandInfo && brandInfo.org_color_1) {
+    primaryColor = brandInfo.org_color_1;
     primaryColorStyle = StyleSheet.create({
-      color: brandInfo.primaryColor,
+      color: brandInfo.org_color_1,
     });
   }
 }

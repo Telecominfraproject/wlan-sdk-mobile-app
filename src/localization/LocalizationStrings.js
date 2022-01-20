@@ -43,6 +43,7 @@ export const strings = new LocalizedStrings({
       titleAccessPointCommand: 'Access Point Command Error',
       titleAccessPointRegistration: 'Access Point Registration Error',
       titleAccessScheduler: 'Access Schedule Error',
+      titleBrandSelection: 'Brand Selection Error',
       titleChangePassword: 'Change Password Error',
       titleClientRetrieval: 'Client Retrieval Error',
       titleDelete: 'Delete Error',
