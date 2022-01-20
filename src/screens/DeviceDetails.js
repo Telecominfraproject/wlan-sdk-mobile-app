@@ -1,3 +1,4 @@
+import Config from 'react-native-config';
 import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { marginTopDefault, paddingHorizontalDefault, borderRadiusDefault, pageStyle, whiteColor } from '../AppStyle';
@@ -362,57 +363,59 @@ const DeviceDetails = props => {
             />
           </AccordionSection>
 
-          <AccordionSection
-            style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: 1 }])}
-            title={strings.accessSchedule.accessSchedule}
-            disableAccordion={true}
-            isLoading={subscriberInformationLoading}
-            showAdd={true}
-            onAddPress={() =>
-              props.navigation.navigate('AccessSchedule', {
-                device: subscriberDevice,
-                deviceIndex: subscriberDeviceIndex,
-              })
-            }>
-            {subscriberDevice &&
-              subscriberDevice.schedule &&
-              subscriberDevice.schedule.schedule &&
-              subscriberDevice.schedule.schedule.length &&
-              subscriberDevice.schedule.schedule.map((item, index) => {
-                let result = [
-                  <ItemColumnsWithValues
-                    key={'schedule_' + index}
-                    type="value"
-                    values={[item.description]}
-                    showDelete={true}
-                    onDeletePress={() => onDeleteSchedule(index)}
-                    showEdit={true}
-                    onEditPress={() =>
-                      props.navigation.navigate('AccessSchedule', {
-                        device: subscriberDevice,
-                        deviceIndex: subscriberDeviceIndex,
-                        scheduleIndex: index,
-                      })
-                    }
-                  />,
-                ];
-
-                if (index === 0) {
-                  // Add in a header to the start of the array if this is the first index
-                  result.unshift(
+          {Config.PARENTAL_CONTROLS === 'true' && (
+            <AccordionSection
+              style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: 1 }])}
+              title={strings.accessSchedule.accessSchedule}
+              disableAccordion={true}
+              isLoading={subscriberInformationLoading}
+              showAdd={true}
+              onAddPress={() =>
+                props.navigation.navigate('AccessSchedule', {
+                  device: subscriberDevice,
+                  deviceIndex: subscriberDeviceIndex,
+                })
+              }>
+              {subscriberDevice &&
+                subscriberDevice.schedule &&
+                subscriberDevice.schedule.schedule &&
+                subscriberDevice.schedule.schedule.length &&
+                subscriberDevice.schedule.schedule.map((item, index) => {
+                  let result = [
                     <ItemColumnsWithValues
-                      key="label"
-                      type="label"
-                      values={[strings.deviceDetails.description]}
+                      key={'schedule_' + index}
+                      type="value"
+                      values={[item.description]}
                       showDelete={true}
+                      onDeletePress={() => onDeleteSchedule(index)}
                       showEdit={true}
+                      onEditPress={() =>
+                        props.navigation.navigate('AccessSchedule', {
+                          device: subscriberDevice,
+                          deviceIndex: subscriberDeviceIndex,
+                          scheduleIndex: index,
+                        })
+                      }
                     />,
-                  );
-                }
+                  ];
 
-                return result;
-              })}
-          </AccordionSection>
+                  if (index === 0) {
+                    // Add in a header to the start of the array if this is the first index
+                    result.unshift(
+                      <ItemColumnsWithValues
+                        key="label"
+                        type="label"
+                        values={[strings.deviceDetails.description]}
+                        showDelete={true}
+                        showEdit={true}
+                      />,
+                    );
+                  }
+
+                  return result;
+                })}
+            </AccordionSection>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>

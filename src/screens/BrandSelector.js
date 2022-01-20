@@ -1,5 +1,5 @@
-import axios from 'axios';
 import Config from 'react-native-config';
+import axios from 'axios';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
