@@ -360,6 +360,8 @@ const Configuration = props => {
       height: 75,
       width: 75,
       resizeMode: 'contain',
+      borderRadius: 7,
+      backgroundColor: '#f7f7f7',
     },
     sectionNetworkText: {
       flex: 2,
