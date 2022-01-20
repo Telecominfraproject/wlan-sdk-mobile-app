@@ -349,11 +349,12 @@ const Network = props => {
           </AccordionSection>
 
           <ButtonSelector
-            style={componentStyles.networkSwitcher}
+            style={StyleSheet.flatten([componentStyles.networkSwitcher, { zIndex: sectionZIndex-- }])}
             options={wifiNetworks ? wifiNetworks.wifiNetworks : []}
             selected={selectedWifiNetworkIndex}
             maxButtons={2}
             onSelect={onSelectNetwork}
+            zIndex={pickerZIndex--}
           />
 
           <AccordionSection
