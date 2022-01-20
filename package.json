@@ -9,10 +9,7 @@
     "test": "jest",
     "lint": "eslint .",
     "generate:assets": "npx resize-image-cli -s './raw_assets/devices' -d './src/assets/devices/' -w 150 -h 150",
-    "generate:security-apis": "export TS_POST_PROCESS_FILE='yarn prettier --write'; npx openapi-generator-cli generate -i https://raw.githubusercontent.com/Telecominfraproject/wlan-cloud-ucentralsec/main/openpapi/ucentralsec/owsec.yaml -g typescript-axios -o ./src/api/generated/owSecurityApi --ignore-file-override=.openapi-generator-ignore --enable-post-process-file",
     "generate:userportal-apis": "export TS_POST_PROCESS_FILE='yarn prettier --write'; npx openapi-generator-cli generate -i ./src/api/open-api/userportal.yaml -g typescript-axios -o ./src/api/generated/owUserPortalApi --ignore-file-override=.openapi-generator-ignore --enable-post-process-file",
-    "generate:gateway-apis": "export TS_POST_PROCESS_FILE='yarn prettier --write'; npx openapi-generator-cli generate -i https://raw.githubusercontent.com/Telecominfraproject/wlan-cloud-ucentralgw/master/openapi/ucentral/owgw.yaml -g typescript-axios -o ./src/api/generated/owGatewayApi --ignore-file-override=.openapi-generator-ignore --enable-post-process-file",
-    "generate:provisioning-apis": "export TS_POST_PROCESS_FILE='yarn prettier --write'; npx openapi-generator-cli generate -i https://raw.githubusercontent.com/Telecominfraproject/wlan-cloud-owprov/main/openapi/owprov.yaml -g typescript-axios -o ./src/api/generated/owProvisioningApi --ignore-file-override=.openapi-generator-ignore --enable-post-process-file",
     "postinstall": "patch-package",
     "postversion": "react-native-version"
   },
