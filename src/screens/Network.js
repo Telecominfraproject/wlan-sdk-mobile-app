@@ -11,7 +11,13 @@ import {
   selectWifiNetworks,
   selectSubscriberDevices,
 } from '../store/SubscriberInformationSlice';
-import { wifiClientsApi, wiredClientsApi, handleApiError } from '../api/apiHandler';
+import {
+  wifiClientsApi,
+  wiredClientsApi,
+  handleApiError,
+  WifiNetworkEncryptionEnum,
+  WifiNetworkTypeEnum,
+} from '../api/apiHandler';
 import {
   scrollViewToTop,
   displayEditableValue,
@@ -370,8 +376,8 @@ const Network = props => {
               disabled={!isGuestNetworkAvailable()}
               disabledReason={strings.messages.guestNetworkExists}
               items={[
-                { label: strings.network.selectorTypeMain, value: 'main' },
-                { label: strings.network.selectorTypeGuest, value: 'guest' },
+                { label: strings.network.selectorTypeMain, value: WifiNetworkTypeEnum.Main },
+                { label: strings.network.selectorTypeGuest, value: WifiNetworkTypeEnum.Guest },
               ]}
               changeKey="type"
               onChangeValue={onEditNetworkSettings}
@@ -400,11 +406,26 @@ const Network = props => {
               value={wifiNetworkEncryption}
               setValue={setWifiNetworkEncryption}
               items={[
-                { label: strings.network.selectorEncryptionWpa2, value: 'wpa2' },
-                { label: strings.network.selectorEncryptionWpa, value: 'wpa' },
-                { label: strings.network.selectorEncryptionWpaMixed, value: 'wpa-mixed' },
-                { label: strings.network.selectorEncryptionPsk, value: 'psk' },
-                { label: strings.network.selectorEncryptionPsk2, value: 'psk2' },
+                {
+                  label: strings.network.selectorEncryptionWpa1Personal,
+                  value: WifiNetworkEncryptionEnum.Wpa1Personal,
+                },
+                {
+                  label: strings.network.selectorEncryptionWpa2Personal,
+                  value: WifiNetworkEncryptionEnum.Wpa2Personal,
+                },
+                {
+                  label: strings.network.selectorEncryptionWpa3Personal,
+                  value: WifiNetworkEncryptionEnum.Wpa3Personal,
+                },
+                {
+                  label: strings.network.selectorEncryptionWpa12Personal,
+                  value: WifiNetworkEncryptionEnum.Wpa12Personal,
+                },
+                {
+                  label: strings.network.selectorEncryptionWpa23Personal,
+                  value: WifiNetworkEncryptionEnum.Wpa23Personal,
+                },
               ]}
               changeKey="encryption"
               onChangeValue={onEditNetworkSettings}

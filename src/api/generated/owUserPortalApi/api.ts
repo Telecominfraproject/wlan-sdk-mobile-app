@@ -115,6 +115,12 @@ export interface AccessPoint {
    * @memberof AccessPoint
    */
   automaticUpgrade?: boolean;
+  /**
+   *
+   * @type {string}
+   * @memberof AccessPoint
+   */
+  configurationUUID?: string;
 }
 /**
  *
@@ -1521,18 +1527,11 @@ export enum WifiNetworkTypeEnum {
  * @enum {string}
  */
 export enum WifiNetworkEncryptionEnum {
-  None = 'none',
-  Psk = 'psk',
-  Psk2 = 'psk2',
-  PskMixed = 'psk-mixed',
-  Wpa = 'wpa',
-  Wpa2 = 'wpa2',
-  WpaMixed = 'wpa-mixed',
-  Sae = 'sae',
-  SaeMixed = 'sae-mixed',
-  Wpa3 = 'wpa3',
-  Wpa3192 = 'wpa3-192',
-  Wpa3Mixed = 'wpa3-mixed',
+  Wpa1Personal = 'wpa1-personal',
+  Wpa2Personal = 'wpa2-personal',
+  Wpa3Personal = 'wpa3-personal',
+  Wpa12Personal = 'wpa1/2-personal',
+  Wpa23Personal = 'wpa2/3-personal',
 }
 /**
  * @export

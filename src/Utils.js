@@ -13,6 +13,10 @@ import {
   subscriberInformationApi,
   getSubscriberAccessPointInfo,
   clearCredentials,
+  HomeDeviceModeTypeEnum,
+  InternetConnectionTypeEnum,
+  WifiNetworkBandsEnum,
+  WifiNetworkTypeEnum,
 } from './api/apiHandler';
 
 export function showGeneralError(title, message) {
@@ -84,13 +88,13 @@ export function displayValueInternetConnectionType(obj, key) {
   if (obj && key) {
     if (key in obj) {
       switch (obj[key]) {
-        case 'manual':
+        case InternetConnectionTypeEnum.Manual:
           return strings.common.manual;
 
-        case 'pppoe':
+        case InternetConnectionTypeEnum.Pppoe:
           return strings.common.pppoe;
 
-        case 'automatic':
+        case InternetConnectionTypeEnum.Automatic:
           return strings.common.automatic;
 
         default:
@@ -106,13 +110,13 @@ export function displayValueDeviceModeType(obj, key) {
   if (obj && key) {
     if (key in obj) {
       switch (obj[key]) {
-        case 'bridge':
+        case HomeDeviceModeTypeEnum.Bridge:
           return strings.common.bridge;
 
-        case 'manual':
+        case HomeDeviceModeTypeEnum.Manual:
           return strings.common.manual;
 
-        case 'nat':
+        case HomeDeviceModeTypeEnum.Nat:
           return strings.common.nat;
 
         default:
@@ -197,7 +201,7 @@ export function getSubscriberDeviceIndexForMac(subscriberDevices, macAddress) {
 export function getGuestNetworkIndex(wifiNetworks) {
   if (wifiNetworks && wifiNetworks.wifiNetworks) {
     // Return the first guest network index
-    let index = wifiNetworks.wifiNetworks.findIndex(network => network.type === 'guest');
+    let index = wifiNetworks.wifiNetworks.findIndex(network => network.type === WifiNetworkTypeEnum.Guest);
     if (index < 0) {
       return null;
     } else {
@@ -271,24 +275,24 @@ export function getClientConnectionStatusColor(client) {
 
 export function getNetworkBandsSelectorItems(accessPointBandsConfig) {
   let items = [
-    { label: strings.network.selectorBandsAll, value: 'all' },
-    { label: strings.network.selectorBands2g, value: '2G' },
-    { label: strings.network.selectorBands5g, value: '5G' },
+    { label: strings.network.selectorBandsAll, value: WifiNetworkBandsEnum.All },
+    { label: strings.network.selectorBands2g, value: WifiNetworkBandsEnum._2G },
+    { label: strings.network.selectorBands5g, value: WifiNetworkBandsEnum._5G },
   ];
 
   if (accessPointBandsConfig) {
     // TODO: The accessPointBandsConfig does not currently exist, below is just an example of how it
     // might work. This will need to be reviewed once the API has been provided
-    if (accessPointBandsConfig.includes('5GL')) {
-      items.push({ label: strings.network.selectorBands5gl, value: '5GL' });
+    if (accessPointBandsConfig.includes(WifiNetworkBandsEnum._5Gl)) {
+      items.push({ label: strings.network.selectorBands5gl, value: WifiNetworkBandsEnum._5Gl });
     }
 
-    if (accessPointBandsConfig.includes('5GU')) {
-      items.push({ label: strings.network.selectorBands5gu, value: '5GU' });
+    if (accessPointBandsConfig.includes(WifiNetworkBandsEnum._5Gu)) {
+      items.push({ label: strings.network.selectorBands5gu, value: WifiNetworkBandsEnum._5Gu });
     }
 
-    if (accessPointBandsConfig.includes('6G')) {
-      items.push({ label: strings.network.selectorBands6g, value: '6G' });
+    if (accessPointBandsConfig.includes(WifiNetworkBandsEnum._6G)) {
+      items.push({ label: strings.network.selectorBands6g, value: WifiNetworkBandsEnum._6G });
     }
   }
 

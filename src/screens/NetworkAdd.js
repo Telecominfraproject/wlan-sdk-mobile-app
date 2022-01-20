@@ -4,7 +4,7 @@ import { marginTopDefault, pageStyle, pageItemStyle, paddingHorizontalDefault } 
 import { StyleSheet, View, ScrollView, SafeAreaView } from 'react-native';
 import { useSelector } from 'react-redux';
 import { selectCurrentAccessPointId, selectWifiNetworks } from '../store/SubscriberInformationSlice';
-import { handleApiError } from '../api/apiHandler';
+import { handleApiError, WifiNetworkEncryptionEnum, WifiNetworkTypeEnum } from '../api/apiHandler';
 import { getGuestNetworkIndex, getNetworkBandsSelectorItems, addNetwork } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
@@ -109,8 +109,8 @@ const NetworkAdd = props => {
               disabled={hasGuestNetwork()}
               disabledReason={strings.messages.guestNetworkExists}
               items={[
-                { label: strings.network.selectorTypeMain, value: 'main' },
-                { label: strings.network.selectorTypeGuest, value: 'guest' },
+                { label: strings.network.selectorTypeMain, value: WifiNetworkTypeEnum.Main },
+                { label: strings.network.selectorTypeGuest, value: WifiNetworkTypeEnum.Guest },
               ]}
               zIndex={pickerZIndex--}
             />
@@ -135,11 +135,26 @@ const NetworkAdd = props => {
               value={wifiNetworkEncryption}
               setValue={setWifiNetworkEncryption}
               items={[
-                { label: strings.network.selectorEncryptionWpa2, value: 'wpa2' },
-                { label: strings.network.selectorEncryptionWpa, value: 'wpa' },
-                { label: strings.network.selectorEncryptionWpaMixed, value: 'wpa-mixed' },
-                { label: strings.network.selectorEncryptionPsk, value: 'psk' },
-                { label: strings.network.selectorEncryptionPsk2, value: 'psk2' },
+                {
+                  label: strings.network.selectorEncryptionWpa1Personal,
+                  value: WifiNetworkEncryptionEnum.Wpa1Personal,
+                },
+                {
+                  label: strings.network.selectorEncryptionWpa2Personal,
+                  value: WifiNetworkEncryptionEnum.Wpa2Personal,
+                },
+                {
+                  label: strings.network.selectorEncryptionWpa3Personal,
+                  value: WifiNetworkEncryptionEnum.Wpa3Personal,
+                },
+                {
+                  label: strings.network.selectorEncryptionWpa12Personal,
+                  value: WifiNetworkEncryptionEnum.Wpa12Personal,
+                },
+                {
+                  label: strings.network.selectorEncryptionWpa23Personal,
+                  value: WifiNetworkEncryptionEnum.Wpa23Personal,
+                },
               ]}
               zIndex={pickerZIndex--}
             />

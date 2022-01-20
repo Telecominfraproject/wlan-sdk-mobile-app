@@ -12,8 +12,7 @@ import {
 import { StyleSheet, SafeAreaView, View, ScrollView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { completeSignOut, logStringifyPretty, scrollViewToTop } from '../Utils';
-import { getCredentials, handleApiError, mfaApi } from '../api/apiHandler';
-import { SubMfaConfigTypeEnum } from '../api/generated/owUserPortalApi';
+import { getCredentials, handleApiError, mfaApi, SubMfaConfigTypeEnum } from '../api/apiHandler';
 import { useSelector } from 'react-redux';
 import { selectSubscriberInformationLoading, selectSubscriberInformation } from '../store/SubscriberInformationSlice';
 import { displayValue, modifySubscriberInformation, setSubscriberInformationInterval } from '../Utils';

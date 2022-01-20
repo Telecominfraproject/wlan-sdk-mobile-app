@@ -23,7 +23,14 @@ import {
   selectDnsConfiguration,
   selectIpReservations,
 } from '../store/SubscriberInformationSlice';
-import { deviceCommandsApi, handleApiError } from '../api/apiHandler';
+import {
+  deviceCommandsApi,
+  handleApiError,
+  HomeDeviceModeTypeEnum,
+  InlineObjectPatternEnum,
+  InternetConnectionTypeEnum,
+  WifiNetworkTypeEnum,
+} from '../api/apiHandler';
 import {
   scrollViewToTop,
   displayValue,
@@ -151,10 +158,10 @@ const Configuration = props => {
     }
 
     switch (item.type) {
-      case 'main':
+      case WifiNetworkTypeEnum.Main:
         return strings.formatString(strings.configuration.mainNetwork, item.name);
 
-      case 'guest':
+      case WifiNetworkTypeEnum.Guest:
         return strings.formatString(strings.configuration.guestNetwork, item.name);
 
       default:
@@ -236,7 +243,7 @@ const Configuration = props => {
       // for the blink command there are some additional parameters, so add those in.
       if (action === 'blink') {
         payload.duration = 10;
-        payload.pattern = 'blink';
+        payload.pattern = InlineObjectPatternEnum.Blink;
       }
 
       // Indicate that an action is currently in progress
@@ -383,9 +390,18 @@ const Configuration = props => {
         value={internetConnectionType}
         setValue={setInternetConnectionType}
         items={[
-          { label: displayValueInternetConnectionType({ type: 'automatic' }, 'type'), value: 'automatic' },
-          { label: displayValueInternetConnectionType({ type: 'manual' }, 'type'), value: 'manual' },
-          { label: displayValueInternetConnectionType({ type: 'pppoe' }, 'type'), value: 'pppoe' },
+          {
+            label: displayValueInternetConnectionType({ type: InternetConnectionTypeEnum.Automatic }, 'type'),
+            value: InternetConnectionTypeEnum.Automatic,
+          },
+          {
+            label: displayValueInternetConnectionType({ type: InternetConnectionTypeEnum.Manual }, 'type'),
+            value: InternetConnectionTypeEnum.Manual,
+          },
+          {
+            label: displayValueInternetConnectionType({ type: InternetConnectionTypeEnum.Pppoe }, 'type'),
+            value: InternetConnectionTypeEnum.Pppoe,
+          },
         ]}
         changeKey="type"
         onChangeValue={onEditInternetConnectionSettings}
@@ -633,9 +649,18 @@ const Configuration = props => {
         value={deviceModeType}
         setValue={setDeviceModeType}
         items={[
-          { label: displayValueDeviceModeType({ type: 'bridge' }, 'type'), value: 'bridge' },
-          { label: displayValueDeviceModeType({ type: 'manual' }, 'type'), value: 'manual' },
-          { label: displayValueDeviceModeType({ type: 'nat' }, 'type'), value: 'nat' },
+          {
+            label: displayValueDeviceModeType({ type: HomeDeviceModeTypeEnum.Bridge }, 'type'),
+            value: HomeDeviceModeTypeEnum.Bridge,
+          },
+          {
+            label: displayValueDeviceModeType({ type: HomeDeviceModeTypeEnum.Manual }, 'type'),
+            value: HomeDeviceModeTypeEnum.Manual,
+          },
+          {
+            label: displayValueDeviceModeType({ type: HomeDeviceModeTypeEnum.Nat }, 'type'),
+            value: HomeDeviceModeTypeEnum.Nat,
+          },
         ]}
         changeKey="type"
         onChangeValue={onEditDeviceModeSettings}
