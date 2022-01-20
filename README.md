@@ -49,9 +49,6 @@ To run either iOS or Android simulator builds:
 ## Developer Extra Functions
 To generate the APIs from OpenAPI yaml you can run the following commands:
 - yarn generate:userportal-apis
-- yarn generate:security-apis
-- yarn generate:gateway-apis
-- yarn generate:provisioning-apis
 
 Currently only userportal-apis is needed, the others are currently here for expected future enhancement. !! The userportal-apis generation is dependent on the file /api/open-api/userportal.yaml. This file will need to be updated manually to have any changes. The other generations use a direct link to an URL and they will automatically get the latest.
 
