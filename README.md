@@ -43,8 +43,16 @@ To run use the following
 - yarn react-native start
 
 To run either iOS or Android simulator builds:
-- yarn react-native ios-run
-- yarn react-native android-run
+- yarn react-native run-ios
+- yarn react-native run-android
+
+## Updating to the Latest
+
+The following should be done to get the packages
+- yarn upgrade
+
+The following should be done to get the latest React Native version
+- yarn react-native upgrade
 
 ## Developer Extra Functions
 To generate the APIs from OpenAPI yaml you can run the following commands:
