@@ -1,3 +1,4 @@
+import Config from 'react-native-config';
 import React, { useCallback, useRef, useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, okColor, infoColor, errorColor, primaryColor, whiteColor, grayBackgroundcolor } from '../AppStyle';
@@ -161,18 +162,20 @@ const Dashboard = props => {
 
   const renderAccessPointButtons = () => {
     return (
-      <View style={componentStyles.accessPointButtonsContainer}>
-        <TouchableOpacity onPress={onAddAccessPointPress}>
-          <Image style={componentStyles.accessPointButtons} source={require('../assets/plus-solid.png')} />
-        </TouchableOpacity>
-        <Text style={componentStyles.iconLabel}>{strings.dashboard.network}</Text>
-        <TouchableOpacity onPress={onDeleteAccessPointPress}>
-          <Image
-            style={[componentStyles.accessPointButtons, componentStyles.deleteIcon]}
-            source={require('../assets/times-solid.png')}
-          />
-        </TouchableOpacity>
-      </View>
+      Config.MULTI_DEVICES === 'true' && (
+        <View style={componentStyles.accessPointButtonsContainer}>
+          <TouchableOpacity onPress={onAddAccessPointPress}>
+            <Image style={componentStyles.accessPointButtons} source={require('../assets/plus-solid.png')} />
+          </TouchableOpacity>
+          <Text style={componentStyles.iconLabel}>{strings.dashboard.network}</Text>
+          <TouchableOpacity onPress={onDeleteAccessPointPress}>
+            <Image
+              style={[componentStyles.accessPointButtons, componentStyles.deleteIcon]}
+              source={require('../assets/times-solid.png')}
+            />
+          </TouchableOpacity>
+        </View>
+      )
     );
   };
 
