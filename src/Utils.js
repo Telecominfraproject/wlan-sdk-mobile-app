@@ -554,7 +554,7 @@ export async function modifySubscriberInformation(updatedJson) {
     throw new Error(strings.errors.internal);
   }
 
-  const response = await subscriberInformationApi.modifySubscriberInfo(updatedJson);
+  const response = await subscriberInformationApi.modifySubscriberInfo(true, false, updatedJson);
   if (!response || !response.data) {
     throw new Error(strings.errors.invalidResponse);
   }

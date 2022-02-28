@@ -1,30 +1,155 @@
-import React, { createRef, useState } from 'react';
+import React, { createRef, useState, useRef, useEffect } from 'react';
 import { strings } from '../localization/LocalizationStrings';
-import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
+import {
+  pageStyle,
+  pageItemStyle,
+  primaryColor,
+  marginTopDefault,
+  paddingHorizontalDefault,
+  blackColor,
+} from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, TextInput, ActivityIndicator, Image, Text } from 'react-native';
-import { handleApiError } from '../api/apiHandler';
+import { subscriberRegistrationApi, handleApiError } from '../api/apiHandler';
 import { useSelector } from 'react-redux';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
+import { logStringifyPretty, showGeneralMessage } from '../Utils';
 import ButtonStyled from '../components/ButtonStyled';
 
 export default function SignUp(props) {
   const brandInfo = useSelector(selectBrandInfo);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const passwordRef = createRef();
+  const [macAddress, setMacAddress] = useState();
+  const [signUpStatus, setSignUpStatus] = useState();
+  const macAddressRef = createRef();
+  const isMounted = useRef(false);
+
+  useEffect(() => {
+    isMounted.current = true;
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  // The following was taken from a blog post about using setInterval with React-Native and react hooks
+  // https://overreacted.io/making-setinterval-declarative-with-react-hooks/
+  useInterval(() => onCheck(), 2500);
+
+  function useInterval(callback, delay) {
+    const savedCallback = useRef();
+
+    // Remember the latest callback.
+    useEffect(() => {
+      savedCallback.current = callback;
+    }, [callback]);
+
+    // Set up the interval.
+    useEffect(() => {
+      function tick() {
+        savedCallback.current();
+      }
+
+      if (delay !== null) {
+        let id = setInterval(tick, delay);
+        return () => clearInterval(id);
+      }
+    }, [delay]);
+  }
+
+  const onCheck = async () => {
+    try {
+      if (signUpStatus) {
+        const response = await subscriberRegistrationApi.getSignup(email, macAddress, signUpStatus.id);
+        logStringifyPretty(response, 'Sign Up Check');
+
+        if (!response || !response.data) {
+          throw new Error(strings.errors.invalidResponse);
+        }
+
+        if (response.data.error !== 0) {
+          throw new Error(response.data.description);
+        }
+
+        if (isMounted.current) {
+          if (response.data.statusCode === 3) {
+            showGeneralMessage(strings.signUp.statusSignUpComplete);
+            deleteSignUp();
+          } else {
+            setSignUpStatus(response.data);
+          }
+        }
+      }
+    } catch (error) {
+      if (isMounted.current) {
+        handleApiError(strings.errors.titleSignUp, error);
+        deleteSignUp();
+      }
+    }
+  };
+
+  const deleteSignUp = async () => {
+    try {
+      // Delete the current sign-up process upon success or failure. This may be removed in the future. 
+      await subscriberRegistrationApi.deleteSignup(email, macAddress, signUpStatus.id);
+
+      if (isMounted.current) {
+        console.log('deleted');
+      }
+    } catch (error) {
+      if (isMounted.current) {
+        handleApiError(strings.errors.titleSignUp, error);
+      }
+    } finally {
+      setSignUpStatus(null);
+      setLoading(false);
+    }
+  };
 
   const onSubmit = async () => {
     try {
       setLoading(true);
-      // TODO: Need updated API
-      //const response = await accessProcessApi.userSignUp('signUp', email, undefined, { newPassword: password });
-      //logStringifyPretty(response);
+      const response = await subscriberRegistrationApi.postSignup(email, macAddress);
+      logStringifyPretty(response, 'Sign Up');
+
+      if (!response || !response.data) {
+        throw new Error(strings.errors.invalidResponse);
+      }
+
+      if (response.data.error !== 0) {
+        throw new Error(response.data.description);
+      }
+
+      if (isMounted.current) {
+        setSignUpStatus(response.data);
+      }
     } catch (error) {
-      handleApiError(strings.errors.titleSignUp, error);
-    } finally {
-      setLoading(false);
+      if (isMounted.current) {
+        handleApiError(strings.errors.titleSignUp, error);
+        setLoading(false);
+      }
     }
+  };
+
+  const getStatusDescription = () => {
+    if (signUpStatus) {
+      switch (signUpStatus.statusCode) {
+        case 1: // Waiting for Email Verification
+          return strings.signUp.statusEmailVerificationNeed;
+
+        case 2: // Email verified, looking for device
+          return strings.signUp.statusEmailVerified;
+
+        case 3: // Completed
+          return null;
+
+        default:
+          // Unexpected - just show the status message
+          return signUpStatus.status;
+      }
+    }
+
+    return null;
   };
 
   const onPrivacyPolicyPress = async () => {
@@ -39,6 +164,14 @@ export default function SignUp(props) {
     fillView: {
       flex: 3,
     },
+    statusText: {
+      fontSize: 20,
+      color: blackColor,
+      textAlign: 'center',
+      marginTop: marginTopDefault,
+      paddingLeft: paddingHorizontalDefault,
+      paddingRight: paddingHorizontalDefault,
+    },
   });
 
   return (
@@ -46,6 +179,7 @@ export default function SignUp(props) {
       {loading && (
         <View style={pageItemStyle.loadingContainer}>
           <ActivityIndicator size="large" color={primaryColor} animating={loading} />
+          <Text style={componentStyles.statusText}>{getStatusDescription()}</Text>
         </View>
       )}
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
@@ -75,22 +209,20 @@ export default function SignUp(props) {
                   textContentType="emailAddress"
                   returnKeyType="go"
                   onChangeText={text => setEmail(text)}
-                  onSubmitEditing={() => passwordRef.current.focus()}
+                  onSubmitEditing={() => macAddressRef.current.focus()}
                   maxLength={255}
                 />
               </View>
               <View style={pageItemStyle.container}>
                 <TextInput
                   style={pageItemStyle.inputText}
-                  ref={passwordRef}
-                  placeholder={strings.placeholders.password}
-                  secureTextEntry={true}
+                  ref={macAddressRef}
+                  placeholder={strings.placeholders.macAddress}
                   autoCapitalize="none"
-                  textContentType="password"
                   returnKeyType="go"
-                  onChangeText={text => setPassword(text)}
+                  onChangeText={text => setMacAddress(text)}
                   onSubmitEditing={() => onSubmit()}
-                  maxLength={255}
+                  maxLength={17}
                 />
               </View>
               <View style={pageItemStyle.containerButton}>

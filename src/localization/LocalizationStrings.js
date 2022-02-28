@@ -333,6 +333,9 @@ export const strings = new LocalizedStrings({
     signUp: {
       title: 'Sign Up',
       description: 'Please enter a email and password to create an account.',
+      statusEmailVerificationNeed: 'Email address verification needed, check your email for a verification email.',
+      statusEmailVerified: 'Email address verified, now looking for the device ...',
+      statusSignUpComplete: 'Sign up completed, please sign-in to continue.',
     },
     termsConditions: {
       title: 'Terms & Conditions',

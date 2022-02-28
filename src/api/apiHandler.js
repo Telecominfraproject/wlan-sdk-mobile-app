@@ -18,6 +18,7 @@ import {
   SubMfaConfigTypeEnum,
   SubscriberDeviceApiFactory,
   SubscriberInformationApiFactory,
+  SubscriberRegistrationApiFactory,
   WiFiClientsApiFactory,
   WifiNetworkTypeEnum,
   WifiNetworkBandsEnum,
@@ -50,6 +51,7 @@ var deviceCommandsApi = null;
 var mfaApi = null;
 var subscriberDeviceApi = null;
 var subscriberInformationApi = null;
+var subscriberRegistrationApi = null;
 var wiredClientsApi = null;
 var wifiClientsApi = null;
 
@@ -71,6 +73,9 @@ function generateApis() {
     : null;
   subscriberInformationApi = baseUserPortalUrl
     ? new SubscriberInformationApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
+    : null;
+  subscriberRegistrationApi = baseUserPortalUrl
+    ? new SubscriberRegistrationApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
     : null;
   wifiClientsApi = baseUserPortalUrl
     ? new WiFiClientsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
@@ -282,6 +287,7 @@ export {
   mfaApi,
   subscriberDeviceApi,
   subscriberInformationApi,
+  subscriberRegistrationApi,
   wifiClientsApi,
   wiredClientsApi,
   HomeDeviceModeTypeEnum,

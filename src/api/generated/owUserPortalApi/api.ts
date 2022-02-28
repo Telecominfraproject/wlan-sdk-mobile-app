@@ -622,6 +622,37 @@ export enum InlineObjectPatternEnum {
 /**
  *
  * @export
+ * @interface InlineObject1
+ */
+export interface InlineObject1 {
+  /**
+   *
+   * @type {string}
+   * @memberof InlineObject1
+   */
+  reason?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof InlineObject1
+   */
+  time?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof InlineObject1
+   */
+  errorCode?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof InlineObject1
+   */
+  status?: string;
+}
+/**
+ *
+ * @export
  * @interface InlineResponse200
  */
 export interface InlineResponse200 {
@@ -875,6 +906,80 @@ export interface MFAChallengeResponse {
    * @memberof MFAChallengeResponse
    */
   answer?: string;
+}
+/**
+ *
+ * @export
+ * @interface NoteInfo
+ */
+export interface NoteInfo {
+  /**
+   *
+   * @type {number}
+   * @memberof NoteInfo
+   */
+  created?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof NoteInfo
+   */
+  createdBy?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof NoteInfo
+   */
+  note?: string;
+}
+/**
+ *
+ * @export
+ * @interface ObjectInfo
+ */
+export interface ObjectInfo {
+  /**
+   *
+   * @type {string}
+   * @memberof ObjectInfo
+   */
+  id?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ObjectInfo
+   */
+  name?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ObjectInfo
+   */
+  description?: string;
+  /**
+   *
+   * @type {Array<NoteInfo>}
+   * @memberof ObjectInfo
+   */
+  notes?: Array<NoteInfo>;
+  /**
+   *
+   * @type {number}
+   * @memberof ObjectInfo
+   */
+  created?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof ObjectInfo
+   */
+  modified?: number;
+  /**
+   *
+   * @type {Array<number>}
+   * @memberof ObjectInfo
+   */
+  tags?: Array<number>;
 }
 /**
  *
@@ -1134,6 +1239,61 @@ export enum RadioRatesMulticastEnum {
   NUMBER_54000 = 54000,
 }
 
+/**
+ *
+ * @export
+ * @interface SignupEntry
+ */
+export interface SignupEntry {
+  /**
+   *
+   * @type {ObjectInfo}
+   * @memberof SignupEntry
+   */
+  allOf?: ObjectInfo;
+  /**
+   *
+   * @type {string}
+   * @memberof SignupEntry
+   */
+  email?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof SignupEntry
+   */
+  userId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof SignupEntry
+   */
+  serialNumber?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof SignupEntry
+   */
+  created?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof SignupEntry
+   */
+  completed?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof SignupEntry
+   */
+  error?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof SignupEntry
+   */
+  status?: string;
+}
 /**
  *
  * @export
@@ -2533,11 +2693,18 @@ export const SubscriberInformationApiAxiosParamCreator = function (configuration
     /**
      *
      * @summary Modify the information stored about the subscriber
+     * @param {boolean} [configChanged]
+     * @param {boolean} [applyConfigOnly]
      * @param {SubscriberInfo} [subscriberInfo]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    modifySubscriberInfo: async (subscriberInfo?: SubscriberInfo, options: any = {}): Promise<RequestArgs> => {
+    modifySubscriberInfo: async (
+      configChanged?: boolean,
+      applyConfigOnly?: boolean,
+      subscriberInfo?: SubscriberInfo,
+      options: any = {},
+    ): Promise<RequestArgs> => {
       const localVarPath = `/subscriber`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2556,6 +2723,14 @@ export const SubscriberInformationApiAxiosParamCreator = function (configuration
       // authentication bearerAuth required
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (configChanged !== undefined) {
+        localVarQueryParameter['configChanged'] = configChanged;
+      }
+
+      if (applyConfigOnly !== undefined) {
+        localVarQueryParameter['applyConfigOnly'] = applyConfigOnly;
+      }
 
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
@@ -2592,15 +2767,24 @@ export const SubscriberInformationApiFp = function (configuration?: Configuratio
     /**
      *
      * @summary Modify the information stored about the subscriber
+     * @param {boolean} [configChanged]
+     * @param {boolean} [applyConfigOnly]
      * @param {SubscriberInfo} [subscriberInfo]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async modifySubscriberInfo(
+      configChanged?: boolean,
+      applyConfigOnly?: boolean,
       subscriberInfo?: SubscriberInfo,
       options?: any,
     ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.modifySubscriberInfo(subscriberInfo, options);
+      const localVarAxiosArgs = await localVarAxiosParamCreator.modifySubscriberInfo(
+        configChanged,
+        applyConfigOnly,
+        subscriberInfo,
+        options,
+      );
       return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
     },
   };
@@ -2629,12 +2813,21 @@ export const SubscriberInformationApiFactory = function (
     /**
      *
      * @summary Modify the information stored about the subscriber
+     * @param {boolean} [configChanged]
+     * @param {boolean} [applyConfigOnly]
      * @param {SubscriberInfo} [subscriberInfo]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    modifySubscriberInfo(subscriberInfo?: SubscriberInfo, options?: any): AxiosPromise<void> {
-      return localVarFp.modifySubscriberInfo(subscriberInfo, options).then(request => request(axios, basePath));
+    modifySubscriberInfo(
+      configChanged?: boolean,
+      applyConfigOnly?: boolean,
+      subscriberInfo?: SubscriberInfo,
+      options?: any,
+    ): AxiosPromise<void> {
+      return localVarFp
+        .modifySubscriberInfo(configChanged, applyConfigOnly, subscriberInfo, options)
+        .then(request => request(axios, basePath));
     },
   };
 };
@@ -2662,14 +2855,478 @@ export class SubscriberInformationApi extends BaseAPI {
   /**
    *
    * @summary Modify the information stored about the subscriber
+   * @param {boolean} [configChanged]
+   * @param {boolean} [applyConfigOnly]
    * @param {SubscriberInfo} [subscriberInfo]
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof SubscriberInformationApi
    */
-  public modifySubscriberInfo(subscriberInfo?: SubscriberInfo, options?: any) {
+  public modifySubscriberInfo(
+    configChanged?: boolean,
+    applyConfigOnly?: boolean,
+    subscriberInfo?: SubscriberInfo,
+    options?: any,
+  ) {
     return SubscriberInformationApiFp(this.configuration)
-      .modifySubscriberInfo(subscriberInfo, options)
+      .modifySubscriberInfo(configChanged, applyConfigOnly, subscriberInfo, options)
+      .then(request => request(this.axios, this.basePath));
+  }
+}
+
+/**
+ * SubscriberRegistrationApi - axios parameter creator
+ * @export
+ */
+export const SubscriberRegistrationApiAxiosParamCreator = function (configuration?: Configuration) {
+  return {
+    /**
+     *
+     * @summary This call allows someone to get the status of a signup.
+     * @param {string} [email]
+     * @param {string} [serialNumber]
+     * @param {string} [signupUUID]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    deleteSignup: async (
+      email?: string,
+      serialNumber?: string,
+      signupUUID?: string,
+      options: any = {},
+    ): Promise<RequestArgs> => {
+      const localVarPath = `/signup`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication ApiKeyAuth required
+      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (email !== undefined) {
+        localVarQueryParameter['email'] = email;
+      }
+
+      if (serialNumber !== undefined) {
+        localVarQueryParameter['serialNumber'] = serialNumber;
+      }
+
+      if (signupUUID !== undefined) {
+        localVarQueryParameter['signupUUID'] = signupUUID;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @summary This call allows someone to get the status of a signup.
+     * @param {string} [email]
+     * @param {string} [serialNumber]
+     * @param {string} [signupUUID]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getSignup: async (
+      email?: string,
+      serialNumber?: string,
+      signupUUID?: string,
+      options: any = {},
+    ): Promise<RequestArgs> => {
+      const localVarPath = `/signup`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication ApiKeyAuth required
+      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (email !== undefined) {
+        localVarQueryParameter['email'] = email;
+      }
+
+      if (serialNumber !== undefined) {
+        localVarQueryParameter['serialNumber'] = serialNumber;
+      }
+
+      if (signupUUID !== undefined) {
+        localVarQueryParameter['signupUUID'] = signupUUID;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @summary modify the signup command in play
+     * @param {string} signupUUID
+     * @param {'cancel' | 'success' | 'inprogress' | 'failed' | 'poll'} operation
+     * @param {InlineObject1} [inlineObject1]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    modifySignup: async (
+      signupUUID: string,
+      operation: 'cancel' | 'success' | 'inprogress' | 'failed' | 'poll',
+      inlineObject1?: InlineObject1,
+      options: any = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'signupUUID' is not null or undefined
+      assertParamExists('modifySignup', 'signupUUID', signupUUID);
+      // verify required parameter 'operation' is not null or undefined
+      assertParamExists('modifySignup', 'operation', operation);
+      const localVarPath = `/signup`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication ApiKeyAuth required
+      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (signupUUID !== undefined) {
+        localVarQueryParameter['signupUUID'] = signupUUID;
+      }
+
+      if (operation !== undefined) {
+        localVarQueryParameter['operation'] = operation;
+      }
+
+      localVarHeaderParameter['Content-Type'] = 'application/json';
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+      localVarRequestOptions.data = serializeDataIfNeeded(inlineObject1, localVarRequestOptions, configuration);
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @summary This call allows a new subscriber to register themselves and their devices.
+     * @param {string} email
+     * @param {string} serialNumber
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    postSignup: async (email: string, serialNumber: string, options: any = {}): Promise<RequestArgs> => {
+      // verify required parameter 'email' is not null or undefined
+      assertParamExists('postSignup', 'email', email);
+      // verify required parameter 'serialNumber' is not null or undefined
+      assertParamExists('postSignup', 'serialNumber', serialNumber);
+      const localVarPath = `/signup`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication ApiKeyAuth required
+      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (email !== undefined) {
+        localVarQueryParameter['email'] = email;
+      }
+
+      if (serialNumber !== undefined) {
+        localVarQueryParameter['serialNumber'] = serialNumber;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * SubscriberRegistrationApi - functional programming interface
+ * @export
+ */
+export const SubscriberRegistrationApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = SubscriberRegistrationApiAxiosParamCreator(configuration);
+  return {
+    /**
+     *
+     * @summary This call allows someone to get the status of a signup.
+     * @param {string} [email]
+     * @param {string} [serialNumber]
+     * @param {string} [signupUUID]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async deleteSignup(
+      email?: string,
+      serialNumber?: string,
+      signupUUID?: string,
+      options?: any,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.deleteSignup(email, serialNumber, signupUUID, options);
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+    },
+    /**
+     *
+     * @summary This call allows someone to get the status of a signup.
+     * @param {string} [email]
+     * @param {string} [serialNumber]
+     * @param {string} [signupUUID]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async getSignup(
+      email?: string,
+      serialNumber?: string,
+      signupUUID?: string,
+      options?: any,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.getSignup(email, serialNumber, signupUUID, options);
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+    },
+    /**
+     *
+     * @summary modify the signup command in play
+     * @param {string} signupUUID
+     * @param {'cancel' | 'success' | 'inprogress' | 'failed' | 'poll'} operation
+     * @param {InlineObject1} [inlineObject1]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async modifySignup(
+      signupUUID: string,
+      operation: 'cancel' | 'success' | 'inprogress' | 'failed' | 'poll',
+      inlineObject1?: InlineObject1,
+      options?: any,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.modifySignup(
+        signupUUID,
+        operation,
+        inlineObject1,
+        options,
+      );
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+    },
+    /**
+     *
+     * @summary This call allows a new subscriber to register themselves and their devices.
+     * @param {string} email
+     * @param {string} serialNumber
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async postSignup(
+      email: string,
+      serialNumber: string,
+      options?: any,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.postSignup(email, serialNumber, options);
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+    },
+  };
+};
+
+/**
+ * SubscriberRegistrationApi - factory interface
+ * @export
+ */
+export const SubscriberRegistrationApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = SubscriberRegistrationApiFp(configuration);
+  return {
+    /**
+     *
+     * @summary This call allows someone to get the status of a signup.
+     * @param {string} [email]
+     * @param {string} [serialNumber]
+     * @param {string} [signupUUID]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    deleteSignup(email?: string, serialNumber?: string, signupUUID?: string, options?: any): AxiosPromise<object> {
+      return localVarFp
+        .deleteSignup(email, serialNumber, signupUUID, options)
+        .then(request => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary This call allows someone to get the status of a signup.
+     * @param {string} [email]
+     * @param {string} [serialNumber]
+     * @param {string} [signupUUID]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getSignup(email?: string, serialNumber?: string, signupUUID?: string, options?: any): AxiosPromise<void> {
+      return localVarFp.getSignup(email, serialNumber, signupUUID, options).then(request => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary modify the signup command in play
+     * @param {string} signupUUID
+     * @param {'cancel' | 'success' | 'inprogress' | 'failed' | 'poll'} operation
+     * @param {InlineObject1} [inlineObject1]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    modifySignup(
+      signupUUID: string,
+      operation: 'cancel' | 'success' | 'inprogress' | 'failed' | 'poll',
+      inlineObject1?: InlineObject1,
+      options?: any,
+    ): AxiosPromise<void> {
+      return localVarFp
+        .modifySignup(signupUUID, operation, inlineObject1, options)
+        .then(request => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary This call allows a new subscriber to register themselves and their devices.
+     * @param {string} email
+     * @param {string} serialNumber
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    postSignup(email: string, serialNumber: string, options?: any): AxiosPromise<void> {
+      return localVarFp.postSignup(email, serialNumber, options).then(request => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * SubscriberRegistrationApi - object-oriented interface
+ * @export
+ * @class SubscriberRegistrationApi
+ * @extends {BaseAPI}
+ */
+export class SubscriberRegistrationApi extends BaseAPI {
+  /**
+   *
+   * @summary This call allows someone to get the status of a signup.
+   * @param {string} [email]
+   * @param {string} [serialNumber]
+   * @param {string} [signupUUID]
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof SubscriberRegistrationApi
+   */
+  public deleteSignup(email?: string, serialNumber?: string, signupUUID?: string, options?: any) {
+    return SubscriberRegistrationApiFp(this.configuration)
+      .deleteSignup(email, serialNumber, signupUUID, options)
+      .then(request => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @summary This call allows someone to get the status of a signup.
+   * @param {string} [email]
+   * @param {string} [serialNumber]
+   * @param {string} [signupUUID]
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof SubscriberRegistrationApi
+   */
+  public getSignup(email?: string, serialNumber?: string, signupUUID?: string, options?: any) {
+    return SubscriberRegistrationApiFp(this.configuration)
+      .getSignup(email, serialNumber, signupUUID, options)
+      .then(request => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @summary modify the signup command in play
+   * @param {string} signupUUID
+   * @param {'cancel' | 'success' | 'inprogress' | 'failed' | 'poll'} operation
+   * @param {InlineObject1} [inlineObject1]
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof SubscriberRegistrationApi
+   */
+  public modifySignup(
+    signupUUID: string,
+    operation: 'cancel' | 'success' | 'inprogress' | 'failed' | 'poll',
+    inlineObject1?: InlineObject1,
+    options?: any,
+  ) {
+    return SubscriberRegistrationApiFp(this.configuration)
+      .modifySignup(signupUUID, operation, inlineObject1, options)
+      .then(request => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @summary This call allows a new subscriber to register themselves and their devices.
+   * @param {string} email
+   * @param {string} serialNumber
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof SubscriberRegistrationApi
+   */
+  public postSignup(email: string, serialNumber: string, options?: any) {
+    return SubscriberRegistrationApiFp(this.configuration)
+      .postSignup(email, serialNumber, options)
       .then(request => request(this.axios, this.basePath));
   }
 }
