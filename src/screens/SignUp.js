@@ -90,7 +90,7 @@ export default function SignUp(props) {
 
   const deleteSignUp = async () => {
     try {
-      // Delete the current sign-up process upon success or failure. This may be removed in the future. 
+      // Delete the current sign-up process upon success or failure. This may be removed in the future.
       await subscriberRegistrationApi.deleteSignup(email, macAddress, signUpStatus.id);
 
       if (isMounted.current) {
