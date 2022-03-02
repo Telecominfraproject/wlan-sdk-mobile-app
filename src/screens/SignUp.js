@@ -7,6 +7,7 @@ import {
   marginTopDefault,
   paddingHorizontalDefault,
   blackColor,
+  placeholderColor,
 } from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, TextInput, ActivityIndicator, Image, Text } from 'react-native';
 import { subscriberRegistrationApi, handleApiError } from '../api/apiHandler';
@@ -203,6 +204,7 @@ export default function SignUp(props) {
                 <TextInput
                   style={pageItemStyle.inputText}
                   placeholder={strings.placeholders.email}
+                  placeholderTextColor={placeholderColor}
                   autoComplete="email"
                   autoCapitalize="none"
                   keyboardType="email-address"
@@ -218,6 +220,7 @@ export default function SignUp(props) {
                   style={pageItemStyle.inputText}
                   ref={macAddressRef}
                   placeholder={strings.placeholders.macAddress}
+                  placeholderTextColor={placeholderColor}
                   autoCapitalize="none"
                   returnKeyType="go"
                   onChangeText={text => setMacAddress(text)}

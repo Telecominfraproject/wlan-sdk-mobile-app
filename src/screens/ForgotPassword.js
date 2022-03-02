@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { strings } from '../localization/LocalizationStrings';
-import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
+import { pageStyle, pageItemStyle, primaryColor, placeholderColor } from '../AppStyle';
 import { StyleSheet, SafeAreaView, ScrollView, View, TextInput, ActivityIndicator, Image, Text } from 'react-native';
 import { useSelector } from 'react-redux';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
@@ -98,6 +98,7 @@ const ForgotPassword = props => {
                 <TextInput
                   style={pageItemStyle.inputText}
                   placeholder={strings.placeholders.email}
+                  placeholderTextColor={placeholderColor}
                   autoComplete="email"
                   autoCapitalize="none"
                   keyboardType="email-address"

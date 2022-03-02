@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
-import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
+import { pageStyle, pageItemStyle, primaryColor, placeholderColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, View, TextInput, ActivityIndicator, Text, Image } from 'react-native';
 import { authenticationApi, clearCredentials, handleApiError } from '../api/apiHandler';
 import { useSelector } from 'react-redux';
@@ -152,6 +152,7 @@ export default function ResetPassword(props) {
                 <TextInput
                   style={pageItemStyle.inputText}
                   placeholder={strings.placeholders.currentPassword}
+                  placeholderTextColor={placeholderColor}
                   secureTextEntry={true}
                   onChangeText={text => setCurrentPassword(text)}
                   autoCapitalize="none"
@@ -166,6 +167,7 @@ export default function ResetPassword(props) {
                   style={pageItemStyle.inputText}
                   ref={newPasswordRef}
                   placeholder={strings.placeholders.newPassword}
+                  placeholderTextColor={placeholderColor}
                   secureTextEntry={true}
                   onChangeText={text => setNewPassword(text)}
                   autoCapitalize="none"
@@ -180,6 +182,7 @@ export default function ResetPassword(props) {
                   style={pageItemStyle.inputText}
                   ref={confirmPasswordRef}
                   placeholder={strings.placeholders.confirmPassword}
+                  placeholderTextColor={placeholderColor}
                   secureTextEntry={true}
                   onChangeText={text => setConfirmPassword(text)}
                   autoCapitalize="none"

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { ActivityIndicator, SafeAreaView, ScrollView, Text, TextInput, View } from 'react-native';
-import { pageItemStyle, pageStyle, primaryColor } from '../AppStyle';
+import { pageItemStyle, pageStyle, primaryColor, placeholderColor } from '../AppStyle';
 import { useSelector } from 'react-redux';
 import { selectSubscriberInformationLoading } from '../store/SubscriberInformationSlice';
 import { handleApiError, subscriberDeviceApi } from '../api/apiHandler';
@@ -51,6 +51,7 @@ export default function DeviceRegistration({ navigation, route }) {
             <TextInput
               style={pageItemStyle.inputText}
               placeholder={strings.placeholders.macAddress}
+              placeholderTextColor={placeholderColor}
               value={macAddress}
               onChangeText={onChangeText}
               autoCapitalize="none"

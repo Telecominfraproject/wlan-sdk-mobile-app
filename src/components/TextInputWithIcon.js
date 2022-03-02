@@ -45,6 +45,7 @@ const TextInputWithIcon = props => {
       <TextInput
         style={componentStyles.text}
         placeholder={props.placeholder}
+        placeholderTextColor={placeholderColor}
         onChangeText={onChangeTextInternal}
         maxLength={255}
       />

@@ -2,7 +2,7 @@ import React, { useState, useEffect, createRef } from 'react';
 import { useSelector } from 'react-redux';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { strings } from '../localization/LocalizationStrings';
-import { pageStyle, pageItemStyle, primaryColor } from '../AppStyle';
+import { pageStyle, pageItemStyle, primaryColor, placeholderColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View, Image, TextInput, ActivityIndicator } from 'react-native';
 import ButtonStyled from '../components/ButtonStyled';
 import { showGeneralError, completeSignIn } from '../Utils';
@@ -130,6 +130,7 @@ const SignIn = props => {
                 <TextInput
                   style={pageItemStyle.inputText}
                   placeholder={strings.placeholders.email}
+                  placeholderTextColor={placeholderColor}
                   autoComplete="email"
                   autoCapitalize="none"
                   keyboardType="email-address"
@@ -146,6 +147,7 @@ const SignIn = props => {
                   style={pageItemStyle.inputText}
                   ref={passwordRef}
                   placeholder={strings.placeholders.password}
+                  placeholderTextColor={placeholderColor}
                   secureTextEntry={true}
                   autoCapitalize="none"
                   textContentType="password"

@@ -3,7 +3,7 @@ import { strings } from '../localization/LocalizationStrings';
 import { ScrollView, View, SafeAreaView, TextInput, ActivityIndicator, Text } from 'react-native';
 import { handleApiError, mfaApi } from '../api/apiHandler';
 import { logStringifyPretty, showGeneralError, showGeneralMessage } from '../Utils';
-import { pageItemStyle, pageStyle, primaryColor } from '../AppStyle';
+import { pageItemStyle, pageStyle, primaryColor, placeholderColor } from '../AppStyle';
 import ButtonStyled from '../components/ButtonStyled';
 
 export default function PhoneVerification(props) {
@@ -86,6 +86,7 @@ export default function PhoneVerification(props) {
             <TextInput
               style={pageItemStyle.inputText}
               placeholder={strings.placeholders.code}
+              placeholderTextColor={placeholderColor}
               value={code}
               keyboardType="number-pad"
               onChangeText={text => setCode(text)}

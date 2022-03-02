@@ -104,10 +104,12 @@ export const pageItemStyle = StyleSheet.create({
   title: {
     marginTop: 20,
     fontSize: 36,
+    color: blackColor,
   },
   description: {
     marginTop: 20,
     fontSize: 14,
+    color: blackColor,
   },
   loadingContainer: {
     ...StyleSheet.absoluteFill,
@@ -154,5 +156,6 @@ export const pageItemStyle = StyleSheet.create({
     // Text
     fontSize: 14,
     textAlign: 'left',
+    color: blackColor,
   },
 });

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { strings } from '../localization/LocalizationStrings';
-import { pageItemStyle, pageStyle, primaryColor } from '../AppStyle';
+import { pageItemStyle, pageStyle, primaryColor, placeholderColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, ActivityIndicator, Text, TextInput, View } from 'react-native';
 import { authenticationApi, handleApiError } from '../api/apiHandler';
 import { logStringifyPretty, showGeneralMessage, completeSignIn } from '../Utils';
@@ -137,6 +137,7 @@ export default function MfaCode(props) {
             <TextInput
               style={pageItemStyle.inputText}
               placeholder={strings.placeholders.code}
+              placeholderTextColor={placeholderColor}
               keyboardType="number-pad"
               onChangeText={text => setCode(text)}
               autoCapitalize="none"
