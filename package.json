@@ -11,7 +11,7 @@
     "generate:assets": "npx resize-image-cli -s './raw_assets/devices' -d './src/assets/devices/' -w 150 -h 150",
     "generate:userportal-apis": "export TS_POST_PROCESS_FILE='yarn prettier --write'; npx openapi-generator-cli generate -i ./src/api/open-api/userportal.yaml -g typescript-axios -o ./src/api/generated/owUserPortalApi --ignore-file-override=.openapi-generator-ignore --enable-post-process-file",
     "postinstall": "patch-package",
-    "postversion": "react-native-version"
+    "postversion": "react-native-version --never-amend --increment-build"
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^6.0.9",
