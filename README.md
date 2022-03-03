@@ -41,7 +41,7 @@ To generate an Android release build, you will need to ensure the following
 
 To create:
 - Update the package version number in package.json
-- yarn react-native-version --never-amend --increment-build
+- yarn react-native-version --never-amend
 - cd android
 - ./gradlew bundleRelease
 
