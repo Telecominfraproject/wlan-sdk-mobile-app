@@ -13,7 +13,7 @@ import { StyleSheet, SafeAreaView, ScrollView, View, TextInput, ActivityIndicato
 import { subscriberRegistrationApi, handleApiError } from '../api/apiHandler';
 import { useSelector } from 'react-redux';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
-import { logStringifyPretty, showGeneralMessage } from '../Utils';
+import { getDeviceUuid, logStringifyPretty, showGeneralMessage } from '../Utils';
 import ButtonStyled from '../components/ButtonStyled';
 
 export default function SignUp(props) {
@@ -61,7 +61,14 @@ export default function SignUp(props) {
   const onCheck = async () => {
     try {
       if (signUpStatus) {
-        const response = await subscriberRegistrationApi.getSignup(email, macAddress, signUpStatus.id);
+        const deviceUuid = await getDeviceUuid();
+        const response = await subscriberRegistrationApi.getSignup(
+          email,
+          macAddress,
+          signUpStatus.id,
+          false,
+          deviceUuid,
+        );
         logStringifyPretty(response, 'Sign Up Check');
 
         if (!response || !response.data) {
@@ -91,11 +98,12 @@ export default function SignUp(props) {
 
   const deleteSignUp = async () => {
     try {
+      const deviceUuid = await getDeviceUuid();
       // Delete the current sign-up process upon success or failure. This may be removed in the future.
-      await subscriberRegistrationApi.deleteSignup(email, macAddress, signUpStatus.id);
+      await subscriberRegistrationApi.deleteSignup(email, macAddress, signUpStatus.id, deviceUuid);
 
       if (isMounted.current) {
-        console.log('deleted');
+        console.log('Sign up process deleted.');
       }
     } catch (error) {
       if (isMounted.current) {
@@ -110,7 +118,8 @@ export default function SignUp(props) {
   const onSubmit = async () => {
     try {
       setLoading(true);
-      const response = await subscriberRegistrationApi.postSignup(email, macAddress);
+      const deviceUuid = await getDeviceUuid();
+      const response = await subscriberRegistrationApi.postSignup(email, macAddress, deviceUuid);
       logStringifyPretty(response, 'Sign Up');
 
       if (!response || !response.data) {

@@ -54,6 +54,12 @@ export interface AccessPoint {
    * @type {string}
    * @memberof AccessPoint
    */
+  serialNumber?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof AccessPoint
+   */
   name?: string;
   /**
    *
@@ -515,6 +521,12 @@ export interface HomeDeviceMode {
    * @memberof HomeDeviceMode
    */
   modified?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof HomeDeviceMode
+   */
+  leaseTime?: string;
 }
 
 /**
@@ -1268,6 +1280,12 @@ export interface SignupEntry {
    * @type {string}
    * @memberof SignupEntry
    */
+  macAddress?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof SignupEntry
+   */
   serialNumber?: string;
   /**
    *
@@ -1293,6 +1311,12 @@ export interface SignupEntry {
    * @memberof SignupEntry
    */
   status?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof SignupEntry
+   */
+  statusCode?: number;
 }
 /**
  *
@@ -2884,15 +2908,17 @@ export const SubscriberRegistrationApiAxiosParamCreator = function (configuratio
      *
      * @summary This call allows someone to get the status of a signup.
      * @param {string} [email]
-     * @param {string} [serialNumber]
+     * @param {string} [macAddress]
      * @param {string} [signupUUID]
+     * @param {string} [deviceID]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     deleteSignup: async (
       email?: string,
-      serialNumber?: string,
+      macAddress?: string,
       signupUUID?: string,
+      deviceID?: string,
       options: any = {},
     ): Promise<RequestArgs> => {
       const localVarPath = `/signup`;
@@ -2918,12 +2944,16 @@ export const SubscriberRegistrationApiAxiosParamCreator = function (configuratio
         localVarQueryParameter['email'] = email;
       }
 
-      if (serialNumber !== undefined) {
-        localVarQueryParameter['serialNumber'] = serialNumber;
+      if (macAddress !== undefined) {
+        localVarQueryParameter['macAddress'] = macAddress;
       }
 
       if (signupUUID !== undefined) {
         localVarQueryParameter['signupUUID'] = signupUUID;
+      }
+
+      if (deviceID !== undefined) {
+        localVarQueryParameter['deviceID'] = deviceID;
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
@@ -2939,15 +2969,19 @@ export const SubscriberRegistrationApiAxiosParamCreator = function (configuratio
      *
      * @summary This call allows someone to get the status of a signup.
      * @param {string} [email]
-     * @param {string} [serialNumber]
+     * @param {string} [macAddress]
      * @param {string} [signupUUID]
+     * @param {boolean} [dashboard]
+     * @param {string} [deviceID]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     getSignup: async (
       email?: string,
-      serialNumber?: string,
+      macAddress?: string,
       signupUUID?: string,
+      dashboard?: boolean,
+      deviceID?: string,
       options: any = {},
     ): Promise<RequestArgs> => {
       const localVarPath = `/signup`;
@@ -2973,12 +3007,20 @@ export const SubscriberRegistrationApiAxiosParamCreator = function (configuratio
         localVarQueryParameter['email'] = email;
       }
 
-      if (serialNumber !== undefined) {
-        localVarQueryParameter['serialNumber'] = serialNumber;
+      if (macAddress !== undefined) {
+        localVarQueryParameter['macAddress'] = macAddress;
       }
 
       if (signupUUID !== undefined) {
         localVarQueryParameter['signupUUID'] = signupUUID;
+      }
+
+      if (dashboard !== undefined) {
+        localVarQueryParameter['dashboard'] = dashboard;
+      }
+
+      if (deviceID !== undefined) {
+        localVarQueryParameter['deviceID'] = deviceID;
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
@@ -2995,6 +3037,7 @@ export const SubscriberRegistrationApiAxiosParamCreator = function (configuratio
      * @summary modify the signup command in play
      * @param {string} signupUUID
      * @param {'cancel' | 'success' | 'inprogress' | 'failed' | 'poll'} operation
+     * @param {string} [deviceID]
      * @param {InlineObject1} [inlineObject1]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -3002,6 +3045,7 @@ export const SubscriberRegistrationApiAxiosParamCreator = function (configuratio
     modifySignup: async (
       signupUUID: string,
       operation: 'cancel' | 'success' | 'inprogress' | 'failed' | 'poll',
+      deviceID?: string,
       inlineObject1?: InlineObject1,
       options: any = {},
     ): Promise<RequestArgs> => {
@@ -3036,6 +3080,10 @@ export const SubscriberRegistrationApiAxiosParamCreator = function (configuratio
         localVarQueryParameter['operation'] = operation;
       }
 
+      if (deviceID !== undefined) {
+        localVarQueryParameter['deviceID'] = deviceID;
+      }
+
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
       setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
@@ -3052,15 +3100,21 @@ export const SubscriberRegistrationApiAxiosParamCreator = function (configuratio
      *
      * @summary This call allows a new subscriber to register themselves and their devices.
      * @param {string} email
-     * @param {string} serialNumber
+     * @param {string} macAddress
+     * @param {string} [deviceID]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    postSignup: async (email: string, serialNumber: string, options: any = {}): Promise<RequestArgs> => {
+    postSignup: async (
+      email: string,
+      macAddress: string,
+      deviceID?: string,
+      options: any = {},
+    ): Promise<RequestArgs> => {
       // verify required parameter 'email' is not null or undefined
       assertParamExists('postSignup', 'email', email);
-      // verify required parameter 'serialNumber' is not null or undefined
-      assertParamExists('postSignup', 'serialNumber', serialNumber);
+      // verify required parameter 'macAddress' is not null or undefined
+      assertParamExists('postSignup', 'macAddress', macAddress);
       const localVarPath = `/signup`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -3084,8 +3138,12 @@ export const SubscriberRegistrationApiAxiosParamCreator = function (configuratio
         localVarQueryParameter['email'] = email;
       }
 
-      if (serialNumber !== undefined) {
-        localVarQueryParameter['serialNumber'] = serialNumber;
+      if (macAddress !== undefined) {
+        localVarQueryParameter['macAddress'] = macAddress;
+      }
+
+      if (deviceID !== undefined) {
+        localVarQueryParameter['deviceID'] = deviceID;
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
@@ -3111,36 +3169,55 @@ export const SubscriberRegistrationApiFp = function (configuration?: Configurati
      *
      * @summary This call allows someone to get the status of a signup.
      * @param {string} [email]
-     * @param {string} [serialNumber]
+     * @param {string} [macAddress]
      * @param {string} [signupUUID]
+     * @param {string} [deviceID]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async deleteSignup(
       email?: string,
-      serialNumber?: string,
+      macAddress?: string,
       signupUUID?: string,
+      deviceID?: string,
       options?: any,
     ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.deleteSignup(email, serialNumber, signupUUID, options);
+      const localVarAxiosArgs = await localVarAxiosParamCreator.deleteSignup(
+        email,
+        macAddress,
+        signupUUID,
+        deviceID,
+        options,
+      );
       return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
     },
     /**
      *
      * @summary This call allows someone to get the status of a signup.
      * @param {string} [email]
-     * @param {string} [serialNumber]
+     * @param {string} [macAddress]
      * @param {string} [signupUUID]
+     * @param {boolean} [dashboard]
+     * @param {string} [deviceID]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async getSignup(
       email?: string,
-      serialNumber?: string,
+      macAddress?: string,
       signupUUID?: string,
+      dashboard?: boolean,
+      deviceID?: string,
       options?: any,
     ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getSignup(email, serialNumber, signupUUID, options);
+      const localVarAxiosArgs = await localVarAxiosParamCreator.getSignup(
+        email,
+        macAddress,
+        signupUUID,
+        dashboard,
+        deviceID,
+        options,
+      );
       return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
     },
     /**
@@ -3148,6 +3225,7 @@ export const SubscriberRegistrationApiFp = function (configuration?: Configurati
      * @summary modify the signup command in play
      * @param {string} signupUUID
      * @param {'cancel' | 'success' | 'inprogress' | 'failed' | 'poll'} operation
+     * @param {string} [deviceID]
      * @param {InlineObject1} [inlineObject1]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -3155,12 +3233,14 @@ export const SubscriberRegistrationApiFp = function (configuration?: Configurati
     async modifySignup(
       signupUUID: string,
       operation: 'cancel' | 'success' | 'inprogress' | 'failed' | 'poll',
+      deviceID?: string,
       inlineObject1?: InlineObject1,
       options?: any,
     ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
       const localVarAxiosArgs = await localVarAxiosParamCreator.modifySignup(
         signupUUID,
         operation,
+        deviceID,
         inlineObject1,
         options,
       );
@@ -3170,16 +3250,18 @@ export const SubscriberRegistrationApiFp = function (configuration?: Configurati
      *
      * @summary This call allows a new subscriber to register themselves and their devices.
      * @param {string} email
-     * @param {string} serialNumber
+     * @param {string} macAddress
+     * @param {string} [deviceID]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async postSignup(
       email: string,
-      serialNumber: string,
+      macAddress: string,
+      deviceID?: string,
       options?: any,
     ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.postSignup(email, serialNumber, options);
+      const localVarAxiosArgs = await localVarAxiosParamCreator.postSignup(email, macAddress, deviceID, options);
       return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
     },
   };
@@ -3200,33 +3282,52 @@ export const SubscriberRegistrationApiFactory = function (
      *
      * @summary This call allows someone to get the status of a signup.
      * @param {string} [email]
-     * @param {string} [serialNumber]
+     * @param {string} [macAddress]
      * @param {string} [signupUUID]
+     * @param {string} [deviceID]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    deleteSignup(email?: string, serialNumber?: string, signupUUID?: string, options?: any): AxiosPromise<object> {
+    deleteSignup(
+      email?: string,
+      macAddress?: string,
+      signupUUID?: string,
+      deviceID?: string,
+      options?: any,
+    ): AxiosPromise<object> {
       return localVarFp
-        .deleteSignup(email, serialNumber, signupUUID, options)
+        .deleteSignup(email, macAddress, signupUUID, deviceID, options)
         .then(request => request(axios, basePath));
     },
     /**
      *
      * @summary This call allows someone to get the status of a signup.
      * @param {string} [email]
-     * @param {string} [serialNumber]
+     * @param {string} [macAddress]
      * @param {string} [signupUUID]
+     * @param {boolean} [dashboard]
+     * @param {string} [deviceID]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getSignup(email?: string, serialNumber?: string, signupUUID?: string, options?: any): AxiosPromise<void> {
-      return localVarFp.getSignup(email, serialNumber, signupUUID, options).then(request => request(axios, basePath));
+    getSignup(
+      email?: string,
+      macAddress?: string,
+      signupUUID?: string,
+      dashboard?: boolean,
+      deviceID?: string,
+      options?: any,
+    ): AxiosPromise<void> {
+      return localVarFp
+        .getSignup(email, macAddress, signupUUID, dashboard, deviceID, options)
+        .then(request => request(axios, basePath));
     },
     /**
      *
      * @summary modify the signup command in play
      * @param {string} signupUUID
      * @param {'cancel' | 'success' | 'inprogress' | 'failed' | 'poll'} operation
+     * @param {string} [deviceID]
      * @param {InlineObject1} [inlineObject1]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -3234,23 +3335,25 @@ export const SubscriberRegistrationApiFactory = function (
     modifySignup(
       signupUUID: string,
       operation: 'cancel' | 'success' | 'inprogress' | 'failed' | 'poll',
+      deviceID?: string,
       inlineObject1?: InlineObject1,
       options?: any,
     ): AxiosPromise<void> {
       return localVarFp
-        .modifySignup(signupUUID, operation, inlineObject1, options)
+        .modifySignup(signupUUID, operation, deviceID, inlineObject1, options)
         .then(request => request(axios, basePath));
     },
     /**
      *
      * @summary This call allows a new subscriber to register themselves and their devices.
      * @param {string} email
-     * @param {string} serialNumber
+     * @param {string} macAddress
+     * @param {string} [deviceID]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    postSignup(email: string, serialNumber: string, options?: any): AxiosPromise<void> {
-      return localVarFp.postSignup(email, serialNumber, options).then(request => request(axios, basePath));
+    postSignup(email: string, macAddress: string, deviceID?: string, options?: any): AxiosPromise<void> {
+      return localVarFp.postSignup(email, macAddress, deviceID, options).then(request => request(axios, basePath));
     },
   };
 };
@@ -3266,15 +3369,16 @@ export class SubscriberRegistrationApi extends BaseAPI {
    *
    * @summary This call allows someone to get the status of a signup.
    * @param {string} [email]
-   * @param {string} [serialNumber]
+   * @param {string} [macAddress]
    * @param {string} [signupUUID]
+   * @param {string} [deviceID]
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof SubscriberRegistrationApi
    */
-  public deleteSignup(email?: string, serialNumber?: string, signupUUID?: string, options?: any) {
+  public deleteSignup(email?: string, macAddress?: string, signupUUID?: string, deviceID?: string, options?: any) {
     return SubscriberRegistrationApiFp(this.configuration)
-      .deleteSignup(email, serialNumber, signupUUID, options)
+      .deleteSignup(email, macAddress, signupUUID, deviceID, options)
       .then(request => request(this.axios, this.basePath));
   }
 
@@ -3282,15 +3386,24 @@ export class SubscriberRegistrationApi extends BaseAPI {
    *
    * @summary This call allows someone to get the status of a signup.
    * @param {string} [email]
-   * @param {string} [serialNumber]
+   * @param {string} [macAddress]
    * @param {string} [signupUUID]
+   * @param {boolean} [dashboard]
+   * @param {string} [deviceID]
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof SubscriberRegistrationApi
    */
-  public getSignup(email?: string, serialNumber?: string, signupUUID?: string, options?: any) {
+  public getSignup(
+    email?: string,
+    macAddress?: string,
+    signupUUID?: string,
+    dashboard?: boolean,
+    deviceID?: string,
+    options?: any,
+  ) {
     return SubscriberRegistrationApiFp(this.configuration)
-      .getSignup(email, serialNumber, signupUUID, options)
+      .getSignup(email, macAddress, signupUUID, dashboard, deviceID, options)
       .then(request => request(this.axios, this.basePath));
   }
 
@@ -3299,6 +3412,7 @@ export class SubscriberRegistrationApi extends BaseAPI {
    * @summary modify the signup command in play
    * @param {string} signupUUID
    * @param {'cancel' | 'success' | 'inprogress' | 'failed' | 'poll'} operation
+   * @param {string} [deviceID]
    * @param {InlineObject1} [inlineObject1]
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
@@ -3307,11 +3421,12 @@ export class SubscriberRegistrationApi extends BaseAPI {
   public modifySignup(
     signupUUID: string,
     operation: 'cancel' | 'success' | 'inprogress' | 'failed' | 'poll',
+    deviceID?: string,
     inlineObject1?: InlineObject1,
     options?: any,
   ) {
     return SubscriberRegistrationApiFp(this.configuration)
-      .modifySignup(signupUUID, operation, inlineObject1, options)
+      .modifySignup(signupUUID, operation, deviceID, inlineObject1, options)
       .then(request => request(this.axios, this.basePath));
   }
 
@@ -3319,14 +3434,15 @@ export class SubscriberRegistrationApi extends BaseAPI {
    *
    * @summary This call allows a new subscriber to register themselves and their devices.
    * @param {string} email
-   * @param {string} serialNumber
+   * @param {string} macAddress
+   * @param {string} [deviceID]
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof SubscriberRegistrationApi
    */
-  public postSignup(email: string, serialNumber: string, options?: any) {
+  public postSignup(email: string, macAddress: string, deviceID?: string, options?: any) {
     return SubscriberRegistrationApiFp(this.configuration)
-      .postSignup(email, serialNumber, options)
+      .postSignup(email, macAddress, deviceID, options)
       .then(request => request(this.axios, this.basePath));
   }
 }

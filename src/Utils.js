@@ -1,8 +1,10 @@
+import uuid from 'react-native-uuid';
 import { Alert } from 'react-native';
 import { strings } from './localization/LocalizationStrings';
 import { errorColor, warnColor, okColor } from './AppStyle';
 import { store } from './store/Store';
 import { clearSession, setSession } from './store/SessionSlice';
+import { setDeviceUuid } from './store/DeviceUuidSlice';
 import {
   setSubscriberInformationLoading,
   setSubscriberInformation,
@@ -18,6 +20,20 @@ import {
   WifiNetworkBandsEnum,
   WifiNetworkTypeEnum,
 } from './api/apiHandler';
+
+export async function getDeviceUuid() {
+  let deviceUuid = store.getState().deviceUuid.value;
+
+  if (deviceUuid === null) {
+    deviceUuid = uuid.v4();
+    store.dispatch(setDeviceUuid(deviceUuid));
+  }
+
+  console.log("device UUID");
+  console.log(deviceUuid);
+
+  return deviceUuid;
+}
 
 export function showGeneralError(title, message) {
   console.error(title + ' -> ' + message);
@@ -370,7 +386,9 @@ export async function completeSignIn(navigation, userId, password, sessionData, 
       store.dispatch(setSession(responseData));
 
       // Get the subscriber information
+      console.log("gettins sub");
       await getSubscriberInformation(true);
+      console.log("gettins suba");
 
       // Completed sign-in
       if (setLoadingFn) {
