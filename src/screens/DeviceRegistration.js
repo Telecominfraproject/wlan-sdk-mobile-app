@@ -4,7 +4,7 @@ import { ActivityIndicator, SafeAreaView, ScrollView, Text, TextInput, View } fr
 import { pageItemStyle, pageStyle, primaryColor, placeholderColor } from '../AppStyle';
 import { useSelector } from 'react-redux';
 import { selectSubscriberInformationLoading } from '../store/SubscriberInformationSlice';
-import { handleApiError, subscriberDeviceApi } from '../api/apiHandler';
+import { handleApiError } from '../api/apiHandler';
 import { addAccessPoint } from '../Utils';
 import ButtonStyled from '../components/ButtonStyled';
 
@@ -20,15 +20,16 @@ export default function DeviceRegistration({ navigation, route }) {
 
   const onSubmitPress = async () => {
     try {
-      let response = await subscriberDeviceApi.deviceClaim(macAddress, 'Mobile App');
+      // TODO: Needs to implement the new flow
+      throw new Error('Not supported');
+      //let response = await subscriberDeviceApi.deviceClaim(macAddress, 'Mobile App');
 
-      if (response.data.errorCode !== 0) {
-        throw new Error(response.data.errorText);
-      }
+      //      if (response.data.errorCode !== 0) {
+      //       throw new Error(response.data.errorText);
+      //     }
 
-      await addAccessPoint({ macAddress: macAddress });
-
-      navigation.goBack();
+      //await addAccessPoint({ macAddress: macAddress });
+      //navigation.goBack();
     } catch (error) {
       handleApiError(strings.errors.titleAccessPointRegistration, error);
     }

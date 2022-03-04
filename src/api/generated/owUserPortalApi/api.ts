@@ -127,6 +127,36 @@ export interface AccessPoint {
    * @memberof AccessPoint
    */
   configurationUUID?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof AccessPoint
+   */
+  currentFirmware?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof AccessPoint
+   */
+  currentFirmwareDate?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof AccessPoint
+   */
+  latestFirmware?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof AccessPoint
+   */
+  latestFirmwareDate?: number;
+  /**
+   *
+   * @type {boolean}
+   * @memberof AccessPoint
+   */
+  newFirmwareAvailable?: boolean;
 }
 /**
  *
@@ -662,44 +692,6 @@ export interface InlineObject1 {
    */
   status?: string;
 }
-/**
- *
- * @export
- * @interface InlineResponse200
- */
-export interface InlineResponse200 {
-  /**
-   *
-   * @type {number}
-   * @memberof InlineResponse200
-   */
-  errorCode?: InlineResponse200ErrorCodeEnum;
-  /**
-   *
-   * @type {string}
-   * @memberof InlineResponse200
-   */
-  errorText?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof InlineResponse200
-   */
-  details?: string;
-}
-
-/**
- * @export
- * @enum {string}
- */
-export enum InlineResponse200ErrorCodeEnum {
-  NUMBER_0 = 0,
-  NUMBER_1 = 1,
-  NUMBER_2 = 2,
-  NUMBER_3 = 3,
-  NUMBER_4 = 4,
-}
-
 /**
  *
  * @export
@@ -2537,138 +2529,6 @@ export class MFAApi extends BaseAPI {
   ) {
     return MFAApiFp(this.configuration)
       .modifyMFS(startValidation, completeValidation, challengeCode, subMfaConfig, options)
-      .then(request => request(this.axios, this.basePath));
-  }
-}
-
-/**
- * SubscriberDeviceApi - axios parameter creator
- * @export
- */
-export const SubscriberDeviceApiAxiosParamCreator = function (configuration?: Configuration) {
-  return {
-    /**
-     *
-     * @summary A subscriber is trying to claim a specific SerialNumber.
-     * @param {string} serialNumber
-     * @param {string} id Any string or ID will be stored along with teh claim.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    deviceClaim: async (serialNumber: string, id: string, options: any = {}): Promise<RequestArgs> => {
-      // verify required parameter 'serialNumber' is not null or undefined
-      assertParamExists('deviceClaim', 'serialNumber', serialNumber);
-      // verify required parameter 'id' is not null or undefined
-      assertParamExists('deviceClaim', 'id', id);
-      const localVarPath = `/claim`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication ApiKeyAuth required
-      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
-
-      // authentication bearerAuth required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration);
-
-      if (serialNumber !== undefined) {
-        localVarQueryParameter['serialNumber'] = serialNumber;
-      }
-
-      if (id !== undefined) {
-        localVarQueryParameter['id'] = id;
-      }
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
-      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-  };
-};
-
-/**
- * SubscriberDeviceApi - functional programming interface
- * @export
- */
-export const SubscriberDeviceApiFp = function (configuration?: Configuration) {
-  const localVarAxiosParamCreator = SubscriberDeviceApiAxiosParamCreator(configuration);
-  return {
-    /**
-     *
-     * @summary A subscriber is trying to claim a specific SerialNumber.
-     * @param {string} serialNumber
-     * @param {string} id Any string or ID will be stored along with teh claim.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async deviceClaim(
-      serialNumber: string,
-      id: string,
-      options?: any,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<InlineResponse200>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.deviceClaim(serialNumber, id, options);
-      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-    },
-  };
-};
-
-/**
- * SubscriberDeviceApi - factory interface
- * @export
- */
-export const SubscriberDeviceApiFactory = function (
-  configuration?: Configuration,
-  basePath?: string,
-  axios?: AxiosInstance,
-) {
-  const localVarFp = SubscriberDeviceApiFp(configuration);
-  return {
-    /**
-     *
-     * @summary A subscriber is trying to claim a specific SerialNumber.
-     * @param {string} serialNumber
-     * @param {string} id Any string or ID will be stored along with teh claim.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    deviceClaim(serialNumber: string, id: string, options?: any): AxiosPromise<InlineResponse200> {
-      return localVarFp.deviceClaim(serialNumber, id, options).then(request => request(axios, basePath));
-    },
-  };
-};
-
-/**
- * SubscriberDeviceApi - object-oriented interface
- * @export
- * @class SubscriberDeviceApi
- * @extends {BaseAPI}
- */
-export class SubscriberDeviceApi extends BaseAPI {
-  /**
-   *
-   * @summary A subscriber is trying to claim a specific SerialNumber.
-   * @param {string} serialNumber
-   * @param {string} id Any string or ID will be stored along with teh claim.
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof SubscriberDeviceApi
-   */
-  public deviceClaim(serialNumber: string, id: string, options?: any) {
-    return SubscriberDeviceApiFp(this.configuration)
-      .deviceClaim(serialNumber, id, options)
       .then(request => request(this.axios, this.basePath));
   }
 }
