@@ -29,9 +29,6 @@ export async function getDeviceUuid() {
     store.dispatch(setDeviceUuid(deviceUuid));
   }
 
-  console.log("device UUID");
-  console.log(deviceUuid);
-
   return deviceUuid;
 }
 
@@ -386,9 +383,7 @@ export async function completeSignIn(navigation, userId, password, sessionData, 
       store.dispatch(setSession(responseData));
 
       // Get the subscriber information
-      console.log("gettins sub");
       await getSubscriberInformation(true);
-      console.log("gettins suba");
 
       // Completed sign-in
       if (setLoadingFn) {
