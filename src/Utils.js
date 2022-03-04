@@ -269,12 +269,12 @@ export function getClientConnectionStatusColor(client) {
     // Handle WIFI status
     const rssi = client.rssi;
 
-    // TODO: Verify this
-    if (rssi <= -80) {
+    // This information was provided by CB
+    if (rssi <= -75) {
       return errorColor;
-    } else if (rssi > -80 && rssi <= -50) {
+    } else if (rssi > -75 && rssi <= -60) {
       return warnColor;
-    } else if (rssi > -50 && rssi < 0) {
+    } else if (rssi > -60 && rssi < 0) {
       return okColor;
     } else {
       return errorColor;
