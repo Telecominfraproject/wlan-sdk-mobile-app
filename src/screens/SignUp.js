@@ -63,8 +63,8 @@ export default function SignUp(props) {
       if (signUpStatus) {
         const deviceUuid = await getDeviceUuid();
         const response = await subscriberRegistrationApi.getSignup(
-          email,
-          macAddress,
+          getEmailSanitized(),
+          getMacAddressSanitized(),
           signUpStatus.id,
           false,
           deviceUuid,
@@ -100,7 +100,12 @@ export default function SignUp(props) {
     try {
       const deviceUuid = await getDeviceUuid();
       // Delete the current sign-up process upon success or failure. This may be removed in the future.
-      await subscriberRegistrationApi.deleteSignup(email, macAddress, signUpStatus.id, deviceUuid);
+      await subscriberRegistrationApi.deleteSignup(
+        getEmailSanitized(),
+        getMacAddressSanitized(),
+        signUpStatus.id,
+        deviceUuid,
+      );
 
       if (isMounted.current) {
         console.log('Sign up process deleted.');
@@ -117,9 +122,19 @@ export default function SignUp(props) {
 
   const onSubmit = async () => {
     try {
+      let macAddressSanitized = getMacAddressSanitized();
+
+      if (!macAddressSanitized || macAddressSanitized.length !== 12) {
+        throw new Error(strings.errors.invalidMac);
+      }
+
       setLoading(true);
       const deviceUuid = await getDeviceUuid();
-      const response = await subscriberRegistrationApi.postSignup(email, macAddress, deviceUuid);
+      const response = await subscriberRegistrationApi.postSignup(
+        getEmailSanitized(),
+        getMacAddressSanitized(),
+        deviceUuid,
+      );
       logStringifyPretty(response, 'Sign Up');
 
       if (!response || !response.data) {
@@ -139,6 +154,28 @@ export default function SignUp(props) {
         setLoading(false);
       }
     }
+  };
+
+  const getEmailSanitized = () => {
+    let emailSanitized = email;
+
+    if (emailSanitized) {
+      emailSanitized = emailSanitized.trim();
+    }
+
+    return emailSanitized;
+  };
+
+  const getMacAddressSanitized = () => {
+    let macAddressSanitized = macAddress;
+
+    if (macAddressSanitized) {
+      macAddressSanitized = macAddressSanitized.trim();
+      macAddressSanitized = macAddressSanitized.toLowerCase();
+      macAddressSanitized = macAddressSanitized.replace(/[^0-9a-f]/g, '');
+    }
+
+    return macAddressSanitized;
   };
 
   const getStatusDescription = () => {

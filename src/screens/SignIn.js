@@ -42,9 +42,19 @@ const SignIn = props => {
       showGeneralError(strings.errors.titleSignIn, strings.errors.emptyFields);
     } else {
       // Save the credentials, and start the sign-in process (which will use the credentials)
-      await setCredentials(email, password);
+      await setCredentials(getEmailSanitized(), password);
       signIn();
     }
+  };
+
+  const getEmailSanitized = () => {
+    let emailSanitized = email;
+
+    if (emailSanitized) {
+      emailSanitized = emailSanitized.trim();
+    }
+
+    return emailSanitized;
   };
 
   const signIn = async () => {
