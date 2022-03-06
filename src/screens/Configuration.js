@@ -1008,11 +1008,15 @@ const Configuration = props => {
             <ItemTextWithLabel
               key="firmware"
               label={strings.configuration.firmware}
-              value={displayValue(accessPoint, 'firmware')}
+              value={displayValue(accessPoint, 'currentFirmware')}
               buttonTitle={strings.buttons.update}
               onButtonPress={onUpdateFirmwarePress}
               buttonLoading={buttonAction === 'firmware'}
-              buttonDisabled={!accessPoint || buttonAction}
+              buttonDisabled={
+                !accessPoint ||
+                buttonAction ||
+                displayValue(accessPoint, 'currentFirmware') !== displayValue(accessPoint, 'lastFirmware')
+              }
             />
             <ItemTextWithLabel
               key="model"
