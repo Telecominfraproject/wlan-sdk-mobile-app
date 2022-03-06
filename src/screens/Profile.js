@@ -124,7 +124,8 @@ const Profile = props => {
         val.phoneNumber = phoneNumberValidate;
       }
 
-      await modifySubscriberInformation(val);
+      // Config did not change, so make sure that flag is not set
+      await modifySubscriberInformation(val, false);
     } catch (error) {
       handleApiError(strings.errors.titleSettingUpdate, error);
       // Need to throw the error to ensure the caller cleans up

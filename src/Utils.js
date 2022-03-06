@@ -574,7 +574,7 @@ export async function deleteAccessPoint(accessPointIndex) {
   await modifySubscriberInformation(updatedSubsciberInformation);
 }
 
-export async function modifySubscriberInformation(updatedJson) {
+export async function modifySubscriberInformation(updatedJson, configChanged = true, applyConfigOnly = false) {
   if (!subscriberInformationApi) {
     throw new Error(strings.errors.internal);
   }
@@ -583,7 +583,7 @@ export async function modifySubscriberInformation(updatedJson) {
     throw new Error(strings.errors.internal);
   }
 
-  const response = await subscriberInformationApi.modifySubscriberInfo(true, false, updatedJson);
+  const response = await subscriberInformationApi.modifySubscriberInfo(configChanged, applyConfigOnly, updatedJson);
   if (!response || !response.data) {
     throw new Error(strings.errors.invalidResponse);
   }
@@ -596,6 +596,9 @@ export async function modifySubscriberInformation(updatedJson) {
 }
 
 export async function modifyAccessPoint(accessPointId, jsonObject) {
+  // Note the expectation is that is specific to the access point and NOT any of the
+  // internet connection settings!
+  // This will NOT trigger a configuration update.
   if (!jsonObject) {
     // Do nothing if the object is null or empty
     return;
@@ -628,7 +631,7 @@ export async function modifyAccessPoint(accessPointId, jsonObject) {
     return;
   }
 
-  await modifySubscriberInformation(updatedSubsciberInformation);
+  await modifySubscriberInformation(updatedSubsciberInformation, false);
 }
 
 export async function modifySubscriberDeviceMode(accessPointId, jsonObject) {
