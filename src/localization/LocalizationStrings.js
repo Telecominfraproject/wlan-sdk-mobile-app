@@ -242,6 +242,8 @@ export const strings = new LocalizedStrings({
       manufacturer: 'Manufacturer',
       mode: 'Mode',
       network: 'Network',
+      signalStrength: 'Signal Strength',
+      speed: 'Speed',
       status: 'Status',
     },
     deviceRegistration: {

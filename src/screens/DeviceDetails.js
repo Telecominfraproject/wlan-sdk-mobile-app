@@ -14,6 +14,7 @@ import { handleApiError } from '../api/apiHandler';
 import {
   displayValue,
   displayValueWiredMode,
+  displayValueWiredSpeed,
   displayEditableValue,
   getSubscriberDeviceIndexForMac,
   getClientName,
@@ -152,11 +153,19 @@ const DeviceDetails = props => {
   };
 
   const getWifiNetwork = () => {
-    return displayValue(client, 'ssid') + ' (' + displayValue(client, 'rssi') + ')';
+    return displayValue(client, 'ssid');
+  };
+
+  const getSignalStrength = () => {
+    return displayValue(client, 'rssi') + ' dB';
   };
 
   const getWiredMode = () => {
     return displayValueWiredMode(client, 'mode');
+  };
+
+  const getWiredSpeed = () => {
+    return displayValueWiredSpeed(client, 'speed');
   };
 
   const onReserveIpv4Press = async () => {
@@ -282,6 +291,11 @@ const DeviceDetails = props => {
               <ItemTextWithLabel key="network" label={strings.deviceDetails.network} value={getWifiNetwork()} />
             ) : (
               <ItemTextWithLabel key="mode" label={strings.deviceDetails.mode} value={getWiredMode()} />
+            )}
+            {isWifiClient() ? (
+              <ItemTextWithLabel key="rssi" label={strings.deviceDetails.signalStrength} value={getSignalStrength()} />
+            ): (
+              <ItemTextWithLabel key="speed" label={strings.deviceDetails.speed} value={getWiredSpeed()} />
             )}
           </AccordionSection>
 
