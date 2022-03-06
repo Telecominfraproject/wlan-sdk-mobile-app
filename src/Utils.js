@@ -157,6 +157,22 @@ export function displayValueWiredMode(obj, key) {
   return strings.messages.empty;
 }
 
+export function displayValueWiredSpeed(obj, key) {
+  if (obj && key) {
+    if (key in obj) {
+      switch (obj[key]) {
+        case 'auto':
+          return strings.common.automatic;
+
+        default:
+          return obj[key];
+      }
+    }
+  }
+
+  return strings.messages.empty;
+}
+
 export function displayEditableValue(obj, key) {
   if (obj && key) {
     if (key in obj) {
