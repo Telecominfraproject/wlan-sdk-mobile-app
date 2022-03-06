@@ -30,7 +30,7 @@ export const strings = new LocalizedStrings({
       invalidIPv4: 'An IPv4 Address must be in the format of d.d.d.d',
       invalidIPv6: 'An IPv6 Address must be in the format of d.d.d.d',
       invalidLastName: 'A last name must have at least 2 characters',
-      invalidMac: 'A MAC address must be in the format xx‑xx‑xx‑xx‑xx‑xx',
+      invalidMac: 'A MAC address must be in the format aabbccddeeff or aa:bb:cc:dd:ee:ff',
       invalidPassword: 'Please match the requested password format.',
       invalidPhone: 'Phone number must include the country code and area code.',
       invalidResponse: 'Invalid response received from the server.',
