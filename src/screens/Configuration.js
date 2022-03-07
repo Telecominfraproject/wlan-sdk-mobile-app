@@ -438,7 +438,81 @@ const Configuration = props => {
       );
     }
 
-    if (type === 'automatic' || type === 'manual') {
+    if (type === 'automatic') {
+      if (internetConnectionTab.value === TAB_IPV4) {
+        items.push(
+          <ItemTextWithLabel
+            key="ipAddress"
+            label={strings.configuration.ipAddress}
+            value={displayValue(internetConnection, 'ipAddress')}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabel
+            key="subnetMask"
+            label={strings.configuration.subnetMask}
+            value={displayValue(internetConnection, 'subnetMask')}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabel
+            key="defaultGateway"
+            label={strings.configuration.defaultGateway}
+            value={displayValue(internetConnection, 'defaultGateway')}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabel
+            key="primaryDns"
+            label={strings.configuration.primaryDns}
+            value={displayValue(internetConnection, 'primaryDns')}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabel
+            key="secondaryDns"
+            label={strings.configuration.secondaryDns}
+            value={displayValue(internetConnection, 'secondaryDns')}
+          />,
+        );
+      } else if (internetConnectionTab.value === TAB_IPV6 && ipv6Support) {
+        items.push(
+          <ItemTextWithLabel
+            key="ipAddressV6"
+            label={strings.configuration.ipAddressV6}
+            value={displayValue(internetConnection, 'ipAddressV6')}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabel
+            key="subnetMaskV6"
+            label={strings.configuration.subnetMaskV6}
+            value={displayValue(internetConnection, 'subnetMaskV6')}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabel
+            key="defaultGatewayV6"
+            label={strings.configuration.defaultGatewayV6}
+            value={displayValue(internetConnection, 'defaultGatewayV6')}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabel
+            key="primaryDnsV6"
+            label={strings.configuration.primaryDnsV6}
+            value={displayValue(internetConnection, 'primaryDnsV6')}
+          />,
+        );
+        items.push(
+          <ItemTextWithLabel
+            key="secondaryDnsV6"
+            label={strings.configuration.secondaryDnsV6}
+            value={displayValue(internetConnection, 'secondaryDnsV6')}
+          />,
+        );
+      }
+    } else if (type === 'manual') {
       if (internetConnectionTab.value === TAB_IPV4) {
         items.push(
           <ItemTextWithLabelEditable
@@ -612,7 +686,7 @@ const Configuration = props => {
 
     if (type === 'bridge') {
       // Nothing is added
-    } else if (type === 'manual') {
+    } else if (type === 'nat' || type === 'manual') {
       if (deviceConnectionTab.value === TAB_IPV4) {
         items.push(
           <ItemTextWithLabelEditable
@@ -621,16 +695,6 @@ const Configuration = props => {
             value={displayEditableValue(deviceMode, 'subnet')}
             type="subnetV4"
             editKey="subnet"
-            onEdit={onEditDeviceModeSettings}
-          />,
-        );
-        items.push(
-          <ItemTextWithLabelEditable
-            key="subnetMask"
-            label={strings.configuration.subnetMask}
-            value={displayEditableValue(deviceMode, 'subnetMask')}
-            type="subnetMaskV4"
-            editKey="subnetMask"
             onEdit={onEditDeviceModeSettings}
           />,
         );
@@ -667,16 +731,6 @@ const Configuration = props => {
         );
         items.push(
           <ItemTextWithLabelEditable
-            key="subnetMaskV6"
-            label={strings.configuration.subnetMaskV6}
-            value={displayEditableValue(deviceMode, 'subnetMaskV6')}
-            type="subnetMaskV6"
-            editKey="subnetMaskV6"
-            onEdit={onEditDeviceModeSettings}
-          />,
-        );
-        items.push(
-          <ItemTextWithLabelEditable
             key="startIPV6"
             label={strings.configuration.startIpV6}
             value={displayEditableValue(deviceMode, 'startIPV6')}
@@ -693,66 +747,6 @@ const Configuration = props => {
             type="ipV6"
             editKey="endIPV6"
             onEdit={onEditDeviceModeSettings}
-          />,
-        );
-      }
-    } else if (type === 'nat') {
-      if (deviceConnectionTab.value === TAB_IPV4) {
-        items.push(
-          <ItemTextWithLabel
-            key="subnet"
-            label={strings.configuration.subnet}
-            value={displayValue(deviceMode, 'subnet')}
-          />,
-        );
-        items.push(
-          <ItemTextWithLabel
-            key="subnetMask"
-            label={strings.configuration.subnetMask}
-            value={displayValue(deviceMode, 'subnetMask')}
-          />,
-        );
-        items.push(
-          <ItemTextWithLabel
-            key="startIP"
-            label={strings.configuration.startIp}
-            value={displayValue(deviceMode, 'startIP')}
-          />,
-        );
-        items.push(
-          <ItemTextWithLabel
-            key="endIP"
-            label={strings.configuration.endIp}
-            value={displayValue(deviceMode, 'endIP')}
-          />,
-        );
-      } else if (deviceConnectionTab.value === TAB_IPV6 && ipv6Support) {
-        items.push(
-          <ItemTextWithLabel
-            key="subnetV6"
-            label={strings.configuration.subnetV6}
-            value={displayValue(deviceMode, 'subnetV6')}
-          />,
-        );
-        items.push(
-          <ItemTextWithLabel
-            key="subnetMaskV6"
-            label={strings.configuration.subnetMaskV6}
-            value={displayValue(deviceMode, 'subnetMaskV6')}
-          />,
-        );
-        items.push(
-          <ItemTextWithLabel
-            key="startIPV6"
-            label={strings.configuration.startIpV6}
-            value={displayValue(deviceMode, 'startIPV6')}
-          />,
-        );
-        items.push(
-          <ItemTextWithLabel
-            key="endIPV6"
-            label={strings.configuration.endIpV6}
-            value={displayValue(deviceMode, 'endIPV6')}
           />,
         );
       }
