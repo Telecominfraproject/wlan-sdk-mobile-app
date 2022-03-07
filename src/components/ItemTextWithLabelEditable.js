@@ -42,6 +42,33 @@ const ItemTextWithLabelEditable = props => {
     }
   }, [edit]);
 
+  const autoCapitalized = () => {
+    let autoCapitalize = 'words';
+
+    if (type) {
+      let types = type.split('|');
+
+      types.forEach(typeItem => {
+        // The moment autocapitize is false, then this will the state returned (if multiple)
+        // as the will allow the all scenarios.
+        if (autoCapitalize !== 'none') {
+          switch (typeItem) {
+            case 'firstName':
+            case 'lastName':
+              autoCapitalize = 'words';
+              break;
+
+            default:
+              autoCapitalize = 'none';
+              break;
+          }
+        }
+      });
+    }
+
+    return autoCapitalize;
+  };
+
   const onChangeText = text => {
     let converted = convertText(text);
 
@@ -198,6 +225,10 @@ const ItemTextWithLabelEditable = props => {
 
             case 'lastName':
               re = /^[a-zA-Z- ]{2,}$/;
+              break;
+
+            case 'password':
+              re = /.{8,}$/;
               break;
           }
 
@@ -448,6 +479,7 @@ const ItemTextWithLabelEditable = props => {
             style={componentStyles.input}
             value={value}
             editable={!loading}
+            autoCapitalize={autoCapitalized()}
             placeholder={props.placeholder}
             placeholderTextColor={placeholderColor}
             onChangeText={onChangeText}
