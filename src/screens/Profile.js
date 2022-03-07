@@ -5,14 +5,21 @@ import {
   paddingHorizontalDefault,
   heightCellDefault,
   primaryColor,
+  redColor,
   pageStyle,
   pageItemStyle,
   paddingVerticalDefault,
 } from '../AppStyle';
-import { StyleSheet, SafeAreaView, View, ScrollView } from 'react-native';
+import { StyleSheet, SafeAreaView, View, ScrollView, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { completeSignOut, logStringifyPretty, scrollViewToTop } from '../Utils';
-import { getCredentials, handleApiError, mfaApi, SubMfaConfigTypeEnum } from '../api/apiHandler';
+import {
+  getCredentials,
+  handleApiError,
+  mfaApi,
+  SubMfaConfigTypeEnum,
+  subscriberInformationApi,
+} from '../api/apiHandler';
 import { useSelector } from 'react-redux';
 import { selectSubscriberInformationLoading, selectSubscriberInformation } from '../store/SubscriberInformationSlice';
 import { displayValue, modifySubscriberInformation, setSubscriberInformationInterval } from '../Utils';
@@ -173,7 +180,6 @@ const Profile = props => {
         sms: phone,
       };
 
-      // start validation
       const response = await mfaApi.modifyMFS(true, undefined, undefined, mfaConfig);
       if (!response || !response.data) {
         throw new Error(strings.errors.invalidResponse);
@@ -201,6 +207,31 @@ const Profile = props => {
     completeSignOut(props.navigation);
   };
 
+  const onRemoveMyAccountPress = async () => {
+    Alert.alert(strings.configuration.confirmTitle, strings.profile.confirmRemoveMyAccount, [
+      {
+        text: strings.buttons.ok,
+        onPress: async () => {
+          try {
+            const response = await subscriberInformationApi.deleteSubscriberInfo();
+            if (!response || !response.data) {
+              throw new Error(strings.errors.invalidResponse);
+            }
+
+            logStringifyPretty(response.data, response.request.responseURL);
+
+            completeSignOut(props.navigation);
+          } catch (error) {
+            handleApiError(strings.errors.titleRemoveUser, error);
+          }
+        },
+      },
+      {
+        text: strings.buttons.cancel,
+      },
+    ]);
+  };
+
   // Styles
   const componentStyles = StyleSheet.create({
     section: {
@@ -221,6 +252,10 @@ const Profile = props => {
     },
     buttonRight: {
       marginLeft: paddingHorizontalDefault / 2,
+      flex: 1,
+    },
+    buttonRemoveMyAccount: {
+      minHeight: heightCellDefault,
       flex: 1,
     },
   });
@@ -295,6 +330,16 @@ const Profile = props => {
               title={strings.buttons.signOut}
               type="outline"
               onPress={onSignOutPress}
+            />
+          </View>
+
+          <View style={pageItemStyle.containerButton}>
+            <ButtonStyled
+              style={componentStyles.buttonRemoveMyAccount}
+              title={strings.buttons.removeMyAccount}
+              type="text"
+              color={redColor}
+              onPress={onRemoveMyAccountPress}
             />
           </View>
 

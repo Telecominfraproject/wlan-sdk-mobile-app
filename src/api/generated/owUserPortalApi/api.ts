@@ -2541,6 +2541,41 @@ export const SubscriberInformationApiAxiosParamCreator = function (configuration
   return {
     /**
      *
+     * @summary Remove the subscriber from the DB
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    deleteSubscriberInfo: async (options: any = {}): Promise<RequestArgs> => {
+      const localVarPath = `/subscriber`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication ApiKeyAuth required
+      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
      * @summary Get the information about the subscriber
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -2640,6 +2675,18 @@ export const SubscriberInformationApiFp = function (configuration?: Configuratio
   return {
     /**
      *
+     * @summary Remove the subscriber from the DB
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async deleteSubscriberInfo(
+      options?: any,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.deleteSubscriberInfo(options);
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+    },
+    /**
+     *
      * @summary Get the information about the subscriber
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -2687,6 +2734,15 @@ export const SubscriberInformationApiFactory = function (
   return {
     /**
      *
+     * @summary Remove the subscriber from the DB
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    deleteSubscriberInfo(options?: any): AxiosPromise<object> {
+      return localVarFp.deleteSubscriberInfo(options).then(request => request(axios, basePath));
+    },
+    /**
+     *
      * @summary Get the information about the subscriber
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -2723,6 +2779,19 @@ export const SubscriberInformationApiFactory = function (
  * @extends {BaseAPI}
  */
 export class SubscriberInformationApi extends BaseAPI {
+  /**
+   *
+   * @summary Remove the subscriber from the DB
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof SubscriberInformationApi
+   */
+  public deleteSubscriberInfo(options?: any) {
+    return SubscriberInformationApiFp(this.configuration)
+      .deleteSubscriberInfo(options)
+      .then(request => request(this.axios, this.basePath));
+  }
+
   /**
    *
    * @summary Get the information about the subscriber

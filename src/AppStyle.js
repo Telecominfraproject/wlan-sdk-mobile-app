@@ -13,6 +13,7 @@ export const grayLightColor = '#dddddd';
 export const grayColor = '#bbbbbb';
 export const grayDarkColor = '#777777';
 export const placeholderColor = '#c7c7cd';
+export const redColor = '#e3202d';
 
 // Badges colours
 export const okColor = '#8BC34A';

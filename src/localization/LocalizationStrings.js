@@ -53,6 +53,7 @@ export const strings = new LocalizedStrings({
       titleNetwork: 'Network Error',
       titleNetworkModify: 'Network Modify Error',
       titleProfile: 'Profile Error',
+      titleRemoveUser: 'Remove User Error',
       titleResendCode: 'Resend Code Error',
       titleSignIn: 'Sign In Error',
       titleSignUp: 'Sign Up Error',
@@ -108,6 +109,7 @@ export const strings = new LocalizedStrings({
       reboot: 'Reboot',
       refresh: 'Refresh',
       register: 'Register',
+      removeMyAccount: 'Remove My Account',
       resendCode: 'Resend Code',
       reserve: 'Reserve',
       resetPassword: 'Reset Password',
@@ -314,6 +316,7 @@ export const strings = new LocalizedStrings({
     profile: {
       accountInfo: 'Account Information',
       app: 'App',
+      confirmRemoveMyAccount: 'This will remove all your user information and sign you out - proceed?',
       email: 'Email',
       firstName: 'First Name',
       description: 'Description',

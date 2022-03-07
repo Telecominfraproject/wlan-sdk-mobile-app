@@ -138,7 +138,7 @@ const ButtonStyled = props => {
       borderWidth: 1,
     },
     textOutline: {
-      color: primaryColor,
+      color: props.color ? props.color : primaryColor,
     },
     // Filled Styles
     containerFilled: {
