@@ -35,7 +35,7 @@ export default function SignUp(props) {
 
   // The following was taken from a blog post about using setInterval with React-Native and react hooks
   // https://overreacted.io/making-setinterval-declarative-with-react-hooks/
-  useInterval(() => onCheck(), 2500);
+  useInterval(() => onSignUpInternalCheck(), 2500);
 
   function useInterval(callback, delay) {
     const savedCallback = useRef();
@@ -58,7 +58,43 @@ export default function SignUp(props) {
     }, [delay]);
   }
 
-  const onCheck = async () => {
+  const onSignUpPress = async () => {
+    try {
+      let macAddressSanitized = getMacAddressSanitized();
+
+      if (!macAddressSanitized || macAddressSanitized.length !== 12) {
+        throw new Error(strings.errors.invalidMac);
+      }
+
+      setLoading(true);
+      const deviceUuid = await getDeviceUuid();
+      const response = await subscriberRegistrationApi.postSignup(
+        getEmailSanitized(),
+        getMacAddressSanitized(),
+        deviceUuid,
+      );
+      logStringifyPretty(response, 'Sign Up');
+
+      if (!response || !response.data) {
+        throw new Error(strings.errors.invalidResponse);
+      }
+
+      if (response.data.error !== 0) {
+        throw new Error(response.data.description);
+      }
+
+      if (isMounted.current) {
+        setSignUpStatus(response.data);
+      }
+    } catch (error) {
+      if (isMounted.current) {
+        handleApiError(strings.errors.titleSignUp, error);
+        setLoading(false);
+      }
+    }
+  };
+
+  const onSignUpInternalCheck = async () => {
     try {
       if (signUpStatus) {
         const deviceUuid = await getDeviceUuid();
@@ -118,42 +154,6 @@ export default function SignUp(props) {
     } finally {
       setSignUpStatus(null);
       setLoading(false);
-    }
-  };
-
-  const onSubmit = async () => {
-    try {
-      let macAddressSanitized = getMacAddressSanitized();
-
-      if (!macAddressSanitized || macAddressSanitized.length !== 12) {
-        throw new Error(strings.errors.invalidMac);
-      }
-
-      setLoading(true);
-      const deviceUuid = await getDeviceUuid();
-      const response = await subscriberRegistrationApi.postSignup(
-        getEmailSanitized(),
-        getMacAddressSanitized(),
-        deviceUuid,
-      );
-      logStringifyPretty(response, 'Sign Up');
-
-      if (!response || !response.data) {
-        throw new Error(strings.errors.invalidResponse);
-      }
-
-      if (response.data.error !== 0) {
-        throw new Error(response.data.description);
-      }
-
-      if (isMounted.current) {
-        setSignUpStatus(response.data);
-      }
-    } catch (error) {
-      if (isMounted.current) {
-        handleApiError(strings.errors.titleSignUp, error);
-        setLoading(false);
-      }
     }
   };
 
@@ -258,7 +258,7 @@ export default function SignUp(props) {
                   textContentType="emailAddress"
                   returnKeyType="go"
                   onChangeText={text => setEmail(text)}
-                  onSubmitEditing={() => macAddressRef.current.focus()}
+                  onSignUpPressEditing={() => macAddressRef.current.focus()}
                   maxLength={255}
                 />
               </View>
@@ -271,12 +271,12 @@ export default function SignUp(props) {
                   autoCapitalize="none"
                   returnKeyType="go"
                   onChangeText={text => setMacAddress(text)}
-                  onSubmitEditing={() => onSubmit()}
+                  onSignUpPressEditing={() => onSignUpPress()}
                   maxLength={17}
                 />
               </View>
               <View style={pageItemStyle.containerButton}>
-                <ButtonStyled title={strings.buttons.signUp} type="filled" onPress={onSubmit} />
+                <ButtonStyled title={strings.buttons.signUp} type="filled" onPress={onSignUpPress} />
               </View>
             </>
           )}
