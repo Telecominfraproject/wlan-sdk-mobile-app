@@ -57,7 +57,6 @@ const ItemPickerWithLabel = props => {
   };
 
   const getCurrentValue = () => {
-    console.log(items);
     if (items && props.value) {
       for (let i = 0; i < items.length; i++) {
         let item = items[i];
