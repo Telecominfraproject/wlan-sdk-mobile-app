@@ -108,7 +108,8 @@ export default function SignUp(props) {
       );
 
       if (isMounted.current) {
-        console.log('Sign up process deleted.');
+        // Navigate back to Sign-In
+        props.navigation.navigate('SignIn');
       }
     } catch (error) {
       if (isMounted.current) {
