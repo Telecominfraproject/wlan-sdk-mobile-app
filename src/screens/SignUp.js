@@ -17,13 +17,15 @@ import { getDeviceUuid, logStringifyPretty, showGeneralMessage } from '../Utils'
 import ButtonStyled from '../components/ButtonStyled';
 
 export default function SignUp(props) {
+  // Refs
+  const isMounted = useRef(false);
+  const macAddressRef = createRef();
+  // State
   const brandInfo = useSelector(selectBrandInfo);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState();
   const [macAddress, setMacAddress] = useState();
   const [signUpStatus, setSignUpStatus] = useState();
-  const macAddressRef = createRef();
-  const isMounted = useRef(false);
 
   useEffect(() => {
     isMounted.current = true;
@@ -209,6 +211,14 @@ export default function SignUp(props) {
   };
 
   const componentStyles = StyleSheet.create({
+    containerForm: {
+      flexDirection: 'column',
+      flexWrap: 'nowrap',
+      flex: 0,
+      width: '100%',
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+    },
     fillView: {
       flex: 3,
     },
@@ -224,12 +234,6 @@ export default function SignUp(props) {
 
   return (
     <SafeAreaView style={pageStyle.safeAreaView}>
-      {loading && (
-        <View style={pageItemStyle.loadingContainer}>
-          <ActivityIndicator size="large" color={primaryColor} animating={loading} />
-          <Text style={componentStyles.statusText}>{getStatusDescription()}</Text>
-        </View>
-      )}
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.containerPreLogin}>
           <View style={pageItemStyle.container}>
@@ -241,9 +245,10 @@ export default function SignUp(props) {
           {loading ? (
             <View style={pageItemStyle.loadingContainer}>
               <ActivityIndicator size="large" color={primaryColor} animating={loading} />
+              <Text style={componentStyles.statusText}>{getStatusDescription()}</Text>
             </View>
           ) : (
-            <>
+            <View style={componentStyles.containerForm}>
               <View style={pageItemStyle.container}>
                 <Text style={pageItemStyle.description}>{strings.signUp.description}</Text>
               </View>
@@ -278,8 +283,10 @@ export default function SignUp(props) {
               <View style={pageItemStyle.containerButton}>
                 <ButtonStyled title={strings.buttons.signUp} type="filled" onPress={onSignUpPress} />
               </View>
-            </>
+            </View>
           )}
+
+          {/* Bottom Buttons */}
           <View style={componentStyles.fillView} />
           <View style={pageItemStyle.containerButtons}>
             <ButtonStyled title={strings.buttons.privacyPolicy} type="text" onPress={onPrivacyPolicyPress} />

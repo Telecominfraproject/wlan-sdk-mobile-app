@@ -1,22 +1,27 @@
-import React, { useState, useEffect, createRef } from 'react';
+import React, { useState, useEffect, createRef, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { strings } from '../localization/LocalizationStrings';
-import { pageStyle, pageItemStyle, primaryColor, placeholderColor } from '../AppStyle';
+import { pageStyle, pageItemStyle, primaryColor, placeholderColor, marginTopDefault } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View, Image, TextInput, ActivityIndicator } from 'react-native';
-import ButtonStyled from '../components/ButtonStyled';
 import { showGeneralError, completeSignIn } from '../Utils';
 import { handleApiError, hasCredentials, setCredentials, getCredentials } from '../api/apiHandler';
+import ButtonStyled from '../components/ButtonStyled';
 import Divider from '../components/Divider';
 
 const SignIn = props => {
+  // Refs
+  const isMounted = useRef(false);
+  const passwordRef = createRef();
+  // State
   const brandInfo = useSelector(selectBrandInfo);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [loading, setLoading] = useState(false);
-  const passwordRef = createRef();
 
   useEffect(() => {
+    isMounted.current = true;
+
     // If the brand is not selected, then resort back to the brand selector
     if (brandInfo === null) {
       props.navigation.reset({
@@ -31,8 +36,13 @@ const SignIn = props => {
         signIn();
       }
     }
+
+    // Check credentials
     checkCredentials();
 
+    return () => {
+      isMounted.current = false;
+    };
     // No dependencies as this is only to run once on mount. There are plenty of
     // hacks around this eslint warning, but disabling it makes the most sense.
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -66,10 +76,18 @@ const SignIn = props => {
       }
 
       // Handle the sign in process
-      await completeSignIn(props.navigation, credentials.username, credentials.password, null, setLoading);
+      await completeSignIn(props.navigation, credentials.username, credentials.password, null, setLoadingWrapper);
     } catch (error) {
-      // Handle the error.
-      handleApiError(strings.errors.titleSignIn, error);
+      if (isMounted.current) {
+        // Handle the error.
+        handleApiError(strings.errors.titleSignIn, error);
+      }
+    }
+  };
+
+  const setLoadingWrapper = state => {
+    if (isMounted.current) {
+      setLoading(state);
     }
   };
 
@@ -105,13 +123,6 @@ const SignIn = props => {
       justifyContent: 'flex-start',
       alignItems: 'center',
     },
-    headerImage: {
-      marginTop: 20,
-      // Layout
-      height: 75,
-      width: '100%',
-      resizeMode: 'contain',
-    },
     fillView: {
       flex: 3,
     },
@@ -122,7 +133,7 @@ const SignIn = props => {
       <ScrollView contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.containerPreLogin}>
           <View style={pageItemStyle.container}>
-            <Image style={componentStyles.headerImage} source={{ uri: brandInfo.large_org_logo }} />
+            <Image style={pageItemStyle.headerImage} source={{ uri: brandInfo.large_org_logo }} />
           </View>
           <View style={pageItemStyle.container}>
             <Text style={pageItemStyle.title}>{strings.signIn.title}</Text>
