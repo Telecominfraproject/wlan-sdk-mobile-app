@@ -62,13 +62,19 @@ export default function MfaCode(props) {
 
       logStringifyPretty(response.data, response.request.responseURL);
 
-      await completeSignIn(props.navigation, userId, null, response.data, setLoading);
+      await completeSignIn(props.navigation, userId, null, response.data, setLoadingWrapper);
     } catch (error) {
       if (isMounted.current) {
         setLoading(false);
       }
 
       handleApiError(strings.errors.titleMfa, error);
+    }
+  };
+
+  const setLoadingWrapper = state => {
+    if (isMounted.current) {
+      setLoading(state);
     }
   };
 
