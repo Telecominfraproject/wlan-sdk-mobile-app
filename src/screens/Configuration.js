@@ -911,7 +911,7 @@ const Configuration = props => {
             title={strings.formatString(strings.configuration.accessPointRoleSettings, {
               role: displayValueAccessPointDeviceRole(accessPoint, 'deviceType'),
             })}
-            disableAccordion={true}
+            disableAccordionCount={true}
             isLoading={false}>
             <ItemTextWithLabelEditable
               key="name"
@@ -958,7 +958,7 @@ const Configuration = props => {
           <AccordionSection
             style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
             title={strings.configuration.internetSettings}
-            disableAccordion={true}
+            disableAccordionCount={true}
             isLoading={subscriberInformationLoading}>
             {renderInternetConnectionSettings()}
           </AccordionSection>
@@ -966,7 +966,7 @@ const Configuration = props => {
           <AccordionSection
             style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
             title={strings.configuration.deviceMode}
-            disableAccordion={true}
+            disableAccordionCount={true}
             isLoading={subscriberInformationLoading}>
             {renderDeviceMode()}
           </AccordionSection>
@@ -974,7 +974,7 @@ const Configuration = props => {
           <AccordionSection
             style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
             title={strings.configuration.dnsSettings}
-            disableAccordion={true}
+            disableAccordionCount={true}
             isLoading={subscriberInformationLoading}>
             {renderDnsSettings()}
           </AccordionSection>

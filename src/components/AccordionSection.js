@@ -162,7 +162,7 @@ const AccordionSection = props => {
             {hasAccordion() && hasAdd() && <View style={componentStyles.spacer} />}
             {hasAccordion() && (
               <>
-                <Text style={componentStyles.headerText}>{getChildrenCount()}</Text>
+                {!props.disableAccordionCount && <Text style={componentStyles.headerText}>{getChildrenCount()}</Text>}
                 <Image style={componentStyles.headerCaret} source={getCaretIcon()} />
               </>
             )}

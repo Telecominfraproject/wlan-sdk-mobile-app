@@ -346,7 +346,7 @@ const Network = props => {
           <AccordionSection
             style={StyleSheet.flatten([componentStyles.sectionAccordion, { zIndex: sectionZIndex-- }])}
             title={strings.network.settings}
-            disableAccordion={true}
+            disableAccordionCount={true}
             isLoading={false}>
             <ItemPickerWithLabel
               key="type"
