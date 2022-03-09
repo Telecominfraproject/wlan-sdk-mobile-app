@@ -35,9 +35,10 @@ import {
   logStringifyPretty,
 } from '../Utils';
 import AccordionSection from '../components/AccordionSection';
-import ButtonStyled from '../components/ButtonStyled';
-import ItemTextWithIcon from '../components/ItemTextWithIcon';
 import ButtonSelector from '../components/ButtonSelector';
+import ButtonStyled from '../components/ButtonStyled';
+import Divider from '../components/Divider';
+import ItemTextWithIcon from '../components/ItemTextWithIcon';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
 
@@ -333,27 +334,6 @@ const Network = props => {
     <SafeAreaView style={pageStyle.safeAreaView}>
       <ScrollView ref={scrollRef} contentContainerStyle={pageStyle.scrollView}>
         <View style={pageStyle.containerPostLogin}>
-          <AccordionSection
-            style={componentStyles.sectionAccordion}
-            title={strings.network.wiredClients}
-            isLoading={subscriberInformationLoading || loadingWiredClients}>
-            {wiredClients &&
-              wiredClients.clients &&
-              wiredClients.clients.map(item => {
-                return (
-                  <ItemTextWithIcon
-                    label={getClientName(item, subscriberDevices)}
-                    key={item.macAddress}
-                    icon={getClientMainIcon(item)}
-                    badgeSource={getClientBadgeIcon(item)}
-                    badgeTintColor={whiteColor}
-                    badgeBackgroundColor={getClientBadgeIconTint(item)}
-                    onPress={() => onClientPress(item)}
-                  />
-                );
-              })}
-          </AccordionSection>
-
           <ButtonSelector
             style={StyleSheet.flatten([componentStyles.networkSwitcher, { zIndex: sectionZIndex-- }])}
             options={wifiNetworks ? wifiNetworks.wifiNetworks : []}
@@ -444,6 +424,21 @@ const Network = props => {
             />
           </AccordionSection>
 
+          <View style={pageItemStyle.containerButtons}>
+            <ButtonStyled
+              style={componentStyles.buttonLeft}
+              title={strings.buttons.deleteNetwork}
+              type="outline"
+              onPress={onDeleteNetworkPress}
+            />
+            <ButtonStyled
+              style={componentStyles.buttonRight}
+              title={strings.buttons.addNetwork}
+              type="filled"
+              onPress={onAddNetworkPress}
+            />
+          </View>
+
           <AccordionSection
             style={componentStyles.sectionAccordion}
             title={strings.network.wifiClients}
@@ -464,20 +459,28 @@ const Network = props => {
               })}
           </AccordionSection>
 
-          <View style={pageItemStyle.containerButtons}>
-            <ButtonStyled
-              style={componentStyles.buttonLeft}
-              title={strings.buttons.deleteNetwork}
-              type="outline"
-              onPress={onDeleteNetworkPress}
-            />
-            <ButtonStyled
-              style={componentStyles.buttonRight}
-              title={strings.buttons.addNetwork}
-              type="filled"
-              onPress={onAddNetworkPress}
-            />
-          </View>
+          <Divider marginTop={20} />
+
+          <AccordionSection
+            style={componentStyles.sectionAccordion}
+            title={strings.network.wiredClients}
+            isLoading={subscriberInformationLoading || loadingWiredClients}>
+            {wiredClients &&
+              wiredClients.clients &&
+              wiredClients.clients.map(item => {
+                return (
+                  <ItemTextWithIcon
+                    label={getClientName(item, subscriberDevices)}
+                    key={item.macAddress}
+                    icon={getClientMainIcon(item)}
+                    badgeSource={getClientBadgeIcon(item)}
+                    badgeTintColor={whiteColor}
+                    badgeBackgroundColor={getClientBadgeIconTint(item)}
+                    onPress={() => onClientPress(item)}
+                  />
+                );
+              })}
+          </AccordionSection>
         </View>
       </ScrollView>
     </SafeAreaView>

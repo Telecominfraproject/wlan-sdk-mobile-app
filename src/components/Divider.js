@@ -10,6 +10,7 @@ export default function Divider(props) {
   const height = props.height ?? 2;
   const paddingHorizontal = props.paddingHorizontal ?? 0;
   const paddingVertical = props.paddingVertical ?? 0;
+  const marginTop = props.marginTop ?? props.marginHorizontal;
   const marginHorizontal = props.marginHorizontal ?? 0;
   const marginVertical = props.marginVertical ?? 5;
 
@@ -18,6 +19,7 @@ export default function Divider(props) {
       paddingHorizontal,
       paddingVertical,
       width: '100%',
+      marginTop,
       marginHorizontal,
       marginVertical,
     },
