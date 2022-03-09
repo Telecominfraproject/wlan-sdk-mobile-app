@@ -1,6 +1,6 @@
 {
   "name": "myopenwifi",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
