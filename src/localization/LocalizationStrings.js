@@ -341,6 +341,7 @@ export const strings = new LocalizedStrings({
       statusEmailVerificationNeed: 'Email address verification needed, check your email for a verification email.',
       statusEmailVerified: 'Email address verified, now looking for the device ...',
       statusSignUpComplete: 'Sign up completed, please sign-in to continue.',
+      statusCancelled: 'Sign up cancelled.',
     },
     termsConditions: {
       title: 'Terms & Conditions',

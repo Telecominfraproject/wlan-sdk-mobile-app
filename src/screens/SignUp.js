@@ -1,20 +1,13 @@
 import React, { createRef, useState, useRef, useEffect } from 'react';
 import { strings } from '../localization/LocalizationStrings';
-import {
-  pageStyle,
-  pageItemStyle,
-  primaryColor,
-  marginTopDefault,
-  paddingHorizontalDefault,
-  blackColor,
-  placeholderColor,
-} from '../AppStyle';
-import { StyleSheet, SafeAreaView, ScrollView, View, TextInput, ActivityIndicator, Image, Text } from 'react-native';
+import { pageStyle, pageItemStyle, placeholderColor } from '../AppStyle';
+import { StyleSheet, SafeAreaView, ScrollView, View, TextInput, Image, Text } from 'react-native';
 import { subscriberRegistrationApi, handleApiError } from '../api/apiHandler';
 import { useSelector } from 'react-redux';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { getDeviceUuid, logStringifyPretty, showGeneralMessage } from '../Utils';
 import ButtonStyled from '../components/ButtonStyled';
+import ProgressModal from '../components/ProgressModal';
 
 export default function SignUp(props) {
   // Refs
@@ -37,7 +30,7 @@ export default function SignUp(props) {
 
   // The following was taken from a blog post about using setInterval with React-Native and react hooks
   // https://overreacted.io/making-setinterval-declarative-with-react-hooks/
-  useInterval(() => onSignUpInternalCheck(), 2500);
+  useInterval(() => onSignUpIntervalCheck(), 2500);
 
   function useInterval(callback, delay) {
     const savedCallback = useRef();
@@ -62,20 +55,31 @@ export default function SignUp(props) {
 
   const onSignUpPress = async () => {
     try {
-      let macAddressSanitized = getMacAddressSanitized();
-
-      if (!macAddressSanitized || macAddressSanitized.length !== 12) {
-        throw new Error(strings.errors.invalidMac);
-      }
-
       setLoading(true);
       const deviceUuid = await getDeviceUuid();
-      const response = await subscriberRegistrationApi.postSignup(
-        getEmailSanitized(),
-        getMacAddressSanitized(),
-        deviceUuid,
-      );
-      logStringifyPretty(response, 'Sign Up');
+
+      // Check to see if a process is already running
+      let response = null;
+      try {
+        console.log;
+        response = await subscriberRegistrationApi.getSignup(
+          getEmailSanitized(),
+          getMacAddressSanitized(),
+          null,
+          false,
+          deviceUuid,
+        );
+        logStringifyPretty(response, 'Sign Up Get Pre-Check');
+      } catch (error) {
+        logStringifyPretty(response, 'Sign Up Get Pre-Check');
+        // If the GET was not successful, then try the POST
+        response = await subscriberRegistrationApi.postSignup(
+          getEmailSanitized(),
+          getMacAddressSanitized(),
+          deviceUuid,
+        );
+        logStringifyPretty(response, 'Sign Up Post');
+      }
 
       if (!response || !response.data) {
         throw new Error(strings.errors.invalidResponse);
@@ -86,6 +90,7 @@ export default function SignUp(props) {
       }
 
       if (isMounted.current) {
+        // Set the sign up status, which will have the periodic checks works
         setSignUpStatus(response.data);
       }
     } catch (error) {
@@ -96,13 +101,36 @@ export default function SignUp(props) {
     }
   };
 
-  const onSignUpInternalCheck = async () => {
+  const onSignUpCancelPress = async () => {
+    try {
+      if (signUpStatus) {
+        const deviceUuid = await getDeviceUuid();
+        await subscriberRegistrationApi.modifySignup(signUpStatus.id, 'cancel', deviceUuid);
+      }
+
+      // Delete the signup before completing
+      await deleteSignUp();
+
+      if (isMounted.current) {
+        showGeneralMessage(strings.signUp.statusCancelled);
+      }
+    } catch (error) {
+      // Delete the signup on error
+      await deleteSignUp();
+
+      if (isMounted.current) {
+        handleApiError(strings.errors.titleSignUp, error);
+      }
+    }
+  };
+
+  const onSignUpIntervalCheck = async () => {
     try {
       if (signUpStatus) {
         const deviceUuid = await getDeviceUuid();
         const response = await subscriberRegistrationApi.getSignup(
-          getEmailSanitized(),
-          getMacAddressSanitized(),
+          getEmailSanitized(true),
+          getMacAddressSanitized(true),
           signUpStatus.id,
           false,
           deviceUuid,
@@ -118,58 +146,76 @@ export default function SignUp(props) {
         }
 
         if (isMounted.current) {
+          setSignUpStatus(response.data);
+
           if (response.data.statusCode === 3) {
-            showGeneralMessage(strings.signUp.statusSignUpComplete);
-            deleteSignUp();
-          } else {
-            setSignUpStatus(response.data);
+            // This is the completion state, clean up and navigate back to the Sign In
+
+            // Delete the current sign-in process
+            await deleteSignUp();
+
+            if (isMounted.current) {
+              // Navigate back to Sign-In
+              showGeneralMessage(strings.signUp.statusSignUpComplete);
+              props.navigation.navigate('SignIn');
+            }
           }
         }
       }
     } catch (error) {
+      await deleteSignUp();
+
       if (isMounted.current) {
         handleApiError(strings.errors.titleSignUp, error);
-        deleteSignUp();
       }
     }
   };
 
   const deleteSignUp = async () => {
     try {
-      const deviceUuid = await getDeviceUuid();
-      // Delete the current sign-up process upon success or failure. This may be removed in the future.
-      await subscriberRegistrationApi.deleteSignup(
-        getEmailSanitized(),
-        getMacAddressSanitized(),
-        signUpStatus.id,
-        deviceUuid,
-      );
-
-      if (isMounted.current) {
-        // Navigate back to Sign-In
-        props.navigation.navigate('SignIn');
+      if (signUpStatus) {
+        // Delete the current sign-up process upon success or failure. This may be removed in the future.
+        const deviceUuid = await getDeviceUuid();
+        await subscriberRegistrationApi.deleteSignup(
+          getEmailSanitized(true),
+          getMacAddressSanitized(true),
+          signUpStatus.id,
+          deviceUuid,
+        );
       }
     } catch (error) {
       if (isMounted.current) {
         handleApiError(strings.errors.titleSignUp, error);
       }
     } finally {
-      setSignUpStatus(null);
-      setLoading(false);
+      // Upon successful or failed deletion clear all the inputs
+      if (isMounted.current) {
+        setLoading(false);
+        setSignUpStatus(null);
+        setEmail(null);
+        setMacAddress(null);
+      }
     }
   };
 
-  const getEmailSanitized = () => {
+  const getEmailSanitized = required => {
     let emailSanitized = email;
 
     if (emailSanitized) {
       emailSanitized = emailSanitized.trim();
     }
 
+    if (required) {
+      let re = /\S+@\S+\.\S+/;
+      if (!emailSanitized || !re.test(emailSanitized)) {
+        throw new Error(strings.errors.invalidEmail);
+      }
+    }
+
     return emailSanitized;
   };
 
-  const getMacAddressSanitized = () => {
+  const getMacAddressSanitized = required => {
     let macAddressSanitized = macAddress;
 
     if (macAddressSanitized) {
@@ -178,7 +224,22 @@ export default function SignUp(props) {
       macAddressSanitized = macAddressSanitized.replace(/[^0-9a-f]/g, '');
     }
 
+    if (required) {
+      // If required, make sure it is long enough
+      if (!macAddressSanitized || macAddressSanitized.length !== 12) {
+        throw new Error(strings.errors.invalidMac);
+      }
+    }
+
     return macAddressSanitized;
+  };
+
+  const isSignUpDisabled = () => {
+    if (getEmailSanitized(false) && getMacAddressSanitized(false)) {
+      return false;
+    }
+
+    return true;
   };
 
   const getStatusDescription = () => {
@@ -194,7 +255,7 @@ export default function SignUp(props) {
           return null;
 
         default:
-          // Unexpected - just show the status message
+          // Unexpected just show the status message
           return signUpStatus.status;
       }
     }
@@ -222,14 +283,6 @@ export default function SignUp(props) {
     fillView: {
       flex: 3,
     },
-    statusText: {
-      fontSize: 20,
-      color: blackColor,
-      textAlign: 'center',
-      marginTop: marginTopDefault,
-      paddingLeft: paddingHorizontalDefault,
-      paddingRight: paddingHorizontalDefault,
-    },
   });
 
   return (
@@ -243,10 +296,7 @@ export default function SignUp(props) {
             <Text style={pageItemStyle.title}>{strings.signUp.title}</Text>
           </View>
           {loading ? (
-            <View style={pageItemStyle.loadingContainer}>
-              <ActivityIndicator size="large" color={primaryColor} animating={loading} />
-              <Text style={componentStyles.statusText}>{getStatusDescription()}</Text>
-            </View>
+            <ProgressModal message={getStatusDescription()} visible={loading} onCancelPress={onSignUpCancelPress} />
           ) : (
             <View style={componentStyles.containerForm}>
               <View style={pageItemStyle.container}>
@@ -281,7 +331,12 @@ export default function SignUp(props) {
                 />
               </View>
               <View style={pageItemStyle.containerButton}>
-                <ButtonStyled title={strings.buttons.signUp} type="filled" onPress={onSignUpPress} />
+                <ButtonStyled
+                  title={strings.buttons.signUp}
+                  disabled={isSignUpDisabled()}
+                  type="filled"
+                  onPress={() => onSignUpPress()}
+                />
               </View>
             </View>
           )}
