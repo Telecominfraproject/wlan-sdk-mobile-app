@@ -112,7 +112,7 @@ export default function SignUp(props) {
       await deleteSignUp();
 
       if (isMounted.current) {
-        showGeneralMessage(strings.signUp.statusCancelled);
+        showGeneralMessage(strings.messages.titleCancelled, strings.signUp.statusCancelled);
       }
     } catch (error) {
       // Delete the signup on error
@@ -156,7 +156,7 @@ export default function SignUp(props) {
 
             if (isMounted.current) {
               // Navigate back to Sign-In
-              showGeneralMessage(strings.signUp.statusSignUpComplete);
+              showGeneralMessage(strings.messages.titleSuccess, strings.signUp.statusSignUpComplete);
               props.navigation.navigate('SignIn');
             }
           }

@@ -69,7 +69,8 @@ export const strings = new LocalizedStrings({
       passwordChanged: 'Password successfully changed.',
       resetEmailSent:
         "You should soon receive an email containing the instructions to reset your password. Please make sure to check your spam if you can't find the email.",
-      titleMessage: 'Message',
+      titleCancelled: 'Cancelled',
+      titleSuccess: 'Success',
     },
     navigator: {
       accessSchedule: 'Access Schedule',

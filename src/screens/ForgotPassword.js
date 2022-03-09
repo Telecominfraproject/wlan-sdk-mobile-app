@@ -50,7 +50,7 @@ const ForgotPassword = props => {
         true,
       );
 
-      showGeneralMessage(strings.messages.resetEmailSent);
+      showGeneralMessage(strings.messages.titleSuccess, strings.messages.resetEmailSent);
     } catch (error) {
       handleApiError(strings.errors.titleForgotPassword, error);
     } finally {

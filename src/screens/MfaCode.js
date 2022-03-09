@@ -114,7 +114,7 @@ export default function MfaCode(props) {
           }
         }
 
-        showGeneralMessage(message);
+        showGeneralMessage(strings.messages.titleSuccess, message);
       } else {
         throw new Error(strings.errors.invalidResponse);
       }

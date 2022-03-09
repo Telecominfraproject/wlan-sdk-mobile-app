@@ -60,7 +60,7 @@ export default function PhoneVerification(props) {
       }
 
       logStringifyPretty(response.data, response.request.responseURL);
-      showGeneralMessage(response.data.Details);
+      showGeneralMessage(strings.messages.titleSuccess, response.data.Details);
     } catch (err) {
       handleApiError(strings.errors.titleResendCode, err);
     } finally {

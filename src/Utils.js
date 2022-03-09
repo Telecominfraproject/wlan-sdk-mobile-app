@@ -37,8 +37,8 @@ export function showGeneralError(title, message) {
   Alert.alert(title, message, null, { cancelable: true });
 }
 
-export function showGeneralMessage(message) {
-  Alert.alert(strings.messages.titleMessage, message);
+export function showGeneralMessage(title, message) {
+  Alert.alert(title, message);
 }
 
 export function scrollViewToTop(scrollViewRef) {

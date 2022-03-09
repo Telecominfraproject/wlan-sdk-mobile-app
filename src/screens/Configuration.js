@@ -256,7 +256,7 @@ const Configuration = props => {
       }
 
       if (response.data.Code === 0) {
-        showGeneralMessage(successMessage);
+        showGeneralMessage(strings.messages.titleSuccess, successMessage);
       } else {
         throw new Error(strings.errors.invalidResponse);
       }

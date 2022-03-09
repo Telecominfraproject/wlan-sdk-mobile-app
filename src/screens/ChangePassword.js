@@ -82,7 +82,7 @@ export default function ResetPassword(props) {
         clearCredentials();
 
         // Show the succcess message
-        showGeneralMessage(strings.messages.passwordChanged);
+        showGeneralMessage(strings.messages.titleSuccess, strings.messages.passwordChanged);
 
         if (isMounted.current) {
           // Clear any loading flag
