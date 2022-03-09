@@ -61,7 +61,6 @@ export default function SignUp(props) {
       // Check to see if a process is already running
       let response = null;
       try {
-        console.log;
         response = await subscriberRegistrationApi.getSignup(
           getEmailSanitized(),
           getMacAddressSanitized(),
@@ -97,6 +96,8 @@ export default function SignUp(props) {
       if (isMounted.current) {
         handleApiError(strings.errors.titleSignUp, error);
         setLoading(false);
+        setEmail(null);
+        setMacAddress(null);
       }
     }
   };
