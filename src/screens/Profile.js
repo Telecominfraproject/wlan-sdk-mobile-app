@@ -213,13 +213,7 @@ const Profile = props => {
         text: strings.buttons.ok,
         onPress: async () => {
           try {
-            const response = await subscriberInformationApi.deleteSubscriberInfo();
-            if (!response || !response.data) {
-              throw new Error(strings.errors.invalidResponse);
-            }
-
-            logStringifyPretty(response.data, response.request.responseURL);
-
+            await subscriberInformationApi.deleteSubscriberInfo();
             completeSignOut(props.navigation);
           } catch (error) {
             handleApiError(strings.errors.titleRemoveUser, error);
