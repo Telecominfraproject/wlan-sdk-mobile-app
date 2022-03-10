@@ -480,10 +480,6 @@ export async function completeSignIn(navigation, userId, password, sessionData, 
       // Get the subscriber information
       await getSubscriberInformation(true);
 
-      // TODO: This needs to be fixed on the back end - we need to do twice on first login
-      store.dispatch(clearSubscriberInformation());
-      await getSubscriberInformation(true);
-
       // Completed sign-in
       if (setLoadingFn) {
         setLoadingFn(false);
