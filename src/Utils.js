@@ -47,6 +47,85 @@ export function scrollViewToTop(scrollViewRef) {
   }
 }
 
+export function sanitizeEmailInput(email, required) {
+  let valueSanitized = email;
+
+  if (valueSanitized) {
+    valueSanitized = valueSanitized.trim();
+  }
+
+  if (required) {
+    if (!valueSanitized) {
+      throw new Error(strings.formatString(strings.errors.emptyField, 'Email'));
+    }
+
+    const re = /\S+@\S+\.\S+/;
+    if (!re.test(valueSanitized)) {
+      throw new Error(strings.errors.invalidEmail);
+    }
+  }
+
+  return valueSanitized;
+}
+
+export function sanitizePasswordInput(password, regexPattern, required) {
+  let valueSanitized = password;
+
+  if (regexPattern && valueSanitized) {
+    const reg = new RegExp(regexPattern, 'g');
+    if (!reg.test(valueSanitized)) {
+      throw new Error(strings.errors.invalidPassword);
+    }
+  }
+
+  if (required) {
+    if (!valueSanitized) {
+      throw new Error(strings.formatString(strings.errors.emptyField, 'Password'));
+    }
+  }
+
+  return valueSanitized;
+}
+
+export function sanitizeMacAddressInput(macAddress, required) {
+  let valueSanitized = macAddress;
+
+  if (valueSanitized) {
+    valueSanitized = valueSanitized.trim();
+    valueSanitized = valueSanitized.toLowerCase();
+    valueSanitized = valueSanitized.replace(/[^0-9a-f]/g, '');
+  }
+
+  if (required) {
+    if (!valueSanitized) {
+      throw new Error(strings.formatString(strings.errors.emptyField, 'MAC Address'));
+    }
+
+    // If required, make sure it is long enough
+    if (valueSanitized.length !== 12) {
+      throw new Error(strings.errors.invalidMac);
+    }
+  }
+
+  return valueSanitized;
+}
+
+export function sanitizeCode(code, required) {
+  let valueSanitized = code;
+
+  if (valueSanitized) {
+    valueSanitized = valueSanitized.trim();
+  }
+
+  if (required) {
+    if (!valueSanitized) {
+      throw new Error(strings.formatString(strings.errors.emptyField, 'Code'));
+    }
+  }
+
+  return valueSanitized;
+}
+
 export function displayValue(obj, key) {
   if (obj && key) {
     if (key in obj) {

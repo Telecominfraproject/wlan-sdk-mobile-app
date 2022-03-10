@@ -35,17 +35,17 @@ export default function PhoneVerification(props) {
       }
 
       logStringifyPretty(response.data, response.request.responseURL);
+
       if (isMounted.current) {
         // Only navigate if still mounted
         props.navigation.goBack();
       }
     } catch (err) {
       if (isMounted.current) {
-        setCode();
+        showGeneralError(strings.errors.validationError, strings.errors.invalidCode);
+        setCode(null);
         setLoading(false);
       }
-
-      showGeneralError(strings.errors.validationError, strings.errors.invalidCode);
     }
   };
 
@@ -60,11 +60,14 @@ export default function PhoneVerification(props) {
       }
 
       logStringifyPretty(response.data, response.request.responseURL);
-      showGeneralMessage(strings.messages.titleSuccess, response.data.Details);
-    } catch (err) {
-      handleApiError(strings.errors.titleResendCode, err);
-    } finally {
+
       if (isMounted.current) {
+        showGeneralMessage(strings.messages.titleSuccess, response.data.Details);
+        setLoading(false);
+      }
+    } catch (err) {
+      if (isMounted.current) {
+        handleApiError(strings.errors.titleResendCode, err);
         setLoading(false);
       }
     }
@@ -87,8 +90,8 @@ export default function PhoneVerification(props) {
               style={pageItemStyle.inputText}
               placeholder={strings.placeholders.code}
               placeholderTextColor={placeholderColor}
-              value={code}
               keyboardType="number-pad"
+              value={code}
               onChangeText={text => setCode(text)}
               autoCapitalize="none"
               textContentType="oneTimeCode"

@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { pageItemStyle, pageStyle, primaryColor, placeholderColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, ActivityIndicator, Text, TextInput, View } from 'react-native';
-import { authenticationApi, handleApiError } from '../api/apiHandler';
-import { logStringifyPretty, showGeneralMessage, completeSignIn } from '../Utils';
+import { authenticationApi, handleApiError, SubMfaConfigTypeEnum } from '../api/apiHandler';
+import { logStringifyPretty, showGeneralMessage, completeSignIn, sanitizeCode } from '../Utils';
 import ButtonStyled from '../components/ButtonStyled';
 
 export default function MfaCode(props) {
@@ -28,10 +28,10 @@ export default function MfaCode(props) {
   const getDescription = () => {
     if (mfaInfo) {
       switch (mfaInfo.method) {
-        case 'email':
+        case SubMfaConfigTypeEnum.Email:
           return strings.mfaCode.descriptionEmail;
 
-        case 'sms':
+        case SubMfaConfigTypeEnum.Sms:
           return strings.mfaCode.descriptionSms;
       }
     }
@@ -47,7 +47,7 @@ export default function MfaCode(props) {
       const response = await authenticationApi.getAccessToken(
         {
           uuid: mfaInfo.uuid,
-          answer: code,
+          answer: sanitizeCode(code, true),
         },
         undefined,
         undefined,
@@ -66,9 +66,8 @@ export default function MfaCode(props) {
     } catch (error) {
       if (isMounted.current) {
         setLoading(false);
+        handleApiError(strings.errors.titleMfa, error);
       }
-
-      handleApiError(strings.errors.titleMfa, error);
     }
   };
 
@@ -104,24 +103,26 @@ export default function MfaCode(props) {
 
         if (mfaInfo) {
           switch (mfaInfo.method) {
-            case 'email':
+            case SubMfaConfigTypeEnum.Email:
               message = strings.mfaCode.validationCodeResendEmail;
               break;
 
-            case 'sms':
+            case SubMfaConfigTypeEnum.Sms:
               message = strings.mfaCode.validationCodeResendSms;
               break;
           }
         }
 
-        showGeneralMessage(strings.messages.titleSuccess, message);
+        if (isMounted.current) {
+          showGeneralMessage(strings.messages.titleSuccess, message);
+          setLoading(false);
+        }
       } else {
         throw new Error(strings.errors.invalidResponse);
       }
     } catch (error) {
-      handleApiError(strings.errors.titleMfa, error);
-    } finally {
       if (isMounted.current) {
+        handleApiError(strings.errors.titleMfa, error);
         setLoading(false);
       }
     }
@@ -145,8 +146,11 @@ export default function MfaCode(props) {
               placeholder={strings.placeholders.code}
               placeholderTextColor={placeholderColor}
               keyboardType="number-pad"
+              value={code}
               onChangeText={text => setCode(text)}
               autoCapitalize="none"
+              autoComplete="none"
+              autoCorrect={false}
               textContentType="oneTimeCode"
               returnKeyType="send"
               onSubmitEditing={onSubmitPress}

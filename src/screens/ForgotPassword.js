@@ -5,7 +5,7 @@ import { StyleSheet, SafeAreaView, ScrollView, View, TextInput, ActivityIndicato
 import { useSelector } from 'react-redux';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { authenticationApi, handleApiError } from '../api/apiHandler';
-import { showGeneralMessage } from '../Utils';
+import { showGeneralMessage, sanitizeEmailInput, logStringifyPretty } from '../Utils';
 import ButtonStyled from '../components/ButtonStyled';
 
 const ForgotPassword = props => {
@@ -25,37 +25,31 @@ const ForgotPassword = props => {
     };
   }, []);
 
-  const validateEmail = emailToCheck => {
-    const re = /\S+@\S+\.\S+/;
-    return re.test(emailToCheck);
-  };
-
   const onSubmit = async () => {
     try {
-      if (!email) {
-        throw new Error(strings.formatString(strings.errors.emptyField, strings.placeholders.email));
-      }
-
-      if (!validateEmail(email)) {
-        throw new Error(strings.errors.invalidEmail);
-      }
-
       setLoading(true);
 
-      await authenticationApi.getAccessToken(
+      let response = await authenticationApi.getAccessToken(
         {
-          userId: email,
+          userId: sanitizeEmailInput(email, true),
         },
         undefined,
         true,
       );
 
-      showGeneralMessage(strings.messages.titleSuccess, strings.messages.resetEmailSent);
-    } catch (error) {
-      handleApiError(strings.errors.titleForgotPassword, error);
-    } finally {
+      logStringifyPretty(response.data, response.request.responseURL);
+
       if (isMounted.current) {
-        // Make sure to always clear the loading flag
+        showGeneralMessage(strings.messages.titleSuccess, strings.messages.resetEmailSent);
+        setEmail(null);
+        setLoading(false);
+
+        // Done - so navigate back
+        props.navigation.goBack();
+      }
+    } catch (error) {
+      if (isMounted.current) {
+        handleApiError(strings.errors.titleForgotPassword, error);
         setLoading(false);
       }
     }
@@ -104,6 +98,7 @@ const ForgotPassword = props => {
                   keyboardType="email-address"
                   textContentType="emailAddress"
                   returnKeyType="go"
+                  value={email}
                   onChangeText={text => setEmail(text)}
                   onSubmitEditing={() => onSubmit()}
                   maxLength={255}

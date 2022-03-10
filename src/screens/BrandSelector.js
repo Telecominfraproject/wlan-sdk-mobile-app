@@ -64,7 +64,6 @@ const BrandSelector = props => {
         url: Config.TIP_REGISTRY_URL,
       });
 
-      // Only update the state if still mounted
       if (isMounted.current) {
         let registry = response.data.registry;
 
@@ -73,14 +72,12 @@ const BrandSelector = props => {
         } else {
           setBrands([]);
         }
+
+        setLoading(false);
       }
     } catch (error) {
-      // Do not report the error in this case, as it is no longer there and it is just getting state
       if (isMounted.current) {
         handleApiError(strings.errors.titleBrandSelection, error);
-      }
-    } finally {
-      if (isMounted.current) {
         setLoading(false);
       }
     }
@@ -101,7 +98,7 @@ const BrandSelector = props => {
     // Save the brand information on selection
     dispatch(setBrandInfo(item));
 
-    // Start the navigation on signin
+    // Reset the navigation so it starts on SignIn
     props.navigation.reset({
       index: 0,
       routes: [{ name: 'SignIn' }],

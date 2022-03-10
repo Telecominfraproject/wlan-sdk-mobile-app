@@ -5,7 +5,13 @@ import { StyleSheet, SafeAreaView, ScrollView, View, TextInput, Image, Text } fr
 import { subscriberRegistrationApi, handleApiError } from '../api/apiHandler';
 import { useSelector } from 'react-redux';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
-import { getDeviceUuid, logStringifyPretty, showGeneralMessage } from '../Utils';
+import {
+  getDeviceUuid,
+  logStringifyPretty,
+  sanitizeEmailInput,
+  sanitizeMacAddressInput,
+  showGeneralMessage,
+} from '../Utils';
 import ButtonStyled from '../components/ButtonStyled';
 import ProgressModal from '../components/ProgressModal';
 
@@ -62,8 +68,8 @@ export default function SignUp(props) {
       let response = null;
       try {
         response = await subscriberRegistrationApi.getSignup(
-          getEmailSanitized(),
-          getMacAddressSanitized(),
+          sanitizeEmailInput(email, true),
+          sanitizeMacAddressInput(macAddress, true),
           null,
           false,
           deviceUuid,
@@ -73,16 +79,17 @@ export default function SignUp(props) {
         logStringifyPretty(response, 'Sign Up Get Pre-Check');
         // If the GET was not successful, then try the POST
         response = await subscriberRegistrationApi.postSignup(
-          getEmailSanitized(),
-          getMacAddressSanitized(),
+          sanitizeEmailInput(email, true),
+          sanitizeMacAddressInput(macAddress, true),
           deviceUuid,
         );
-        logStringifyPretty(response, 'Sign Up Post');
       }
 
       if (!response || !response.data) {
         throw new Error(strings.errors.invalidResponse);
       }
+
+      logStringifyPretty(response.data, 'Sign Up');
 
       if (response.data.error !== 0) {
         throw new Error(response.data.description);
@@ -96,8 +103,6 @@ export default function SignUp(props) {
       if (isMounted.current) {
         handleApiError(strings.errors.titleSignUp, error);
         setLoading(false);
-        setEmail(null);
-        setMacAddress(null);
       }
     }
   };
@@ -130,17 +135,18 @@ export default function SignUp(props) {
       if (signUpStatus) {
         const deviceUuid = await getDeviceUuid();
         const response = await subscriberRegistrationApi.getSignup(
-          getEmailSanitized(true),
-          getMacAddressSanitized(true),
+          sanitizeEmailInput(email, true),
+          sanitizeMacAddressInput(macAddress, true),
           signUpStatus.id,
           false,
           deviceUuid,
         );
-        logStringifyPretty(response, 'Sign Up Check');
 
         if (!response || !response.data) {
           throw new Error(strings.errors.invalidResponse);
         }
+
+        logStringifyPretty(response.data, 'Sign Up Check');
 
         if (response.data.error !== 0) {
           throw new Error(response.data.description);
@@ -178,8 +184,8 @@ export default function SignUp(props) {
         // Delete the current sign-up process upon success or failure. This may be removed in the future.
         const deviceUuid = await getDeviceUuid();
         await subscriberRegistrationApi.deleteSignup(
-          getEmailSanitized(true),
-          getMacAddressSanitized(true),
+          sanitizeEmailInput(email, true),
+          sanitizeMacAddressInput(macAddress, true),
           signUpStatus.id,
           deviceUuid,
         );
@@ -189,58 +195,14 @@ export default function SignUp(props) {
         handleApiError(strings.errors.titleSignUp, error);
       }
     } finally {
-      // Upon successful or failed deletion clear all the inputs
       if (isMounted.current) {
-        setLoading(false);
+        // Upon successful or failed deletion clear all the inputs
         setSignUpStatus(null);
         setEmail(null);
         setMacAddress(null);
+        setLoading(false);
       }
     }
-  };
-
-  const getEmailSanitized = required => {
-    let emailSanitized = email;
-
-    if (emailSanitized) {
-      emailSanitized = emailSanitized.trim();
-    }
-
-    if (required) {
-      let re = /\S+@\S+\.\S+/;
-      if (!emailSanitized || !re.test(emailSanitized)) {
-        throw new Error(strings.errors.invalidEmail);
-      }
-    }
-
-    return emailSanitized;
-  };
-
-  const getMacAddressSanitized = required => {
-    let macAddressSanitized = macAddress;
-
-    if (macAddressSanitized) {
-      macAddressSanitized = macAddressSanitized.trim();
-      macAddressSanitized = macAddressSanitized.toLowerCase();
-      macAddressSanitized = macAddressSanitized.replace(/[^0-9a-f]/g, '');
-    }
-
-    if (required) {
-      // If required, make sure it is long enough
-      if (!macAddressSanitized || macAddressSanitized.length !== 12) {
-        throw new Error(strings.errors.invalidMac);
-      }
-    }
-
-    return macAddressSanitized;
-  };
-
-  const isSignUpDisabled = () => {
-    if (getEmailSanitized(false) && getMacAddressSanitized(false)) {
-      return false;
-    }
-
-    return true;
   };
 
   const getStatusDescription = () => {
@@ -313,6 +275,7 @@ export default function SignUp(props) {
                   keyboardType="email-address"
                   textContentType="emailAddress"
                   returnKeyType="go"
+                  value={email}
                   onChangeText={text => setEmail(text)}
                   onSignUpPressEditing={() => macAddressRef.current.focus()}
                   maxLength={255}
@@ -325,19 +288,16 @@ export default function SignUp(props) {
                   placeholder={strings.placeholders.macAddress}
                   placeholderTextColor={placeholderColor}
                   autoCapitalize="none"
+                  autoCorrect={false}
                   returnKeyType="go"
+                  value={macAddress}
                   onChangeText={text => setMacAddress(text)}
                   onSignUpPressEditing={() => onSignUpPress()}
                   maxLength={17}
                 />
               </View>
               <View style={pageItemStyle.containerButton}>
-                <ButtonStyled
-                  title={strings.buttons.signUp}
-                  disabled={isSignUpDisabled()}
-                  type="filled"
-                  onPress={() => onSignUpPress()}
-                />
+                <ButtonStyled title={strings.buttons.signUp} type="filled" onPress={() => onSignUpPress()} />
               </View>
             </View>
           )}

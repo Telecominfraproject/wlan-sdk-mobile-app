@@ -5,7 +5,7 @@ import { SafeAreaView, ScrollView, View, TextInput, ActivityIndicator, Text, Ima
 import { authenticationApi, clearCredentials, handleApiError } from '../api/apiHandler';
 import { useSelector } from 'react-redux';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
-import { logStringifyPretty, showGeneralError, showGeneralMessage } from '../Utils';
+import { logStringifyPretty, sanitizePasswordInput, showGeneralMessage } from '../Utils';
 import ButtonStyled from '../components/ButtonStyled';
 
 export default function ResetPassword(props) {
@@ -14,6 +14,8 @@ export default function ResetPassword(props) {
   const forced = props.route.params.forced ?? false;
   // Regs
   const isMounted = useRef(false);
+  const newPasswordRef = useRef();
+  const confirmPasswordRef = useRef();
   // State
   const brandInfo = useSelector(selectBrandInfo);
   const [currentPassword, setCurrentPassword] = useState();
@@ -21,24 +23,24 @@ export default function ResetPassword(props) {
   const [confirmPassword, setConfirmPassword] = useState();
   const [pattern, setPattern] = useState();
   const [loading, setLoading] = useState(false);
-  const newPasswordRef = useRef();
-  const confirmPasswordRef = useRef();
 
   // Keep track of whether the screen is mounted or not so async tasks know to access state or not.
   useEffect(() => {
     isMounted.current = true;
+
+    // Get the password pattern
+    getPasswordPattern();
 
     return () => {
       isMounted.current = false;
     };
   }, []);
 
-  useEffect(() => {
-    getPasswordPattern();
-  }, []);
-
   const getPasswordPattern = async () => {
     try {
+      // This is done in the background, so no need for a loading flag. This is just to help with
+      // an improved user experience, if this does not load then the expectation is the backend
+      // will return an error if the new password does not fit with the expected guidelines
       const response = await authenticationApi.getAccessToken({}, undefined, undefined, true);
 
       if (!response || !response.data) {
@@ -46,77 +48,65 @@ export default function ResetPassword(props) {
       }
 
       logStringifyPretty(response.data);
+
       if (isMounted.current) {
         setPattern(response.data.passwordPattern);
       }
     } catch (error) {
       if (isMounted.current) {
-        // Since this is just retrieving information, do not care about error if it
-        // does not happen when not mounted
+        // Error does not matter when not mounted - it is likely not important at all.
         handleApiError(strings.errors.titleChangePassword, error);
       }
     }
   };
 
   const onSubmit = async () => {
-    if (checkPassword()) {
-      try {
-        setLoading(true);
+    try {
+      setLoading(true);
 
-        const response = await authenticationApi.getAccessToken(
-          {
-            userId: userId,
-            password: currentPassword,
-            newPassword: newPassword,
-          },
-          newPassword,
-        );
+      // Only use the pattern on the new passwords
+      let sanitizedCurrentPassword = sanitizePasswordInput(currentPassword, null, true);
+      let sanitizedNewPassword = sanitizePasswordInput(newPassword, pattern, true);
+      let sanitizedConfirmPassword = sanitizePasswordInput(confirmPassword, pattern, true);
 
-        if (!response || !response.data) {
-          throw new Error(strings.errors.invalidResponse);
-        }
+      if (sanitizedNewPassword !== sanitizedConfirmPassword) {
+        throw new Error(strings.errors.mismatchPassword);
+      } else if (sanitizedCurrentPassword === sanitizedNewPassword) {
+        throw new Error(strings.errors.reuseCurrentPassword);
+      }
 
-        logStringifyPretty(response.data, 'getAccessToken (Password)');
+      const response = await authenticationApi.getAccessToken(
+        {
+          userId: userId,
+          password: sanitizedCurrentPassword,
+          newPassword: sanitizedNewPassword,
+        },
+        sanitizedNewPassword,
+      );
 
-        // Clear any current credentials - as the password has now changed
-        clearCredentials();
+      if (!response || !response.data) {
+        throw new Error(strings.errors.invalidResponse);
+      }
 
+      logStringifyPretty(response.data, 'getAccessToken (Password)');
+
+      // Clear any current credentials - as the password has now changed. This should
+      // be done even if no longer mounted.
+      clearCredentials();
+
+      if (isMounted.current) {
         // Show the succcess message
         showGeneralMessage(strings.messages.titleSuccess, strings.messages.passwordChanged);
+        setLoading(false);
 
-        if (isMounted.current) {
-          // Clear any loading flag
-          setLoading(false);
-
-          props.navigation.goBack();
-        }
-      } catch (error) {
-        if (isMounted.current) {
-          setLoading(false);
-        }
-        handleApiError(strings.errors.titleChangePassword, error);
+        // Done - so navigate back
+        props.navigation.goBack();
       }
-    }
-  };
-
-  const checkPassword = () => {
-    if (newPassword !== confirmPassword) {
-      showGeneralError(strings.errors.titleChangePassword, strings.errors.mismatchPassword);
-      return false;
-    } else if (!validatePassword(newPassword)) {
-      showGeneralError(strings.errors.titleChangePassword, strings.errors.invalidPassword);
-      return false;
-    }
-
-    return true;
-  };
-
-  const validatePassword = passwordToCheck => {
-    if (pattern) {
-      const reg = new RegExp(pattern, 'g');
-      return reg.test(passwordToCheck);
-    } else {
-      return true;
+    } catch (error) {
+      if (isMounted.current) {
+        handleApiError(strings.errors.titleChangePassword, error);
+        setLoading(false);
+      }
     }
   };
 
@@ -154,8 +144,11 @@ export default function ResetPassword(props) {
                   placeholder={strings.placeholders.currentPassword}
                   placeholderTextColor={placeholderColor}
                   secureTextEntry={true}
+                  value={currentPassword}
                   onChangeText={text => setCurrentPassword(text)}
                   autoCapitalize="none"
+                  autoComplete="none"
+                  autoCorrect={false}
                   textContentType="password"
                   returnKeyType="next"
                   onSubmitEditing={() => newPasswordRef.current.focus()}
@@ -169,8 +162,11 @@ export default function ResetPassword(props) {
                   placeholder={strings.placeholders.newPassword}
                   placeholderTextColor={placeholderColor}
                   secureTextEntry={true}
+                  value={newPassword}
                   onChangeText={text => setNewPassword(text)}
                   autoCapitalize="none"
+                  autoComplete="none"
+                  autoCorrect={false}
                   textContentType="newPassword"
                   returnKeyType="next"
                   onSubmitEditing={() => confirmPasswordRef.current.focus()}
@@ -184,6 +180,7 @@ export default function ResetPassword(props) {
                   placeholder={strings.placeholders.confirmPassword}
                   placeholderTextColor={placeholderColor}
                   secureTextEntry={true}
+                  value={confirmPassword}
                   onChangeText={text => setConfirmPassword(text)}
                   autoCapitalize="none"
                   textContentType="none"

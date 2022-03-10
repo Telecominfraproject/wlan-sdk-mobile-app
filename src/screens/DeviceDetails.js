@@ -294,7 +294,7 @@ const DeviceDetails = props => {
             )}
             {isWifiClient() ? (
               <ItemTextWithLabel key="rssi" label={strings.deviceDetails.signalStrength} value={getSignalStrength()} />
-            ): (
+            ) : (
               <ItemTextWithLabel key="speed" label={strings.deviceDetails.speed} value={getWiredSpeed()} />
             )}
           </AccordionSection>

@@ -2,9 +2,9 @@ import React, { useState, useEffect, createRef, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { strings } from '../localization/LocalizationStrings';
-import { pageStyle, pageItemStyle, primaryColor, placeholderColor, marginTopDefault } from '../AppStyle';
+import { pageStyle, pageItemStyle, primaryColor, placeholderColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View, Image, TextInput, ActivityIndicator } from 'react-native';
-import { showGeneralError, completeSignIn } from '../Utils';
+import { showGeneralError, completeSignIn, sanitizeEmailInput, sanitizePasswordInput } from '../Utils';
 import { handleApiError, hasCredentials, setCredentials, getCredentials } from '../api/apiHandler';
 import ButtonStyled from '../components/ButtonStyled';
 import Divider from '../components/Divider';
@@ -48,23 +48,13 @@ const SignIn = props => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onSignInPress = async () => {
-    if (!email || !password) {
-      showGeneralError(strings.errors.titleSignIn, strings.errors.emptyFields);
-    } else {
+    try {
       // Save the credentials, and start the sign-in process (which will use the credentials)
-      await setCredentials(getEmailSanitized(), password);
+      await setCredentials(sanitizeEmailInput(email, true), sanitizePasswordInput(password, null, true));
       signIn();
+    } catch (error) {
+      showGeneralError(strings.errors.titleSignIn, error.message);
     }
-  };
-
-  const getEmailSanitized = () => {
-    let emailSanitized = email;
-
-    if (emailSanitized) {
-      emailSanitized = emailSanitized.trim();
-    }
-
-    return emailSanitized;
   };
 
   const signIn = async () => {
@@ -81,6 +71,7 @@ const SignIn = props => {
       if (isMounted.current) {
         // Handle the error.
         handleApiError(strings.errors.titleSignIn, error);
+        setLoading(false);
       }
     }
   };
@@ -171,6 +162,8 @@ const SignIn = props => {
                   placeholderTextColor={placeholderColor}
                   secureTextEntry={true}
                   autoCapitalize="none"
+                  autoComplete="off"
+                  autoCorrect={false}
                   textContentType="password"
                   returnKeyType="go"
                   onChangeText={text => setPassword(text)}
