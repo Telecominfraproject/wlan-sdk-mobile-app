@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, View, Keyboard } from 'react-native';
 import {
   grayColor,
   heightCellDefault,
@@ -171,6 +171,10 @@ const ItemPickerWithLabel = props => {
             dropDownDirection="BOTTOM"
             dropDownContainerStyle={componentStyles.dropDownContainer}
             onChangeValue={value => onChangeValue(value)}
+            onOpen={() => {
+              // Need to dismiss the keyboard when it is opened to ensure text fields are saved
+              Keyboard.dismiss();
+            }}
           />
         )}
       </Pressable>
