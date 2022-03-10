@@ -33,7 +33,7 @@ const ProgressModal = props => {
       borderColor: grayDarkColor,
     },
     messageText: {
-      fontSize: 20,
+      fontSize: 16,
       color: blackColor,
       textAlign: 'center',
     },
