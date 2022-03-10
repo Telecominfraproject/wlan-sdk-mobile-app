@@ -18,6 +18,7 @@ import {
   HomeDeviceModeTypeEnum,
   InternetConnectionTypeEnum,
   WifiNetworkBandsEnum,
+  WifiNetworkEncryptionEnum,
   WifiNetworkTypeEnum,
 } from './api/apiHandler';
 
@@ -381,25 +382,69 @@ export function getClientConnectionStatusColor(client) {
   }
 }
 
-export function getNetworkBandsSelectorItems(accessPointBandsConfig) {
-  let items = [
-    { label: strings.network.selectorBandsAll, value: WifiNetworkBandsEnum.All },
-    { label: strings.network.selectorBands2g, value: WifiNetworkBandsEnum._2G },
-    { label: strings.network.selectorBands5g, value: WifiNetworkBandsEnum._5G },
+export function getNetworkTypeItems() {
+  return [
+    { label: strings.network.selectorTypeMain, value: WifiNetworkTypeEnum.Main },
+    { label: strings.network.selectorTypeGuest, value: WifiNetworkTypeEnum.Guest },
   ];
+}
 
-  if (accessPointBandsConfig) {
-    // TODO: The accessPointBandsConfig does not currently exist, below is just an example of how it
-    // might work. This will need to be reviewed once the API has been provided
-    if (accessPointBandsConfig.includes(WifiNetworkBandsEnum._5Gl)) {
+export function getNetworkEncryptionItems() {
+  return [
+    {
+      label: strings.network.selectorEncryptionWpa1Personal,
+      value: WifiNetworkEncryptionEnum.Wpa1Personal,
+    },
+    {
+      label: strings.network.selectorEncryptionWpa2Personal,
+      value: WifiNetworkEncryptionEnum.Wpa2Personal,
+    },
+    {
+      label: strings.network.selectorEncryptionWpa3Personal,
+      value: WifiNetworkEncryptionEnum.Wpa3Personal,
+    },
+    {
+      label: strings.network.selectorEncryptionWpa12Personal,
+      value: WifiNetworkEncryptionEnum.Wpa12Personal,
+    },
+    {
+      label: strings.network.selectorEncryptionWpa23Personal,
+      value: WifiNetworkEncryptionEnum.Wpa23Personal,
+    },
+  ];
+}
+
+export function getNetworkBandsSelectorItems(radios) {
+  let items = [{ label: strings.network.selectorBandsAll, value: WifiNetworkBandsEnum.All }];
+
+  // The radios field contains a list of support bands (and other information) for the particular
+  // access point. So look through this array and make sure only to present the bands that are
+  // supported.
+  let supportedBands = [];
+  if (radios) {
+    radios.forEach(radio => {
+      supportedBands.push(radio.band);
+    });
+  }
+
+  if (supportedBands) {
+    if (supportedBands.includes(WifiNetworkBandsEnum._2G)) {
+      items.push({ label: strings.network.selectorBands2g, value: WifiNetworkBandsEnum._2G });
+    }
+
+    if (supportedBands.includes(WifiNetworkBandsEnum._5G)) {
+      items.push({ label: strings.network.selectorBands5g, value: WifiNetworkBandsEnum._5G });
+    }
+
+    if (supportedBands.includes(WifiNetworkBandsEnum._5Gl)) {
       items.push({ label: strings.network.selectorBands5gl, value: WifiNetworkBandsEnum._5Gl });
     }
 
-    if (accessPointBandsConfig.includes(WifiNetworkBandsEnum._5Gu)) {
+    if (supportedBands.includes(WifiNetworkBandsEnum._5Gu)) {
       items.push({ label: strings.network.selectorBands5gu, value: WifiNetworkBandsEnum._5Gu });
     }
 
-    if (accessPointBandsConfig.includes(WifiNetworkBandsEnum._6G)) {
+    if (supportedBands.includes(WifiNetworkBandsEnum._6G)) {
       items.push({ label: strings.network.selectorBands6g, value: WifiNetworkBandsEnum._6G });
     }
   }

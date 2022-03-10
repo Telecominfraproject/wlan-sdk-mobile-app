@@ -3,9 +3,15 @@ import { strings } from '../localization/LocalizationStrings';
 import { marginTopDefault, pageStyle, pageItemStyle, paddingHorizontalDefault } from '../AppStyle';
 import { StyleSheet, View, ScrollView, SafeAreaView } from 'react-native';
 import { useSelector } from 'react-redux';
-import { selectCurrentAccessPointId, selectWifiNetworks } from '../store/SubscriberInformationSlice';
-import { handleApiError, WifiNetworkEncryptionEnum, WifiNetworkTypeEnum } from '../api/apiHandler';
-import { getGuestNetworkIndex, getNetworkBandsSelectorItems, addNetwork } from '../Utils';
+import { selectCurrentAccessPointId, selectWifiNetworks, selectRadios } from '../store/SubscriberInformationSlice';
+import { handleApiError } from '../api/apiHandler';
+import {
+  getGuestNetworkIndex,
+  getNetworkTypeItems,
+  getNetworkEncryptionItems,
+  getNetworkBandsSelectorItems,
+  addNetwork,
+} from '../Utils';
 import AccordionSection from '../components/AccordionSection';
 import ButtonStyled from '../components/ButtonStyled';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
@@ -21,6 +27,7 @@ const NetworkAdd = props => {
   const isMounted = useRef(false);
   // Selectors
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
+  const radios = useSelector(selectRadios);
   const wifiNetworks = useSelector(selectWifiNetworks);
   // States
   const [loading, setLoading] = useState(false);
@@ -70,10 +77,9 @@ const NetworkAdd = props => {
       }
     } catch (error) {
       if (isMounted.current) {
+        handleApiError(strings.errors.titleNetworkModify, error);
         setLoading(false);
       }
-
-      handleApiError(strings.errors.titleNetworkModify, error);
     }
   };
 
@@ -108,10 +114,7 @@ const NetworkAdd = props => {
               setValue={setWifiNetworkType}
               disabled={hasGuestNetwork()}
               disabledReason={strings.messages.guestNetworkExists}
-              items={[
-                { label: strings.network.selectorTypeMain, value: WifiNetworkTypeEnum.Main },
-                { label: strings.network.selectorTypeGuest, value: WifiNetworkTypeEnum.Guest },
-              ]}
+              items={getNetworkTypeItems()}
               zIndex={pickerZIndex--}
             />
             <ItemTextWithLabelEditable
@@ -134,28 +137,7 @@ const NetworkAdd = props => {
               label={strings.network.encryption}
               value={wifiNetworkEncryption}
               setValue={setWifiNetworkEncryption}
-              items={[
-                {
-                  label: strings.network.selectorEncryptionWpa1Personal,
-                  value: WifiNetworkEncryptionEnum.Wpa1Personal,
-                },
-                {
-                  label: strings.network.selectorEncryptionWpa2Personal,
-                  value: WifiNetworkEncryptionEnum.Wpa2Personal,
-                },
-                {
-                  label: strings.network.selectorEncryptionWpa3Personal,
-                  value: WifiNetworkEncryptionEnum.Wpa3Personal,
-                },
-                {
-                  label: strings.network.selectorEncryptionWpa12Personal,
-                  value: WifiNetworkEncryptionEnum.Wpa12Personal,
-                },
-                {
-                  label: strings.network.selectorEncryptionWpa23Personal,
-                  value: WifiNetworkEncryptionEnum.Wpa23Personal,
-                },
-              ]}
+              items={getNetworkEncryptionItems()}
               zIndex={pickerZIndex--}
             />
             <ItemPickerWithLabel
@@ -164,7 +146,7 @@ const NetworkAdd = props => {
               value={wifiNetworkBands}
               setValue={setWifiNetworkBands}
               multiple={true}
-              items={getNetworkBandsSelectorItems(null)}
+              items={getNetworkBandsSelectorItems(radios)}
               zIndex={pickerZIndex--}
             />
           </AccordionSection>

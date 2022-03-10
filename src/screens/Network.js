@@ -8,16 +8,11 @@ import {
   selectCurrentAccessPointId,
   selectSubscriberInformationLoading,
   selectAccessPoint,
-  selectWifiNetworks,
+  selectRadios,
   selectSubscriberDevices,
+  selectWifiNetworks,
 } from '../store/SubscriberInformationSlice';
-import {
-  wifiClientsApi,
-  wiredClientsApi,
-  handleApiError,
-  WifiNetworkEncryptionEnum,
-  WifiNetworkTypeEnum,
-} from '../api/apiHandler';
+import { wifiClientsApi, wiredClientsApi, handleApiError } from '../api/apiHandler';
 import {
   scrollViewToTop,
   displayEditableValue,
@@ -29,6 +24,8 @@ import {
   getClientConnectionStatusColor,
   getGuestNetworkIndex,
   setSubscriberInformationInterval,
+  getNetworkTypeItems,
+  getNetworkEncryptionItems,
   getNetworkBandsSelectorItems,
   modifyNetworkSettings,
   deleteNetwork,
@@ -56,6 +53,7 @@ const Network = props => {
   const currentAccessPointId = useSelector(selectCurrentAccessPointId);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
   const accessPoint = useSelector(selectAccessPoint);
+  const radios = useSelector(selectRadios);
   const wifiNetworks = useSelector(selectWifiNetworks);
   const subscriberDevices = useSelector(selectSubscriberDevices);
   // State
@@ -355,10 +353,7 @@ const Network = props => {
               setValue={setWifiNetworkType}
               disabled={!isGuestNetworkAvailable()}
               disabledReason={strings.messages.guestNetworkExists}
-              items={[
-                { label: strings.network.selectorTypeMain, value: WifiNetworkTypeEnum.Main },
-                { label: strings.network.selectorTypeGuest, value: WifiNetworkTypeEnum.Guest },
-              ]}
+              items={getNetworkTypeItems()}
               changeKey="type"
               onChangeValue={onEditNetworkSettings}
               zIndex={pickerZIndex--}
@@ -385,28 +380,7 @@ const Network = props => {
               label={strings.network.encryption}
               value={wifiNetworkEncryption}
               setValue={setWifiNetworkEncryption}
-              items={[
-                {
-                  label: strings.network.selectorEncryptionWpa1Personal,
-                  value: WifiNetworkEncryptionEnum.Wpa1Personal,
-                },
-                {
-                  label: strings.network.selectorEncryptionWpa2Personal,
-                  value: WifiNetworkEncryptionEnum.Wpa2Personal,
-                },
-                {
-                  label: strings.network.selectorEncryptionWpa3Personal,
-                  value: WifiNetworkEncryptionEnum.Wpa3Personal,
-                },
-                {
-                  label: strings.network.selectorEncryptionWpa12Personal,
-                  value: WifiNetworkEncryptionEnum.Wpa12Personal,
-                },
-                {
-                  label: strings.network.selectorEncryptionWpa23Personal,
-                  value: WifiNetworkEncryptionEnum.Wpa23Personal,
-                },
-              ]}
+              items={getNetworkEncryptionItems()}
               changeKey="encryption"
               onChangeValue={onEditNetworkSettings}
               zIndex={pickerZIndex--}
@@ -417,7 +391,7 @@ const Network = props => {
               value={wifiNetworkBands}
               setValue={setWifiNetworkBands}
               multiple={true}
-              items={getNetworkBandsSelectorItems(null)}
+              items={getNetworkBandsSelectorItems(radios)}
               changeKey="bands"
               onChangeValue={onEditNetworkSettings}
               zIndex={pickerZIndex--}

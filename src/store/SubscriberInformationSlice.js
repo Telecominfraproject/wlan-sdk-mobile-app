@@ -16,12 +16,13 @@ export const subscriberInformationSlice = createSlice({
     subscriberInformation: null,
     accessPoints: null,
     accessPoint: null,
-    internetConnection: null,
-    wifiNetworks: null,
     deviceMode: null,
     dnsConfiguration: null,
+    internetConnection: null,
     ipReservations: null,
+    radios: null,
     subscriberDevices: null,
+    wifiNetworks: null,
   },
   reducers: {
     setSubscriberInformationLoading: (state, action) => {
@@ -35,7 +36,8 @@ export const subscriberInformationSlice = createSlice({
       }
     },
     setSubscriberInformation: (state, action) => {
-      if (isFieldDifferent(state.subscriberInformation, action.payload, 'modified')) {
+      // Only check the subscriberInformation modified field, all other modified fields are ignored.
+      if (true || isFieldDifferent(state.subscriberInformation, action.payload, 'modified')) {
         state.subscriberInformation = action.payload;
         setStateFromSubsciberInfo(state, state.subscriberInformation, state.selectedAccessPointId);
       } else {
@@ -46,12 +48,13 @@ export const subscriberInformationSlice = createSlice({
       state.subscriberInformation = null;
       state.accessPoints = null;
       state.accessPoint = null;
-      state.internetConnection = null;
-      state.wifiNetworks = null;
       state.deviceMode = null;
       state.dnsConfiguration = null;
+      state.internetConnection = null;
       state.ipReservations = null;
+      state.radios = null;
       state.subscriberDevices = null;
+      state.wifiNetworks = null;
     },
   },
 });
@@ -62,15 +65,16 @@ function setStateFromSubsciberInfo(state, subscriberInfo, selectAccessPointId) {
   state.accessPoints = subscriberInfo && subscriberInfo.accessPoints ? subscriberInfo.accessPoints.list : null;
 
   // Next pull out the subgroups from the currently selected access point, and update the appropriate state if
-  // they have changed. NOTE: the accessPoint state will NOT include these groups, as anything that is looking
-  // at access point should only look at the first level fields.
+  // they have changed. NOTE: the accessPoint state will NOT include these groups, as anything that is being
+  // looking at access point should only look at the first level fields.
   let subGroupFields = [
-    'internetConnection',
     'deviceMode',
     'dnsConfiguration',
+    'internetConnection',
     'ipReservations',
-    'wifiNetworks',
+    'radios',
     'subscriberDevices',
+    'wifiNetworks',
   ];
 
   let newAccessPoint = getSubscriberAccessPointInfo(subscriberInfo, selectAccessPointId, null);
@@ -96,11 +100,12 @@ function setStateFromSubsciberInfo(state, subscriberInfo, selectAccessPointId) {
       let filtered1 = JSON.parse(JSON.stringify(newObject));
       let filtered2 = JSON.parse(JSON.stringify(state[key]));
 
+      // Ignore these modified fields, only the outer will be looked at
       delete filtered1.modified;
       delete filtered2.modified;
 
       if (!isEqual(filtered1, filtered2)) {
-        console.log(key + ' updated');
+        console.log(key + ' -> state updated');
         state[key] = newObject;
       }
     }
@@ -109,7 +114,7 @@ function setStateFromSubsciberInfo(state, subscriberInfo, selectAccessPointId) {
   // For the accessPoint, only include the specific access point fields and only if they changed
   // Note if both access points are null, the simple state comparison will work
   if (newAccessPoint === null || state.accessPoint === null || !isEqual(newAccessPoint, state.accessPoint)) {
-    console.log('accessPoint updated');
+    console.log('accessPoint -> state updated');
     state.accessPoint = newAccessPoint;
   }
 }
@@ -119,12 +124,13 @@ export const selectCurrentAccessPointId = state => state.subscriberInformation.s
 export const selectSubscriberInformation = state => state.subscriberInformation.subscriberInformation;
 export const selectAccessPoints = state => state.subscriberInformation.accessPoints;
 export const selectAccessPoint = state => state.subscriberInformation.accessPoint;
-export const selectInternetConnection = state => state.subscriberInformation.internetConnection;
-export const selectWifiNetworks = state => state.subscriberInformation.wifiNetworks;
 export const selectDeviceMode = state => state.subscriberInformation.deviceMode;
 export const selectDnsConfiguration = state => state.subscriberInformation.dnsConfiguration;
+export const selectInternetConnection = state => state.subscriberInformation.internetConnection;
 export const selectIpReservations = state => state.subscriberInformation.ipReservations;
+export const selectRadios = state => state.subscriberInformation.radios;
 export const selectSubscriberDevices = state => state.subscriberInformation.subscriberDevices;
+export const selectWifiNetworks = state => state.subscriberInformation.wifiNetworks;
 
 export const {
   setSubscriberInformationLoading,
