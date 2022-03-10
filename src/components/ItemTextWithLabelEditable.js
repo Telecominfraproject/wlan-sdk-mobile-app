@@ -495,7 +495,7 @@ const ItemTextWithLabelEditable = props => {
             editable={!loading}
             autoCapitalize={autoCapitalized()}
             autoCorrect={false}
-            autoComplete={false}
+            autoComplete="off"
             placeholder={props.placeholder}
             placeholderTextColor={placeholderColor}
             onChangeText={onChangeText}
