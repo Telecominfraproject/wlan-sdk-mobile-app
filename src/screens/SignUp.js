@@ -273,7 +273,7 @@ export default function SignUp(props) {
                   returnKeyType="go"
                   value={email}
                   onChangeText={text => setEmail(text)}
-                  onSignUpPressEditing={() => macAddressRef.current.focus()}
+                  onSubmitEditing={() => macAddressRef.current.focus()}
                   maxLength={255}
                 />
               </View>
@@ -288,7 +288,7 @@ export default function SignUp(props) {
                   returnKeyType="go"
                   value={macAddress}
                   onChangeText={text => setMacAddress(text)}
-                  onSignUpPressEditing={() => onSignUpPress()}
+                  onSubmitEditing={() => onSignUpPress()}
                   maxLength={17}
                 />
               </View>
