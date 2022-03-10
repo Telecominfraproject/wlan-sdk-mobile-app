@@ -1,5 +1,5 @@
 import Config from 'react-native-config';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, okColor, infoColor, errorColor, primaryColor, whiteColor, grayBackgroundcolor } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, View, Text, TouchableOpacity, Image, Alert } from 'react-native';
@@ -25,7 +25,10 @@ import ButtonSelector from '../components/ButtonSelector';
 import { wifiClientsApi, wiredClientsApi, handleApiError } from '../api/apiHandler';
 
 const Dashboard = props => {
+  // Refs
   const scrollRef = useRef();
+  const isMounted = useRef(false);
+  // Dispatch
   const dispatch = useDispatch();
   // Selectors
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
@@ -35,6 +38,15 @@ const Dashboard = props => {
   const wifiNetworks = useSelector(selectWifiNetworks);
   // States
   const [connectedDevices, setConnectedDevices] = useState(0);
+
+  // Keep track of whether the screen is mounted or not so async tasks know to access state or not.
+  useEffect(() => {
+    isMounted.current = true;
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   // Refresh the information only anytime there is a navigation change and this has come into focus
   // Need to be careful here as useFocusEffect is also called during re-render so it can result in
@@ -63,9 +75,12 @@ const Dashboard = props => {
       wiredClientsApi.getWiredClients(accessPoint.macAddress),
       wifiClientsApi.getWifiClients(accessPoint.macAddress),
     ]);
+
     let wiredClients = wired.value && wired.value.data.clients ? wired.value.data.clients.length : 0;
     let wifiClients = wifi.value && wifi.value.data.associations ? wifi.value.data.associations.length : 0;
-    setConnectedDevices(wiredClients + wifiClients);
+    if (isMounted.current) {
+      setConnectedDevices(wiredClients + wifiClients);
+    }
   };
 
   const getInternetBadge = () => {
