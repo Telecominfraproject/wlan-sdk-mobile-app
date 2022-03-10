@@ -97,10 +97,6 @@ const SignIn = props => {
     });
   };
 
-  const onPrivacyPolicyPress = async () => {
-    props.navigation.navigate('PrivacyPolicy');
-  };
-
   const onTermsConditionsPress = async () => {
     props.navigation.navigate('TermsConditions');
   };
@@ -190,11 +186,8 @@ const SignIn = props => {
 
           {/* Bottom Buttons */}
           <View style={componentStyles.fillView} />
-          <View style={pageItemStyle.containerButton}>
-            <ButtonStyled title={strings.buttons.changeBrand} type="text" onPress={onChangeBrandPress} />
-          </View>
           <View style={pageItemStyle.containerButtons}>
-            <ButtonStyled title={strings.buttons.privacyPolicy} type="text" onPress={onPrivacyPolicyPress} />
+            <ButtonStyled title={strings.buttons.changeBrand} type="text" onPress={onChangeBrandPress} />
             <ButtonStyled title={strings.buttons.termsConditions} type="text" onPress={onTermsConditionsPress} />
           </View>
         </View>

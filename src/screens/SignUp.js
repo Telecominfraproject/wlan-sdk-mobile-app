@@ -226,10 +226,6 @@ export default function SignUp(props) {
     return null;
   };
 
-  const onPrivacyPolicyPress = async () => {
-    props.navigation.navigate('PrivacyPolicy');
-  };
-
   const onTermsConditionsPress = async () => {
     props.navigation.navigate('TermsConditions');
   };
@@ -304,8 +300,7 @@ export default function SignUp(props) {
 
           {/* Bottom Buttons */}
           <View style={componentStyles.fillView} />
-          <View style={pageItemStyle.containerButtons}>
-            <ButtonStyled title={strings.buttons.privacyPolicy} type="text" onPress={onPrivacyPolicyPress} />
+          <View style={pageItemStyle.containerButton}>
             <ButtonStyled title={strings.buttons.termsConditions} type="text" onPress={onTermsConditionsPress} />
           </View>
         </View>

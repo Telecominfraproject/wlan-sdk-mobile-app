@@ -22,8 +22,8 @@ import NavigationHeader from './components/NavigationHeader';
 import Network from './screens/Network';
 import NetworkAdd from './screens/NetworkAdd';
 import MfaCode from './screens/MfaCode';
+import PasswordPolicy from './screens/PasswordPolicy';
 import PhoneVerification from './screens/PhoneVerification';
-import PrivacyPolicy from './screens/PrivacyPolicy';
 import Profile from './screens/Profile';
 import SignIn from './screens/SignIn';
 import SignUp from './screens/SignUp';
@@ -267,12 +267,12 @@ const Navigator = () => {
           component={ChangePassword}
           options={{ title: strings.navigator.passwordReset }}
         />
-        <Stack.Screen name="SignUp" component={SignUp} options={{ title: strings.navigator.signUp }} />
         <Stack.Screen
-          name="PrivacyPolicy"
-          component={PrivacyPolicy}
-          options={{ title: strings.navigator.privacyPolicy }}
+          name="PasswordPolicy"
+          component={PasswordPolicy}
+          options={{ title: strings.navigator.passwordPolicy }}
         />
+        <Stack.Screen name="SignUp" component={SignUp} options={{ title: strings.navigator.signUp }} />
         <Stack.Screen
           name="TermsConditions"
           component={TermsConditions}

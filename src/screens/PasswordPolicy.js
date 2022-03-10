@@ -3,11 +3,11 @@ import { WebView } from 'react-native-webview';
 import { useSelector } from 'react-redux';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
 
-const TermsConditions = props => {
+const PasswordPolicy = props => {
   // State
   const brandInfo = useSelector(selectBrandInfo);
 
-  return <WebView source={{ uri: brandInfo.access_policy }} />;
+  return <WebView source={{ uri: brandInfo.password_policy }} />;
 };
 
-export default TermsConditions;
+export default PasswordPolicy;

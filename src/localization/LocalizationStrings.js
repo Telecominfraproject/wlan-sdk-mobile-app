@@ -86,9 +86,9 @@ export const strings = new LocalizedStrings({
       network: 'Network',
       networkAdd: 'Add Network',
       multiFactorAuthentication: 'Multi-Factor Authentication',
+      passwordPolicy: 'Password Policy',
       passwordReset: 'Password Reset',
       phoneVerification: 'Phone Number Verification',
-      privacyPolicy: 'Privacy Policy',
       profile: 'Profile',
       signUp: 'Sign Up',
       termsConditions: 'Terms & Conditions',
@@ -107,7 +107,6 @@ export const strings = new LocalizedStrings({
       ok: 'Ok',
       passwordPolicy: 'Password Policy',
       pause: 'Pause',
-      privacyPolicy: 'Privacy Policy',
       reboot: 'Reboot',
       refresh: 'Refresh',
       register: 'Register',
@@ -310,10 +309,6 @@ export const strings = new LocalizedStrings({
     },
     phoneVerification: {
       description: 'A validation code was sent by text message (SMS), please enter in this code below.',
-    },
-    privacyPolicy: {
-      title: 'Privacy Policy',
-      content: 'This is the privacy policy.',
     },
     profile: {
       accountInfo: 'Account Information',

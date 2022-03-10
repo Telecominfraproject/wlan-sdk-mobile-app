@@ -55,8 +55,8 @@ const ForgotPassword = props => {
     }
   };
 
-  const onPrivacyPolicyPress = () => {
-    props.navigation.navigate('PrivacyPolicy');
+  const onPasswordPolicyPress = () => {
+    props.navigation.navigate('PasswordPolicy');
   };
 
   const onTermsConditionsPress = () => {
@@ -111,7 +111,7 @@ const ForgotPassword = props => {
           )}
           <View style={forgotPasswordStyle.fillView} />
           <View style={pageItemStyle.containerButtons}>
-            <ButtonStyled title={strings.buttons.privacyPolicy} type="text" onPress={onPrivacyPolicyPress} />
+            <ButtonStyled title={strings.buttons.passwordPolicy} type="text" onPress={onPasswordPolicyPress} />
             <ButtonStyled title={strings.buttons.termsConditions} type="text" onPress={onTermsConditionsPress} />
           </View>
         </View>
