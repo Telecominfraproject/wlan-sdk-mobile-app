@@ -109,6 +109,7 @@ const Configuration = props => {
   useFocusEffect(
     useCallback(() => {
       scrollViewToTop(scrollRef);
+
       var intervalId = setSubscriberInformationInterval(null);
 
       // Return function of what should be done on 'focus out'
@@ -943,14 +944,9 @@ const Configuration = props => {
               }
             />
             <ItemTextWithLabel
-              key="model"
-              label={strings.configuration.productModel}
-              value={displayValue(accessPoint, 'model')}
-            />
-            <ItemTextWithLabel
-              key="serial_number"
+              key="serialNumber"
               label={strings.configuration.serialNumber}
-              value={displayValue(accessPoint, 'serial_number')}
+              value={displayValue(accessPoint, 'serialNumber')}
             />
             <ItemTextWithLabel
               key="macAddress"
