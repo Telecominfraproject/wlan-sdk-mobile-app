@@ -81,6 +81,7 @@ export const strings = new LocalizedStrings({
       dashboard: 'Dashboard',
       details: 'Details',
       deviceRegistration: 'Register Device',
+      deviceStatistics: 'Device Statistics',
       forgotPassword: 'Forgot Password',
       ipReservation: 'IP Reservation',
       network: 'Network',
@@ -186,6 +187,7 @@ export const strings = new LocalizedStrings({
       defaultGateway: 'Default Gateway',
       defaultGatewayV6: 'Default Gateway (IPv6)',
       deviceMode: 'Device Mode',
+      deviceStatistics: 'Device Statistics',
       dnsSettings: 'DNS Settings',
       endIp: 'End IP',
       endIpV6: 'End IP (IPv6)',
@@ -253,6 +255,9 @@ export const strings = new LocalizedStrings({
       description:
         'No access point is currently registed on this account. Please register an access point to continue.',
       descriptionAdd: 'Please enter the mac address of your access point.',
+    },
+    deviceStatistics: {
+      description: 'Device statistics are below',
     },
     accessSchedule: {
       accessSchedule: 'Access Schedule',

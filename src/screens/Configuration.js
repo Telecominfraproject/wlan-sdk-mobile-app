@@ -194,6 +194,10 @@ const Configuration = props => {
     );
   };
 
+  const onDeviceStatisticsPress = () => {
+    props.navigation.navigate('DeviceStatistics');
+  };
+
   const onBlinkLightsPress = async () => {
     sendAccessPointCommand('blink', strings.configuration.commandLightBlinkSuccess);
   };
@@ -952,6 +956,11 @@ const Configuration = props => {
               key="macAddress"
               label={strings.configuration.macAddress}
               value={displayValue(accessPoint, 'macAddress')}
+            />
+            <ItemTextWithIcon
+              key="deviceStatistics"
+              label={strings.configuration.deviceStatistics}
+              onPress={() => onDeviceStatisticsPress()}
             />
           </AccordionSection>
 

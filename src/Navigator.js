@@ -16,6 +16,7 @@ import Configuration from './screens/Configuration';
 import Dashboard from './screens/Dashboard';
 import DeviceDetails from './screens/DeviceDetails';
 import DeviceRegistration from './screens/DeviceRegistration';
+import DeviceStatistics from './screens/DeviceStatistics';
 import ForgotPassword from './screens/ForgotPassword';
 import IpReservationAddEdit from './screens/IpReservationAddEdit';
 import NavigationHeader from './components/NavigationHeader';
@@ -88,6 +89,11 @@ const Navigator = () => {
           name="ConfigurationScreen"
           component={Configuration}
           options={{ title: strings.navigator.configuration }}
+        />
+        <ConfigurationStack.Screen
+          name="DeviceStatistics"
+          component={DeviceStatistics}
+          options={{ title: strings.navigator.deviceStatistics }}
         />
         <ConfigurationStack.Screen
           name="IpReservationAddEdit"

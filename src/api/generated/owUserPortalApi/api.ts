@@ -1313,6 +1313,56 @@ export interface SignupEntry {
 /**
  *
  * @export
+ * @interface StatsBlock
+ */
+export interface StatsBlock {
+  /**
+   *
+   * @type {number}
+   * @memberof StatsBlock
+   */
+  modified?: number;
+  /**
+   *
+   * @type {Array<StatsEntry>}
+   * @memberof StatsBlock
+   */
+  external?: Array<StatsEntry>;
+  /**
+   *
+   * @type {Array<StatsEntry>}
+   * @memberof StatsBlock
+   */
+  internal?: Array<StatsEntry>;
+}
+/**
+ *
+ * @export
+ * @interface StatsEntry
+ */
+export interface StatsEntry {
+  /**
+   *
+   * @type {number}
+   * @memberof StatsEntry
+   */
+  timestamp?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof StatsEntry
+   */
+  tx?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof StatsEntry
+   */
+  rx?: number;
+}
+/**
+ *
+ * @export
  * @interface SubMfaConfig
  */
 export interface SubMfaConfig {
@@ -2295,6 +2345,123 @@ export class DeviceCommandsApi extends BaseAPI {
   ) {
     return DeviceCommandsApiFp(this.configuration)
       .performAnAction(action, inlineObject, options)
+      .then(request => request(this.axios, this.basePath));
+  }
+}
+
+/**
+ * DeviceStatisticsApi - axios parameter creator
+ * @export
+ */
+export const DeviceStatisticsApiAxiosParamCreator = function (configuration?: Configuration) {
+  return {
+    /**
+     *
+     * @summary Get a list of statistics about the MAC address inout/output in terms of bytes
+     * @param {string} mac
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getStats: async (mac: string, options: any = {}): Promise<RequestArgs> => {
+      // verify required parameter 'mac' is not null or undefined
+      assertParamExists('getStats', 'mac', mac);
+      const localVarPath = `/stats/{mac}`.replace(`{${'mac'}}`, encodeURIComponent(String(mac)));
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication ApiKeyAuth required
+      await setApiKeyToObject(localVarHeaderParameter, 'X-API-KEY', configuration);
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * DeviceStatisticsApi - functional programming interface
+ * @export
+ */
+export const DeviceStatisticsApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = DeviceStatisticsApiAxiosParamCreator(configuration);
+  return {
+    /**
+     *
+     * @summary Get a list of statistics about the MAC address inout/output in terms of bytes
+     * @param {string} mac
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async getStats(
+      mac: string,
+      options?: any,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.getStats(mac, options);
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+    },
+  };
+};
+
+/**
+ * DeviceStatisticsApi - factory interface
+ * @export
+ */
+export const DeviceStatisticsApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = DeviceStatisticsApiFp(configuration);
+  return {
+    /**
+     *
+     * @summary Get a list of statistics about the MAC address inout/output in terms of bytes
+     * @param {string} mac
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getStats(mac: string, options?: any): AxiosPromise<void> {
+      return localVarFp.getStats(mac, options).then(request => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * DeviceStatisticsApi - object-oriented interface
+ * @export
+ * @class DeviceStatisticsApi
+ * @extends {BaseAPI}
+ */
+export class DeviceStatisticsApi extends BaseAPI {
+  /**
+   *
+   * @summary Get a list of statistics about the MAC address inout/output in terms of bytes
+   * @param {string} mac
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof DeviceStatisticsApi
+   */
+  public getStats(mac: string, options?: any) {
+    return DeviceStatisticsApiFp(this.configuration)
+      .getStats(mac, options)
       .then(request => request(this.axios, this.basePath));
   }
 }

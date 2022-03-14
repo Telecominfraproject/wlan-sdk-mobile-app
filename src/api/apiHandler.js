@@ -11,6 +11,7 @@ import {
   ClientsApiFactory,
   Configuration as UserPortalConfiguration,
   DeviceCommandsApiFactory,
+  DeviceStatisticsApiFactory,
   HomeDeviceModeTypeEnum,
   InlineObjectPatternEnum,
   InternetConnectionTypeEnum,
@@ -47,6 +48,7 @@ const userPortalConfig = new UserPortalConfiguration({ accessToken: getAccessTok
 var baseUserPortalUrl = null;
 var authenticationApi = null;
 var deviceCommandsApi = null;
+var deviceStatisticsApi = null;
 var mfaApi = null;
 var subscriberInformationApi = null;
 var subscriberRegistrationApi = null;
@@ -64,6 +66,9 @@ function generateApis() {
     : null;
   deviceCommandsApi = baseUserPortalUrl
     ? new DeviceCommandsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
+    : null;
+  deviceStatisticsApi = baseUserPortalUrl
+    ? new DeviceStatisticsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
     : null;
   mfaApi = baseUserPortalUrl ? new MFAApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance) : null;
   subscriberInformationApi = baseUserPortalUrl
@@ -279,6 +284,7 @@ function get403ErrorFromData(error) {
 export {
   authenticationApi,
   deviceCommandsApi,
+  deviceStatisticsApi,
   mfaApi,
   subscriberInformationApi,
   subscriberRegistrationApi,
