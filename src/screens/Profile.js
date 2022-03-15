@@ -37,6 +37,7 @@ const Profile = props => {
   // Refs
   const scrollRef = useRef();
   const isMounted = useRef(false);
+  const mfaErrorReported = useRef(false);
   // State
   const subscriberInformation = useSelector(selectSubscriberInformation);
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
@@ -62,11 +63,7 @@ const Profile = props => {
       scrollViewToTop(scrollRef);
 
       // Setup the refresh interval and update the MFA at the same time
-      async function updateMfa() {
-        getMFA();
-      }
-
-      var intervalId = setSubscriberInformationInterval(updateMfa);
+      let intervalId = setSubscriberInformationInterval(getMFA);
 
       // Return function of what should be done on 'focus out'
       return () => {
@@ -96,11 +93,17 @@ const Profile = props => {
       if (isMounted.current) {
         setMfa(response.data);
         setMfaType(type);
+        // Clear the error reported flag as now being successful
+        mfaErrorReported.current = false;
       }
     } catch (error) {
       // Do not report the error in this case, as it is no longer there and it is just getting state
       if (isMounted.current) {
-        handleApiError(strings.errors.titleMfa, error);
+        if (!mfaErrorReported.current) {
+          // Only report the first error seen, then do not report another until a successful poll is seen
+          handleApiError(strings.errors.titleMfa, error);
+          mfaErrorReported.current = true;
+        }
       }
     } finally {
       if (isMounted.current) {
@@ -165,7 +168,6 @@ const Profile = props => {
         if (!response || !response.data) {
           throw new Error(strings.errors.invalidResponse);
         }
-        console.log('MFA change complete');
       }
     } catch (error) {
       handleApiError(strings.errors.titleMfa, error);
