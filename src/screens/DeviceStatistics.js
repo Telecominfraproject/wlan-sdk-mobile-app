@@ -23,6 +23,7 @@ export default function DeviceStatistics(props) {
   // Refs
   const scrollRef = useRef();
   const isMounted = useRef(false);
+  const errorReported = useRef(false);
   // State
   const accessPoint = useSelector(selectAccessPoint);
   const [deviceStatisticsLoading, setDeviceStatisticsLoading] = useState(false);
@@ -72,11 +73,17 @@ export default function DeviceStatistics(props) {
       if (isMounted.current) {
         setDeviceStatistics(response.data);
         setDeviceStatisticsLoading(false);
+        // Clear the error reported flag
+        errorReported.current = false;
       }
     } catch (error) {
       // Do not report the error in this case, as it is no longer there and it is just getting state
       if (isMounted.current) {
-        handleApiError(strings.errors.titleDeviceStatistics, error);
+        // Only report the first error
+        if (!errorReported.current) {
+          handleApiError(strings.errors.titleDeviceStatistics, error);
+          errorReported.current = true;
+        }
         setDeviceStatisticsLoading(false);
       }
     }
@@ -108,9 +115,8 @@ export default function DeviceStatistics(props) {
   }
 
   const getTickValues = key => {
-    let max = 0;
-
     if (deviceStatistics && deviceStatistics.external) {
+      let max = 0;
       deviceStatistics.external.forEach(item => {
         if (item[key] > max) {
           max = item[key];
