@@ -2,6 +2,7 @@ import React from 'react';
 import {
   paddingHorizontalDefault,
   borderRadiusDefault,
+  cellHeightDefault,
   primaryColor,
   whiteColor,
   grayColor,
@@ -105,7 +106,7 @@ const ButtonStyled = props => {
     },
     containerLarge: {
       paddingHorizontal: paddingHorizontalDefault,
-      height: 44,
+      height: cellHeightDefault,
       borderRadius: borderRadiusDefault,
     },
     containerSmall: {

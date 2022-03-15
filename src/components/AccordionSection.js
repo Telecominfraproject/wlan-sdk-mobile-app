@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
-import { paddingHorizontalDefault, borderRadiusDefault, primaryColor, whiteColor, grayColor } from '../AppStyle';
+import {
+  paddingHorizontalDefault,
+  borderRadiusDefault,
+  cellHeightDefault,
+  primaryColor,
+  whiteColor,
+  grayColor,
+} from '../AppStyle';
 import { StyleSheet, TouchableOpacity, View, Text, Image, ActivityIndicator } from 'react-native';
 import isEqual from 'lodash.isequal';
 
@@ -77,7 +84,7 @@ const AccordionSection = props => {
       width: '100%',
     },
     headerContainer: {
-      height: 44,
+      height: cellHeightDefault,
       width: '100%',
       // Layout
       flexDirection: 'row',
