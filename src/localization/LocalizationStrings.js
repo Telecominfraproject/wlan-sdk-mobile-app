@@ -48,6 +48,7 @@ export const strings = new LocalizedStrings({
       titleChangePassword: 'Change Password Error',
       titleClientRetrieval: 'Client Retrieval Error',
       titleDelete: 'Delete Error',
+      titleDeviceStatistics: 'Device Statistics',
       titleForgotPassword: 'Forgot Password Error',
       titleIpReservationModify: 'IP Reservation Modify Error',
       titleMfa: 'Multi-Factor Authentication Error',
@@ -257,7 +258,8 @@ export const strings = new LocalizedStrings({
       descriptionAdd: 'Please enter the mac address of your access point.',
     },
     deviceStatistics: {
-      description: 'Device statistics are below',
+      titleExternalDataReceive: 'Access Point Data Received (External)',
+      titleExternalDataTransmit: 'Access Point Data Transmitted (External)',
     },
     accessSchedule: {
       accessSchedule: 'Access Schedule',

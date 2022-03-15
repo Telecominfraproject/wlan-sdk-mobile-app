@@ -27,6 +27,7 @@ export const paddingHorizontalDefault = 10;
 export const paddingVerticalDefault = 5;
 export const heightCellDefault = 50;
 export const borderRadiusDefault = 6;
+export const cellHeightDefault = 44;
 
 function updatePrimaryColorInfo() {
   const state = store.getState();
@@ -145,7 +146,7 @@ export const pageItemStyle = StyleSheet.create({
   inputText: {
     marginTop: 10,
     // Layout
-    height: 44,
+    height: cellHeightDefault,
     width: '100%',
     paddingLeft: 10,
     paddingRight: 10,
