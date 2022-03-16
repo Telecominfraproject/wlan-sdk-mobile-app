@@ -939,7 +939,7 @@ const Configuration = props => {
               buttonTitle={strings.buttons.update}
               onButtonPress={onUpdateFirmwarePress}
               buttonLoading={buttonAction === 'firmware'}
-              buttonDisabled={buttonAction || !accessPoint || accessPoint.newFirmwareAvailable}
+              buttonDisabled={buttonAction || !accessPoint || !accessPoint.newFirmwareAvailable}
             />
             <ItemTextWithLabel
               key="serialNumber"
