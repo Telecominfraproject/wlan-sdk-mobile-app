@@ -105,7 +105,7 @@ export default function DeviceStatistics(props) {
       // Remove seconds from the time if it matches one of expected patterns
       let timeRegex = new RegExp(/^(\d)?\d:\d\d:\d\d/);
       if (timeString && timeRegex.test(timeString)) {
-        return timeString.replace(/:\d\d($| )/, '');
+        return timeString.replace(/:\d\d($| )/, ' ').trim();
       } else {
         return timeString;
       }
@@ -168,7 +168,7 @@ export default function DeviceStatistics(props) {
     chartPadding: {
       top: marginTopDefault,
       left: 60,
-      bottom: 50,
+      bottom: 60,
       right: 20,
     },
     chartStyle: {
@@ -178,7 +178,7 @@ export default function DeviceStatistics(props) {
     axisXStyle: {
       axis: { stroke: blackColor, strokeWidth: 1 },
       ticks: { stroke: blackColor, strokeWidth: 1 },
-      tickLabels: { fill: blackColor, angle: 90, dx: 12, dy: -5 },
+      tickLabels: { fill: blackColor, angle: 90, dx: 15, dy: -5 },
       grid: { stroke: 'none' },
     },
     axisYStyle: {
