@@ -188,10 +188,12 @@ const Configuration = props => {
   };
 
   const onUpdateFirmwarePress = async () => {
+    let latestFirmware = displayValue(accessPoint, 'latestFirmware');
+
     sendAccessPointCommandWithConfirm(
       'upgrade',
-      strings.configuration.commandFirmwareUpdateSuccess,
-      strings.configuration.confirmFirmwareUpdateSuccess,
+      strings.formatString(strings.configuration.commandFirmwareUpdateSuccess, latestFirmware),
+      strings.formatString(strings.configuration.confirmFirmwareUpdateSuccess, latestFirmware),
     );
   };
 
@@ -937,11 +939,7 @@ const Configuration = props => {
               buttonTitle={strings.buttons.update}
               onButtonPress={onUpdateFirmwarePress}
               buttonLoading={buttonAction === 'firmware'}
-              buttonDisabled={
-                !accessPoint ||
-                buttonAction ||
-                displayValue(accessPoint, 'currentFirmware') !== displayValue(accessPoint, 'lastFirmware')
-              }
+              buttonDisabled={buttonAction || !accessPoint || accessPoint.newFirmwareAvailable}
             />
             <ItemTextWithLabel
               key="serialNumber"
