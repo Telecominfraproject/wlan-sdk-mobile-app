@@ -47,7 +47,7 @@ const TextInputWithIcon = props => {
         placeholder={props.placeholder}
         placeholderTextColor={placeholderColor}
         onChangeText={onChangeTextInternal}
-        maxLength={255}
+        maxLength={props.maxLength !== undefined ? props.maxLength : 255}
       />
     </View>
   );
