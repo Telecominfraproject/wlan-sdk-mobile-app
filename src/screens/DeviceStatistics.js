@@ -142,6 +142,7 @@ export default function DeviceStatistics(props) {
   const componentStyles = StyleSheet.create({
     containerChart: {
       width: '100%',
+      marginTop: marginTopDefault,
       backgroundColor: whiteColor,
       borderRadius: borderRadiusDefault,
     },
@@ -226,7 +227,7 @@ export default function DeviceStatistics(props) {
               />
             </VictoryChart>
           </View>
-          <View style={[componentStyles.containerChart, { marginTop: marginTopDefault }]}>
+          <View style={[componentStyles.containerChart]}>
             <View style={componentStyles.headerChart}>
               <Text style={componentStyles.headerChartText}>{strings.deviceStatistics.titleExternalDataTransmit}</Text>
             </View>
