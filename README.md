@@ -40,10 +40,25 @@ To generate an Android release build, you will need to ensure the following
 To create:
 - Update the package version number in package.json
 - yarn react-native-version --never-amend
+
+# Android
 - cd android
 - ./gradlew bundleRelease
 
 Resulting file will be in android/app/build/outputs/bundle/release/. It should be renamed to MyOpenWifi.aab
+
+# iOS
+- start Xcode
+- select "Any iOS Device" for the target
+- Product->Scheme->Edit Scheme
+-  Change build configuration to "Release"
+-  Close
+- Product->Build
+- Distribute App
+-   Ad Hoc
+-   Next
+-   Select profile
+-   Export
 
 ## User Portal
 
