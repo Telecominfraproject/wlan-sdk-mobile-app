@@ -56,7 +56,7 @@ const ProgressModal = props => {
             style={componentStyles.activityIndicator}
             color={primaryColor}
             size="large"
-            animating="true"
+            animating={true}
           />
           {props.onCancelPress && (
             <ButtonStyled
