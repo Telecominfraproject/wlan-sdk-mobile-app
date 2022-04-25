@@ -3197,6 +3197,7 @@ export const SubscriberRegistrationApiAxiosParamCreator = function (configuratio
      * @summary This call allows a new subscriber to register themselves and their devices.
      * @param {string} email
      * @param {string} macAddress
+     * @param {string} registrationId
      * @param {string} [deviceID]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -3204,6 +3205,7 @@ export const SubscriberRegistrationApiAxiosParamCreator = function (configuratio
     postSignup: async (
       email: string,
       macAddress: string,
+      registrationId: string,
       deviceID?: string,
       options: any = {},
     ): Promise<RequestArgs> => {
@@ -3211,6 +3213,8 @@ export const SubscriberRegistrationApiAxiosParamCreator = function (configuratio
       assertParamExists('postSignup', 'email', email);
       // verify required parameter 'macAddress' is not null or undefined
       assertParamExists('postSignup', 'macAddress', macAddress);
+      // verify required parameter 'registrationId' is not null or undefined
+      assertParamExists('postSignup', 'registrationId', registrationId);
       const localVarPath = `/signup`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -3240,6 +3244,10 @@ export const SubscriberRegistrationApiAxiosParamCreator = function (configuratio
 
       if (deviceID !== undefined) {
         localVarQueryParameter['deviceID'] = deviceID;
+      }
+
+      if (registrationId !== undefined) {
+        localVarQueryParameter['registrationId'] = registrationId;
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
@@ -3347,6 +3355,7 @@ export const SubscriberRegistrationApiFp = function (configuration?: Configurati
      * @summary This call allows a new subscriber to register themselves and their devices.
      * @param {string} email
      * @param {string} macAddress
+     * @param {string} registrationId
      * @param {string} [deviceID]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -3354,10 +3363,17 @@ export const SubscriberRegistrationApiFp = function (configuration?: Configurati
     async postSignup(
       email: string,
       macAddress: string,
+      registrationId: string,
       deviceID?: string,
       options?: any,
     ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.postSignup(email, macAddress, deviceID, options);
+      const localVarAxiosArgs = await localVarAxiosParamCreator.postSignup(
+        email,
+        macAddress,
+        registrationId,
+        deviceID,
+        options,
+      );
       return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
     },
   };
@@ -3444,12 +3460,21 @@ export const SubscriberRegistrationApiFactory = function (
      * @summary This call allows a new subscriber to register themselves and their devices.
      * @param {string} email
      * @param {string} macAddress
+     * @param {string} registrationId
      * @param {string} [deviceID]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    postSignup(email: string, macAddress: string, deviceID?: string, options?: any): AxiosPromise<void> {
-      return localVarFp.postSignup(email, macAddress, deviceID, options).then(request => request(axios, basePath));
+    postSignup(
+      email: string,
+      macAddress: string,
+      registrationId: string,
+      deviceID?: string,
+      options?: any,
+    ): AxiosPromise<void> {
+      return localVarFp
+        .postSignup(email, macAddress, registrationId, deviceID, options)
+        .then(request => request(axios, basePath));
     },
   };
 };
@@ -3531,14 +3556,15 @@ export class SubscriberRegistrationApi extends BaseAPI {
    * @summary This call allows a new subscriber to register themselves and their devices.
    * @param {string} email
    * @param {string} macAddress
+   * @param {string} registrationId
    * @param {string} [deviceID]
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof SubscriberRegistrationApi
    */
-  public postSignup(email: string, macAddress: string, deviceID?: string, options?: any) {
+  public postSignup(email: string, macAddress: string, registrationId: string, deviceID?: string, options?: any) {
     return SubscriberRegistrationApiFp(this.configuration)
-      .postSignup(email, macAddress, deviceID, options)
+      .postSignup(email, macAddress, registrationId, deviceID, options)
       .then(request => request(this.axios, this.basePath));
   }
 }
