@@ -135,8 +135,8 @@ android {
         applicationId "com.telecominfraproject.openwifi.myopenwifi"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 14
-        versionName "0.5.7"
+        versionCode 15
+        versionName "0.5.8"
     }
     splits {
         abi {
