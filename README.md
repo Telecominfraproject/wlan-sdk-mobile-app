@@ -50,15 +50,15 @@ Resulting file will be in android/app/build/outputs/bundle/release/. It should b
 # iOS
 - start Xcode
 - select "Any iOS Device" for the target
-- Product->Scheme->Edit Scheme
--  Change build configuration to "Release"
--  Close
-- Product->Build
-- Distribute App
--   Ad Hoc
--   Next
--   Select profile
--   Export
+- Product->Scheme->Edit Scheme...
+-  Change the "Build Configuration" field to "Release"
+-  Click on "Close"
+- Product->Archive
+- Select "Distribute App"
+-   Select "Ad Hoc", click on "Next"
+-   On the "Ad Hoc Distribution options" just leave default options and click on "Next"
+-   Select the correct profile in the "MyOpenWifi.app" field, click on "Next
+-   Click on "Export"
 
 ## User Portal
 
