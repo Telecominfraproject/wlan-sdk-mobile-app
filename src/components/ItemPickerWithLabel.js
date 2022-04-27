@@ -116,6 +116,7 @@ const ItemPickerWithLabel = props => {
     },
     picker: {
       height: 28,
+      minHeight: 28,
       paddingHorizontal: 0,
       borderWidth: props.style && props.style.borderWidth ? props.style.borderWidth : undefined,
       borderRadius: props.style && props.style.borderRadius ? props.style.borderRadius : undefined,
