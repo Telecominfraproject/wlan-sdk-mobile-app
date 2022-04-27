@@ -81,7 +81,7 @@ export default function SignUp(props) {
         response = await subscriberRegistrationApi.postSignup(
           sanitizeEmailInput(email, true),
           sanitizeMacAddressInput(macAddress, true),
-          brandInfo.operator_id,
+          brandInfo.registration_id,
           deviceUuid,
         );
       }
