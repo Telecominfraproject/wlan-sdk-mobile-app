@@ -102,7 +102,7 @@ export default function SignUp(props) {
       }
     } catch (error) {
       if (isMounted.current) {
-        handleApiError(strings.errors.titleSignUp, error);
+        handleApiError(strings.errors.titleSignUp, error, props.navigation);
         setLoading(false);
       }
     }
@@ -126,7 +126,7 @@ export default function SignUp(props) {
       await deleteSignUp();
 
       if (isMounted.current) {
-        handleApiError(strings.errors.titleSignUp, error);
+        handleApiError(strings.errors.titleSignUp, error, props.navigation);
       }
     }
   };
@@ -174,7 +174,7 @@ export default function SignUp(props) {
       await deleteSignUp();
 
       if (isMounted.current) {
-        handleApiError(strings.errors.titleSignUp, error);
+        handleApiError(strings.errors.titleSignUp, error, props.navigation);
       }
     }
   };
@@ -193,7 +193,7 @@ export default function SignUp(props) {
       }
     } catch (error) {
       if (isMounted.current) {
-        handleApiError(strings.errors.titleSignUp, error);
+        handleApiError(strings.errors.titleSignUp, error, props.navigation);
       }
     } finally {
       if (isMounted.current) {

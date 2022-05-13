@@ -8,7 +8,7 @@ import { authenticationApi, handleApiError } from '../api/apiHandler';
 import { showGeneralMessage, sanitizeEmailInput, logStringifyPretty } from '../Utils';
 import ButtonStyled from '../components/ButtonStyled';
 
-const ForgotPassword = props => {
+export default function ForgotPassword(props) {
   // Refs
   const isMounted = useRef(false);
   // State
@@ -49,7 +49,7 @@ const ForgotPassword = props => {
       }
     } catch (error) {
       if (isMounted.current) {
-        handleApiError(strings.errors.titleForgotPassword, error);
+        handleApiError(strings.errors.titleForgotPassword, error, props.navigation);
         setLoading(false);
       }
     }
@@ -118,6 +118,4 @@ const ForgotPassword = props => {
       </ScrollView>
     </SafeAreaView>
   );
-};
-
-export default ForgotPassword;
+}

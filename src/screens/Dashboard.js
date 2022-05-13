@@ -24,7 +24,7 @@ import ImageWithBadge from '../components/ImageWithBadge';
 import ButtonSelector from '../components/ButtonSelector';
 import { wifiClientsApi, wiredClientsApi, handleApiError } from '../api/apiHandler';
 
-const Dashboard = props => {
+export default function Dashboard(props) {
   // Refs
   const scrollRef = useRef();
   const isMounted = useRef(false);
@@ -54,7 +54,7 @@ const Dashboard = props => {
   useFocusEffect(
     useCallback(() => {
       scrollViewToTop(scrollRef);
-      var intervalId = setSubscriberInformationInterval(null);
+      var intervalId = setSubscriberInformationInterval(null, props.navigation);
       getConnectedDevices();
 
       // Return function of what should be done on 'focus out'
@@ -208,7 +208,7 @@ const Dashboard = props => {
             let accessPointIndex = accessPoints.findIndex(ap => ap.macAddress === accessPoint.macAddress);
             await deleteAccessPoint(accessPointIndex);
           } catch (error) {
-            handleApiError(strings.errors.titleDelete, error);
+            handleApiError(strings.errors.titleDelete, error, props.navigation);
           }
         },
       },
@@ -342,6 +342,4 @@ const Dashboard = props => {
       </ScrollView>
     </SafeAreaView>
   );
-};
-
-export default Dashboard;
+}

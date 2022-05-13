@@ -5,7 +5,8 @@ import { strings } from '../localization/LocalizationStrings';
 import axios from 'axios';
 import { store } from '../store/Store';
 import { setSystemInfo } from '../store/SystemInfoSlice';
-import { showGeneralError } from '../Utils';
+import { clearSession, setSession } from '../store/SessionSlice';
+import { showGeneralError, logStringifyPretty, completeSignOut } from '../Utils';
 import {
   AuthenticationApiFactory,
   ClientsApiFactory,
@@ -31,7 +32,19 @@ import {
   resetInternetCredentials,
 } from 'react-native-keychain';
 
+// Setup the User Portal APIs
+var baseUserPortalUrl = null;
+var authenticationApi = null;
+var deviceCommandsApi = null;
+var deviceStatisticsApi = null;
+var mfaApi = null;
+var subscriberInformationApi = null;
+var subscriberRegistrationApi = null;
+var wiredClientsApi = null;
+var wifiClientsApi = null;
+
 const axiosInstance = axios.create({});
+const axiosInstanceWithRefresh = axios.create({});
 
 function getAccessToken() {
   const state = store.getState();
@@ -43,19 +56,64 @@ function getAccessToken() {
   return null;
 }
 
-// Setup the User Portal APIs
-const userPortalConfig = new UserPortalConfiguration({ accessToken: getAccessToken });
-var baseUserPortalUrl = null;
-var authenticationApi = null;
-var deviceCommandsApi = null;
-var deviceStatisticsApi = null;
-var mfaApi = null;
-var subscriberInformationApi = null;
-var subscriberRegistrationApi = null;
-var wiredClientsApi = null;
-var wifiClientsApi = null;
+axiosInstanceWithRefresh.interceptors.request.use(
+  async function (config) {
+    let now = Math.floor(Date.now() / 1000);
+    let state = store.getState();
+    let session = state.session.value;
+
+    if (session) {
+      let nearExpired = session.created + Math.floor(session.expires_in * 0.75);
+      if (now >= nearExpired) {
+        console.log('Token expired, refreshing');
+
+        try {
+          if (authenticationApi) {
+            let response = await authenticationApi.getAccessToken(
+              {
+                refreshToken: session.refresh_token,
+              },
+              null,
+              false,
+              false,
+              false,
+              false,
+              'refresh_token',
+            );
+
+            if (!response || !response.data) {
+              // Clear the session this will get use the error that is needed
+              store.dispatch(clearSession());
+            } else {
+              let responseData = response.data;
+              logStringifyPretty(responseData, 'Refresh Token');
+              store.dispatch(setSession(responseData));
+            }
+
+            // Update the header with the new Bearer
+            config.headers.Authorization = 'Bearer ' + response.data.access_token;
+          }
+        } catch (error) {
+          console.log('Refreshing token failed.');
+
+          // Clear any session information
+          store.dispatch(clearSession());
+
+          // Clear the current Authorization as this guarantees that the current command will fail
+          // Would prefer to send an error here - but it does not seem that this can occur
+          config.headers.Authorization = '';
+        }
+      }
+    }
+
+    return config;
+  },
+  error => Promise.reject(error),
+  {},
+);
 
 // TODO: Generate APIs should handle only state changes it cares about
+const userPortalConfig = new UserPortalConfiguration({ accessToken: getAccessToken });
 store.subscribe(generateApis);
 generateApis();
 
@@ -65,23 +123,23 @@ function generateApis() {
     ? new AuthenticationApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
     : null;
   deviceCommandsApi = baseUserPortalUrl
-    ? new DeviceCommandsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
+    ? new DeviceCommandsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstanceWithRefresh)
     : null;
   deviceStatisticsApi = baseUserPortalUrl
-    ? new DeviceStatisticsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
+    ? new DeviceStatisticsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstanceWithRefresh)
     : null;
-  mfaApi = baseUserPortalUrl ? new MFAApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance) : null;
+  mfaApi = baseUserPortalUrl ? new MFAApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstanceWithRefresh) : null;
   subscriberInformationApi = baseUserPortalUrl
-    ? new SubscriberInformationApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
+    ? new SubscriberInformationApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstanceWithRefresh)
     : null;
   subscriberRegistrationApi = baseUserPortalUrl
-    ? new SubscriberRegistrationApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
+    ? new SubscriberRegistrationApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstanceWithRefresh)
     : null;
   wifiClientsApi = baseUserPortalUrl
-    ? new WiFiClientsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
+    ? new WiFiClientsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstanceWithRefresh)
     : null;
   wiredClientsApi = baseUserPortalUrl
-    ? new ClientsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
+    ? new ClientsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstanceWithRefresh)
     : null;
 }
 
@@ -187,7 +245,8 @@ function getSubscriberAccessPointInfo(subscriberInformation, accessPointId, key)
   }
 }
 
-function handleApiError(title, error) {
+function handleApiError(title, error, navigation) {
+  let signOut = false;
   let message = strings.errors.unknown;
 
   if (error.response) {
@@ -200,10 +259,15 @@ function handleApiError(title, error) {
 
       case 403:
         message = get403ErrorFromData(error.response.data);
+        signOut = true;
         break;
 
       default:
-        message = error.message;
+        if (error.response && error.response.data && error.response.data.ErrorDescription) {
+          message = error.response.data.ErrorDescription;
+        } else {
+          message = error.message;
+        }
     }
   } else if (error.request) {
     switch (error.request.status) {
@@ -218,17 +282,18 @@ function handleApiError(title, error) {
     message = error.message;
   }
 
-  if (error.response && error.response.data && error.response.data.ErrorDescription) {
-    message = error.response.data.ErrorDescription;
-  }
-
   showGeneralError(title, message);
+
+  if (signOut) {
+    completeSignOut(navigation);
+  }
 }
 
 function get403ErrorFromData(error) {
   console.log(error);
   let code = error ? error.ErrorCode : null;
 
+  console.log(code);
   if (code) {
     switch (code) {
       case 1:
@@ -269,6 +334,9 @@ function get403ErrorFromData(error) {
 
       case 13:
         return strings.errors.apiSecurityServiceUnreachable;
+
+      case 14:
+        return strings.errors.apiCannotRefreshToken;
 
       default:
         if (error.ErrorDescription) {

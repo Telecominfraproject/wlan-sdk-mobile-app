@@ -58,7 +58,7 @@ import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
 import ItemTab from '../components/ItemTab';
 
-const Configuration = props => {
+export default function Configuration(props) {
   const TAB_IPV4 = 'ipv4';
   const TAB_IPV6 = 'ipv6';
   // The sectionZIndex is used to help with any embedded picker/dropdown. Start with a high enough
@@ -110,7 +110,7 @@ const Configuration = props => {
     useCallback(() => {
       scrollViewToTop(scrollRef);
 
-      var intervalId = setSubscriberInformationInterval(null);
+      var intervalId = setSubscriberInformationInterval(null, props.navigation);
 
       // Return function of what should be done on 'focus out'
       return () => {
@@ -269,7 +269,7 @@ const Configuration = props => {
       }
     } catch (error) {
       // Handle the error.
-      handleApiError(strings.errors.titleAccessPointCommand, error);
+      handleApiError(strings.errors.titleAccessPointCommand, error, props.navigation);
     } finally {
       if (isMounted.current) {
         // Clear the action is progress
@@ -286,7 +286,7 @@ const Configuration = props => {
     try {
       await modifyAccessPoint(currentAccessPointId, val);
     } catch (error) {
-      handleApiError(strings.errors.titleSettingUpdate, error);
+      handleApiError(strings.errors.titleSettingUpdate, error, props.navigation);
       // Need to throw the error to ensure the caller cleans up
       throw error;
     }
@@ -296,7 +296,7 @@ const Configuration = props => {
     try {
       await modifySubscriberInternetConnection(currentAccessPointId, val);
     } catch (error) {
-      handleApiError(strings.errors.titleSettingUpdate, error);
+      handleApiError(strings.errors.titleSettingUpdate, error, props.navigation);
       // Need to throw the error to ensure the caller cleans up
       throw error;
     }
@@ -306,7 +306,7 @@ const Configuration = props => {
     try {
       await modifySubscriberDeviceMode(currentAccessPointId, val);
     } catch (error) {
-      handleApiError(strings.errors.titleSettingUpdate, error);
+      handleApiError(strings.errors.titleSettingUpdate, error, props.navigation);
       // Need to throw the error to ensure the caller cleans up
       throw error;
     }
@@ -316,7 +316,7 @@ const Configuration = props => {
     try {
       await modifySubscriberDnsInformation(currentAccessPointId, val);
     } catch (error) {
-      handleApiError(strings.errors.titleSettingUpdate, error);
+      handleApiError(strings.errors.titleSettingUpdate, error, props.navigation);
       // Need to throw the error to ensure the caller cleans up
       throw error;
     }
@@ -339,7 +339,7 @@ const Configuration = props => {
           try {
             await deleteSubscriberIpReservation(currentAccessPointId, index);
           } catch (error) {
-            handleApiError(strings.errors.titleDelete, error);
+            handleApiError(strings.errors.titleDelete, error, props.navigation);
           }
         },
       },
@@ -1048,6 +1048,4 @@ const Configuration = props => {
       </ScrollView>
     </SafeAreaView>
   );
-};
-
-export default Configuration;
+}

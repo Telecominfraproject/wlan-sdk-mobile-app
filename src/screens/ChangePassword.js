@@ -55,7 +55,7 @@ export default function ResetPassword(props) {
     } catch (error) {
       if (isMounted.current) {
         // Error does not matter when not mounted - it is likely not important at all.
-        handleApiError(strings.errors.titleChangePassword, error);
+        handleApiError(strings.errors.titleChangePassword, error, props.navigation);
       }
     }
   };
@@ -104,7 +104,7 @@ export default function ResetPassword(props) {
       }
     } catch (error) {
       if (isMounted.current) {
-        handleApiError(strings.errors.titleChangePassword, error);
+        handleApiError(strings.errors.titleChangePassword, error, props.navigation);
         setLoading(false);
       }
     }

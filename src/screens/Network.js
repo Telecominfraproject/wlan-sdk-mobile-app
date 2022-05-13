@@ -39,7 +39,7 @@ import ItemTextWithIcon from '../components/ItemTextWithIcon';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
 
-const Network = props => {
+export default function Network(props) {
   // The sectionZIndex is used to help with any embedded picker/dropdown. Start with a high enough
   // value that it'll cover each section. The sections further up the view should have higher numbers
   var sectionZIndex = 20;
@@ -134,7 +134,7 @@ const Network = props => {
           // Handle both client updates simulatenously
           Promise.all([getWiredClients(accessPoint.macAddress), getWifiClients(accessPoint.macAddress)]);
         }
-      });
+      }, props.navigation);
 
       return () => {
         clearInterval(intervalId);
@@ -174,7 +174,7 @@ const Network = props => {
     } catch (error) {
       if (isMounted.current && !wiredClientsErrorReportedRef.current) {
         wiredClientsErrorReportedRef.current = true;
-        handleApiError(strings.errors.titleClientRetrieval, error);
+        handleApiError(strings.errors.titleClientRetrieval, error, props.navigation);
       }
     } finally {
       if (isMounted.current) {
@@ -212,7 +212,7 @@ const Network = props => {
     } catch (error) {
       if (isMounted.current && !wifiClientsErrorReportedRef.current) {
         wifiClientsErrorReportedRef.current = true;
-        handleApiError(strings.errors.titleClientRetrieval, error);
+        handleApiError(strings.errors.titleClientRetrieval, error, props.navigation);
       }
     } finally {
       if (isMounted.current) {
@@ -281,7 +281,7 @@ const Network = props => {
 
       await modifyNetworkSettings(currentAccessPointId, selectedWifiNetworkIndex, val);
     } catch (error) {
-      handleApiError(strings.errors.titleSettingUpdate, error);
+      handleApiError(strings.errors.titleSettingUpdate, error, props.navigation);
       // Need to throw the error to ensure the caller cleans up
       throw error;
     }
@@ -295,7 +295,7 @@ const Network = props => {
           try {
             await deleteNetwork(currentAccessPointId, selectedWifiNetworkIndex);
           } catch (error) {
-            handleApiError(strings.errors.titleDelete, error);
+            handleApiError(strings.errors.titleDelete, error, props.navigation);
           }
         },
       },
@@ -459,6 +459,4 @@ const Network = props => {
       </ScrollView>
     </SafeAreaView>
   );
-};
-
-export default Network;
+}

@@ -12,12 +12,12 @@ import { logStringifyPretty, modifySubscriberDevice, showGeneralError } from '..
 import { handleApiError } from '../api/apiHandler';
 import ItemTimeRange from '../components/ItemTimeRange';
 
-export default function AccessSchedule({ navigation, route }) {
+export default function AccessSchedule(props) {
   let sectionZIndex = 20;
   let rangeZIndex = 100;
-  // const { device, deviceIndex, scheduleIndex } = route.params;
+  // const { device, deviceIndex, scheduleIndex } = props.route.params;
   // TODO: test data
-  const { deviceIndex, scheduleIndex = 0 } = route.params;
+  const { deviceIndex, scheduleIndex = 0 } = props.route.params;
   const device = {
     description: 'string',
     firstContact: 0,
@@ -92,7 +92,7 @@ export default function AccessSchedule({ navigation, route }) {
   };
 
   const onCancelPress = () => {
-    navigation.goBack();
+    props.navigation.goBack();
   };
 
   const onSubmitPress = async () => {
@@ -123,10 +123,10 @@ export default function AccessSchedule({ navigation, route }) {
 
       if (isMounted.current) {
         // On success just go back
-        navigation.goBack();
+        props.navigation.goBack();
       }
     } catch (e) {
-      handleApiError(strings.errors.titleAccessScheduler, e);
+      handleApiError(strings.errors.titleAccessScheduler, e, props.navigation);
     } finally {
       if (isMounted.current) {
         setLoading(false);

@@ -20,6 +20,7 @@ import {
   WifiNetworkBandsEnum,
   WifiNetworkEncryptionEnum,
   WifiNetworkTypeEnum,
+  handleApiError,
 } from './api/apiHandler';
 
 export function formatBytes(bytes, decimals = 2) {
@@ -476,10 +477,12 @@ export async function completeSignOut(navigation) {
   store.dispatch(clearSession());
   clearCredentials();
 
-  navigation.reset({
-    index: 0,
-    routes: [{ name: 'SignIn' }],
-  });
+  if (navigation) {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'SignIn' }],
+    });
+  }
 }
 
 export async function completeSignIn(navigation, userId, password, sessionData, setLoadingFn) {
@@ -613,7 +616,7 @@ export function isArrayDifferent(array1, array2) {
   return intersection.length !== array1.length;
 }
 
-export function setSubscriberInformationInterval(extraUpdateFn) {
+export function setSubscriberInformationInterval(extraUpdateFn, nagivation) {
   async function checkSubscriberInformation() {
     try {
       let promisesToHandle = [getSubscriberInformation(false)];
@@ -625,6 +628,9 @@ export function setSubscriberInformationInterval(extraUpdateFn) {
       await Promise.all(promisesToHandle);
     } catch (error) {
       // do nothing
+      if (error && error.response && error.response.status === 403) {
+        handleApiError(strings.errors.titleAuthenticationRefresh, error, nagivation);
+      }
     }
   }
 

@@ -324,6 +324,12 @@ export interface Association {
    * @memberof Association
    */
   rx?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof Association
+   */
+  manufacturer?: string;
 }
 /**
  *
@@ -398,6 +404,12 @@ export interface Client {
    * @memberof Client
    */
   rx?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof Client
+   */
+  manufacturer?: string;
 }
 /**
  *
@@ -1605,6 +1617,25 @@ export interface WebTokenAclTemplate {
   aclTemplate?: AclTemplate;
 }
 /**
+ *
+ * @export
+ * @interface WebTokenRefreshRequest
+ */
+export interface WebTokenRefreshRequest {
+  /**
+   *
+   * @type {string}
+   * @memberof WebTokenRefreshRequest
+   */
+  userId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof WebTokenRefreshRequest
+   */
+  refresh_token?: string;
+}
+/**
  * User Id and password.
  * @export
  * @interface WebTokenRequest
@@ -1807,26 +1838,35 @@ export const AuthenticationApiAxiosParamCreator = function (configuration?: Conf
     /**
      *
      * @summary Get access token - to be used as Bearer token header for all other API requests.
-     * @param {WebTokenRequest | MFAChallengeResponse} webTokenRequestMFAChallengeResponse User id and password
+     * @param {WebTokenRequest | MFAChallengeResponse | WebTokenRefreshRequest} webTokenRequestMFAChallengeResponseWebTokenRefreshRequest User id and password
      * @param {string} [newPassword] used when a user is trying to change her password. This will be the new password.
      * @param {boolean} [forgotPassword] A user forgot her password. She needs to present her e-mail address in the userId and set this to true
      * @param {boolean} [requirements] A user forgot her password. This will provided the password requirements.
      * @param {boolean} [resendMFACode]
      * @param {boolean} [completeMFAChallenge]
+     * @param {string} [grantType]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     getAccessToken: async (
-      webTokenRequestMFAChallengeResponse: WebTokenRequest | MFAChallengeResponse,
+      webTokenRequestMFAChallengeResponseWebTokenRefreshRequest:
+        | WebTokenRequest
+        | MFAChallengeResponse
+        | WebTokenRefreshRequest,
       newPassword?: string,
       forgotPassword?: boolean,
       requirements?: boolean,
       resendMFACode?: boolean,
       completeMFAChallenge?: boolean,
+      grantType?: string,
       options: any = {},
     ): Promise<RequestArgs> => {
-      // verify required parameter 'webTokenRequestMFAChallengeResponse' is not null or undefined
-      assertParamExists('getAccessToken', 'webTokenRequestMFAChallengeResponse', webTokenRequestMFAChallengeResponse);
+      // verify required parameter 'webTokenRequestMFAChallengeResponseWebTokenRefreshRequest' is not null or undefined
+      assertParamExists(
+        'getAccessToken',
+        'webTokenRequestMFAChallengeResponseWebTokenRefreshRequest',
+        webTokenRequestMFAChallengeResponseWebTokenRefreshRequest,
+      );
       const localVarPath = `/oauth2`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1866,13 +1906,17 @@ export const AuthenticationApiAxiosParamCreator = function (configuration?: Conf
         localVarQueryParameter['completeMFAChallenge'] = completeMFAChallenge;
       }
 
+      if (grantType !== undefined) {
+        localVarQueryParameter['grant_type'] = grantType;
+      }
+
       localVarHeaderParameter['Content-Type'] = 'application/json';
 
       setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
       let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
       localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
       localVarRequestOptions.data = serializeDataIfNeeded(
-        webTokenRequestMFAChallengeResponse,
+        webTokenRequestMFAChallengeResponseWebTokenRefreshRequest,
         localVarRequestOptions,
         configuration,
       );
@@ -1933,31 +1977,37 @@ export const AuthenticationApiFp = function (configuration?: Configuration) {
     /**
      *
      * @summary Get access token - to be used as Bearer token header for all other API requests.
-     * @param {WebTokenRequest | MFAChallengeResponse} webTokenRequestMFAChallengeResponse User id and password
+     * @param {WebTokenRequest | MFAChallengeResponse | WebTokenRefreshRequest} webTokenRequestMFAChallengeResponseWebTokenRefreshRequest User id and password
      * @param {string} [newPassword] used when a user is trying to change her password. This will be the new password.
      * @param {boolean} [forgotPassword] A user forgot her password. She needs to present her e-mail address in the userId and set this to true
      * @param {boolean} [requirements] A user forgot her password. This will provided the password requirements.
      * @param {boolean} [resendMFACode]
      * @param {boolean} [completeMFAChallenge]
+     * @param {string} [grantType]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async getAccessToken(
-      webTokenRequestMFAChallengeResponse: WebTokenRequest | MFAChallengeResponse,
+      webTokenRequestMFAChallengeResponseWebTokenRefreshRequest:
+        | WebTokenRequest
+        | MFAChallengeResponse
+        | WebTokenRefreshRequest,
       newPassword?: string,
       forgotPassword?: boolean,
       requirements?: boolean,
       resendMFACode?: boolean,
       completeMFAChallenge?: boolean,
+      grantType?: string,
       options?: any,
     ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<WebTokenResult | MFAChallengeRequest>> {
       const localVarAxiosArgs = await localVarAxiosParamCreator.getAccessToken(
-        webTokenRequestMFAChallengeResponse,
+        webTokenRequestMFAChallengeResponseWebTokenRefreshRequest,
         newPassword,
         forgotPassword,
         requirements,
         resendMFACode,
         completeMFAChallenge,
+        grantType,
         options,
       );
       return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
@@ -1993,32 +2043,38 @@ export const AuthenticationApiFactory = function (
     /**
      *
      * @summary Get access token - to be used as Bearer token header for all other API requests.
-     * @param {WebTokenRequest | MFAChallengeResponse} webTokenRequestMFAChallengeResponse User id and password
+     * @param {WebTokenRequest | MFAChallengeResponse | WebTokenRefreshRequest} webTokenRequestMFAChallengeResponseWebTokenRefreshRequest User id and password
      * @param {string} [newPassword] used when a user is trying to change her password. This will be the new password.
      * @param {boolean} [forgotPassword] A user forgot her password. She needs to present her e-mail address in the userId and set this to true
      * @param {boolean} [requirements] A user forgot her password. This will provided the password requirements.
      * @param {boolean} [resendMFACode]
      * @param {boolean} [completeMFAChallenge]
+     * @param {string} [grantType]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     getAccessToken(
-      webTokenRequestMFAChallengeResponse: WebTokenRequest | MFAChallengeResponse,
+      webTokenRequestMFAChallengeResponseWebTokenRefreshRequest:
+        | WebTokenRequest
+        | MFAChallengeResponse
+        | WebTokenRefreshRequest,
       newPassword?: string,
       forgotPassword?: boolean,
       requirements?: boolean,
       resendMFACode?: boolean,
       completeMFAChallenge?: boolean,
+      grantType?: string,
       options?: any,
     ): AxiosPromise<WebTokenResult | MFAChallengeRequest> {
       return localVarFp
         .getAccessToken(
-          webTokenRequestMFAChallengeResponse,
+          webTokenRequestMFAChallengeResponseWebTokenRefreshRequest,
           newPassword,
           forgotPassword,
           requirements,
           resendMFACode,
           completeMFAChallenge,
+          grantType,
           options,
         )
         .then(request => request(axios, basePath));
@@ -2046,33 +2102,39 @@ export class AuthenticationApi extends BaseAPI {
   /**
    *
    * @summary Get access token - to be used as Bearer token header for all other API requests.
-   * @param {WebTokenRequest | MFAChallengeResponse} webTokenRequestMFAChallengeResponse User id and password
+   * @param {WebTokenRequest | MFAChallengeResponse | WebTokenRefreshRequest} webTokenRequestMFAChallengeResponseWebTokenRefreshRequest User id and password
    * @param {string} [newPassword] used when a user is trying to change her password. This will be the new password.
    * @param {boolean} [forgotPassword] A user forgot her password. She needs to present her e-mail address in the userId and set this to true
    * @param {boolean} [requirements] A user forgot her password. This will provided the password requirements.
    * @param {boolean} [resendMFACode]
    * @param {boolean} [completeMFAChallenge]
+   * @param {string} [grantType]
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof AuthenticationApi
    */
   public getAccessToken(
-    webTokenRequestMFAChallengeResponse: WebTokenRequest | MFAChallengeResponse,
+    webTokenRequestMFAChallengeResponseWebTokenRefreshRequest:
+      | WebTokenRequest
+      | MFAChallengeResponse
+      | WebTokenRefreshRequest,
     newPassword?: string,
     forgotPassword?: boolean,
     requirements?: boolean,
     resendMFACode?: boolean,
     completeMFAChallenge?: boolean,
+    grantType?: string,
     options?: any,
   ) {
     return AuthenticationApiFp(this.configuration)
       .getAccessToken(
-        webTokenRequestMFAChallengeResponse,
+        webTokenRequestMFAChallengeResponseWebTokenRefreshRequest,
         newPassword,
         forgotPassword,
         requirements,
         resendMFACode,
         completeMFAChallenge,
+        grantType,
         options,
       )
       .then(request => request(this.axios, this.basePath));

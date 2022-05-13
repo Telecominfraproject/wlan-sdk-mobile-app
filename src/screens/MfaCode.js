@@ -66,7 +66,7 @@ export default function MfaCode(props) {
     } catch (error) {
       if (isMounted.current) {
         setLoading(false);
-        handleApiError(strings.errors.titleMfa, error);
+        handleApiError(strings.errors.titleMfa, error, props.navigation);
       }
     }
   };
@@ -122,7 +122,7 @@ export default function MfaCode(props) {
       }
     } catch (error) {
       if (isMounted.current) {
-        handleApiError(strings.errors.titleMfa, error);
+        handleApiError(strings.errors.titleMfa, error, props.navigation);
         setLoading(false);
       }
     }

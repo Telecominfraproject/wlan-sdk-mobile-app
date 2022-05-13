@@ -12,7 +12,7 @@ import { setBrandInfo } from '../store/BrandInfoSlice';
 import ItemBrand from '../components/ItemBrand';
 import TextInputWithIcon from '../components/TextInputWithIcon';
 
-const BrandSelector = props => {
+export default function BrandSelector(props) {
   const dispatch = useDispatch();
   // Refs
   const scrollRef = useRef();
@@ -77,7 +77,7 @@ const BrandSelector = props => {
       }
     } catch (error) {
       if (isMounted.current) {
-        handleApiError(strings.errors.titleBrandSelection, error);
+        handleApiError(strings.errors.titleBrandSelection, error, props.navigation);
         setLoading(false);
       }
     }
@@ -156,6 +156,4 @@ const BrandSelector = props => {
       </ScrollView>
     </SafeAreaView>
   );
-};
-
-export default BrandSelector;
+}

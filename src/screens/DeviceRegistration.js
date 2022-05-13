@@ -8,7 +8,7 @@ import { handleApiError } from '../api/apiHandler';
 import { addAccessPoint } from '../Utils';
 import ButtonStyled from '../components/ButtonStyled';
 
-export default function DeviceRegistration({ navigation, route }) {
+export default function DeviceRegistration(props) {
   const [macAddress, setMacAddress] = useState();
   const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
 
@@ -29,9 +29,9 @@ export default function DeviceRegistration({ navigation, route }) {
       //     }
 
       //await addAccessPoint({ macAddress: macAddress });
-      //navigation.goBack();
+      //props.navigation.goBack();
     } catch (error) {
-      handleApiError(strings.errors.titleAccessPointRegistration, error);
+      handleApiError(strings.errors.titleAccessPointRegistration, error, props.navigation);
     }
   };
 

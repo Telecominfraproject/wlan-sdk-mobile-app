@@ -67,7 +67,7 @@ export default function IpReservationAddEdit(props) {
     } catch (error) {
       if (isMounted.current) {
         setLoading(false);
-        handleApiError(strings.errors.titleIpReservationModify, error);
+        handleApiError(strings.errors.titleIpReservationModify, error, props.navigation);
       }
     }
   };

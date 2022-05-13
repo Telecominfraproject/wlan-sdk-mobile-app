@@ -9,7 +9,7 @@ import { handleApiError, hasCredentials, setCredentials, getCredentials } from '
 import ButtonStyled from '../components/ButtonStyled';
 import Divider from '../components/Divider';
 
-const SignIn = props => {
+export default function SignIn(props) {
   // Refs
   const isMounted = useRef(false);
   const passwordRef = createRef();
@@ -70,7 +70,7 @@ const SignIn = props => {
     } catch (error) {
       if (isMounted.current) {
         // Handle the error.
-        handleApiError(strings.errors.titleSignIn, error);
+        handleApiError(strings.errors.titleSignIn, error, props.navigation);
         setLoading(false);
       }
     }
@@ -194,6 +194,4 @@ const SignIn = props => {
       </ScrollView>
     </SafeAreaView>
   );
-};
-
-export default SignIn;
+}

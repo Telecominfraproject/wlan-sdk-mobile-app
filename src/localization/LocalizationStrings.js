@@ -5,6 +5,7 @@ export const strings = new LocalizedStrings({
     errors: {
       apiAccessDenied: 'Access denied. Trying signing in again.',
       apiBadMfaTransaction: 'Multi-factor authentication was not accepted, please try again.',
+      apiCannotRefreshToken: 'Token has expired and it cannot be refreshed, please sign in again.',
       apiExpiredToken: 'Token has expired, please sign in again.',
       apiInternalError: 'Server had an internal error, please try again',
       apiInvalidCredentials: 'Invalid credentials, check username and/or password.',
@@ -44,6 +45,7 @@ export const strings = new LocalizedStrings({
       titleAccessPointCommand: 'Access Point Command Error',
       titleAccessPointRegistration: 'Access Point Registration Error',
       titleAccessScheduler: 'Access Schedule Error',
+      titleAuthenticationRefresh: 'Authentication Refresh Error',
       titleBrandSelection: 'Brand Selection Error',
       titleChangePassword: 'Change Password Error',
       titleClientRetrieval: 'Client Retrieval Error',

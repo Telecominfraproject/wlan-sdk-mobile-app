@@ -30,7 +30,7 @@ import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
 import VersionInfo from 'react-native-version-info';
 
-const Profile = props => {
+export default function Profile(props) {
   // The sectionZIndex is used to help with any embedded picker/dropdown. Start with a high enough
   // value that it'll cover each section. The sections further up the view should have higher numbers
   var sectionZIndex = 20;
@@ -63,7 +63,7 @@ const Profile = props => {
       scrollViewToTop(scrollRef);
 
       // Setup the refresh interval and update the MFA at the same time
-      let intervalId = setSubscriberInformationInterval(getMFA);
+      let intervalId = setSubscriberInformationInterval(getMFA, props.navigation);
 
       // Return function of what should be done on 'focus out'
       return () => {
@@ -101,7 +101,7 @@ const Profile = props => {
       if (isMounted.current) {
         if (!mfaErrorReported.current) {
           // Only report the first error seen, then do not report another until a successful poll is seen
-          handleApiError(strings.errors.titleMfa, error);
+          handleApiError(strings.errors.titleMfa, error, props.navigation);
           mfaErrorReported.current = true;
         }
       }
@@ -137,7 +137,7 @@ const Profile = props => {
       // Config did not change, so make sure that flag is not set
       await modifySubscriberInformation(val, false);
     } catch (error) {
-      handleApiError(strings.errors.titleSettingUpdate, error);
+      handleApiError(strings.errors.titleSettingUpdate, error, props.navigation);
       // Need to throw the error to ensure the caller cleans up
       throw error;
     }
@@ -170,7 +170,7 @@ const Profile = props => {
         }
       }
     } catch (error) {
-      handleApiError(strings.errors.titleMfa, error);
+      handleApiError(strings.errors.titleMfa, error, props.navigation);
     }
   };
 
@@ -196,7 +196,7 @@ const Profile = props => {
         throw new Error(strings.errors.invalidResponse);
       }
     } catch (error) {
-      handleApiError(strings.errors.titleSmsValidation, error);
+      handleApiError(strings.errors.titleSmsValidation, error, props.navigation);
     }
   };
 
@@ -218,7 +218,7 @@ const Profile = props => {
             await subscriberInformationApi.deleteSubscriberInfo();
             completeSignOut(props.navigation);
           } catch (error) {
-            handleApiError(strings.errors.titleRemoveUser, error);
+            handleApiError(strings.errors.titleRemoveUser, error, props.navigation);
           }
         },
       },
@@ -351,6 +351,4 @@ const Profile = props => {
       </ScrollView>
     </SafeAreaView>
   );
-};
-
-export default Profile;
+}

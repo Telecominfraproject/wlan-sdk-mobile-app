@@ -32,7 +32,7 @@ import ItemTextWithLabel from '../components/ItemTextWithLabel';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 import ItemColumnsWithValues from '../components/ItemColumnsWithValues';
 
-const DeviceDetails = props => {
+export default function DeviceDetails(props) {
   // Route Params
   const { client } = props.route.params;
   // Need to use refs so that the async tasks can have proper access to these state changes
@@ -133,7 +133,7 @@ const DeviceDetails = props => {
 
       await modifySubscriberDevice(currentAccessPointId, subscriberDeviceIndex, value);
     } catch (error) {
-      handleApiError(strings.errors.titleSettingUpdate, error);
+      handleApiError(strings.errors.titleSettingUpdate, error, props.navigation);
 
       // Need to throw the error to ensure the caller cleans up
       throw error;
@@ -192,7 +192,7 @@ const DeviceDetails = props => {
 
       await addSubscriberIpReservation(currentAccessPointId, reservationJsonObject);
     } catch (error) {
-      handleApiError(strings.errors.titleSettingUpdate, error);
+      handleApiError(strings.errors.titleSettingUpdate, error, props.navigation);
     } finally {
       if (isMounted.current) {
         setLoading(false);
@@ -211,7 +211,7 @@ const DeviceDetails = props => {
 
       await deleteSubscriberIpReservation(currentAccessPointId, ipReservationIndex);
     } catch (error) {
-      handleApiError(strings.errors.titleSettingUpdate, error);
+      handleApiError(strings.errors.titleSettingUpdate, error, props.navigation);
     } finally {
       if (isMounted.current) {
         setLoading(false);
@@ -434,6 +434,4 @@ const DeviceDetails = props => {
       </ScrollView>
     </SafeAreaView>
   );
-};
-
-export default DeviceDetails;
+}

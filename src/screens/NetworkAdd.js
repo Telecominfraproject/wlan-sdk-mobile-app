@@ -17,7 +17,7 @@ import ButtonStyled from '../components/ButtonStyled';
 import ItemTextWithLabelEditable from '../components/ItemTextWithLabelEditable';
 import ItemPickerWithLabel from '../components/ItemPickerWithLabel';
 
-const NetworkAdd = props => {
+export default function NetworkAdd(props) {
   // The sectionZIndex is used to help with any embedded picker/dropdown. Start with a high enough
   // value that it'll cover each section. The sections further up the view should have higher numbers
   var sectionZIndex = 20;
@@ -77,7 +77,7 @@ const NetworkAdd = props => {
       }
     } catch (error) {
       if (isMounted.current) {
-        handleApiError(strings.errors.titleNetworkModify, error);
+        handleApiError(strings.errors.titleNetworkModify, error, props.navigation);
         setLoading(false);
       }
     }
@@ -170,5 +170,3 @@ const NetworkAdd = props => {
     </SafeAreaView>
   );
 };
-
-export default NetworkAdd;

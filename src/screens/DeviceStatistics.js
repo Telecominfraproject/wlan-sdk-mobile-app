@@ -46,7 +46,7 @@ export default function DeviceStatistics(props) {
       scrollViewToTop(scrollRef);
 
       // Setup the refresh interval and update the device statistics at the same time
-      let intervalId = setSubscriberInformationInterval(getDeviceStatistics);
+      let intervalId = setSubscriberInformationInterval(getDeviceStatistics, props.navigation);
 
       // Return function of what should be done on 'focus out'
       return () => {
@@ -81,7 +81,7 @@ export default function DeviceStatistics(props) {
       if (isMounted.current) {
         // Only report the first error
         if (!errorReported.current) {
-          handleApiError(strings.errors.titleDeviceStatistics, error);
+          handleApiError(strings.errors.titleDeviceStatistics, error, props.navigation);
           errorReported.current = true;
         }
         setDeviceStatisticsLoading(false);

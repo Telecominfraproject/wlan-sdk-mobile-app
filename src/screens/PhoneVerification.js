@@ -67,7 +67,7 @@ export default function PhoneVerification(props) {
       }
     } catch (err) {
       if (isMounted.current) {
-        handleApiError(strings.errors.titleResendCode, err);
+        handleApiError(strings.errors.titleResendCode, err, props.navigation);
         setLoading(false);
       }
     }
@@ -112,4 +112,4 @@ export default function PhoneVerification(props) {
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
