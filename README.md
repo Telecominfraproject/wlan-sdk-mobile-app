@@ -7,6 +7,8 @@ To run use the following
 - yarn react-native start
 
 To run either iOS or Android simulator builds:
+- yarn install
+- cd ios && pod install
 - yarn react-native run-ios
 - yarn react-native run-android
 
