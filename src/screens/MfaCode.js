@@ -149,7 +149,7 @@ export default function MfaCode(props) {
               value={code}
               onChangeText={text => setCode(text)}
               autoCapitalize="none"
-              autoComplete="none"
+              autoComplete="off"
               autoCorrect={false}
               textContentType="oneTimeCode"
               returnKeyType="send"

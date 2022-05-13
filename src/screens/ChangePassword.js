@@ -147,7 +147,7 @@ export default function ResetPassword(props) {
                   value={currentPassword}
                   onChangeText={text => setCurrentPassword(text)}
                   autoCapitalize="none"
-                  autoComplete="none"
+                  autoComplete="off"
                   autoCorrect={false}
                   textContentType="password"
                   returnKeyType="next"
@@ -165,7 +165,7 @@ export default function ResetPassword(props) {
                   value={newPassword}
                   onChangeText={text => setNewPassword(text)}
                   autoCapitalize="none"
-                  autoComplete="none"
+                  autoComplete="off"
                   autoCorrect={false}
                   textContentType="newPassword"
                   returnKeyType="next"
