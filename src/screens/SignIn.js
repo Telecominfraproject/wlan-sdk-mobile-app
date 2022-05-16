@@ -1,11 +1,18 @@
 import React, { useState, useEffect, createRef, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
+import { selectSubscriberInformationLoading } from '../store/SubscriberInformationSlice';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor, placeholderColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View, Image, TextInput, ActivityIndicator } from 'react-native';
-import { showGeneralError, completeSignIn, sanitizeEmailInput, sanitizePasswordInput } from '../Utils';
-import { handleApiError, hasCredentials, setCredentials, getCredentials } from '../api/apiHandler';
+import {
+  showGeneralError,
+  getSubscriberInformation,
+  completeSignIn,
+  sanitizeEmailInput,
+  sanitizePasswordInput,
+} from '../Utils';
+import { handleApiError, hasSession, clearSession } from '../api/apiHandler';
 import ButtonStyled from '../components/ButtonStyled';
 import Divider from '../components/Divider';
 
@@ -13,6 +20,8 @@ export default function SignIn(props) {
   // Refs
   const isMounted = useRef(false);
   const passwordRef = createRef();
+  // Selectors
+  const subscriberInformationLoading = useSelector(selectSubscriberInformationLoading);
   // State
   const brandInfo = useSelector(selectBrandInfo);
   const [email, setEmail] = useState();
@@ -28,17 +37,26 @@ export default function SignIn(props) {
         index: 0,
         routes: [{ name: 'BrandSelector' }],
       });
-    }
+    } else {
+      async function checkSignedIn() {
+        try {
+          if (await hasSession()) {
+            console.log('has session');
+            // Check to see if we can get subscriber information
+            await getSubscriberInformation(true);
 
-    async function checkCredentials() {
-      let foundCredentials = await hasCredentials();
-      if (foundCredentials) {
-        signIn();
+            props.navigation.replace('Main');
+          }
+        } catch (error) {
+          handleApiError(strings.errors.titleSignIn, error, props.navigation);
+          await clearSession();
+        }
       }
-    }
 
-    // Check credentials
-    checkCredentials();
+      // Check to see if the current token can retrieve subscriber information, so we are
+      // current signed in
+      checkSignedIn();
+    }
 
     return () => {
       isMounted.current = false;
@@ -49,24 +67,17 @@ export default function SignIn(props) {
 
   const onSignInPress = async () => {
     try {
-      // Save the credentials, and start the sign-in process (which will use the credentials)
-      await setCredentials(sanitizeEmailInput(email, true), sanitizePasswordInput(password, null, true));
-      signIn();
+      // Sanitize the email and password
+      signIn(sanitizeEmailInput(email, true), sanitizePasswordInput(password, null, true));
     } catch (error) {
       showGeneralError(strings.errors.titleSignIn, error.message);
     }
   };
 
-  const signIn = async () => {
+  const signIn = async (sanitizedUsername, sanitizedPassword) => {
     try {
-      const credentials = await getCredentials();
-      if (!credentials) {
-        // Credentials are expected at this point, return an error if not found
-        throw new Error(strings.errors.noCredentials);
-      }
-
       // Handle the sign in process
-      await completeSignIn(props.navigation, credentials.username, credentials.password, null, setLoadingWrapper);
+      await completeSignIn(props.navigation, sanitizedUsername, sanitizedPassword, null, setLoadingWrapper);
     } catch (error) {
       if (isMounted.current) {
         // Handle the error.
@@ -125,9 +136,13 @@ export default function SignIn(props) {
           <View style={pageItemStyle.container}>
             <Text style={pageItemStyle.title}>{strings.signIn.title}</Text>
           </View>
-          {loading ? (
+          {loading || subscriberInformationLoading ? (
             <View style={[pageItemStyle.container, componentStyles.fillView]}>
-              <ActivityIndicator size="large" color={primaryColor} animating={loading} />
+              <ActivityIndicator
+                size="large"
+                color={primaryColor}
+                animating={loading || subscriberInformationLoading}
+              />
             </View>
           ) : (
             <View style={componentStyles.containerForm}>

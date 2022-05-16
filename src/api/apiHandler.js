@@ -1,11 +1,9 @@
 // Used the following for a basis for generating react-native from OpenAPI
 // https://majidlotfinia.medium.com/openapi-generator-for-react-native-by-swagger-58847cadd9e8
 import 'react-native-url-polyfill/auto';
-import { strings } from '../localization/LocalizationStrings';
 import axios from 'axios';
+import { strings } from '../localization/LocalizationStrings';
 import { store } from '../store/Store';
-import { setSystemInfo } from '../store/SystemInfoSlice';
-import { clearSession, setSession } from '../store/SessionSlice';
 import { showGeneralError, logStringifyPretty, completeSignOut } from '../Utils';
 import {
   AuthenticationApiFactory,
@@ -33,6 +31,7 @@ import {
 } from 'react-native-keychain';
 
 // Setup the User Portal APIs
+var subscriberPortalUrl = null;
 var baseUserPortalUrl = null;
 var authenticationApi = null;
 var deviceCommandsApi = null;
@@ -43,24 +42,20 @@ var subscriberRegistrationApi = null;
 var wiredClientsApi = null;
 var wifiClientsApi = null;
 
-const axiosInstance = axios.create({});
+// This instance is only used for authentication, it has no refresh check as this
+// would result in problems during authentication calls.
+const axiosInstanceAuthentication = axios.create({});
+
+// This instance will check for token refresh. This will NOT be used for authentication calls as
+// it would end up in loops.
 const axiosInstanceWithRefresh = axios.create({});
 
-function getAccessToken() {
-  const state = store.getState();
-  const session = state.session.value;
-  if (session) {
-    return session.access_token;
-  }
-
-  return null;
-}
-
 axiosInstanceWithRefresh.interceptors.request.use(
+  // This interceptor is for checking on when to use the refresh token to try and
+  // retreive another valid access token
   async function (config) {
+    let session = await getSession();
     let now = Math.floor(Date.now() / 1000);
-    let state = store.getState();
-    let session = state.session.value;
 
     if (session) {
       let nearExpired = session.created + Math.floor(session.expires_in * 0.75);
@@ -82,22 +77,21 @@ axiosInstanceWithRefresh.interceptors.request.use(
             );
 
             if (!response || !response.data) {
-              // Clear the session this will get use the error that is needed
-              store.dispatch(clearSession());
-            } else {
-              let responseData = response.data;
-              logStringifyPretty(responseData, 'Refresh Token');
-              store.dispatch(setSession(responseData));
+              throw new Error(strings.errors.internal);
             }
+
+            let responseData = response.data;
+            logStringifyPretty(responseData, 'Refresh Token');
+            await setSession(responseData);
 
             // Update the header with the new Bearer
             config.headers.Authorization = 'Bearer ' + response.data.access_token;
           }
         } catch (error) {
-          console.log('Refreshing token failed.');
+          console.log('Refreshing token failed');
 
           // Clear any session information
-          store.dispatch(clearSession());
+          await clearSession();
 
           // Clear the current Authorization as this guarantees that the current command will fail
           // Would prefer to send an error here - but it does not seem that this can occur
@@ -112,105 +106,91 @@ axiosInstanceWithRefresh.interceptors.request.use(
   {},
 );
 
-// TODO: Generate APIs should handle only state changes it cares about
-const userPortalConfig = new UserPortalConfiguration({ accessToken: getAccessToken });
+const userPortalConfig = new UserPortalConfiguration({ accessToken: getAccessTokenForBearer });
 store.subscribe(generateApis);
+// Generate the APIs
 generateApis();
 
 function generateApis() {
-  baseUserPortalUrl = getBaseUrlForApi('owuserport');
-  authenticationApi = baseUserPortalUrl
-    ? new AuthenticationApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstance)
-    : null;
-  deviceCommandsApi = baseUserPortalUrl
-    ? new DeviceCommandsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstanceWithRefresh)
-    : null;
-  deviceStatisticsApi = baseUserPortalUrl
-    ? new DeviceStatisticsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstanceWithRefresh)
-    : null;
-  mfaApi = baseUserPortalUrl ? new MFAApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstanceWithRefresh) : null;
-  subscriberInformationApi = baseUserPortalUrl
-    ? new SubscriberInformationApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstanceWithRefresh)
-    : null;
-  subscriberRegistrationApi = baseUserPortalUrl
-    ? new SubscriberRegistrationApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstanceWithRefresh)
-    : null;
-  wifiClientsApi = baseUserPortalUrl
-    ? new WiFiClientsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstanceWithRefresh)
-    : null;
-  wiredClientsApi = baseUserPortalUrl
-    ? new ClientsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstanceWithRefresh)
-    : null;
-}
-
-// Get the base URL from the System Info. This is returned in a call to SystemInfo and it
-// is needed in order to provide the proper base URIs for the other API systems.
-function getBaseUrlForApi(type) {
+  console.log('generat');
   const state = store.getState();
+  const brandInfo = state.brandInfo.value;
 
-  if (type === 'owuserport') {
-    // The owsec currently comes from the branding information, while all
-    // other information is from the endpoints API
-    const brandInfo = state.brandInfo.value;
-    if (brandInfo && brandInfo.subscriber_portal) {
-      return brandInfo.subscriber_portal + '/api/v1';
+  if (brandInfo && brandInfo.subscriber_portal) {
+    if (!baseUserPortalUrl || subscriberPortalUrl !== brandInfo.subscriber_portal) {
+      baseUserPortalUrl = brandInfo.subscriber_portal + '/api/v1';
+      authenticationApi = new AuthenticationApiFactory(
+        userPortalConfig,
+        baseUserPortalUrl,
+        axiosInstanceAuthentication,
+      );
+      deviceCommandsApi = new DeviceCommandsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstanceWithRefresh);
+      deviceStatisticsApi = new DeviceStatisticsApiFactory(
+        userPortalConfig,
+        baseUserPortalUrl,
+        axiosInstanceWithRefresh,
+      );
+      mfaApi = new MFAApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstanceWithRefresh);
+      subscriberInformationApi = new SubscriberInformationApiFactory(
+        userPortalConfig,
+        baseUserPortalUrl,
+        axiosInstanceWithRefresh,
+      );
+      subscriberRegistrationApi = new SubscriberRegistrationApiFactory(
+        userPortalConfig,
+        baseUserPortalUrl,
+        axiosInstanceWithRefresh,
+      );
+      wifiClientsApi = new WiFiClientsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstanceWithRefresh);
+      wiredClientsApi = new ClientsApiFactory(userPortalConfig, baseUserPortalUrl, axiosInstanceWithRefresh);
     }
   } else {
-    const systemInfo = state.systemInfo.value;
+    subscriberPortalUrl = null;
+    baseUserPortalUrl = null;
+    authenticationApi = null;
+    deviceCommandsApi = null;
+    deviceStatisticsApi = null;
+    mfaApi = null;
+    subscriberInformationApi = null;
+    subscriberRegistrationApi = null;
+    wifiClientsApi = null;
+    wiredClientsApi = null;
+  }
+}
 
-    if (systemInfo && systemInfo.endpoints) {
-      const endpoints = systemInfo.endpoints;
-      const endpointsLength = endpoints.length;
-
-      for (let i = 0; i < endpointsLength; i++) {
-        let info = endpoints[i];
-
-        if (info.type === type) {
-          return info.uri + '/api/v1';
-        }
-      }
-    }
+async function getAccessTokenForBearer() {
+  console.log('get token');
+  const session = await getSession();
+  if (session) {
+    return session.access_token;
   }
 
   return null;
 }
 
-function setApiSystemInfo(systemInfo) {
-  // Set the state, then we can use the getBaseUrlForApi to verify it has the proper information
-  store.dispatch(setSystemInfo(systemInfo));
-
-  let valid = true;
-  const typesToValidate = ['owgw']; // Include all API types that might be used
-  const typesToValidateLength = typesToValidate.length;
-
-  for (let i = 0; i < typesToValidateLength; i++) {
-    let type = typesToValidate[i];
-
-    if (!getBaseUrlForApi(type)) {
-      valid = false;
-      break;
-    }
-  }
-
-  if (!valid) {
-    throw new Error(strings.errors.missingEndpoints);
-  }
-}
-
-async function hasCredentials() {
+async function hasSession() {
   return hasInternetCredentials(baseUserPortalUrl);
 }
 
-async function setCredentials(email, password) {
-  return setInternetCredentials(baseUserPortalUrl, email, password);
+async function setSession(session) {
+  if (session) {
+    return await setInternetCredentials(baseUserPortalUrl, 'session', JSON.stringify(session));
+  } else {
+    return await setInternetCredentials(baseUserPortalUrl, 'session', null);
+  }
 }
 
-async function getCredentials() {
-  return getInternetCredentials(baseUserPortalUrl);
+async function getSession() {
+  let jsonSessionString = await getInternetCredentials(baseUserPortalUrl);
+  if (jsonSessionString && jsonSessionString.password) {
+    return JSON.parse(jsonSessionString.password);
+  }
+
+  return null;
 }
 
-async function clearCredentials() {
-  return resetInternetCredentials(baseUserPortalUrl);
+async function clearSession() {
+  return await resetInternetCredentials(baseUserPortalUrl);
 }
 
 function getSubscriberAccessPointInfo(subscriberInformation, accessPointId, key) {
@@ -251,6 +231,7 @@ function handleApiError(title, error, navigation) {
 
   if (error.response) {
     console.log(error.response);
+
     switch (error.response.status) {
       case 400:
       case 404:
@@ -290,10 +271,8 @@ function handleApiError(title, error, navigation) {
 }
 
 function get403ErrorFromData(error) {
-  console.log(error);
   let code = error ? error.ErrorCode : null;
 
-  console.log(code);
   if (code) {
     switch (code) {
       case 1:
@@ -365,11 +344,10 @@ export {
   WifiNetworkTypeEnum,
   WifiNetworkBandsEnum,
   WifiNetworkEncryptionEnum,
+  hasSession,
+  setSession,
+  getSession,
+  clearSession,
   getSubscriberAccessPointInfo,
   handleApiError,
-  setApiSystemInfo,
-  hasCredentials,
-  setCredentials,
-  getCredentials,
-  clearCredentials,
 };

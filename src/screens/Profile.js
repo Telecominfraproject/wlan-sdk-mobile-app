@@ -13,13 +13,7 @@ import {
 import { StyleSheet, SafeAreaView, View, ScrollView, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { completeSignOut, logStringifyPretty, scrollViewToTop } from '../Utils';
-import {
-  getCredentials,
-  handleApiError,
-  mfaApi,
-  SubMfaConfigTypeEnum,
-  subscriberInformationApi,
-} from '../api/apiHandler';
+import { handleApiError, mfaApi, SubMfaConfigTypeEnum, subscriberInformationApi } from '../api/apiHandler';
 import { useSelector } from 'react-redux';
 import { selectSubscriberInformationLoading, selectSubscriberInformation } from '../store/SubscriberInformationSlice';
 import { displayValue, modifySubscriberInformation, setSubscriberInformationInterval } from '../Utils';
@@ -201,8 +195,7 @@ export default function Profile(props) {
   };
 
   const onChangePasswordPress = async () => {
-    const credentials = await getCredentials();
-    props.navigation.navigate('ChangePassword', { userId: credentials.username });
+    props.navigation.navigate('ChangePassword', { userId: subscriberInformation.userId });
   };
 
   const onSignOutPress = async () => {

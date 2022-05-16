@@ -43,7 +43,7 @@ export default function MfaCode(props) {
     try {
       setLoading(true);
 
-      // Send in the MFA Code to get the session information
+      // Send in the MFA Code to complete the sign in and get the session information
       const response = await authenticationApi.getAccessToken(
         {
           uuid: mfaInfo.uuid,
@@ -62,6 +62,7 @@ export default function MfaCode(props) {
 
       logStringifyPretty(response.data, response.request.responseURL);
 
+      // The response is the session information, pass that into the completeSignIn
       await completeSignIn(props.navigation, userId, null, response.data, setLoadingWrapper);
     } catch (error) {
       if (isMounted.current) {

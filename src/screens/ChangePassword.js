@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { strings } from '../localization/LocalizationStrings';
 import { pageStyle, pageItemStyle, primaryColor, placeholderColor } from '../AppStyle';
 import { SafeAreaView, ScrollView, View, TextInput, ActivityIndicator, Text, Image } from 'react-native';
-import { authenticationApi, clearCredentials, handleApiError } from '../api/apiHandler';
+import { authenticationApi, handleApiError } from '../api/apiHandler';
 import { useSelector } from 'react-redux';
 import { selectBrandInfo } from '../store/BrandInfoSlice';
 import { logStringifyPretty, sanitizePasswordInput, showGeneralMessage } from '../Utils';
@@ -34,6 +34,8 @@ export default function ResetPassword(props) {
     return () => {
       isMounted.current = false;
     };
+    // Disable the eslint warning, as we want to change only on navigation changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getPasswordPattern = async () => {
@@ -89,10 +91,6 @@ export default function ResetPassword(props) {
       }
 
       logStringifyPretty(response.data, 'getAccessToken (Password)');
-
-      // Clear any current credentials - as the password has now changed. This should
-      // be done even if no longer mounted.
-      clearCredentials();
 
       if (isMounted.current) {
         // Show the succcess message

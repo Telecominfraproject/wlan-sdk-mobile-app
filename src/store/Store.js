@@ -4,9 +4,7 @@ import { persistStore, persistReducer } from 'redux-persist';
 import FSStorage from 'redux-persist-fs-storage';
 import brandInfoReducer from './BrandInfoSlice';
 import deviceUuidReducer from './DeviceUuidSlice';
-import sessionReducer from './SessionSlice';
 import subscriberInformationReducer from './SubscriberInformationSlice';
-import systemInfoReducer from './SystemInfoSlice';
 
 const persistConfig = {
   key: 'root',
@@ -18,9 +16,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   brandInfo: brandInfoReducer,
   deviceUuid: deviceUuidReducer,
-  session: sessionReducer,
   subscriberInformation: subscriberInformationReducer,
-  systemInfo: systemInfoReducer,
 });
 
 const persistedRootReducer = persistReducer(persistConfig, rootReducer);

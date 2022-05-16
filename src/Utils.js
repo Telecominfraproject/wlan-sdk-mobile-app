@@ -3,7 +3,6 @@ import { Alert } from 'react-native';
 import { strings } from './localization/LocalizationStrings';
 import { errorColor, warnColor, okColor } from './AppStyle';
 import { store } from './store/Store';
-import { clearSession, setSession } from './store/SessionSlice';
 import { setDeviceUuid } from './store/DeviceUuidSlice';
 import {
   setSubscriberInformationLoading,
@@ -14,7 +13,8 @@ import {
   authenticationApi,
   subscriberInformationApi,
   getSubscriberAccessPointInfo,
-  clearCredentials,
+  clearSession,
+  setSession,
   HomeDeviceModeTypeEnum,
   InternetConnectionTypeEnum,
   WifiNetworkBandsEnum,
@@ -474,8 +474,7 @@ export function logStringifyPretty(obj, title) {
 }
 
 export async function completeSignOut(navigation) {
-  store.dispatch(clearSession());
-  clearCredentials();
+  await clearSession();
 
   if (navigation) {
     navigation.reset({
@@ -497,7 +496,7 @@ export async function completeSignIn(navigation, userId, password, sessionData, 
     if (!sessionData) {
       // Make sure to clear any session/subscriber information and try and get token. If we already have session data
       // nothing to do, just handle the continuation
-      store.dispatch(clearSession());
+      await clearSession();
       store.dispatch(clearSubscriberInformation());
 
       const response = await authenticationApi.getAccessToken({
@@ -535,7 +534,7 @@ export async function completeSignIn(navigation, userId, password, sessionData, 
           }
       }
 
-      store.dispatch(setSession(responseData));
+      await setSession(responseData);
 
       // Get the subscriber information
       await getSubscriberInformation(true);
@@ -553,8 +552,7 @@ export async function completeSignIn(navigation, userId, password, sessionData, 
       setLoadingFn(false);
     }
 
-    // Clear any saved credentials, make the user re-enter them
-    clearCredentials();
+    await clearSession();
 
     // Check for password reset handling
     if (error.response && error.response.status === 403 && error.response.data && error.response.data.ErrorCode === 1) {
