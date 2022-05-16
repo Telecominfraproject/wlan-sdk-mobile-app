@@ -168,6 +168,10 @@ export default function DeviceDetails(props) {
     return displayValueWiredSpeed(client, 'speed');
   };
 
+  const getManufacturer = () => {
+    return displayValueWiredSpeed(client, 'manufacturer');
+  };
+
   const onReserveIpv4Press = async () => {
     onReserve(client.ipv4);
   };
@@ -328,7 +332,7 @@ export default function DeviceDetails(props) {
             <ItemTextWithLabel
               key="manufacturer"
               label={strings.deviceDetails.manufacturer}
-              value={displayValue(subscriberDevice, 'manufacturer')}
+              value={getManufacturer()}
             />
             {isReserved() && isReservedIPv4() ? (
               <ItemTextWithLabel
