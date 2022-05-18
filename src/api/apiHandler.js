@@ -112,7 +112,6 @@ store.subscribe(generateApis);
 generateApis();
 
 function generateApis() {
-  console.log('generat');
   const state = store.getState();
   const brandInfo = state.brandInfo.value;
 

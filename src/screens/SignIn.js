@@ -41,7 +41,6 @@ export default function SignIn(props) {
       async function checkSignedIn() {
         try {
           if (await hasSession()) {
-            console.log('has session');
             // Check to see if we can get subscriber information
             await getSubscriberInformation(true);
 
